@@ -1,0 +1,74 @@
+import { describe, expect, it } from "vitest";
+import type { StoryLaunch } from "../types";
+import {
+  createLastObservation,
+  lastObservationToLaunch,
+  parseLastObservation,
+} from "./lastObservation";
+
+const story: StoryLaunch = {
+  region: "CN",
+  scriptId: "1000000001",
+  scriptUrl: "https://example.test/1000000001.txt",
+  title: "第一节",
+  subtitle: "测试章节",
+  sequence: [
+    {
+      region: "CN",
+      scriptId: "1000000001",
+      scriptUrl: "https://example.test/1000000001.txt",
+      title: "第一节",
+      subtitle: "测试章节",
+    },
+    {
+      region: "CN",
+      scriptId: "1000000002",
+      scriptUrl: "https://example.test/1000000002.txt",
+      title: "第二节",
+      subtitle: "测试章节",
+    },
+  ],
+  sequenceIndex: 0,
+};
+
+describe("last observation", () => {
+  it("stores the exact playback position and queue context", () => {
+    const observation = createLastObservation(story, 7.8, 1234);
+
+    expect(observation).toEqual({
+      scriptId: story.scriptId,
+      scriptUrl: story.scriptUrl,
+      title: story.title,
+      subtitle: story.subtitle,
+      frameIndex: 7,
+      updatedAt: 1234,
+      region: story.region,
+      sequence: story.sequence,
+      sequenceIndex: 0,
+    });
+    expect(lastObservationToLaunch(observation)).toEqual({
+      ...story,
+      startIndex: 7,
+    });
+  });
+
+  it("ignores corrupt records and invalid queue metadata", () => {
+    expect(parseLastObservation("not json")).toBeNull();
+    expect(parseLastObservation(JSON.stringify({ scriptId: "100" }))).toBeNull();
+
+    const observation = createLastObservation(story, 2, 1234);
+    const parsed = parseLastObservation(
+      JSON.stringify({ ...observation, sequenceIndex: 99 }),
+    );
+
+    expect(parsed).toEqual({
+      scriptId: story.scriptId,
+      scriptUrl: story.scriptUrl,
+      title: story.title,
+      subtitle: story.subtitle,
+      frameIndex: 2,
+      updatedAt: 1234,
+      region: story.region,
+    });
+  });
+});
