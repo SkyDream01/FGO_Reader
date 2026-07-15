@@ -14,6 +14,10 @@
 
 当前立绘使用资源自带的默认表情；`charaFace` 表情差分合成尚未实现。
 
+## 视频介绍
+
+[在哔哩哔哩观看项目介绍视频](https://www.bilibili.com/video/BV1n7Nv6jE58/)
+
 ## 运行
 
 Windows 下可直接使用一键脚本：
