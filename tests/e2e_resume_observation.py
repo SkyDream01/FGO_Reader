@@ -117,7 +117,25 @@ with sync_playwright() as playwright:
     page.get_by_text("观测目录", exact=True).wait_for(timeout=5000)
     page.get_by_text("继续上次观测", exact=True).wait_for(timeout=5000)
     page.locator(".quest-row").first.wait_for(timeout=5000)
-    assert "继续观测" in page.locator(".launch-button").text_content()
+    restart_button = page.get_by_role("button", name="重新观测")
+    continue_button = page.get_by_role("button", name="继续观测")
+    restart_button.wait_for(timeout=5000)
+    assert restart_button.bounding_box()["x"] < continue_button.bounding_box()["x"]
+
+    page.set_viewport_size({"width": 2400, "height": 1200})
+    launch_actions = page.locator(".launch-actions")
+    desktop_buttons = launch_actions.locator(".launch-button")
+    desktop_boxes = [
+        desktop_buttons.nth(index).bounding_box()
+        for index in range(desktop_buttons.count())
+    ]
+    assert all(box and box["height"] <= 80 for box in desktop_boxes)
+    assert all(
+        item.is_visible()
+        for item in launch_actions.locator(".launch-action-copy strong, .launch-action-copy small").all()
+    )
+    launch_actions.screenshot(path=str(SCREENSHOTS / "launch-actions-desktop.png"))
+    page.set_viewport_size({"width": 1180, "height": 900})
 
     page.reload(wait_until="networkidle", timeout=30000)
     continue_card = page.locator(".resume-card").filter(has_text="继续上次观测")
@@ -128,7 +146,7 @@ with sync_playwright() as playwright:
             ".launch-overview",
             ".selected-record",
             ".script-stack",
-            ".launch-button",
+            ".launch-actions",
         )
     ]
     assert all(tablet_boxes)
@@ -168,6 +186,18 @@ with sync_playwright() as playwright:
     assert page.evaluate(
         "JSON.parse(localStorage.getItem('fgo-reader-bookmark')).scriptId"
     ) == "1000000001"
+
+    restart_button = page.get_by_role("button", name="重新观测")
+    continue_button = page.get_by_role("button", name="继续观测")
+    restart_button.wait_for(timeout=5000)
+    assert restart_button.bounding_box()["x"] < continue_button.bounding_box()["x"]
+    restart_button.click()
+    page.locator(".reader-loading").wait_for(state="hidden", timeout=10000)
+    assert page.locator(".dialogue-text").text_content() == "第一条记录。"
+    assert page.locator(".dialogue-meta span").first.text_content() == "LOG 001"
+    page.wait_for_function(
+        "JSON.parse(localStorage.getItem('fgo-reader-last-observation')).frameIndex === 0"
+    )
 
     page.screenshot(path=str(SCREENSHOTS / "resume-observation.png"), full_page=True)
     assert not page_errors, f"Page errors: {page_errors}"

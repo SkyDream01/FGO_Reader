@@ -9,6 +9,7 @@ import {
   LoaderCircle,
   Play,
   Radio,
+  RotateCcw,
   Search,
   Sparkles,
 } from "lucide-react";
@@ -213,7 +214,7 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
     [quests, region, warDetail],
   );
 
-  const openSelectedScript = () => {
+  const openSelectedScript = (startIndex?: number) => {
     if (!selectedScript || !selectedQuest || !warDetail) return;
     const sequenceIndex = storySequence.findIndex(
       (item) => item.scriptId === selectedScript.scriptId,
@@ -224,6 +225,7 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
       scriptUrl: selectedScript.script,
       title: selectedQuest.name,
       subtitle: warDetail.longName,
+      ...(startIndex === undefined ? {} : { startIndex }),
       ...(sequenceIndex >= 0
         ? { sequence: storySequence, sequenceIndex }
         : {}),
@@ -509,17 +511,40 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
             </div>
           </div>
 
-          <button className="launch-button" onClick={openSelectedScript} disabled={!selectedScript}>
-            <span>
-              <Play size={19} fill="currentColor" />
-              {selectedProgress > 0 ? "继续观测" : "开始观测"}
-            </span>
-            <small>
-              {selectedProgress > 0
-                ? `RESUME FROM LOG ${String(selectedProgress + 1).padStart(3, "0")}`
-                : "ENTER STORY MODE"}
-            </small>
-          </button>
+          <div className="launch-actions">
+            {selectedProgress > 0 && (
+              <button
+                className="launch-button restart-button"
+                onClick={() => openSelectedScript(0)}
+                disabled={!selectedScript}
+              >
+                <span className="launch-action-icon" aria-hidden="true">
+                  <RotateCcw size={18} />
+                </span>
+                <span className="launch-action-copy">
+                  <strong>重新观测</strong>
+                  <small>从 LOG 001 开始</small>
+                </span>
+              </button>
+            )}
+            <button
+              className="launch-button resume-button"
+              onClick={() => openSelectedScript()}
+              disabled={!selectedScript}
+            >
+              <span className="launch-action-icon" aria-hidden="true">
+                <Play size={19} fill="currentColor" />
+              </span>
+              <span className="launch-action-copy">
+                <strong>{selectedProgress > 0 ? "继续观测" : "开始观测"}</strong>
+                <small>
+                  {selectedProgress > 0
+                    ? `从 LOG ${String(selectedProgress + 1).padStart(3, "0")} 继续`
+                    : "从 LOG 001 开始"}
+                </small>
+              </span>
+            </button>
+          </div>
 
           <div className="source-note">
             <BookMarked size={15} />

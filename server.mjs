@@ -59,7 +59,16 @@ app.use("/atlas-api", async (request, response) => {
 
 app.use("/translation-api", createTranslationApp({ env: process.env }));
 
-app.use(express.static(path.join(root, "dist"), { maxAge: "1h" }));
+app.use(express.static(path.join(root, "dist"), {
+  maxAge: "1h",
+  setHeaders(response, filePath) {
+    // The HTML shell references hash-named assets. It must be revalidated so a
+    // newly built shell can point browsers at the latest asset bundle.
+    if (path.basename(filePath) === "index.html") {
+      response.setHeader("Cache-Control", "no-cache");
+    }
+  },
+}));
 app.use((_request, response) => {
   response.sendFile(path.join(root, "dist", "index.html"));
 });
