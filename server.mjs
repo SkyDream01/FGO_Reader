@@ -57,7 +57,7 @@ app.use("/atlas-api", async (request, response) => {
   }
 });
 
-app.use("/translation-api", createTranslationApp({ env: process.env }));
+app.use("/translation-api", createTranslationApp({ env: process.env, localEnvPath }));
 
 app.use(express.static(path.join(root, "dist"), {
   maxAge: "1h",

@@ -8,6 +8,7 @@ import {
   Expand,
   EyeOff,
   Gauge,
+  HardDrive,
   Keyboard,
   Languages,
   ListMusic,
@@ -51,7 +52,9 @@ import {
 import { parseFgoScript } from "../lib/scriptParser";
 import {
   clearPersistentTranslationCaches,
+  deleteLocalOpenAiConfig,
   loadTranslationSettings,
+  saveLocalOpenAiConfig,
   saveTranslationSettings,
   type TranslationSettings,
 } from "../lib/translation";
@@ -195,6 +198,10 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   const [toast, setToast] = useState("");
   const [backgroundFailed, setBackgroundFailed] = useState(false);
   const [translationEligible, setTranslationEligible] = useState(false);
+  const [openAiDraftDirty, setOpenAiDraftDirty] = useState(false);
+  const [clearOpenAiApiKey, setClearOpenAiApiKey] = useState(false);
+  const [translationConfigSaving, setTranslationConfigSaving] = useState(false);
+  const [translationConfigError, setTranslationConfigError] = useState("");
   const [readMax, setReadMax] = useState(() => {
     const value = localStorage.getItem(`fgo-reader-read:${story.scriptId}`);
     return value === null ? -1 : Number(value);
@@ -225,6 +232,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   const selectedProviderInfo = translation.serverConfig?.providers.find(
     (provider) => provider.id === translationDraft.provider,
   );
+  const localOpenAiConfig = translation.serverConfig?.localEnv?.openai;
   const translationDisplayError = useMemo(
     () => translatedMode && (!translationSettings.provider || !translation.providerReady)
       ? { detail: "翻译后端尚未完成配置", retryable: false }
@@ -259,9 +267,22 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   }, []);
 
   const openSettings = useCallback(() => {
-    setTranslationDraft(translationSettings);
+    setTranslationDraft(localOpenAiConfig?.editable
+      ? {
+          ...translationSettings,
+          openai: {
+            baseUrl: localOpenAiConfig.baseUrl,
+            apiKey: "",
+            model: localOpenAiConfig.model,
+            allowNoAuth: localOpenAiConfig.allowNoAuth,
+          },
+        }
+      : translationSettings);
+    setOpenAiDraftDirty(false);
+    setClearOpenAiApiKey(false);
+    setTranslationConfigError("");
     setPanel("settings");
-  }, [translationSettings]);
+  }, [localOpenAiConfig, translationSettings]);
 
   const toggleTranslation = useCallback(() => {
     if (!translationEligible) return;
@@ -284,24 +305,101 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     translationSettings,
   ]);
 
-  const applyTranslationDraft = useCallback(() => {
-    persistTranslationSettings(translationDraft);
-    showToast("翻译设置已保存并应用");
-    translation.refreshServerConfig();
-  }, [persistTranslationSettings, showToast, translation, translationDraft]);
+  const applyTranslationDraft = useCallback(async () => {
+    setTranslationConfigError("");
+    setTranslationConfigSaving(true);
+    try {
+      if (translationDraft.provider === "openai" && localOpenAiConfig?.editable) {
+        await saveLocalOpenAiConfig({
+          baseUrl: translationDraft.openai.baseUrl,
+          model: translationDraft.openai.model,
+          apiKey: translationDraft.openai.apiKey,
+          allowNoAuth: translationDraft.openai.allowNoAuth,
+          clearApiKey: clearOpenAiApiKey,
+        });
+        const saved: TranslationSettings = {
+          ...translationDraft,
+          openai: { baseUrl: "", apiKey: "", model: "", allowNoAuth: false },
+        };
+        persistTranslationSettings(saved);
+        setTranslationDraft((value) => ({
+          ...value,
+          openai: { ...value.openai, apiKey: "" },
+        }));
+        setOpenAiDraftDirty(false);
+        setClearOpenAiApiKey(false);
+        await translation.refreshServerConfig();
+        showToast("大模型配置已保存到 .env.local 并应用");
+      } else {
+        persistTranslationSettings(translationDraft);
+        await translation.refreshServerConfig();
+        showToast("翻译设置已保存并应用");
+      }
+    } catch (error) {
+      setTranslationConfigError(error instanceof Error ? error.message : "无法保存翻译配置");
+    } finally {
+      setTranslationConfigSaving(false);
+    }
+  }, [
+    clearOpenAiApiKey,
+    localOpenAiConfig?.editable,
+    persistTranslationSettings,
+    showToast,
+    translation,
+    translationDraft,
+  ]);
 
-  const clearLocalTranslationOverrides = useCallback(() => {
-    const cleared: TranslationSettings = {
-      ...translationDraft,
-      deepl: { authKey: "", serverUrl: "" },
-      openai: { baseUrl: "", apiKey: "", model: "", allowNoAuth: false },
-    };
-    setTranslationDraft(cleared);
-    persistTranslationSettings(cleared);
-    clearPersistentTranslationCaches();
-    showToast("已清除本地翻译凭据和缓存");
-    translation.refreshServerConfig();
-  }, [persistTranslationSettings, showToast, translation, translationDraft]);
+  const clearLocalTranslationOverrides = useCallback(async () => {
+    setTranslationConfigError("");
+    setTranslationConfigSaving(true);
+    try {
+      if (translationDraft.provider === "openai" && localOpenAiConfig?.editable) {
+        await deleteLocalOpenAiConfig();
+      }
+      const cleared: TranslationSettings = {
+        ...translationDraft,
+        deepl: { authKey: "", serverUrl: "" },
+        openai: { baseUrl: "", apiKey: "", model: "", allowNoAuth: false },
+      };
+      setTranslationDraft(cleared);
+      persistTranslationSettings(cleared);
+      setOpenAiDraftDirty(false);
+      setClearOpenAiApiKey(false);
+      clearPersistentTranslationCaches();
+      await translation.refreshServerConfig();
+      showToast(translationDraft.provider === "openai" && localOpenAiConfig?.editable
+        ? "已清除 .env.local 大模型配置和翻译缓存"
+        : "已清除本地翻译凭据和缓存");
+    } catch (error) {
+      setTranslationConfigError(error instanceof Error ? error.message : "无法清除翻译配置");
+    } finally {
+      setTranslationConfigSaving(false);
+    }
+  }, [
+    localOpenAiConfig?.editable,
+    persistTranslationSettings,
+    showToast,
+    translation,
+    translationDraft,
+  ]);
+
+  useEffect(() => {
+    if (
+      panel !== "settings"
+      || translationDraft.provider !== "openai"
+      || !localOpenAiConfig?.editable
+      || openAiDraftDirty
+    ) return;
+    setTranslationDraft((value) => ({
+      ...value,
+      openai: {
+        baseUrl: localOpenAiConfig.baseUrl,
+        apiKey: "",
+        model: localOpenAiConfig.model,
+        allowNoAuth: localOpenAiConfig.allowNoAuth,
+      },
+    }));
+  }, [localOpenAiConfig, openAiDraftDirty, panel, translationDraft.provider]);
 
   useEffect(() => {
     localStorage.setItem("fgo-reader-settings", JSON.stringify(settings));
@@ -933,6 +1031,10 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                       {selectedProviderInfo
                         ? selectedProviderInfo.experimental
                           ? "实验性非官方接口"
+                          : translationDraft.provider === "openai" && localOpenAiConfig?.editable
+                            ? selectedProviderInfo.serverConfigured
+                              ? ".env.local 已配置"
+                              : "保存到 .env.local"
                           : selectedProviderInfo.serverConfigured
                             ? "服务端已配置"
                             : "需要页面配置"
@@ -941,12 +1043,17 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                   </span>
                   <select
                     value={translationDraft.provider ?? ""}
-                    onChange={(event) => setTranslationDraft((value) => ({
-                      ...value,
-                      provider: event.target.value
-                        ? event.target.value as TranslationSettings["provider"]
-                        : null,
-                    }))}
+                    onChange={(event) => {
+                      setTranslationDraft((value) => ({
+                        ...value,
+                        provider: event.target.value
+                          ? event.target.value as TranslationSettings["provider"]
+                          : null,
+                      }));
+                      setOpenAiDraftDirty(false);
+                      setClearOpenAiApiKey(false);
+                      setTranslationConfigError("");
+                    }}
                   >
                     <option value="">请选择后端</option>
                     <option value="deepl">DeepL</option>
@@ -986,39 +1093,73 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
 
                 {translationDraft.provider === "openai" && (
                   <div className="translation-provider-fields">
+                    {localOpenAiConfig?.editable && (
+                      <div className={`translation-env-status ${selectedProviderInfo?.serverConfigured ? "ready" : ""}`}>
+                        <HardDrive size={17} />
+                        <span>
+                          <strong>{localOpenAiConfig.fileName}</strong>
+                          <small>本机服务端配置 · 密钥不回传浏览器</small>
+                        </span>
+                        <em>{selectedProviderInfo?.serverConfigured ? "READY" : "EDITABLE"}</em>
+                      </div>
+                    )}
                     <label className="text-setting">
                       <span><strong>API Base URL</strong><small>API 根路径，通常以 /v1 结尾</small></span>
                       <input
                         type="url"
                         placeholder="http://127.0.0.1:11434/v1"
                         value={translationDraft.openai.baseUrl}
-                        onChange={(event) => setTranslationDraft((value) => ({
-                          ...value,
-                          openai: { ...value.openai, baseUrl: event.target.value },
-                        }))}
+                        onChange={(event) => {
+                          setOpenAiDraftDirty(true);
+                          setTranslationDraft((value) => ({
+                            ...value,
+                            openai: { ...value.openai, baseUrl: event.target.value },
+                          }));
+                        }}
                       />
                     </label>
                     <label className="text-setting">
                       <span><strong>模型</strong><small>Chat Completions 模型 ID</small></span>
                       <input
                         value={translationDraft.openai.model}
-                        onChange={(event) => setTranslationDraft((value) => ({
-                          ...value,
-                          openai: { ...value.openai, model: event.target.value },
-                        }))}
+                        onChange={(event) => {
+                          setOpenAiDraftDirty(true);
+                          setTranslationDraft((value) => ({
+                            ...value,
+                            openai: { ...value.openai, model: event.target.value },
+                          }));
+                        }}
                       />
                     </label>
                     <label className="text-setting">
-                      <span><strong>API 密钥</strong><small>留空使用服务端环境变量</small></span>
+                      <span>
+                        <strong>API 密钥</strong>
+                        <small>
+                          {localOpenAiConfig?.editable
+                            ? translationDraft.openai.apiKey
+                              ? "保存后替换现有密钥"
+                              : clearOpenAiApiKey
+                                ? "保存后清除现有密钥"
+                                : localOpenAiConfig.apiKeyConfigured
+                                  ? "已保存，留空保持不变"
+                                  : "尚未保存"
+                            : "留空使用服务端环境变量"}
+                        </small>
+                      </span>
                       <input
                         type="password"
                         autoComplete="off"
                         disabled={translationDraft.openai.allowNoAuth}
+                        placeholder={localOpenAiConfig?.apiKeyConfigured ? "••••••••（已保存）" : ""}
                         value={translationDraft.openai.apiKey}
-                        onChange={(event) => setTranslationDraft((value) => ({
-                          ...value,
-                          openai: { ...value.openai, apiKey: event.target.value },
-                        }))}
+                        onChange={(event) => {
+                          setOpenAiDraftDirty(true);
+                          setClearOpenAiApiKey(false);
+                          setTranslationDraft((value) => ({
+                            ...value,
+                            openai: { ...value.openai, apiKey: event.target.value },
+                          }));
+                        }}
                       />
                     </label>
                     <label className="switch-setting compact-switch">
@@ -1026,13 +1167,36 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                       <input
                         type="checkbox"
                         checked={translationDraft.openai.allowNoAuth}
-                        onChange={(event) => setTranslationDraft((value) => ({
-                          ...value,
-                          openai: { ...value.openai, allowNoAuth: event.target.checked },
-                        }))}
+                        onChange={(event) => {
+                          setOpenAiDraftDirty(true);
+                          setTranslationDraft((value) => ({
+                            ...value,
+                            openai: { ...value.openai, allowNoAuth: event.target.checked },
+                          }));
+                        }}
                       />
                       <i />
                     </label>
+                    {localOpenAiConfig?.editable && localOpenAiConfig.apiKeyConfigured && (
+                      <label className="switch-setting compact-switch clear-secret-switch">
+                        <span><strong>清除已保存密钥</strong><small>仅在下次保存时执行</small></span>
+                        <input
+                          type="checkbox"
+                          checked={clearOpenAiApiKey}
+                          onChange={(event) => {
+                            setOpenAiDraftDirty(true);
+                            setClearOpenAiApiKey(event.target.checked);
+                            if (event.target.checked) {
+                              setTranslationDraft((value) => ({
+                                ...value,
+                                openai: { ...value.openai, apiKey: "" },
+                              }));
+                            }
+                          }}
+                        />
+                        <i />
+                      </label>
+                    )}
                   </div>
                 )}
 
@@ -1050,12 +1214,27 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                   </div>
                 )}
 
+                {translationConfigError && (
+                  <div className="translation-experimental-note translation-config-error">
+                    <CircleAlert size={16} />
+                    <span>{translationConfigError}</span>
+                  </div>
+                )}
+
                 <p className="translation-storage-warning">
-                  页面配置会按你的选择明文保存在 localStorage；仅建议在自己的本机浏览器中使用。
+                  {translationDraft.provider === "openai" && localOpenAiConfig?.editable
+                    ? "Base URL、模型和密钥写入项目根目录 .env.local；已保存密钥只返回配置状态，不返回明文。"
+                    : "页面配置会按你的选择明文保存在 localStorage；仅建议在自己的本机浏览器中使用。"}
                 </p>
                 <div className="translation-settings-actions">
-                  <button className="primary" onClick={applyTranslationDraft}><Save size={15} /> 保存并应用</button>
-                  <button onClick={clearLocalTranslationOverrides}><Trash2 size={15} /> 清除本地凭据</button>
+                  <button className="primary" onClick={applyTranslationDraft} disabled={translationConfigSaving}>
+                    {translationConfigSaving ? <LoaderCircle className="spin" size={15} /> : <Save size={15} />}
+                    {translationDraft.provider === "openai" && localOpenAiConfig?.editable ? "保存到 .env.local" : "保存并应用"}
+                  </button>
+                  <button onClick={clearLocalTranslationOverrides} disabled={translationConfigSaving}>
+                    <Trash2 size={15} />
+                    {translationDraft.provider === "openai" && localOpenAiConfig?.editable ? "清除 .env.local 配置" : "清除本地凭据"}
+                  </button>
                 </div>
               </section>
             </div>

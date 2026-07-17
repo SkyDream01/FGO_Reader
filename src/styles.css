@@ -2411,6 +2411,62 @@ select:focus-visible {
   letter-spacing: 0.12em;
 }
 
+.translation-env-status {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid rgba(117, 216, 211, 0.16);
+  color: #76939a;
+  background:
+    linear-gradient(90deg, rgba(117, 216, 211, 0.06), transparent 62%),
+    rgba(3, 13, 21, 0.68);
+}
+
+.translation-env-status.ready {
+  border-color: rgba(117, 216, 211, 0.32);
+  color: var(--teal);
+}
+
+.translation-env-status > span {
+  display: block;
+  min-width: 0;
+}
+
+.translation-env-status strong,
+.translation-env-status small {
+  display: block;
+}
+
+.translation-env-status strong {
+  color: #dcebec;
+  font-family: "Bahnschrift", monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.translation-env-status small {
+  overflow: hidden;
+  margin-top: 3px;
+  color: #607781;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.translation-env-status em {
+  padding: 3px 5px;
+  border: 1px solid currentColor;
+  color: inherit;
+  font-family: "Bahnschrift", monospace;
+  font-size: 7px;
+  font-style: normal;
+  letter-spacing: 0.12em;
+}
+
 .translation-settings-section > label,
 .translation-provider-fields > label {
   position: relative;
@@ -2468,6 +2524,20 @@ select:focus-visible {
   margin-top: 1px;
 }
 
+.translation-config-error {
+  border-color: rgba(215, 116, 101, 0.32);
+  color: #f0bbb2;
+  background: rgba(76, 28, 29, 0.38);
+}
+
+.translation-settings-section .clear-secret-switch {
+  color: #d99e95;
+}
+
+.translation-settings-section .clear-secret-switch strong {
+  color: #deb0a8;
+}
+
 .translation-storage-warning {
   margin: 12px 0 0;
   color: #8c6b6d;
@@ -2497,6 +2567,11 @@ select:focus-visible {
   border-color: rgba(117, 216, 211, 0.42);
   color: #e9ffff;
   background: rgba(29, 85, 91, 0.62);
+}
+
+.translation-settings-actions button:disabled {
+  cursor: wait;
+  opacity: 0.52;
 }
 
 .switch-setting i {

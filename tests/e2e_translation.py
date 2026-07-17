@@ -75,6 +75,7 @@ with sync_playwright() as playwright:
     page = browser.new_page(viewport={"width": 1600, "height": 1000})
     page_errors = []
     translation_requests = []
+    config_updates = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     page.add_init_script(
         "localStorage.clear();"
@@ -107,12 +108,50 @@ with sync_playwright() as playwright:
     )
 
     def translation_handler(route):
-        if route.request.url.endswith("/config"):
+        if route.request.url.endswith("/config/openai"):
+            payload = json.loads(route.request.post_data or "{}")
+            config_updates.append(payload)
             route.fulfill(
                 json={
                     "sourceLanguage": "ja",
                     "targetLanguage": "zh-Hans",
                     "clientOverridesAllowed": True,
+                    "localEnv": {
+                        "openai": {
+                            "editable": True,
+                            "fileName": ".env.local",
+                            "baseUrl": payload["baseUrl"],
+                            "model": payload["model"],
+                            "allowNoAuth": payload["allowNoAuth"],
+                            "apiKeyConfigured": bool(payload["apiKey"]),
+                        }
+                    },
+                    "providers": [],
+                }
+            )
+            return
+
+        if route.request.url.endswith("/config"):
+            saved_openai = config_updates[-1] if config_updates else {
+                "baseUrl": "http://127.0.0.1:11434/v1",
+                "model": "qwen-local",
+                "allowNoAuth": False,
+            }
+            route.fulfill(
+                json={
+                    "sourceLanguage": "ja",
+                    "targetLanguage": "zh-Hans",
+                    "clientOverridesAllowed": True,
+                    "localEnv": {
+                        "openai": {
+                            "editable": True,
+                            "fileName": ".env.local",
+                            "baseUrl": saved_openai["baseUrl"],
+                            "model": saved_openai["model"],
+                            "allowNoAuth": saved_openai["allowNoAuth"],
+                            "apiKeyConfigured": True,
+                        }
+                    },
                     "providers": [
                         {
                             "id": "deepl",
@@ -124,9 +163,9 @@ with sync_playwright() as playwright:
                         {
                             "id": "openai",
                             "label": "OpenAI 兼容",
-                            "serverConfigured": False,
+                            "serverConfigured": True,
                             "experimental": False,
-                            "configurationId": None,
+                            "configurationId": "openai-local-test-v1",
                         },
                         {
                             "id": "bing",
@@ -200,5 +239,32 @@ with sync_playwright() as playwright:
     page.get_by_text("日文翻译", exact=True).wait_for(timeout=5000)
     assert page.locator(".translation-settings-section select").input_value() == "bing"
     assert page.get_by_text("可能随时失效", exact=False).is_visible()
+
+    page.locator(".translation-settings-section select").select_option("openai")
+    page.get_by_text(".env.local", exact=True).wait_for(timeout=5000)
+    provider_fields = page.locator(".translation-provider-fields")
+    assert provider_fields.locator('input[type="url"]').input_value() == "http://127.0.0.1:11434/v1"
+    assert provider_fields.locator('input:not([type])').input_value() == "qwen-local"
+    assert "已保存" in (provider_fields.locator('input[type="password"]').get_attribute("placeholder") or "")
+    provider_fields.locator('input:not([type])').fill("qwen-local-2")
+    provider_fields.locator('input[type="password"]').fill("new-test-key")
+    page.get_by_role("button", name="保存到 .env.local").click()
+    page.get_by_text("大模型配置已保存到 .env.local 并应用", exact=True).wait_for(timeout=5000)
+    assert config_updates == [{
+        "baseUrl": "http://127.0.0.1:11434/v1",
+        "model": "qwen-local-2",
+        "apiKey": "new-test-key",
+        "allowNoAuth": False,
+        "clearApiKey": False,
+    }]
+    page.screenshot(path="screenshots/llm-env-settings.png", full_page=True)
+    page.set_viewport_size({"width": 760, "height": 900})
+    page.wait_for_timeout(250)
+    panel_box = page.locator(".settings-panel").bounding_box()
+    assert panel_box and panel_box["width"] >= 750
+    page.locator(".settings-list").evaluate("element => { element.scrollTop = element.scrollHeight; }")
+    page.wait_for_timeout(150)
+    assert page.get_by_role("button", name="保存到 .env.local").is_visible()
+    page.screenshot(path="screenshots/llm-env-settings-mobile.png", full_page=True)
     assert not page_errors, f"Page errors: {page_errors}"
     browser.close()

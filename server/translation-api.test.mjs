@@ -1,4 +1,8 @@
 import { createServer } from "node:http";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { parseEnv } from "node:util";
 import express from "express";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
@@ -10,9 +14,11 @@ import {
 } from "./translation-api.mjs";
 
 const servers = [];
+const temporaryDirectories = [];
 
 afterEach(async () => {
   await Promise.all(servers.splice(0).map((server) => new Promise((resolve) => server.close(resolve))));
+  await Promise.all(temporaryDirectories.splice(0).map((directory) => rm(directory, { recursive: true, force: true })));
 });
 
 async function serve(router) {
@@ -150,5 +156,127 @@ describe("translation HTTP API", () => {
     expect(response.status).toBe(503);
     expect(fetchImpl).toHaveBeenCalledTimes(1);
     expect(fetchImpl.mock.calls[0][0]).toContain("deepl.com");
+  });
+
+  it("edits only whitelisted OpenAI-compatible values in .env.local without returning secrets", async () => {
+    const directory = await mkdtemp(path.join(os.tmpdir(), "fgo-reader-env-"));
+    temporaryDirectories.push(directory);
+    const localEnvPath = path.join(directory, ".env.local");
+    await writeFile(localEnvPath, [
+      "# keep this comment",
+      "PORT=4999",
+      "OPENAI_COMPAT_BASE_URL=https://old.example/v1",
+      "OPENAI_COMPAT_API_KEY=old-test-key",
+      "OPENAI_COMPAT_MODEL=old-model",
+      "OPENAI_COMPAT_ALLOW_NO_AUTH=false",
+      "",
+    ].join("\n"));
+    const env = {
+      OPENAI_COMPAT_BASE_URL: "https://old.example/v1",
+      OPENAI_COMPAT_API_KEY: "old-test-key",
+      OPENAI_COMPAT_MODEL: "old-model",
+      OPENAI_COMPAT_ALLOW_NO_AUTH: "false",
+    };
+    const app = createTranslationApp({ env, localEnvPath });
+    const origin = await serve(app);
+
+    const initialText = await (await fetch(`${origin}/config`)).text();
+    expect(initialText).not.toContain("old-test-key");
+    expect(JSON.parse(initialText).localEnv.openai).toMatchObject({
+      editable: true,
+      fileName: ".env.local",
+      baseUrl: "https://old.example/v1",
+      model: "old-model",
+      apiKeyConfigured: true,
+    });
+
+    const saveResponse = await fetch(`${origin}/config/openai`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        baseUrl: "http://127.0.0.1:11434/v1/",
+        model: "qwen-test",
+        apiKey: "replacement-test-key",
+        allowNoAuth: false,
+        clearApiKey: false,
+      }),
+    });
+    const saveText = await saveResponse.text();
+    expect(saveResponse.status).toBe(200);
+    expect(saveText).not.toContain("replacement-test-key");
+    expect(JSON.parse(saveText).localEnv.openai).toMatchObject({
+      baseUrl: "http://127.0.0.1:11434/v1",
+      model: "qwen-test",
+      apiKeyConfigured: true,
+    });
+
+    const savedSource = await readFile(localEnvPath, "utf8");
+    const savedEnv = parseEnv(savedSource);
+    expect(savedSource).toContain("# keep this comment");
+    expect(savedEnv.PORT).toBe("4999");
+    expect(savedEnv.OPENAI_COMPAT_BASE_URL).toBe("http://127.0.0.1:11434/v1");
+    expect(savedEnv.OPENAI_COMPAT_API_KEY).toBe("replacement-test-key");
+    expect(savedEnv.OPENAI_COMPAT_MODEL).toBe("qwen-test");
+    expect(env.OPENAI_COMPAT_MODEL).toBe("qwen-test");
+
+    const keepResponse = await fetch(`${origin}/config/openai`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        baseUrl: "http://127.0.0.1:11434/v1",
+        model: "qwen-test-2",
+        apiKey: "",
+        allowNoAuth: false,
+        clearApiKey: false,
+      }),
+    });
+    expect(keepResponse.status).toBe(200);
+    expect(parseEnv(await readFile(localEnvPath, "utf8")).OPENAI_COMPAT_API_KEY).toBe("replacement-test-key");
+
+    const clearKeyResponse = await fetch(`${origin}/config/openai`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        baseUrl: "http://127.0.0.1:11434/v1",
+        model: "qwen-test-2",
+        apiKey: "",
+        allowNoAuth: false,
+        clearApiKey: true,
+      }),
+    });
+    expect(clearKeyResponse.status).toBe(200);
+    expect((await clearKeyResponse.json()).localEnv.openai.apiKeyConfigured).toBe(false);
+    expect(parseEnv(await readFile(localEnvPath, "utf8")).OPENAI_COMPAT_API_KEY).toBe("");
+
+    const deleteResponse = await fetch(`${origin}/config/openai`, { method: "DELETE" });
+    expect(deleteResponse.status).toBe(200);
+    const clearedEnv = parseEnv(await readFile(localEnvPath, "utf8"));
+    expect(clearedEnv.PORT).toBe("4999");
+    expect(clearedEnv.OPENAI_COMPAT_BASE_URL).toBe("");
+    expect(clearedEnv.OPENAI_COMPAT_API_KEY).toBe("");
+    expect(clearedEnv.OPENAI_COMPAT_MODEL).toBe("");
+    expect(clearedEnv.OPENAI_COMPAT_ALLOW_NO_AUTH).toBe("false");
+  });
+
+  it("rejects cross-site attempts to change local environment configuration", async () => {
+    const directory = await mkdtemp(path.join(os.tmpdir(), "fgo-reader-env-"));
+    temporaryDirectories.push(directory);
+    const app = createTranslationApp({ env: {}, localEnvPath: path.join(directory, ".env.local") });
+    const origin = await serve(app);
+    const response = await fetch(`${origin}/config/openai`, {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+        origin: "https://example.test",
+      },
+      body: JSON.stringify({
+        baseUrl: "http://127.0.0.1:11434/v1",
+        model: "local-model",
+        apiKey: "",
+        allowNoAuth: true,
+        clearApiKey: false,
+      }),
+    });
+    expect(response.status).toBe(403);
   });
 });

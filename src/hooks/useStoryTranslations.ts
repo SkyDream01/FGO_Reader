@@ -72,19 +72,23 @@ export function useStoryTranslations({
     [providerConfig, settings.provider],
   );
 
-  const refreshServerConfig = useCallback(() => {
-    const controller = new AbortController();
+  const loadServerConfig = useCallback(async (signal?: AbortSignal) => {
     setServerConfigError("");
-    fetchTranslationServerConfig(controller.signal)
-      .then(setServerConfig)
-      .catch((error: unknown) => {
-        if (controller.signal.aborted) return;
-        setServerConfigError(error instanceof Error ? error.message : "无法读取翻译配置");
-      });
-    return () => controller.abort();
+    try {
+      setServerConfig(await fetchTranslationServerConfig(signal));
+    } catch (error) {
+      if (signal?.aborted) return;
+      setServerConfigError(error instanceof Error ? error.message : "无法读取翻译配置");
+    }
   }, []);
 
-  useEffect(() => refreshServerConfig(), [refreshServerConfig]);
+  const refreshServerConfig = useCallback(() => loadServerConfig(), [loadServerConfig]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void loadServerConfig(controller.signal);
+    return () => controller.abort();
+  }, [loadServerConfig]);
 
   const abortRequests = useCallback(() => {
     for (const controller of controllersRef.current) controller.abort();

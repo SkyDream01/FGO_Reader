@@ -39,10 +39,22 @@ export interface TranslationProviderInfo {
   configurationId: string | null;
 }
 
+export interface LocalOpenAiConfig {
+  editable: boolean;
+  fileName: string;
+  baseUrl: string;
+  model: string;
+  allowNoAuth: boolean;
+  apiKeyConfigured: boolean;
+}
+
 export interface TranslationServerConfig {
   sourceLanguage: "ja";
   targetLanguage: "zh-Hans";
   clientOverridesAllowed: boolean;
+  localEnv?: {
+    openai: LocalOpenAiConfig;
+  };
   providers: TranslationProviderInfo[];
 }
 
@@ -390,6 +402,40 @@ export async function fetchTranslationServerConfig(signal?: AbortSignal): Promis
   const response = await fetch("/translation-api/config", { signal });
   if (!response.ok) throw new TranslationRequestError("无法读取翻译服务配置", "provider_unavailable", true);
   return response.json() as Promise<TranslationServerConfig>;
+}
+
+async function parseLocalConfigResponse(response: Response) {
+  if (response.ok) return response.json() as Promise<TranslationServerConfig>;
+  let detail = "无法保存本地大模型配置";
+  let code = "local_config_write_failed";
+  try {
+    const error = await response.json() as { detail?: string; code?: string };
+    detail = error.detail || detail;
+    code = error.code || code;
+  } catch {
+    // Keep the safe generic error when the local API returns a non-JSON body.
+  }
+  throw new TranslationRequestError(detail, code, false, "openai");
+}
+
+export async function saveLocalOpenAiConfig(input: {
+  baseUrl: string;
+  model: string;
+  apiKey: string;
+  allowNoAuth: boolean;
+  clearApiKey: boolean;
+}) {
+  const response = await fetch("/translation-api/config/openai", {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  return parseLocalConfigResponse(response);
+}
+
+export async function deleteLocalOpenAiConfig() {
+  const response = await fetch("/translation-api/config/openai", { method: "DELETE" });
+  return parseLocalConfigResponse(response);
 }
 
 export async function requestTranslations({
