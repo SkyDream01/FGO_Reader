@@ -71,4 +71,32 @@ describe("last observation", () => {
       region: story.region,
     });
   });
+
+  it("round-trips a valid choice trail and omits an invalid optional trail", () => {
+    const storyWithTrail: StoryLaunch = {
+      ...story,
+      choiceTrail: [{ choiceId: "frame-12", optionIndex: 1 }],
+    };
+    const observation = createLastObservation(storyWithTrail, 2, 1234);
+
+    expect(observation.choiceTrail).toEqual([
+      { choiceId: "frame-12", optionIndex: 1 },
+    ]);
+    expect(lastObservationToLaunch(observation).choiceTrail).toEqual(
+      observation.choiceTrail,
+    );
+
+    const { choiceTrail: _choiceTrail, ...legacyObservation } = observation;
+    expect(parseLastObservation(JSON.stringify(legacyObservation))).toEqual(
+      legacyObservation,
+    );
+    expect(
+      parseLastObservation(
+        JSON.stringify({
+          ...observation,
+          choiceTrail: [{ choiceId: "", optionIndex: -1 }],
+        }),
+      ),
+    ).toEqual(legacyObservation);
+  });
 });

@@ -120,6 +120,15 @@ export interface ChoiceFrame {
 
 export type StoryFrame = DialogueFrame | ChoiceFrame;
 
+/** A resolved choice, addressed by the parser's stable choice-frame id. */
+export interface ChoiceDecision {
+  choiceId: string;
+  optionIndex: number;
+}
+
+/** Ordered decisions needed to reconstruct a branching story path. */
+export type ChoiceTrail = ChoiceDecision[];
+
 export interface ParsedScript {
   scriptId: string;
   frames: StoryFrame[];
@@ -147,6 +156,7 @@ export interface Bookmark {
   region: Region;
   sequence?: StorySequenceItem[];
   sequenceIndex?: number;
+  choiceTrail?: ChoiceTrail;
 }
 
 export interface LastObservation {
@@ -159,6 +169,7 @@ export interface LastObservation {
   region: Region;
   sequence?: StorySequenceItem[];
   sequenceIndex?: number;
+  choiceTrail?: ChoiceTrail;
 }
 
 export interface StorySequenceItem {
@@ -173,4 +184,5 @@ export interface StoryLaunch extends StorySequenceItem {
   startIndex?: number;
   sequence?: StorySequenceItem[];
   sequenceIndex?: number;
+  choiceTrail?: ChoiceTrail;
 }

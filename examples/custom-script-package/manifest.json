@@ -1,0 +1,7 @@
+{
+  "format": "fgo-reader-script-package",
+  "version": 1,
+  "title": "最小文本剧本包",
+  "region": "JP",
+  "script": "script.txt"
+}

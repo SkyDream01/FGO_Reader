@@ -43,7 +43,18 @@ import {
   offlineDemoScript,
 } from "../data/atlas";
 import { useBgm } from "../hooks/useBgm";
+import { useCustomAssetUrl } from "../hooks/useCustomAssetUrl";
 import { useStoryTranslations } from "../hooks/useStoryTranslations";
+import {
+  addChoiceDecision,
+  clearChoiceTrail,
+  replayChoiceTrail,
+  validateChoiceTrail,
+} from "../lib/choiceTrail";
+import {
+  isCustomScriptUrl,
+  loadCustomScriptByUrl,
+} from "../lib/customScripts";
 import {
   clearLastObservation,
   createLastObservation,
@@ -62,6 +73,7 @@ import type {
   Bookmark as ReaderBookmark,
   CharacterState,
   ChoiceFrame,
+  ChoiceTrail,
   ReaderSettings,
   StoryFrame,
   StoryLaunch,
@@ -85,6 +97,31 @@ const defaultSettings: ReaderSettings = {
   masterName: "御主",
 };
 
+const choiceTrailStorageKey = (scriptId: string) =>
+  `fgo-reader-choice-trail:${scriptId}`;
+
+interface CustomPackageContext {
+  id: string;
+  scriptText: string;
+  translationAllowed: boolean;
+  assets?: {
+    backgrounds?: Record<string, string>;
+    characters?: Record<string, string>;
+    bgm?: Record<string, string>;
+  };
+}
+
+function loadStoredChoiceTrail(scriptId: string): ChoiceTrail {
+  try {
+    const value: unknown = JSON.parse(
+      localStorage.getItem(choiceTrailStorageKey(scriptId)) || "[]",
+    );
+    return validateChoiceTrail(value) ? value : [];
+  } catch {
+    return [];
+  }
+}
+
 function loadSettings(): ReaderSettings {
   try {
     const stored = localStorage.getItem("fgo-reader-settings");
@@ -94,10 +131,27 @@ function loadSettings(): ReaderSettings {
   }
 }
 
-function CharacterSprite({ character, region }: { character: CharacterState; region: StoryLaunch["region"] }) {
+function CharacterSprite({
+  character,
+  region,
+  customPackage,
+}: {
+  character: CharacterState;
+  region: StoryLaunch["region"];
+  customPackage: CustomPackageContext | null;
+}) {
   const [failed, setFailed] = useState(false);
   const [wideAtlas, setWideAtlas] = useState(false);
-  const url = characterUrl(region, character.id);
+  const fallbackUrl = characterUrl(region, character.id);
+  const {
+    url,
+    usingLocalAsset,
+    useFallback,
+  } = useCustomAssetUrl({
+    packageId: customPackage?.id,
+    assetPath: customPackage?.assets?.characters?.[character.id],
+    fallbackUrl,
+  });
 
   useEffect(() => {
     setFailed(false);
@@ -109,7 +163,7 @@ function CharacterSprite({ character, region }: { character: CharacterState; reg
       data-position={character.position}
       data-slot={character.slot}
     >
-      {!failed ? (
+      {!failed && url ? (
         <img
           src={url}
           alt={character.name}
@@ -117,15 +171,21 @@ function CharacterSprite({ character, region }: { character: CharacterState; reg
             const image = event.currentTarget;
             setWideAtlas(image.naturalWidth / image.naturalHeight > 1.25);
           }}
-          onError={() => setFailed(true)}
+          onError={() => {
+            if (usingLocalAsset) {
+              useFallback();
+              return;
+            }
+            setFailed(true);
+          }}
           draggable={false}
         />
-      ) : (
+      ) : failed ? (
         <div className="character-fallback" aria-label={`${character.name} 立绘不可用`}>
           <span>{character.name.slice(0, 1)}</span>
           <small>{character.name}</small>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -181,10 +241,16 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   const [translationSettings, setTranslationSettings] = useState<TranslationSettings>(loadTranslationSettings);
   const [translationDraft, setTranslationDraft] = useState<TranslationSettings>(loadTranslationSettings);
   const [frames, setFrames] = useState<StoryFrame[]>([]);
+  const [baseFrames, setBaseFrames] = useState<StoryFrame[]>([]);
+  const [choiceTrail, setChoiceTrail] = useState<ChoiceTrail>(() =>
+    story.choiceTrail ?? loadStoredChoiceTrail(story.scriptId),
+  );
+  const [customPackage, setCustomPackage] = useState<CustomPackageContext | null>(null);
   const [frameIndex, setFrameIndex] = useState(0);
   const [revealedCount, setRevealedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadNote, setLoadNote] = useState("");
+  const [loadError, setLoadError] = useState("");
   const [panel, setPanel] = useState<Panel>("none");
   const [autoMode, setAutoMode] = useState(false);
   const [skipMode, setSkipMode] = useState(false);
@@ -244,12 +310,37 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     [displayText],
   );
   const textComplete = currentFrame?.type === "choice" || revealedCount >= textCharacters.length;
-  const currentBackground = backgroundUrl(story.region, currentFrame?.scene ?? null);
+  const backgroundFallbackUrl = backgroundUrl(story.region, currentFrame?.scene ?? null);
+  const {
+    url: currentBackground,
+    usingLocalAsset: usingLocalBackground,
+    useFallback: useBackgroundFallback,
+  } = useCustomAssetUrl({
+    packageId: customPackage?.id,
+    assetPath: currentFrame?.scene
+      ? customPackage?.assets?.backgrounds?.[currentFrame.scene]
+      : undefined,
+    fallbackUrl: backgroundFallbackUrl,
+  });
+  const {
+    url: localBgmUrl,
+    usingLocalAsset: usingLocalBgm,
+    loadingLocalAsset: loadingLocalBgm,
+  } = useCustomAssetUrl({
+    packageId: customPackage?.id,
+    assetPath: currentFrame?.bgm
+      ? customPackage?.assets?.bgm?.[currentFrame.bgm]
+      : undefined,
+    fallbackUrl: "",
+  });
   const progress = frames.length > 1 ? (frameIndex / (frames.length - 1)) * 100 : 0;
 
   const bgm = useBgm({
     region: story.region,
     fileName: currentFrame?.bgm ?? null,
+    localUrl: usingLocalBgm ? localBgmUrl : null,
+    localTitle: currentFrame?.bgm ?? undefined,
+    localPending: loadingLocalBgm,
     unlocked: audioUnlocked,
     muted,
     volume: settings.bgmVolume,
@@ -415,6 +506,17 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   }, [frameIndex, frames.length, story.scriptId]);
 
   useEffect(() => {
+    try {
+      localStorage.setItem(
+        choiceTrailStorageKey(story.scriptId),
+        JSON.stringify(choiceTrail),
+      );
+    } catch {
+      // Choice recovery is an enhancement; playback must continue if storage is full.
+    }
+  }, [choiceTrail, story.scriptId]);
+
+  useEffect(() => {
     if (!frames.length) return;
 
     if (completed) {
@@ -426,34 +528,65 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
       return;
     }
 
-    saveLastObservation(createLastObservation(story, frameIndex));
-  }, [completed, frameIndex, frames.length, nextStory, story]);
+    saveLastObservation(
+      createLastObservation({ ...story, choiceTrail }, frameIndex),
+    );
+  }, [choiceTrail, completed, frameIndex, frames.length, nextStory, story]);
 
   useEffect(() => {
     const controller = new AbortController();
+    const customSource = isCustomScriptUrl(story.scriptUrl);
     setLoading(true);
     setLoadNote("");
+    setLoadError("");
     setFrames([]);
+    setBaseFrames([]);
     setCompleted(false);
     setTranslationEligible(false);
+    setCustomPackage(null);
 
-    getScriptText(story.scriptUrl, controller.signal, story.region, story.scriptId)
-      .then((source) => {
+    const sourcePromise = customSource
+      ? loadCustomScriptByUrl(story.scriptUrl).then((record) => {
+          if (!record) throw new Error("本地资源包已不存在或已被删除");
+          setCustomPackage(record);
+          return { source: record.scriptText, record };
+        })
+      : getScriptText(story.scriptUrl, controller.signal, story.region, story.scriptId)
+          .then((source) => ({ source, record: null }));
+
+    sourcePromise
+      .then(({ source, record }) => {
         const parsed = parseFgoScript(source, story.scriptId, settings.masterName);
         if (!parsed.frames.length) throw new Error("脚本中没有可播放的对话");
+        const restoredTrail = story.choiceTrail ?? loadStoredChoiceTrail(story.scriptId);
+        const replayed = replayChoiceTrail(parsed.frames, restoredTrail);
         const savedProgress = Number(localStorage.getItem(`fgo-reader-progress:${story.scriptId}`) || 0);
         const startIndex = Math.max(
           0,
-          Math.min(story.startIndex ?? savedProgress, parsed.frames.length - 1),
+          Math.min(story.startIndex ?? savedProgress, replayed.frames.length - 1),
         );
-        setFrames(parsed.frames);
+        setBaseFrames(parsed.frames);
+        setFrames(replayed.frames);
+        setChoiceTrail(replayed.choiceTrail);
         setFrameIndex(startIndex);
-        setTranslationEligible(story.region === "JP");
+        setTranslationEligible(
+          story.region === "JP" && (!customSource || record?.translationAllowed === true),
+        );
       })
       .catch((reason: unknown) => {
         if (controller.signal.aborted) return;
+        if (customSource) {
+          setLoadError(
+            reason instanceof Error
+              ? `无法打开本地资源包：${reason.message}`
+              : "无法打开本地资源包，请返回目录后重新导入。",
+          );
+          return;
+        }
         const parsed = parseFgoScript(offlineDemoScript, "offline-demo", settings.masterName);
+        setBaseFrames(parsed.frames);
         setFrames(parsed.frames);
+        setChoiceTrail(clearChoiceTrail());
         setFrameIndex(0);
         setTranslationEligible(false);
         setLoadNote(
@@ -467,7 +600,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     return () => controller.abort();
     // Master name is intentionally applied when a script is loaded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [story.scriptId, story.scriptUrl]);
+  }, [story.choiceTrail, story.scriptId, story.scriptUrl]);
 
   useEffect(() => {
     setBackgroundFailed(false);
@@ -564,6 +697,10 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
         ...option.frames,
         ...currentFrames.slice(frameIndex + 1),
       ]);
+      setChoiceTrail((currentTrail) => addChoiceDecision(currentTrail, {
+        choiceId: currentFrame.id,
+        optionIndex: choiceIndex,
+      }));
 
       if (option.frames.length || frameIndex < frames.length - 1) {
         setFrameIndex((index) => index + 1);
@@ -637,10 +774,11 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
       region: story.region,
       sequence: story.sequence,
       sequenceIndex: story.sequenceIndex,
+      choiceTrail,
     };
     localStorage.setItem("fgo-reader-bookmark", JSON.stringify(value));
     showToast("已保存当前位置");
-  }, [frameIndex, showToast, story]);
+  }, [choiceTrail, frameIndex, showToast, story]);
 
   const toggleFullscreen = useCallback(() => {
     if (document.fullscreenElement) document.exitFullscreen().catch(() => undefined);
@@ -784,6 +922,8 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   };
 
   const replay = () => {
+    setFrames(baseFrames);
+    setChoiceTrail(clearChoiceTrail());
     setFrameIndex(0);
     setCompleted(false);
     setAutoMode(false);
@@ -804,7 +944,13 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
               className={`scene-image transition-${currentFrame?.transition ?? "none"}`}
               src={currentBackground}
               alt="剧情背景"
-              onError={() => setBackgroundFailed(true)}
+              onError={() => {
+                if (usingLocalBackground) {
+                  useBackgroundFallback();
+                  return;
+                }
+                setBackgroundFailed(true);
+              }}
               draggable={false}
             />
           )}
@@ -815,7 +961,12 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
 
         <div className="character-layer" aria-live="off">
           {currentFrame?.characters.map((character) => (
-            <CharacterSprite key={`${character.slot}-${character.id}`} character={character} region={story.region} />
+            <CharacterSprite
+              key={`${character.slot}-${character.id}`}
+              character={character}
+              region={story.region}
+              customPackage={customPackage}
+            />
           ))}
         </div>
 
@@ -949,6 +1100,17 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
 
         {loadNote && !loading && (
           <div className="load-note"><CircleAlert size={17} /> {loadNote}</div>
+        )}
+
+        {loadError && !loading && (
+          <div className="reader-load-error" onClick={(event) => event.stopPropagation()}>
+            <CircleAlert size={19} />
+            <div>
+              <strong>本地记录无法展开</strong>
+              <p>{loadError}</p>
+            </div>
+            <button onClick={onExit}>返回目录</button>
+          </div>
         )}
 
         {toast && <div className="reader-toast"><Check size={16} /> {toast}</div>}

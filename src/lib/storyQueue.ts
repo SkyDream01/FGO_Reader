@@ -32,6 +32,7 @@ export function getNextStoryLaunch(story: StoryLaunch): StoryLaunch | null {
   return {
     ...nextStory,
     startIndex: 0,
+    choiceTrail: [],
     sequence: story.sequence,
     sequenceIndex: nextIndex,
   };

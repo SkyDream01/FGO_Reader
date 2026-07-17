@@ -55,6 +55,7 @@ describe("story queue", () => {
     expect(getNextStoryLaunch(current)).toEqual({
       ...sequence[1],
       startIndex: 0,
+      choiceTrail: [],
       sequence,
       sequenceIndex: 1,
     });

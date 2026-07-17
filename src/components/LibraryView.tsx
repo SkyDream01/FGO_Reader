@@ -1,9 +1,11 @@
 import {
   BookMarked,
+  BookOpen,
   ChevronRight,
   CircleAlert,
   Database,
   FileText,
+  HardDrive,
   History,
   Library,
   LoaderCircle,
@@ -12,8 +14,11 @@ import {
   RotateCcw,
   Search,
   Sparkles,
+  Trash2,
+  Upload,
+  X,
 } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   flattenStoryQuests,
   getBasicWars,
@@ -21,9 +26,20 @@ import {
   scriptUrlFromId,
 } from "../data/atlas";
 import {
+  clearLastObservation,
   lastObservationToLaunch,
   loadLastObservation,
 } from "../lib/lastObservation";
+import {
+  customScriptUrl,
+  deleteCustomScriptPackage,
+  listCustomScriptPackages,
+  parseCustomScriptArchive,
+  saveCustomScriptPackage,
+  setCustomScriptTranslationAllowed,
+  type CustomScriptArchivePreview,
+  type CustomScriptPackageSummary,
+} from "../lib/customScripts";
 import { buildStorySequence } from "../lib/storyQueue";
 import type {
   BasicWar,
@@ -62,6 +78,45 @@ function getScripts(quest: StoryQuest | null) {
   );
 }
 
+type CustomLibraryPanel = "none" | "library" | "preview";
+
+function customPackageLaunch(
+  record: CustomScriptPackageSummary,
+  restart = false,
+): StoryLaunch {
+  return {
+    region: record.region,
+    scriptId: record.scriptId,
+    scriptUrl: customScriptUrl(record.id),
+    title: record.title,
+    subtitle: `本地资源包 · ${regionLabels[record.region]}`,
+    ...(restart ? { startIndex: 0, choiceTrail: [] } : {}),
+  };
+}
+
+function formatBytes(value: number) {
+  if (value < 1024 * 1024) return `${Math.max(1, Math.round(value / 1024))} KiB`;
+  return `${(value / (1024 * 1024)).toFixed(1)} MiB`;
+}
+
+function customPackageProgress(scriptId: string) {
+  const value = Number(localStorage.getItem(`fgo-reader-progress:${scriptId}`));
+  return Number.isInteger(value) && value > 0 ? value : 0;
+}
+
+function sameChoiceTrail(
+  left: StoryLaunch["choiceTrail"],
+  right: StoryLaunch["choiceTrail"],
+) {
+  const normalizedLeft = left ?? [];
+  const normalizedRight = right ?? [];
+  return normalizedLeft.length === normalizedRight.length && normalizedLeft.every(
+    (decision, index) =>
+      decision.choiceId === normalizedRight[index]?.choiceId &&
+      decision.optionIndex === normalizedRight[index]?.optionIndex,
+  );
+}
+
 export function LibraryView({ onOpenStory }: LibraryViewProps) {
   const [region, setRegion] = useState<Region>("CN");
   const [category, setCategory] = useState<"main" | "event">("main");
@@ -76,8 +131,8 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
   const [loadingWars, setLoadingWars] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [error, setError] = useState("");
-  const [lastObservation] = useState<LastObservation | null>(loadLastObservation);
-  const [bookmark] = useState<Bookmark | null>(() => {
+  const [lastObservation, setLastObservation] = useState<LastObservation | null>(loadLastObservation);
+  const [bookmark, setBookmark] = useState<Bookmark | null>(() => {
     try {
       const value = localStorage.getItem("fgo-reader-bookmark");
       return value ? (JSON.parse(value) as Bookmark) : null;
@@ -85,6 +140,24 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
       return null;
     }
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [customPackages, setCustomPackages] = useState<CustomScriptPackageSummary[]>([]);
+  const [customPanel, setCustomPanel] = useState<CustomLibraryPanel>("none");
+  const [importPreview, setImportPreview] = useState<CustomScriptArchivePreview | null>(null);
+  const [importTranslationAllowed, setImportTranslationAllowed] = useState(false);
+  const [importingPackage, setImportingPackage] = useState(false);
+
+  const refreshCustomPackages = useCallback(async () => {
+    try {
+      setCustomPackages(await listCustomScriptPackages());
+    } catch (reason) {
+      setError(reason instanceof Error ? `无法读取本地脚本库：${reason.message}` : "无法读取本地脚本库");
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshCustomPackages();
+  }, [refreshCustomPackages]);
 
   useEffect(() => {
     let cancelled = false;
@@ -226,6 +299,7 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
       title: selectedQuest.name,
       subtitle: warDetail.longName,
       ...(startIndex === undefined ? {} : { startIndex }),
+      ...(startIndex === 0 ? { choiceTrail: [] } : {}),
       ...(sequenceIndex >= 0
         ? { sequence: storySequence, sequenceIndex }
         : {}),
@@ -248,13 +322,108 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
     });
   };
 
+  const beginImport = () => {
+    setError("");
+    setImportPreview(null);
+    setImportTranslationAllowed(false);
+    fileInputRef.current?.click();
+  };
+
+  const closeCustomPanel = () => {
+    if (importingPackage) return;
+    setCustomPanel("none");
+    setImportPreview(null);
+    setImportTranslationAllowed(false);
+  };
+
+  const selectPackage = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setImportingPackage(true);
+    setError("");
+    try {
+      const preview = await parseCustomScriptArchive(file);
+      setImportPreview(preview);
+      setImportTranslationAllowed(false);
+      setCustomPanel("preview");
+    } catch (reason) {
+      setError(reason instanceof Error ? `导入失败：${reason.message}` : "导入资源包失败");
+    } finally {
+      setImportingPackage(false);
+    }
+  };
+
+  const confirmImport = async () => {
+    if (!importPreview) return;
+    setImportingPackage(true);
+    try {
+      let record = await saveCustomScriptPackage({
+        ...importPreview,
+        record: {
+          ...importPreview.record,
+          translationAllowed: importPreview.record.region === "JP" && importTranslationAllowed,
+        },
+      });
+      if (
+        record.region === "JP" &&
+        record.translationAllowed !== importTranslationAllowed
+      ) {
+        record = await setCustomScriptTranslationAllowed(
+          record.id,
+          importTranslationAllowed,
+        ) ?? record;
+      }
+      await refreshCustomPackages();
+      setImportPreview(null);
+      setCustomPanel("none");
+      onOpenStory(customPackageLaunch(record));
+    } catch (reason) {
+      setError(reason instanceof Error ? `无法保存资源包：${reason.message}` : "无法保存资源包");
+    } finally {
+      setImportingPackage(false);
+    }
+  };
+
+  const deleteCustomPackage = async (record: CustomScriptPackageSummary) => {
+    if (!window.confirm(`删除「${record.title}」及其本地资源？此操作不会影响 Atlas 剧情。`)) return;
+    try {
+      await deleteCustomScriptPackage(record.id);
+      localStorage.removeItem(`fgo-reader-progress:${record.scriptId}`);
+      localStorage.removeItem(`fgo-reader-read:${record.scriptId}`);
+      localStorage.removeItem(`fgo-reader-choice-trail:${record.scriptId}`);
+      if (lastObservation?.scriptUrl === customScriptUrl(record.id)) {
+        clearLastObservation();
+        setLastObservation(null);
+      }
+      if (bookmark?.scriptUrl === customScriptUrl(record.id)) {
+        localStorage.removeItem("fgo-reader-bookmark");
+        setBookmark(null);
+      }
+      await refreshCustomPackages();
+    } catch (reason) {
+      setError(reason instanceof Error ? `无法删除资源包：${reason.message}` : "无法删除资源包");
+    }
+  };
+
+  const toggleCustomTranslation = async (record: CustomScriptPackageSummary, allowed: boolean) => {
+    try {
+      await setCustomScriptTranslationAllowed(record.id, allowed);
+      await refreshCustomPackages();
+    } catch (reason) {
+      setError(reason instanceof Error ? `无法更新翻译授权：${reason.message}` : "无法更新翻译授权");
+    }
+  };
+
   const activeWar = wars.find((war) => war.id === activeWarId);
   const bookmarkDuplicatesLast = Boolean(
     bookmark &&
       lastObservation &&
       bookmark.region === lastObservation.region &&
       bookmark.scriptId === lastObservation.scriptId &&
-      bookmark.frameIndex === lastObservation.frameIndex,
+      bookmark.frameIndex === lastObservation.frameIndex &&
+      sameChoiceTrail(bookmark.choiceTrail, lastObservation.choiceTrail),
   );
 
   return (
@@ -354,6 +523,36 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
               <button aria-label="读取脚本"><ChevronRight size={17} /></button>
             </div>
           </form>
+
+          <section className="custom-script-tools" aria-label="自定义脚本">
+            <div className="custom-script-heading">
+              <span><HardDrive size={14} /> 本地脚本库</span>
+              <small>{customPackages.length} PACKAGES</small>
+            </div>
+            <input
+              ref={fileInputRef}
+              className="custom-file-input"
+              type="file"
+              accept=".zip,application/zip"
+              onChange={selectPackage}
+            />
+            <button type="button" className="custom-import-button" onClick={beginImport} disabled={importingPackage}>
+              {importingPackage ? <LoaderCircle className="spin" size={15} /> : <Upload size={15} />}
+              <span>{importingPackage ? "正在校验资源包" : "导入 ZIP 资源包"}</span>
+            </button>
+            <div className="custom-script-actions">
+              <button type="button" onClick={() => setCustomPanel("library")}>
+                <Library size={14} /> 浏览脚本库
+              </button>
+              <a
+                href="https://github.com/SkyDream01/FGO_Reader/blob/main/docs/custom-scripts.md"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <BookOpen size={14} /> 制作指南
+              </a>
+            </div>
+          </section>
         </aside>
 
         <section className="quest-panel panel-surface">
@@ -465,6 +664,7 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
                       startIndex: bookmark.frameIndex,
                       sequence: bookmark.sequence,
                       sequenceIndex: bookmark.sequenceIndex,
+                      choiceTrail: bookmark.choiceTrail,
                     })
                   }
                 >
@@ -554,6 +754,128 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
           </div>
         </aside>
       </main>
+
+      {customPanel !== "none" && (
+        <div
+          className="custom-library-backdrop"
+          role="presentation"
+          onMouseDown={closeCustomPanel}
+        >
+          <section
+            className="custom-library-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label={customPanel === "preview" ? "导入自定义资源包" : "本地脚本库"}
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <header className="custom-library-header">
+              <div>
+                <p className="eyebrow">LOCAL OBSERVATION ARCHIVE</p>
+                <h2>{customPanel === "preview" ? "确认导入资源包" : "本地脚本库"}</h2>
+              </div>
+              <button type="button" onClick={closeCustomPanel} disabled={importingPackage} aria-label="关闭">
+                <X size={19} />
+              </button>
+            </header>
+
+            {customPanel === "preview" && importPreview && (
+              <div className="custom-import-preview">
+                <div className="custom-import-seal" aria-hidden="true">
+                  <Upload size={28} />
+                  <span>ZIP</span>
+                </div>
+                <div className="custom-import-title">
+                  <small>{importPreview.record.archiveName}</small>
+                  <h3>{importPreview.record.title}</h3>
+                  <p>{importPreview.record.description || "未提供简介"}</p>
+                  <em>{regionLabels[importPreview.record.region]} · {importPreview.record.author || "未署名"}</em>
+                </div>
+
+                <div className="custom-import-metrics">
+                  <span><strong>{importPreview.record.preview.frameCount}</strong> LOGS</span>
+                  <span><strong>{importPreview.record.preview.choiceCount}</strong> CHOICES</span>
+                  <span><strong>{Object.keys(importPreview.record.assets.backgrounds).length + Object.keys(importPreview.record.assets.characters).length + Object.keys(importPreview.record.assets.bgm).length}</strong> ASSETS</span>
+                  <span><strong>{formatBytes(importPreview.record.byteSize)}</strong> SIZE</span>
+                </div>
+
+                {importPreview.record.region === "JP" && (
+                  <label className="custom-translation-consent">
+                    <input
+                      type="checkbox"
+                      checked={importTranslationAllowed}
+                      onChange={(event) => setImportTranslationAllowed(event.target.checked)}
+                    />
+                    <i />
+                    <span>
+                      <strong>允许此脚本使用翻译服务</strong>
+                      <small>开启译文模式后，文本会发送给你已配置的翻译后端。</small>
+                    </span>
+                  </label>
+                )}
+
+                <p className="custom-import-note">
+                  脚本与本地资源保存在当前浏览器；未映射的场景、立绘和 BGM 将按包内区服从 Atlas 读取。
+                </p>
+                <div className="custom-modal-actions">
+                  <button type="button" onClick={closeCustomPanel} disabled={importingPackage}>取消</button>
+                  <button type="button" className="primary" onClick={confirmImport} disabled={importingPackage}>
+                    {importingPackage ? <LoaderCircle className="spin" size={15} /> : <Play size={15} fill="currentColor" />}
+                    导入并开始观测
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {customPanel === "library" && (
+              <div className="custom-package-list">
+                {customPackages.length ? customPackages.map((record) => {
+                  const progress = customPackageProgress(record.scriptId);
+                  return (
+                    <article className="custom-package-row" key={record.id}>
+                      <div className="custom-package-mark"><HardDrive size={18} /></div>
+                      <div className="custom-package-copy">
+                        <small>{regionLabels[record.region]} · {formatBytes(record.byteSize)} · {record.archiveName}</small>
+                        <strong>{record.title}</strong>
+                        <em>{record.author || "未署名"}{record.description ? ` · ${record.description}` : ""}</em>
+                      </div>
+                      <div className="custom-package-controls">
+                        {record.region === "JP" && (
+                          <label title="允许使用翻译服务">
+                            <input
+                              type="checkbox"
+                              checked={record.translationAllowed}
+                              onChange={(event) => void toggleCustomTranslation(record, event.target.checked)}
+                            />
+                            <span>译文</span>
+                          </label>
+                        )}
+                        <button type="button" onClick={() => onOpenStory(customPackageLaunch(record, true))} title="从头开始">
+                          <RotateCcw size={15} />
+                        </button>
+                        <button type="button" className="custom-open-button" onClick={() => onOpenStory(customPackageLaunch(record))}>
+                          <Play size={15} fill="currentColor" /> {progress > 0 ? "继续" : "开始"}
+                        </button>
+                        <button type="button" className="danger" onClick={() => void deleteCustomPackage(record)} title="删除资源包">
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </article>
+                  );
+                }) : (
+                  <div className="custom-package-empty">
+                    <HardDrive size={24} />
+                    <strong>脚本库为空</strong>
+                    <p>导入一个 ZIP 资源包后，它会保存在这个浏览器中。</p>
+                    <button type="button" onClick={() => { closeCustomPanel(); beginImport(); }}>
+                      <Upload size={15} /> 导入第一个资源包
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        </div>
+      )}
 
       <footer className="archive-footer">
         <span>CHRONICLE ENGINE / 0.1</span>

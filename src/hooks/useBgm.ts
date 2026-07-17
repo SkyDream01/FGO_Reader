@@ -7,15 +7,28 @@ type AudioStatus = "idle" | "locked" | "loading" | "playing" | "error";
 interface UseBgmOptions {
   region: Region;
   fileName: string | null;
+  localUrl?: string | null;
+  localTitle?: string;
+  localPending?: boolean;
   unlocked: boolean;
   muted: boolean;
   volume: number;
 }
 
-export function useBgm({ region, fileName, unlocked, muted, volume }: UseBgmOptions) {
+export function useBgm({
+  region,
+  fileName,
+  localUrl = null,
+  localTitle,
+  localPending = false,
+  unlocked,
+  muted,
+  volume,
+}: UseBgmOptions) {
   const [catalog, setCatalog] = useState<BgmEntry[]>([]);
   const [status, setStatus] = useState<AudioStatus>(fileName ? "locked" : "idle");
   const [error, setError] = useState("");
+  const [localFailed, setLocalFailed] = useState(false);
   const playersRef = useRef<HTMLAudioElement[]>([]);
   const currentPlayerRef = useRef(-1);
   const currentFileRef = useRef<string | null>(null);
@@ -36,6 +49,10 @@ export function useBgm({ region, fileName, unlocked, muted, volume }: UseBgmOpti
     () => catalog.find((entry) => entry.fileName === fileName),
     [catalog, fileName],
   );
+
+  useEffect(() => {
+    setLocalFailed(false);
+  }, [fileName, localUrl]);
 
   useEffect(() => {
     const players = [new Audio(), new Audio()];
@@ -89,12 +106,22 @@ export function useBgm({ region, fileName, unlocked, muted, volume }: UseBgmOpti
       return;
     }
 
+    if (localPending) {
+      const current = players[currentPlayerRef.current];
+      current?.pause();
+      setStatus("loading");
+      return;
+    }
+
     if (!unlocked) {
       setStatus("locked");
       return;
     }
 
-    const resolvedAudioUrl = catalogEntry?.audioAsset || fallbackBgmUrl(region, fileName);
+    const usingLocalAsset = Boolean(localUrl && !localFailed);
+    const resolvedAudioUrl = usingLocalAsset
+      ? localUrl!
+      : catalogEntry?.audioAsset || fallbackBgmUrl(region, fileName);
     if (
       currentFileRef.current === fileName &&
       currentUrlRef.current === resolvedAudioUrl &&
@@ -145,13 +172,19 @@ export function useBgm({ region, fileName, unlocked, muted, volume }: UseBgmOpti
       })
       .catch((reason: unknown) => {
         if (token !== fadeTokenRef.current) return;
+        if (usingLocalAsset) {
+          setLocalFailed(true);
+          return;
+        }
         setStatus("error");
         setError(reason instanceof Error ? reason.message : "BGM 播放失败");
       });
-  }, [catalogEntry?.audioAsset, fileName, muted, region, unlocked, volume]);
+  }, [catalogEntry?.audioAsset, fileName, localFailed, localPending, localUrl, muted, region, unlocked, volume]);
 
   return {
-    title: catalogEntry?.name || fileName || "无 BGM",
+    title: localUrl && !localFailed
+      ? localTitle || fileName || "本地 BGM"
+      : catalogEntry?.name || fileName || "无 BGM",
     status,
     error,
   };

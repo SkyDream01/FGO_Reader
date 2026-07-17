@@ -4,6 +4,7 @@ import type {
   StoryLaunch,
   StorySequenceItem,
 } from "../types";
+import { normalizeChoiceTrail, validateChoiceTrail } from "./choiceTrail";
 
 export const LAST_OBSERVATION_KEY = "fgo-reader-last-observation";
 
@@ -33,6 +34,10 @@ export function createLastObservation(
   frameIndex: number,
   updatedAt = Date.now(),
 ): LastObservation {
+  const choiceTrail = validateChoiceTrail(story.choiceTrail)
+    ? normalizeChoiceTrail(story.choiceTrail)
+    : undefined;
+
   return {
     scriptId: story.scriptId,
     scriptUrl: story.scriptUrl,
@@ -45,12 +50,17 @@ export function createLastObservation(
     ...(story.sequenceIndex !== undefined
       ? { sequenceIndex: story.sequenceIndex }
       : {}),
+    ...(choiceTrail ? { choiceTrail } : {}),
   };
 }
 
 export function lastObservationToLaunch(
   observation: LastObservation,
 ): StoryLaunch {
+  const choiceTrail = validateChoiceTrail(observation.choiceTrail)
+    ? normalizeChoiceTrail(observation.choiceTrail)
+    : undefined;
+
   return {
     region: observation.region,
     scriptId: observation.scriptId,
@@ -62,6 +72,7 @@ export function lastObservationToLaunch(
     ...(observation.sequenceIndex !== undefined
       ? { sequenceIndex: observation.sequenceIndex }
       : {}),
+    ...(choiceTrail ? { choiceTrail } : {}),
   };
 }
 
@@ -94,6 +105,9 @@ export function parseLastObservation(raw: string | null): LastObservation | null
       Number(value.sequenceIndex) < sequence.length
         ? Number(value.sequenceIndex)
         : undefined;
+    const choiceTrail = validateChoiceTrail(value.choiceTrail)
+      ? normalizeChoiceTrail(value.choiceTrail)
+      : undefined;
 
     return {
       scriptId: value.scriptId,
@@ -106,6 +120,7 @@ export function parseLastObservation(raw: string | null): LastObservation | null
       ...(sequence && sequenceIndex !== undefined
         ? { sequence, sequenceIndex }
         : {}),
+      ...(choiceTrail ? { choiceTrail } : {}),
     };
   } catch {
     return null;

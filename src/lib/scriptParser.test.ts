@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { cleanScriptText, parseFgoScript } from "./scriptParser";
 
@@ -140,6 +141,54 @@ describe("parseFgoScript", () => {
         "再等等",
       ]);
       expect(choice.options[0].frames[0]).toMatchObject({ text: "好的。" });
+    }
+  });
+});
+
+describe("custom script package example", () => {
+  it("parses the checked-in text-only package through filesystem URLs", async () => {
+    const packageUrl = new URL(
+      "../../examples/custom-script-package/",
+      import.meta.url,
+    );
+    const manifest = JSON.parse(
+      await readFile(new URL("manifest.json", packageUrl), "utf8"),
+    ) as {
+      format: string;
+      version: number;
+      title: string;
+      region: string;
+      script: string;
+    };
+    const source = await readFile(new URL(manifest.script, packageUrl), "utf8");
+
+    expect(manifest).toMatchObject({
+      format: "fgo-reader-script-package",
+      version: 1,
+      title: "最小文本剧本包",
+      region: "JP",
+      script: "script.txt",
+    });
+
+    const parsed = parseFgoScript(source, "custom-script-package-example");
+    expect(parsed.frames).toHaveLength(2);
+    expect(parsed.frames[0]).toMatchObject({
+      type: "dialogue",
+      speaker: "旁白",
+      text: "这是一个只含文本的自定义剧本包。",
+    });
+
+    const choice = parsed.frames[1];
+    expect(choice.type).toBe("choice");
+    if (choice.type === "choice") {
+      expect(choice.options.map((option) => option.label)).toEqual([
+        "继续阅读",
+        "先查看说明",
+      ]);
+      expect(choice.options.map((option) => option.frames[0]?.text)).toEqual([
+        "那么，让我们开始吧。",
+        "请先阅读自定义剧本包说明。",
+      ]);
     }
   });
 });
