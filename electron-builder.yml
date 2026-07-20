@@ -1,0 +1,31 @@
+appId: io.github.skydream01.fgoreader
+productName: FGO Chronicle Reader
+asar: true
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**/*
+  - desktop/**/*
+  - server/**/*
+  - shared/**/*
+  - server.mjs
+  - package.json
+  - "!node_modules/@capacitor/**/*"
+  - "!node_modules/lucide-react/**/*"
+  - "!node_modules/react/**/*"
+  - "!node_modules/react-dom/**/*"
+  - "!node_modules/scheduler/**/*"
+  - "!**/.env.local"
+  - "!**/*.test.*"
+  - "!**/*.map"
+win:
+  icon: build/icon.ico
+  target:
+    - target: portable
+      arch:
+        - x64
+  artifactName: FGO-Chronicle-Reader-${version}-win-${arch}-portable.${ext}
+portable:
+  requestExecutionLevel: user
+publish: null

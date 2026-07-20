@@ -77,6 +77,12 @@ import {
   saveTranslationSettings,
   type TranslationSettings,
 } from "../lib/translation";
+import {
+  exportTextFile,
+  leaveApplicationFullscreen,
+  registerAndroidBackHandler,
+  toggleApplicationFullscreen,
+} from "../platform/runtime";
 import type {
   Bookmark as ReaderBookmark,
   CharacterState,
@@ -393,22 +399,16 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     saveTranslationSettings(next);
   }, []);
 
-  const exportManualTranslationTemplate = useCallback(() => {
+  const exportManualTranslationTemplate = useCallback(async () => {
     if (!japaneseStoryLoaded || !baseFrames.length) return;
     setManualTranslationError("");
     try {
-      const blob = new Blob([manualTranslation.exportTemplate()], {
-        type: "application/json;charset=utf-8",
-      });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
       const safeScriptId = story.scriptId.replace(/[^A-Za-z0-9._-]+/g, "_");
-      link.href = url;
-      link.download = `fgo-translation-${safeScriptId}.json`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      await exportTextFile(
+        `fgo-translation-${safeScriptId}.json`,
+        manualTranslation.exportTemplate(),
+        "application/json;charset=utf-8",
+      );
       showToast("翻译母本已导出");
     } catch (error) {
       setManualTranslationError(error instanceof Error ? error.message : "无法导出翻译母本");
@@ -914,9 +914,23 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   }, [choiceTrail, frameIndex, showToast, story]);
 
   const toggleFullscreen = useCallback(() => {
-    if (document.fullscreenElement) document.exitFullscreen().catch(() => undefined);
-    else document.documentElement.requestFullscreen().catch(() => showToast("浏览器未允许全屏"));
+    void toggleApplicationFullscreen().catch(() => showToast("当前设备未允许全屏"));
   }, [showToast]);
+
+  useEffect(() => registerAndroidBackHandler(() => {
+    if (panel !== "none" || completed) {
+      setPanel("none");
+      setCompleted(false);
+      return true;
+    }
+    void leaveApplicationFullscreen().catch(() => undefined);
+    onExit();
+    return true;
+  }), [completed, onExit, panel]);
+
+  useEffect(() => () => {
+    void leaveApplicationFullscreen().catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     const focus = () => setWindowFocused(true);

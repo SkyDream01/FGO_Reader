@@ -1,28 +1,46 @@
 {
   "name": "fgo-chronicle-reader",
+  "description": "Unofficial local FGO story reader powered by Atlas Academy data",
   "private": true,
   "version": "0.1.0",
   "license": "MIT",
   "type": "module",
+  "main": "desktop/main.mjs",
+  "author": "SkyDream01",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "start": "node server.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "desktop:smoke": "npm run build && electron . --smoke-test",
+    "package:exe": "npm run build && electron-builder --win portable --x64 && node scripts/collect-artifacts.mjs",
+    "android:sync": "npm run build && cap sync android",
+    "android:open": "cap open android",
+    "package:apk": "node scripts/package-apk.mjs",
+    "package:all": "npm run package:exe && npm run package:apk"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/browser": "^8.0.4",
+    "@capacitor/core": "^8.4.2",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/share": "^8.0.1",
     "express": "^5.2.1",
     "lucide-react": "^1.24.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.2",
     "@types/express": "^5.0.6",
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "electron": "^43.1.1",
+    "electron-builder": "^26.15.3",
     "typescript": "^7.0.2",
     "vite": "^8.1.4",
     "vitest": "^4.1.10"

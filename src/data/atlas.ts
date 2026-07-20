@@ -6,6 +6,7 @@ import type {
   StoryQuest,
   WarDetail,
 } from "../types";
+import { runtimeFetch } from "../platform/runtime";
 
 const EXPORT_ROOT = "https://api.atlasacademy.io/export";
 const STATIC_ROOT = "https://static.atlasacademy.io";
@@ -14,7 +15,7 @@ const basicWarCache = new Map<Region, Promise<BasicWar[]>>();
 const bgmCache = new Map<Region, Promise<BgmEntry[]>>();
 
 async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(url, { signal });
+  const response = await runtimeFetch(url, { signal });
   if (!response.ok) {
     throw new Error(`请求失败 (${response.status})`);
   }
@@ -56,13 +57,13 @@ export async function getScriptText(
   scriptId?: string,
 ) {
   const readResponse = async (url: string) => {
-    const response = await fetch(url, { signal });
+    const response = await runtimeFetch(url, { signal });
     if (!response.ok) throw new Error(`脚本读取失败 (${response.status})`);
     const contentType = response.headers.get("content-type") || "";
     if (contentType.includes("application/json")) {
       const metadata = (await response.json()) as { script?: string };
       if (!metadata.script) throw new Error("Atlas 未返回脚本正文地址");
-      const scriptResponse = await fetch(metadata.script, { signal });
+      const scriptResponse = await runtimeFetch(metadata.script, { signal });
       if (!scriptResponse.ok) {
         throw new Error(`脚本正文读取失败 (${scriptResponse.status})`);
       }

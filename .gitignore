@@ -1,7 +1,41 @@
-node_modules
-dist
-.DS_Store
+# Dependencies and package-manager caches
+/node_modules/
+/.npm/
+/.pnpm-store/
+/.yarn/
+
+# Compiled and packaged output
+/dist/
+/release/
+/coverage/
+*.tsbuildinfo
+
+# Test and browser artifacts
+/playwright-report/
+/test-results/
+/screenshots/
+
+# Local runtime data and Android toolchains
+/FGO-Chronicle-Reader-Data/
+/.android-toolchain/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
 *.local
-playwright-report
-test-results
-screenshots
+
+# Logs and transient process files
+*.log
+*.pid
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

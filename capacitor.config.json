@@ -1,0 +1,20 @@
+{
+  "appId": "io.github.skydream01.fgoreader",
+  "appName": "FGO 剧情阅读器",
+  "webDir": "dist",
+  "backgroundColor": "#050a12",
+  "plugins": {
+    "App": {
+      "disableBackButtonHandler": false
+    },
+    "CapacitorHttp": {
+      "enabled": true
+    },
+    "SystemBars": {
+      "insetsHandling": "css",
+      "style": "DARK",
+      "hidden": true,
+      "animation": "NONE"
+    }
+  }
+}

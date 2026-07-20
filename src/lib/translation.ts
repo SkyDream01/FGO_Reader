@@ -1,4 +1,9 @@
 import type { StoryFrame } from "../types";
+import { isAndroidNative } from "../platform/runtime";
+import {
+  getNativeTranslationConfig,
+  requestNativeTranslations,
+} from "../platform/nativeTranslation";
 
 export type TranslationProvider = "deepl" | "openai" | "bing";
 export type TranslationMode = "source" | "translated";
@@ -399,6 +404,7 @@ export function nextTranslationPrefetchFrames(
 }
 
 export async function fetchTranslationServerConfig(signal?: AbortSignal): Promise<TranslationServerConfig> {
+  if (isAndroidNative()) return getNativeTranslationConfig();
   const response = await fetch("/translation-api/config", { signal });
   if (!response.ok) throw new TranslationRequestError("无法读取翻译服务配置", "provider_unavailable", true);
   return response.json() as Promise<TranslationServerConfig>;
@@ -425,6 +431,7 @@ export async function saveLocalOpenAiConfig(input: {
   allowNoAuth: boolean;
   clearApiKey: boolean;
 }) {
+  if (isAndroidNative()) return getNativeTranslationConfig();
   const response = await fetch("/translation-api/config/openai", {
     method: "PUT",
     headers: { "content-type": "application/json" },
@@ -434,6 +441,7 @@ export async function saveLocalOpenAiConfig(input: {
 }
 
 export async function deleteLocalOpenAiConfig() {
+  if (isAndroidNative()) return getNativeTranslationConfig();
   const response = await fetch("/translation-api/config/openai", { method: "DELETE" });
   return parseLocalConfigResponse(response);
 }
@@ -451,6 +459,28 @@ export async function requestTranslations({
   items: TranslationUnit[];
   signal?: AbortSignal;
 }): Promise<TranslationResponse> {
+  if (isAndroidNative()) {
+    try {
+      return await requestNativeTranslations({ provider, scriptId, providerConfig, items, signal });
+    } catch (error) {
+      const nativeError = error as {
+        detail?: unknown;
+        message?: unknown;
+        code?: unknown;
+        retryable?: unknown;
+      };
+      throw new TranslationRequestError(
+        typeof nativeError.detail === "string"
+          ? nativeError.detail
+          : typeof nativeError.message === "string"
+            ? nativeError.message
+            : "翻译服务暂时不可用",
+        typeof nativeError.code === "string" ? nativeError.code : "provider_unavailable",
+        nativeError.retryable === true,
+        provider,
+      );
+    }
+  }
   const response = await fetch("/translation-api", {
     method: "POST",
     headers: { "content-type": "application/json" },

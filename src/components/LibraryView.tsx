@@ -41,6 +41,11 @@ import {
   type CustomScriptPackageSummary,
 } from "../lib/customScripts";
 import { buildStorySequence } from "../lib/storyQueue";
+import {
+  isAndroidNative,
+  openExternalUrl,
+  registerAndroidBackHandler,
+} from "../platform/runtime";
 import type {
   BasicWar,
   Bookmark,
@@ -143,6 +148,7 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [customPackages, setCustomPackages] = useState<CustomScriptPackageSummary[]>([]);
   const [customPanel, setCustomPanel] = useState<CustomLibraryPanel>("none");
+  const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
   const [importPreview, setImportPreview] = useState<CustomScriptArchivePreview | null>(null);
   const [importTranslationAllowed, setImportTranslationAllowed] = useState(false);
   const [importingPackage, setImportingPackage] = useState(false);
@@ -336,6 +342,19 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
     setImportTranslationAllowed(false);
   };
 
+  useEffect(() => registerAndroidBackHandler(() => {
+    if (customPanel !== "none") {
+      if (importingPackage) return true;
+      setCustomPanel("none");
+      setImportPreview(null);
+      setImportTranslationAllowed(false);
+      return true;
+    }
+    if (!mobileToolsOpen) return false;
+    setMobileToolsOpen(false);
+    return true;
+  }), [customPanel, importingPackage, mobileToolsOpen]);
+
   const selectPackage = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -511,48 +530,78 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
             )}
           </div>
 
-          <form className="direct-script" onSubmit={submitDirectScript}>
-            <p><FileText size={14} /> 按脚本 ID 读取</p>
-            <div>
-              <input
-                inputMode="numeric"
-                value={directScriptId}
-                onChange={(event) => setDirectScriptId(event.target.value)}
-                placeholder="例：0100000010"
-              />
-              <button aria-label="读取脚本"><ChevronRight size={17} /></button>
-            </div>
-          </form>
-
-          <section className="custom-script-tools" aria-label="自定义脚本">
-            <div className="custom-script-heading">
-              <span><HardDrive size={14} /> 本地脚本库</span>
-              <small>{customPackages.length} PACKAGES</small>
-            </div>
-            <input
-              ref={fileInputRef}
-              className="custom-file-input"
-              type="file"
-              accept=".zip,application/zip"
-              onChange={selectPackage}
-            />
-            <button type="button" className="custom-import-button" onClick={beginImport} disabled={importingPackage}>
-              {importingPackage ? <LoaderCircle className="spin" size={15} /> : <Upload size={15} />}
-              <span>{importingPackage ? "正在校验资源包" : "导入 ZIP 资源包"}</span>
+          <div className={`library-tools-dock ${mobileToolsOpen ? "open" : ""}`}>
+            <button
+              type="button"
+              className="library-tools-toggle"
+              aria-expanded={mobileToolsOpen}
+              onClick={() => setMobileToolsOpen((open) => !open)}
+            >
+              <span><HardDrive size={14} /> 脚本工具</span>
+              <small>ID 读取 · 本地 ZIP</small>
+              <ChevronRight size={15} />
             </button>
-            <div className="custom-script-actions">
-              <button type="button" onClick={() => setCustomPanel("library")}>
-                <Library size={14} /> 浏览脚本库
-              </button>
-              <a
-                href="https://github.com/SkyDream01/FGO_Reader/blob/main/docs/custom-scripts.md"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <BookOpen size={14} /> 制作指南
-              </a>
+
+            <div className="library-tools-content">
+              <div className="library-tools-popover-head">
+                <div>
+                  <p className="eyebrow">SCRIPT TOOLKIT</p>
+                  <strong>脚本工具</strong>
+                </div>
+                <button type="button" onClick={() => setMobileToolsOpen(false)} aria-label="收起脚本工具">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form className="direct-script" onSubmit={submitDirectScript}>
+                <p><FileText size={14} /> 按脚本 ID 读取</p>
+                <div>
+                  <input
+                    inputMode="numeric"
+                    value={directScriptId}
+                    onChange={(event) => setDirectScriptId(event.target.value)}
+                    placeholder="例：0100000010"
+                  />
+                  <button aria-label="读取脚本"><ChevronRight size={17} /></button>
+                </div>
+              </form>
+
+              <section className="custom-script-tools" aria-label="自定义脚本">
+                <div className="custom-script-heading">
+                  <span><HardDrive size={14} /> 本地脚本库</span>
+                  <small>{customPackages.length} PACKAGES</small>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  className="custom-file-input"
+                  type="file"
+                  accept=".zip,application/zip"
+                  onChange={selectPackage}
+                />
+                <button type="button" className="custom-import-button" onClick={beginImport} disabled={importingPackage}>
+                  {importingPackage ? <LoaderCircle className="spin" size={15} /> : <Upload size={15} />}
+                  <span>{importingPackage ? "正在校验资源包" : "导入 ZIP 资源包"}</span>
+                </button>
+                <div className="custom-script-actions">
+                  <button type="button" onClick={() => setCustomPanel("library")}>
+                    <Library size={14} /> 浏览脚本库
+                  </button>
+                  <a
+                    href="https://github.com/SkyDream01/FGO_Reader/blob/main/docs/custom-scripts.md"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(event) => {
+                      if (!isAndroidNative()) return;
+                      event.preventDefault();
+                      void openExternalUrl(event.currentTarget.href);
+                    }}
+                  >
+                    <BookOpen size={14} /> 制作指南
+                  </a>
+                </div>
+              </section>
             </div>
-          </section>
+          </div>
         </aside>
 
         <section className="quest-panel panel-surface">

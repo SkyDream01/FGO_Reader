@@ -22,15 +22,22 @@ export default function App() {
     setActiveStory(story);
   };
 
-  return activeStory ? (
-    <ReaderView
-      key={`${activeStory.scriptId}:${activeStory.sequenceIndex ?? "direct"}`}
-      story={activeStory}
-      nextStory={nextStory}
-      onNext={() => nextStory && openStory(nextStory)}
-      onExit={() => setActiveStory(null)}
-    />
-  ) : (
-    <LibraryView onOpenStory={openStory} />
+  return (
+    <div className="app-viewport">
+      <div className="app-railwork" aria-hidden="true" />
+      <main className="app-frame">
+        {activeStory ? (
+          <ReaderView
+            key={`${activeStory.scriptId}:${activeStory.sequenceIndex ?? "direct"}`}
+            story={activeStory}
+            nextStory={nextStory}
+            onNext={() => nextStory && openStory(nextStory)}
+            onExit={() => setActiveStory(null)}
+          />
+        ) : (
+          <LibraryView onOpenStory={openStory} />
+        )}
+      </main>
+    </div>
   );
 }
