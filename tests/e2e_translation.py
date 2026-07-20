@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
@@ -208,10 +209,44 @@ with sync_playwright() as playwright:
     assert source_text == "先輩、おはようございます。", repr(source_text)
     assert len(translation_requests) == 0
 
-    page.keyboard.press("t")
+    page.get_by_role("button", name="设置", exact=True).click()
+    manual_section = page.locator(".manual-translation-section")
+    manual_section.get_by_text("人工翻译文件", exact=True).wait_for(timeout=5000)
+    with page.expect_download() as download_info:
+        manual_section.get_by_role("button", name="导出翻译母本").click()
+    template = json.loads(Path(download_info.value.path()).read_text(encoding="utf-8"))
+    assert template["format"] == "fgo-reader-translation-template"
+    assert template["scriptId"] == "1000000099"
+    exported_sources = {entry["sourceText"] for entry in template["entries"]}
+    assert "今日もよろしくお願いします。" in exported_sources
+    assert "もう少し休みます。" in exported_sources
+
+    # Keep one choice blank to verify that manual mode falls back to Japanese
+    # instead of asking the configured Bing provider to fill the gap.
+    for entry in template["entries"]:
+        if entry["sourceText"] != "まだ眠い":
+            entry["translatedText"] = TRANSLATIONS.get(entry["sourceText"], "")
+    translation_file = {
+        "name": "fgo-translation-1000000099.json",
+        "mimeType": "application/json",
+        "buffer": json.dumps(template, ensure_ascii=False).encode("utf-8"),
+    }
+    manual_section.locator('input[type="file"]').set_input_files(translation_file)
+    page.get_by_text("已导入", exact=False).wait_for(timeout=5000)
+    assert manual_section.get_by_text("本脚本不会调用在线翻译", exact=False).is_visible()
+
+    bad_template = {**template, "scriptId": "1000000000"}
+    manual_section.locator('input[type="file"]').set_input_files({
+        "name": "wrong-script.json",
+        "mimeType": "application/json",
+        "buffer": json.dumps(bad_template, ensure_ascii=False).encode("utf-8"),
+    })
+    manual_section.get_by_text("不属于当前脚本", exact=False).wait_for(timeout=5000)
+
+    page.keyboard.press("Escape")
     page.get_by_text("前辈，早上好。", exact=True).wait_for(timeout=5000)
     assert page.locator(".speaker-plate strong").text_content() == "玛修"
-    assert all(request["provider"] == "bing" for request in translation_requests)
+    assert len(translation_requests) == 0
 
     page.keyboard.press("t")
     page.get_by_text("先輩、おはようございます。", exact=True).wait_for(timeout=5000)
@@ -220,6 +255,7 @@ with sync_playwright() as playwright:
 
     page.keyboard.press("Space")
     page.get_by_text("早上好", exact=True).wait_for(timeout=5000)
+    page.get_by_text("まだ眠い", exact=True).wait_for(timeout=5000)
     page.keyboard.press("1")
     page.get_by_text("今天也请多关照。", exact=True).wait_for(timeout=5000)
 
@@ -239,6 +275,16 @@ with sync_playwright() as playwright:
     page.get_by_text("日文翻译", exact=True).wait_for(timeout=5000)
     assert page.locator(".translation-settings-section select").input_value() == "bing"
     assert page.get_by_text("可能随时失效", exact=False).is_visible()
+
+    page.once("dialog", lambda dialog: dialog.accept())
+    page.locator(".manual-translation-section").get_by_role("button", name="移除").click()
+    page.get_by_text("已移除当前脚本的人工译文", exact=True).wait_for(timeout=5000)
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(500)
+    assert len(translation_requests) > 0
+    assert all(request["provider"] == "bing" for request in translation_requests)
+
+    page.get_by_role("button", name="设置", exact=True).click()
 
     page.locator(".translation-settings-section select").select_option("openai")
     page.get_by_text(".env.local", exact=True).wait_for(timeout=5000)

@@ -5,6 +5,7 @@ import {
   ChevronDown,
   ChevronUp,
   CircleAlert,
+  Download,
   Expand,
   EyeOff,
   Gauge,
@@ -23,12 +24,14 @@ import {
   Settings,
   SkipForward,
   Trash2,
+  Upload,
   Volume2,
   VolumeX,
   X,
 } from "lucide-react";
 import {
   CSSProperties,
+  ChangeEvent,
   MouseEvent,
   useCallback,
   useEffect,
@@ -44,6 +47,7 @@ import {
 } from "../data/atlas";
 import { useBgm } from "../hooks/useBgm";
 import { useCustomAssetUrl } from "../hooks/useCustomAssetUrl";
+import { useManualTranslations } from "../hooks/useManualTranslations";
 import { useStoryTranslations } from "../hooks/useStoryTranslations";
 import {
   addChoiceDecision,
@@ -61,6 +65,10 @@ import {
   saveLastObservation,
 } from "../lib/lastObservation";
 import { parseFgoScript } from "../lib/scriptParser";
+import {
+  MANUAL_TRANSLATION_MAX_BYTES,
+  ManualTranslationError,
+} from "../lib/manualTranslations";
 import {
   clearPersistentTranslationCaches,
   deleteLocalOpenAiConfig,
@@ -263,30 +271,44 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   const [completed, setCompleted] = useState(false);
   const [toast, setToast] = useState("");
   const [backgroundFailed, setBackgroundFailed] = useState(false);
-  const [translationEligible, setTranslationEligible] = useState(false);
+  const [japaneseStoryLoaded, setJapaneseStoryLoaded] = useState(false);
+  const [remoteTranslationEligible, setRemoteTranslationEligible] = useState(false);
+  const [loadedMasterName, setLoadedMasterName] = useState(settings.masterName);
   const [openAiDraftDirty, setOpenAiDraftDirty] = useState(false);
   const [clearOpenAiApiKey, setClearOpenAiApiKey] = useState(false);
   const [translationConfigSaving, setTranslationConfigSaving] = useState(false);
   const [translationConfigError, setTranslationConfigError] = useState("");
+  const [manualTranslationBusy, setManualTranslationBusy] = useState(false);
+  const [manualTranslationError, setManualTranslationError] = useState("");
   const [readMax, setReadMax] = useState(() => {
     const value = localStorage.getItem(`fgo-reader-read:${story.scriptId}`);
     return value === null ? -1 : Number(value);
   });
   const toastTimer = useRef<number | null>(null);
+  const manualTranslationInputRef = useRef<HTMLInputElement>(null);
   const revealContext = useRef({ frameId: "", mode: "source", ready: true });
 
   const currentFrame = frames[frameIndex] ?? null;
+  const manualTranslation = useManualTranslations({
+    eligible: japaneseStoryLoaded,
+    scriptId: story.scriptId,
+    title: story.title,
+    masterName: loadedMasterName,
+    frames: baseFrames,
+  });
   const translation = useStoryTranslations({
     scriptId: story.scriptId,
     frames,
     frameIndex,
     historyOpen: panel === "log",
-    eligible: translationEligible,
+    eligible: remoteTranslationEligible && manualTranslation.resolved && !manualTranslation.active,
     settings: translationSettings,
     skipMode,
     ctrlHeld,
+    manualActive: manualTranslation.active,
+    manualTranslations: manualTranslation.translations,
   });
-  const translatedMode = translationEligible && translationSettings.mode === "translated";
+  const translatedMode = japaneseStoryLoaded && translationSettings.mode === "translated";
   const displaySpeaker = currentFrame?.type === "dialogue" && translatedMode
     ? translation.translatedSpeaker(currentFrame) ?? currentFrame.speaker
     : currentFrame?.type === "dialogue"
@@ -300,10 +322,24 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   );
   const localOpenAiConfig = translation.serverConfig?.localEnv?.openai;
   const translationDisplayError = useMemo(
-    () => translatedMode && (!translationSettings.provider || !translation.providerReady)
-      ? { detail: "翻译后端尚未完成配置", retryable: false }
-      : translation.currentError,
-    [translatedMode, translation.currentError, translation.providerReady, translationSettings.provider],
+    () => {
+      if (!translatedMode || !manualTranslation.resolved || manualTranslation.active) return null;
+      if (!remoteTranslationEligible) {
+        return { detail: "当前本地脚本未允许使用在线翻译，且没有可用的人工译文", retryable: false };
+      }
+      return !translationSettings.provider || !translation.providerReady
+        ? { detail: "翻译后端尚未完成配置", retryable: false }
+        : translation.currentError;
+    },
+    [
+      manualTranslation.active,
+      manualTranslation.resolved,
+      remoteTranslationEligible,
+      translatedMode,
+      translation.currentError,
+      translation.providerReady,
+      translationSettings.provider,
+    ],
   );
   const textCharacters = useMemo(
     () => Array.from(displayText),
@@ -357,6 +393,82 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     saveTranslationSettings(next);
   }, []);
 
+  const exportManualTranslationTemplate = useCallback(() => {
+    if (!japaneseStoryLoaded || !baseFrames.length) return;
+    setManualTranslationError("");
+    try {
+      const blob = new Blob([manualTranslation.exportTemplate()], {
+        type: "application/json;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const safeScriptId = story.scriptId.replace(/[^A-Za-z0-9._-]+/g, "_");
+      link.href = url;
+      link.download = `fgo-translation-${safeScriptId}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      showToast("翻译母本已导出");
+    } catch (error) {
+      setManualTranslationError(error instanceof Error ? error.message : "无法导出翻译母本");
+    }
+  }, [baseFrames.length, japaneseStoryLoaded, manualTranslation, showToast, story.scriptId]);
+
+  const beginManualTranslationImport = useCallback(() => {
+    setManualTranslationError("");
+    manualTranslationInputRef.current?.click();
+  }, []);
+
+  const selectManualTranslationFile = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    if (file.size > MANUAL_TRANSLATION_MAX_BYTES) {
+      setManualTranslationError("翻译文件超过 8 MiB 限制");
+      return;
+    }
+
+    setManualTranslationBusy(true);
+    setManualTranslationError("");
+    try {
+      const imported = await manualTranslation.importTemplate(await file.text());
+      persistTranslationSettings({ ...translationSettings, mode: "translated" });
+      showToast(`已导入 ${imported.translatedCount} / ${imported.totalCount} 条人工译文`);
+    } catch (error) {
+      const detail = error instanceof ManualTranslationError || error instanceof Error
+        ? error.message
+        : "无法导入人工译文";
+      setManualTranslationError(detail);
+    } finally {
+      setManualTranslationBusy(false);
+    }
+  }, [manualTranslation, persistTranslationSettings, showToast, translationSettings]);
+
+  const removeManualTranslation = useCallback(async () => {
+    if (!window.confirm("移除当前脚本保存在浏览器中的人工译文？原 JSON 文件不会受到影响。")) return;
+    setManualTranslationBusy(true);
+    setManualTranslationError("");
+    try {
+      await manualTranslation.remove();
+      if (!remoteTranslationEligible || !translationSettings.provider || !translation.providerReady) {
+        persistTranslationSettings({ ...translationSettings, mode: "source" });
+      }
+      showToast("已移除当前脚本的人工译文");
+    } catch (error) {
+      setManualTranslationError(error instanceof Error ? error.message : "无法移除人工译文");
+    } finally {
+      setManualTranslationBusy(false);
+    }
+  }, [
+    manualTranslation,
+    persistTranslationSettings,
+    remoteTranslationEligible,
+    showToast,
+    translation.providerReady,
+    translationSettings,
+  ]);
+
   const openSettings = useCallback(() => {
     setTranslationDraft(localOpenAiConfig?.editable
       ? {
@@ -376,9 +488,22 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   }, [localOpenAiConfig, translationSettings]);
 
   const toggleTranslation = useCallback(() => {
-    if (!translationEligible) return;
+    if (!japaneseStoryLoaded) return;
     if (translationSettings.mode === "translated") {
       persistTranslationSettings({ ...translationSettings, mode: "source" });
+      return;
+    }
+    if (!manualTranslation.resolved) {
+      showToast("正在读取本地人工译文");
+      return;
+    }
+    if (manualTranslation.active) {
+      persistTranslationSettings({ ...translationSettings, mode: "translated" });
+      return;
+    }
+    if (!remoteTranslationEligible) {
+      setPanel("settings");
+      showToast("请先导入人工译文，或在脚本库允许使用翻译服务");
       return;
     }
     if (!translationSettings.provider || !translation.providerReady) {
@@ -389,10 +514,13 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     }
     persistTranslationSettings({ ...translationSettings, mode: "translated" });
   }, [
+    japaneseStoryLoaded,
+    manualTranslation.active,
+    manualTranslation.resolved,
     persistTranslationSettings,
+    remoteTranslationEligible,
     showToast,
     translation.providerReady,
-    translationEligible,
     translationSettings,
   ]);
 
@@ -536,13 +664,16 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   useEffect(() => {
     const controller = new AbortController();
     const customSource = isCustomScriptUrl(story.scriptUrl);
+    const scriptMasterName = settings.masterName;
     setLoading(true);
     setLoadNote("");
     setLoadError("");
     setFrames([]);
     setBaseFrames([]);
     setCompleted(false);
-    setTranslationEligible(false);
+    setJapaneseStoryLoaded(false);
+    setRemoteTranslationEligible(false);
+    setLoadedMasterName(scriptMasterName);
     setCustomPackage(null);
 
     const sourcePromise = customSource
@@ -556,7 +687,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
 
     sourcePromise
       .then(({ source, record }) => {
-        const parsed = parseFgoScript(source, story.scriptId, settings.masterName);
+        const parsed = parseFgoScript(source, story.scriptId, scriptMasterName);
         if (!parsed.frames.length) throw new Error("脚本中没有可播放的对话");
         const restoredTrail = story.choiceTrail ?? loadStoredChoiceTrail(story.scriptId);
         const replayed = replayChoiceTrail(parsed.frames, restoredTrail);
@@ -569,7 +700,8 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
         setFrames(replayed.frames);
         setChoiceTrail(replayed.choiceTrail);
         setFrameIndex(startIndex);
-        setTranslationEligible(
+        setJapaneseStoryLoaded(story.region === "JP");
+        setRemoteTranslationEligible(
           story.region === "JP" && (!customSource || record?.translationAllowed === true),
         );
       })
@@ -583,12 +715,13 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
           );
           return;
         }
-        const parsed = parseFgoScript(offlineDemoScript, "offline-demo", settings.masterName);
+        const parsed = parseFgoScript(offlineDemoScript, "offline-demo", scriptMasterName);
         setBaseFrames(parsed.frames);
         setFrames(parsed.frames);
         setChoiceTrail(clearChoiceTrail());
         setFrameIndex(0);
-        setTranslationEligible(false);
+        setJapaneseStoryLoaded(false);
+        setRemoteTranslationEligible(false);
         setLoadNote(
           `Atlas 数据暂时无法读取，已进入离线演示：${reason instanceof Error ? reason.message : "未知错误"}`,
         );
@@ -982,7 +1115,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
               </div>
               <div className="reader-toolbar">
                 <ToggleButton label="记录" shortcut="L" icon={<MessageSquareText size={16} />} onClick={() => setPanel("log")} />
-                {translationEligible && (
+                {japaneseStoryLoaded && (
                   <ToggleButton
                     active={translatedMode}
                     label={translatedMode ? "原文" : "译文"}
@@ -1049,7 +1182,11 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                     <span>LOG {String(frameIndex + 1).padStart(3, "0")}</span>
                     {translatedMode && (
                       <span className="translation-state">
-                        {translation.currentPending
+                        {manualTranslation.active
+                          ? translation.currentTranslated
+                            ? "IMPORTED"
+                            : "SOURCE FALLBACK"
+                          : translation.currentPending
                           ? "TRANSLATING"
                           : translation.currentReady
                             ? "TRANSLATED"
@@ -1120,7 +1257,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
             <div className="panel-header">
               <div><small>BACKLOG</small><h2>历史记录</h2></div>
               <div className="panel-header-actions">
-                {translationEligible && (
+                {japaneseStoryLoaded && (
                   <button
                     className={translatedMode ? "active" : ""}
                     onClick={toggleTranslation}
@@ -1185,6 +1322,79 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                   <span><Languages size={17} /><strong>日文翻译</strong></span>
                   <small>JA → 简体中文</small>
                 </div>
+
+                {japaneseStoryLoaded && (
+                  <div className="manual-translation-section">
+                    <input
+                      ref={manualTranslationInputRef}
+                      className="custom-file-input"
+                      type="file"
+                      accept=".json,application/json"
+                      onChange={(event) => void selectManualTranslationFile(event)}
+                    />
+                    <div className="manual-translation-status">
+                      <span>
+                        <strong>人工翻译文件</strong>
+                        <small>当前脚本 {story.scriptId}</small>
+                      </span>
+                      <em className={manualTranslation.active ? "ready" : manualTranslation.status === "stale" ? "stale" : ""}>
+                        {!manualTranslation.resolved
+                          ? "LOADING"
+                          : manualTranslation.active
+                            ? `${manualTranslation.translatedCount}/${manualTranslation.totalCount}`
+                            : manualTranslation.status === "stale"
+                              ? "STALE"
+                              : "NOT IMPORTED"}
+                      </em>
+                    </div>
+                    <p>
+                      {manualTranslation.active
+                        ? "人工译文已启用；未填写的条目显示日文原文，本脚本不会调用在线翻译。"
+                        : manualTranslation.status === "stale"
+                          ? "已保存的译文与当前脚本或御主名称不一致，请重新导出母本并导入。"
+                          : "导出全部日文文本，填写 translatedText 后再导入；所有选择分支都会包含在母本中。"}
+                    </p>
+                    {!remoteTranslationEligible && (
+                      <small className="manual-translation-offline-note">
+                        此自定义脚本未允许使用翻译服务，但离线导入和显示人工译文不受影响。
+                      </small>
+                    )}
+                    <div className="manual-translation-actions">
+                      <button
+                        type="button"
+                        onClick={exportManualTranslationTemplate}
+                        disabled={manualTranslationBusy || !manualTranslation.resolved}
+                      >
+                        <Download size={15} /> 导出翻译母本
+                      </button>
+                      <button
+                        type="button"
+                        className="primary"
+                        onClick={beginManualTranslationImport}
+                        disabled={manualTranslationBusy || !manualTranslation.resolved}
+                      >
+                        {manualTranslationBusy ? <LoaderCircle className="spin" size={15} /> : <Upload size={15} />}
+                        导入译文
+                      </button>
+                      {manualTranslation.hasRecord && (
+                        <button
+                          type="button"
+                          className="danger"
+                          onClick={() => void removeManualTranslation()}
+                          disabled={manualTranslationBusy}
+                        >
+                          <Trash2 size={15} /> 移除
+                        </button>
+                      )}
+                    </div>
+                    {(manualTranslationError || manualTranslation.storageError) && (
+                      <div className="translation-experimental-note translation-config-error">
+                        <CircleAlert size={16} />
+                        <span>{manualTranslationError || manualTranslation.storageError}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <label className="text-setting">
                   <span>

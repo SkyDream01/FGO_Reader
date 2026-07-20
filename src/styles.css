@@ -2823,6 +2823,112 @@ select:focus-visible {
   letter-spacing: 0.12em;
 }
 
+.manual-translation-section {
+  margin-top: 12px;
+  padding: 11px;
+  border: 1px solid rgba(117, 216, 211, 0.18);
+  background:
+    linear-gradient(135deg, rgba(117, 216, 211, 0.07), transparent 58%),
+    rgba(3, 13, 21, 0.62);
+}
+
+.manual-translation-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.manual-translation-status span,
+.manual-translation-status strong,
+.manual-translation-status small {
+  display: block;
+}
+
+.manual-translation-status strong {
+  color: #dcebec;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.manual-translation-status small {
+  margin-top: 3px;
+  color: #607781;
+  font-family: "Bahnschrift", monospace;
+  font-size: 8px;
+}
+
+.manual-translation-status em {
+  flex: 0 0 auto;
+  padding: 3px 5px;
+  border: 1px solid rgba(117, 216, 211, 0.2);
+  color: #779198;
+  font-family: "Bahnschrift", monospace;
+  font-size: 7px;
+  font-style: normal;
+  letter-spacing: 0.1em;
+}
+
+.manual-translation-status em.ready {
+  border-color: rgba(117, 216, 211, 0.45);
+  color: var(--teal);
+}
+
+.manual-translation-status em.stale {
+  border-color: rgba(215, 116, 101, 0.38);
+  color: #e7a79d;
+}
+
+.manual-translation-section > p {
+  margin: 10px 0 0;
+  color: #82999f;
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.manual-translation-offline-note {
+  display: block;
+  margin-top: 8px;
+  color: #c0a36b;
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+.manual-translation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.manual-translation-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 33px;
+  padding: 0 10px;
+  border: 1px solid rgba(117, 216, 211, 0.23);
+  color: #b9cccf;
+  background: rgba(5, 17, 26, 0.78);
+}
+
+.manual-translation-actions button.primary {
+  border-color: rgba(117, 216, 211, 0.45);
+  color: #e9ffff;
+  background: rgba(29, 85, 91, 0.65);
+}
+
+.manual-translation-actions button.danger {
+  border-color: rgba(215, 116, 101, 0.28);
+  color: #dca49b;
+}
+
+.manual-translation-actions button:disabled {
+  cursor: wait;
+  opacity: 0.52;
+}
+
 .translation-env-status {
   display: grid;
   grid-template-columns: 18px minmax(0, 1fr) auto;
@@ -3460,8 +3566,13 @@ select:focus-visible {
     padding: 8% 6% 5%;
   }
 
-  .translation-settings-actions {
+  .translation-settings-actions,
+  .manual-translation-actions {
     flex-direction: column;
+  }
+
+  .manual-translation-actions button {
+    width: 100%;
   }
 
   .shortcut-grid {

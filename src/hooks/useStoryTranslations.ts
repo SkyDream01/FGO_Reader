@@ -29,6 +29,8 @@ interface UseStoryTranslationsOptions {
   settings: TranslationSettings;
   skipMode: boolean;
   ctrlHeld: boolean;
+  manualActive: boolean;
+  manualTranslations: Record<string, CachedTranslation>;
 }
 
 interface CurrentTranslationError {
@@ -45,6 +47,8 @@ export function useStoryTranslations({
   settings,
   skipMode,
   ctrlHeld,
+  manualActive,
+  manualTranslations,
 }: UseStoryTranslationsOptions) {
   const [serverConfig, setServerConfig] = useState<TranslationServerConfig | null>(null);
   const [serverConfigError, setServerConfigError] = useState("");
@@ -105,7 +109,10 @@ export function useStoryTranslations({
     setPrefetchRoundActive(false);
     failedPrefetchKeyRef.current = "";
     resolvedConfigurationIdRef.current = undefined;
-    if (settings.provider) {
+    if (manualActive) {
+      translationsRef.current = {};
+      setTranslations({});
+    } else if (settings.provider) {
       const cached = loadPersistentTranslations(settings.provider, namespace, scriptId);
       translationsRef.current = cached;
       setTranslations(cached);
@@ -113,7 +120,7 @@ export function useStoryTranslations({
       translationsRef.current = {};
       setTranslations({});
     }
-  }, [abortRequests, namespace, requestConfigSignature, scriptId, settings.provider]);
+  }, [abortRequests, manualActive, namespace, requestConfigSignature, scriptId, settings.provider]);
 
   useEffect(() => {
     if (settings.mode !== "source") return;
@@ -128,7 +135,7 @@ export function useStoryTranslations({
   useEffect(() => () => abortRequests(), [abortRequests]);
 
   const translateUnits = useCallback(async (units: TranslationUnit[], surfaceError: boolean) => {
-    if (!eligible || settings.mode !== "translated" || !settings.provider || !ready) return false;
+    if (manualActive || !eligible || settings.mode !== "translated" || !settings.provider || !ready) return false;
     const unique = new Map<string, TranslationUnit>();
     for (const unit of units) {
       const key = `${unit.id}:${translationUnitSourceHash(unit)}`;
@@ -192,7 +199,7 @@ export function useStoryTranslations({
       for (const unit of missing) pendingRef.current.delete(unit.id);
       setPendingIds(new Set(pendingRef.current));
     }
-  }, [eligible, namespace, providerConfig, ready, scriptId, settings.mode, settings.provider]);
+  }, [eligible, manualActive, namespace, providerConfig, ready, scriptId, settings.mode, settings.provider]);
 
   const currentFrame = frames[frameIndex] ?? null;
   const currentUnits = useMemo(
@@ -303,8 +310,8 @@ export function useStoryTranslations({
   ]);
 
   const translatedUnit = useCallback((unit: TranslationUnit) => (
-    translationForUnit(translations, unit)
-  ), [translations]);
+    translationForUnit(manualActive ? manualTranslations : translations, unit)
+  ), [manualActive, manualTranslations, translations]);
 
   const translatedSpeaker = useCallback((frame: StoryFrame) => {
     if (frame.type !== "dialogue") return undefined;
@@ -322,10 +329,12 @@ export function useStoryTranslations({
     return unit ? translatedUnit(unit) : undefined;
   }, [translatedUnit]);
 
+  const currentTranslated = currentUnits.every((unit) => Boolean(translatedUnit(unit)));
   const currentReady = settings.mode !== "translated"
+    || manualActive
     || !eligible
-    || (Boolean(settings.provider) && ready && currentUnits.every((unit) => Boolean(translatedUnit(unit))));
-  const currentPending = currentUnits.some((unit) => pendingIds.has(unit.id));
+    || (Boolean(settings.provider) && ready && currentTranslated);
+  const currentPending = !manualActive && currentUnits.some((unit) => pendingIds.has(unit.id));
 
   return {
     serverConfig,
@@ -334,6 +343,7 @@ export function useStoryTranslations({
     providerReady: ready,
     namespace,
     currentReady,
+    currentTranslated,
     currentPending,
     currentError,
     translatedSpeaker,

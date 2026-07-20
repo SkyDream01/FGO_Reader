@@ -65,12 +65,19 @@ with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
     page = browser.new_page(viewport={"width": 1440, "height": 960})
     atlas_asset_requests: list[str] = []
+    translation_requests: list[str] = []
 
     def block_atlas_asset(route):
         atlas_asset_requests.append(route.request.url)
         route.abort()
 
     page.route("https://static.atlasacademy.io/**", block_atlas_asset)
+    page.on(
+        "request",
+        lambda request: translation_requests.append(request.url)
+        if request.method == "POST" and request.url.endswith("/translation-api")
+        else None,
+    )
     page.add_init_script(
         "localStorage.clear();"
         "localStorage.setItem('fgo-reader-settings', JSON.stringify({reduceMotion:true}));"
@@ -105,10 +112,36 @@ with sync_playwright() as playwright:
 
     page.get_by_role("button", name="返回目录").click()
     page.get_by_role("button", name="浏览脚本库").click()
-    page.locator(".custom-library-modal").get_by_text("浏览器导入测试包", exact=True).wait_for(timeout=10000)
-    page.locator(".custom-library-modal").get_by_role("button", name="继续", exact=True).click()
+    custom_row = page.locator(".custom-package-row")
+    custom_row.get_by_text("浏览器导入测试包", exact=True).wait_for(timeout=10000)
+    custom_row.locator('input[type="checkbox"]').click()
+    page.wait_for_function(
+        "() => !document.querySelector('.custom-package-row input[type=checkbox]').checked"
+    )
+    assert not custom_row.locator('input[type="checkbox"]').is_checked()
+    custom_row.get_by_role("button", name="继续", exact=True).click()
     page.locator(".reader-loading").wait_for(state="hidden", timeout=10000)
     page.get_by_text("右侧分支。", exact=True).wait_for(timeout=10000)
+
+    # Offline manual imports remain available after third-party translation
+    # consent is disabled for the custom package.
+    page.get_by_role("button", name="设置", exact=True).click()
+    manual_section = page.locator(".manual-translation-section")
+    manual_section.get_by_text("离线导入和显示人工译文不受影响", exact=False).wait_for(timeout=5000)
+    with page.expect_download() as download_info:
+        manual_section.get_by_role("button", name="导出翻译母本").click()
+    template = json.loads(Path(download_info.value.path()).read_text(encoding="utf-8"))
+    for entry in template["entries"]:
+        entry["translatedText"] = f"译：{entry['sourceText']}"
+    manual_section.locator('input[type="file"]').set_input_files({
+        "name": "custom-manual-translation.json",
+        "mimeType": "application/json",
+        "buffer": json.dumps(template, ensure_ascii=False).encode("utf-8"),
+    })
+    page.get_by_text("已导入", exact=False).wait_for(timeout=5000)
+    page.keyboard.press("Escape")
+    page.get_by_text("译：右侧分支。", exact=True).wait_for(timeout=10000)
+    assert not translation_requests
 
     page.get_by_role("button", name="返回目录").click()
     page.get_by_role("button", name="浏览脚本库").click()
