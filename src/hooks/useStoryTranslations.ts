@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   chunkTranslationUnits,
+  createTranslationFrameBatchPlan,
   fetchTranslationServerConfig,
   frameTranslationUnits,
   loadPersistentTranslations,
-  nextTranslationPrefetchFrames,
   providerConfigFromSettings,
   providerIsReady,
   requestTranslations,
@@ -14,6 +14,7 @@ import {
   translationUnitSourceHash,
   TranslationRequestError,
   type CachedTranslation,
+  type TranslationFrameBatchPlan,
   type TranslationServerConfig,
   type TranslationSettings,
   type TranslationUnit,
@@ -23,12 +24,10 @@ import type { StoryFrame } from "../types";
 interface UseStoryTranslationsOptions {
   scriptId: string;
   frames: StoryFrame[];
+  sourceFrames: StoryFrame[];
   frameIndex: number;
-  historyOpen: boolean;
   eligible: boolean;
   settings: TranslationSettings;
-  skipMode: boolean;
-  ctrlHeld: boolean;
   manualActive: boolean;
   manualTranslations: Record<string, CachedTranslation>;
 }
@@ -38,15 +37,53 @@ interface CurrentTranslationError {
   retryable: boolean;
 }
 
+type TranslationRunResult = "success" | "failed" | "deferred";
+
+const MAX_CONCURRENT_BATCHES = 2;
+const RETRY_DELAY_MS = 1_000;
+
+function uniqueBatchUnits(batch: TranslationFrameBatchPlan | undefined) {
+  if (!batch) return [];
+  const unique = new Map<string, TranslationUnit>();
+  for (const unit of batch.frames.flatMap(frameTranslationUnits)) {
+    const key = `${unit.id}:${translationUnitSourceHash(unit)}`;
+    if (!unique.has(key)) unique.set(key, unit);
+  }
+  return [...unique.values()];
+}
+
+function frameHasTranslations(
+  translations: Record<string, CachedTranslation>,
+  frame: StoryFrame,
+) {
+  return frameTranslationUnits(frame)
+    .every((unit) => Boolean(translationForUnit(translations, unit)));
+}
+
+function retryDelay(signal: AbortSignal) {
+  return new Promise<void>((resolve) => {
+    let settled = false;
+    let timer = 0;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      signal.removeEventListener("abort", finish);
+      resolve();
+    };
+    timer = window.setTimeout(finish, RETRY_DELAY_MS);
+    signal.addEventListener("abort", finish, { once: true });
+    if (signal.aborted) finish();
+  });
+}
+
 export function useStoryTranslations({
   scriptId,
   frames,
+  sourceFrames,
   frameIndex,
-  historyOpen,
   eligible,
   settings,
-  skipMode,
-  ctrlHeld,
   manualActive,
   manualTranslations,
 }: UseStoryTranslationsOptions) {
@@ -55,15 +92,17 @@ export function useStoryTranslations({
   const [translations, setTranslations] = useState<Record<string, CachedTranslation>>({});
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [currentError, setCurrentError] = useState<CurrentTranslationError | null>(null);
-  const [prefetchRoundActive, setPrefetchRoundActive] = useState(false);
+  const [activeBatchCount, setActiveBatchCount] = useState(0);
+  const [backgroundBatchActive, setBackgroundBatchActive] = useState(false);
+  const [schedulerPaused, setSchedulerPaused] = useState(false);
+  const [preparationFrames, setPreparationFrames] = useState<StoryFrame[]>([]);
+  const [preparationFailed, setPreparationFailed] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
   const translationsRef = useRef(translations);
   const pendingRef = useRef(new Set<string>());
   const controllersRef = useRef(new Set<AbortController>());
   const generationRef = useRef(0);
-  const resolvedConfigurationIdRef = useRef<string | undefined>(undefined);
-  const failedPrefetchKeyRef = useRef("");
-  const prefetchRoundIdRef = useRef(0);
+  const backgroundRunIdRef = useRef(0);
 
   const namespace = useMemo(
     () => translationNamespace(settings, serverConfig),
@@ -74,6 +113,13 @@ export function useStoryTranslations({
   const requestConfigSignature = useMemo(
     () => JSON.stringify({ provider: settings.provider, providerConfig }),
     [providerConfig, settings.provider],
+  );
+  const machineActive = Boolean(
+    !manualActive
+    && eligible
+    && settings.mode === "translated"
+    && settings.provider
+    && ready,
   );
 
   const loadServerConfig = useCallback(async (signal?: AbortSignal) => {
@@ -95,20 +141,22 @@ export function useStoryTranslations({
   }, [loadServerConfig]);
 
   const abortRequests = useCallback(() => {
+    backgroundRunIdRef.current += 1;
     for (const controller of controllersRef.current) controller.abort();
     controllersRef.current.clear();
     pendingRef.current.clear();
     setPendingIds(new Set());
+    setActiveBatchCount(0);
+    setBackgroundBatchActive(false);
   }, []);
 
   useEffect(() => {
     generationRef.current += 1;
-    prefetchRoundIdRef.current += 1;
     abortRequests();
     setCurrentError(null);
-    setPrefetchRoundActive(false);
-    failedPrefetchKeyRef.current = "";
-    resolvedConfigurationIdRef.current = undefined;
+    setSchedulerPaused(false);
+    setPreparationFrames([]);
+    setPreparationFailed(false);
     if (manualActive) {
       translationsRef.current = {};
       setTranslations({});
@@ -120,22 +168,58 @@ export function useStoryTranslations({
       translationsRef.current = {};
       setTranslations({});
     }
-  }, [abortRequests, manualActive, namespace, requestConfigSignature, scriptId, settings.provider]);
-
-  useEffect(() => {
-    if (settings.mode !== "source") return;
-    generationRef.current += 1;
-    prefetchRoundIdRef.current += 1;
-    abortRequests();
-    setCurrentError(null);
-    setPrefetchRoundActive(false);
-    failedPrefetchKeyRef.current = "";
-  }, [abortRequests, settings.mode]);
+  }, [
+    abortRequests,
+    manualActive,
+    namespace,
+    requestConfigSignature,
+    scriptId,
+    settings.mode,
+    settings.provider,
+  ]);
 
   useEffect(() => () => abortRequests(), [abortRequests]);
 
-  const translateUnits = useCallback(async (units: TranslationUnit[], surfaceError: boolean) => {
-    if (manualActive || !eligible || settings.mode !== "translated" || !settings.provider || !ready) return false;
+  useEffect(() => {
+    if (!machineActive || preparationFrames.length || !frames[frameIndex]) return;
+    setPreparationFrames(frames.slice(frameIndex, frameIndex + 5));
+  }, [frameIndex, frames, machineActive, preparationFrames.length]);
+
+  const batchPlan = useMemo(
+    () => createTranslationFrameBatchPlan(frames, sourceFrames, frameIndex),
+    [frameIndex, frames, sourceFrames],
+  );
+  const currentBatch = batchPlan[0];
+  const currentBatchUnits = useMemo(() => uniqueBatchUnits(currentBatch), [currentBatch]);
+  const currentFrame = frames[frameIndex] ?? null;
+  const currentUnits = useMemo(
+    () => currentFrame ? frameTranslationUnits(currentFrame) : [],
+    [currentFrame],
+  );
+
+  const preparationReadyCount = useMemo(
+    () => preparationFrames.filter((frame) => frameHasTranslations(translations, frame)).length,
+    [preparationFrames, translations],
+  );
+  const preparationTotal = preparationFrames.length
+    || (machineActive ? Math.min(5, Math.max(0, frames.length - frameIndex)) : 0);
+  const preparationComplete = preparationFrames.length > 0
+    && preparationReadyCount === preparationFrames.length;
+  const preparing = machineActive
+    && Boolean(currentFrame)
+    && !preparationFailed
+    && (!preparationFrames.length || !preparationComplete);
+  const preparationKey = preparationFrames.length
+    ? preparationFrames.map((frame) => frame.id).join("|")
+    : machineActive && currentFrame
+      ? `pending:${scriptId}:${frameIndex}`
+      : "";
+
+  const translateUnits = useCallback(async (
+    units: TranslationUnit[],
+    surfaceError: boolean,
+  ): Promise<TranslationRunResult> => {
+    if (!machineActive || !settings.provider) return "deferred";
     const unique = new Map<string, TranslationUnit>();
     for (const unit of units) {
       const key = `${unit.id}:${translationUnitSourceHash(unit)}`;
@@ -144,26 +228,46 @@ export function useStoryTranslations({
     const missing = [...unique.values()].filter((unit) => (
       !translationForUnit(translationsRef.current, unit) && !pendingRef.current.has(unit.id)
     ));
-    if (!missing.length) return true;
+    if (!missing.length) return "success";
+    if (controllersRef.current.size >= MAX_CONCURRENT_BATCHES) return "deferred";
 
     const generation = generationRef.current;
     const controller = new AbortController();
     controllersRef.current.add(controller);
+    setActiveBatchCount(controllersRef.current.size);
     for (const unit of missing) pendingRef.current.add(unit.id);
     setPendingIds(new Set(pendingRef.current));
     if (surfaceError) setCurrentError(null);
 
     try {
       for (const chunk of chunkTranslationUnits(missing)) {
-        const response = await requestTranslations({
-          provider: settings.provider,
-          scriptId,
-          providerConfig,
-          items: chunk,
-          signal: controller.signal,
-        });
-        if (controller.signal.aborted || generation !== generationRef.current) return false;
-        resolvedConfigurationIdRef.current = response.configurationId;
+        let response: Awaited<ReturnType<typeof requestTranslations>> | null = null;
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          try {
+            response = await requestTranslations({
+              provider: settings.provider,
+              scriptId,
+              providerConfig,
+              items: chunk,
+              signal: controller.signal,
+            });
+            break;
+          } catch (error) {
+            const retryable = error instanceof TranslationRequestError && error.retryable;
+            if (attempt === 0 && retryable && !controller.signal.aborted) {
+              await retryDelay(controller.signal);
+              continue;
+            }
+            throw error;
+          }
+        }
+
+        if (!response || controller.signal.aborted || generation !== generationRef.current) {
+          return "deferred";
+        }
+
+        // Commit every successful API sub-response immediately. A later chunk
+        // may still fail without discarding translations already received.
         const sourceById = new Map(chunk.map((unit) => [unit.id, unit]));
         const next = { ...translationsRef.current };
         for (const translation of response.translations) {
@@ -184,134 +288,99 @@ export function useStoryTranslations({
           response.configurationId,
         );
       }
-      return true;
+      return "success";
     } catch (error) {
-      if (controller.signal.aborted || generation !== generationRef.current) return false;
-      if (surfaceError) {
-        const translatedError = error instanceof TranslationRequestError
-          ? error
-          : new TranslationRequestError("翻译服务暂时不可用", "provider_unavailable", true);
-        setCurrentError({ detail: translatedError.message, retryable: translatedError.retryable });
-      }
-      return false;
+      if (controller.signal.aborted || generation !== generationRef.current) return "deferred";
+      const translatedError = error instanceof TranslationRequestError
+        ? error
+        : new TranslationRequestError("翻译服务暂时不可用", "provider_unavailable", true);
+      setCurrentError({ detail: translatedError.message, retryable: translatedError.retryable });
+      setSchedulerPaused(true);
+      if (surfaceError && !preparationComplete) setPreparationFailed(true);
+      return "failed";
     } finally {
       controllersRef.current.delete(controller);
-      for (const unit of missing) pendingRef.current.delete(unit.id);
-      setPendingIds(new Set(pendingRef.current));
+      setActiveBatchCount(controllersRef.current.size);
+      if (generation === generationRef.current) {
+        for (const unit of missing) pendingRef.current.delete(unit.id);
+        setPendingIds(new Set(pendingRef.current));
+      }
     }
-  }, [eligible, manualActive, namespace, providerConfig, ready, scriptId, settings.mode, settings.provider]);
-
-  const currentFrame = frames[frameIndex] ?? null;
-  const currentUnits = useMemo(
-    () => currentFrame ? frameTranslationUnits(currentFrame) : [],
-    [currentFrame],
-  );
-
-  useEffect(() => {
-    if (
-      !currentFrame
-      || settings.mode !== "translated"
-      || !eligible
-      || !settings.provider
-      || !ready
-      || skipMode
-      || ctrlHeld
-    ) return;
-    void translateUnits(currentUnits, true);
   }, [
-    ctrlHeld,
-    currentFrame,
-    currentUnits,
-    eligible,
-    frameIndex,
-    frames,
-    ready,
-    retryNonce,
-    settings.mode,
+    machineActive,
+    namespace,
+    preparationComplete,
+    providerConfig,
+    scriptId,
     settings.provider,
-    skipMode,
-    translateUnits,
   ]);
 
   useEffect(() => {
     if (
-      !currentFrame
-      || settings.mode !== "translated"
-      || !eligible
-      || !settings.provider
-      || !ready
-      || skipMode
-      || ctrlHeld
-      || prefetchRoundActive
-      || currentUnits.some((unit) => pendingIds.has(unit.id))
-      || currentUnits.some((unit) => !translationForUnit(translations, unit))
+      !machineActive
+      || schedulerPaused
+      || !currentBatchUnits.length
+      || activeBatchCount >= MAX_CONCURRENT_BATCHES
     ) return;
-
-    const prefetchFrames = nextTranslationPrefetchFrames(frames, frameIndex, translations);
-    if (!prefetchFrames.length) return;
-    const prefetchUnits = prefetchFrames.flatMap(frameTranslationUnits);
-    const prefetchKey = `${frameIndex}:${prefetchUnits
-      .map((unit) => `${unit.id}:${translationUnitSourceHash(unit)}`)
-      .join("|")}`;
-    if (failedPrefetchKeyRef.current === prefetchKey) return;
-
-    const roundId = prefetchRoundIdRef.current + 1;
-    prefetchRoundIdRef.current = roundId;
-    setPrefetchRoundActive(true);
-    void translateUnits(prefetchUnits, false).then((success) => {
-      if (prefetchRoundIdRef.current !== roundId) return;
-      failedPrefetchKeyRef.current = success ? "" : prefetchKey;
-    }).finally(() => {
-      if (prefetchRoundIdRef.current === roundId) setPrefetchRoundActive(false);
-    });
+    void translateUnits(currentBatchUnits, true);
   }, [
-    ctrlHeld,
-    currentFrame,
-    currentUnits,
-    eligible,
-    frameIndex,
-    frames,
+    activeBatchCount,
+    currentBatchUnits,
+    machineActive,
     pendingIds,
-    prefetchRoundActive,
-    ready,
-    settings.mode,
-    settings.provider,
-    skipMode,
+    retryNonce,
+    schedulerPaused,
     translateUnits,
     translations,
   ]);
 
   useEffect(() => {
     if (
-      !historyOpen
-      || settings.mode !== "translated"
-      || !eligible
-      || !settings.provider
-      || !ready
-      || skipMode
-      || ctrlHeld
+      !machineActive
+      || schedulerPaused
+      || preparing
+      || backgroundBatchActive
+      || activeBatchCount >= MAX_CONCURRENT_BATCHES
     ) return;
-    const historyUnits = frames
-      .slice(0, frameIndex + 1)
-      .reverse()
-      .flatMap(frameTranslationUnits);
-    if (historyUnits.length) void translateUnits(historyUnits, false);
+
+    const backgroundBatch = batchPlan.find((batch) => {
+      if (batch.priority === 0) return false;
+      return uniqueBatchUnits(batch).some((unit) => (
+        !translationForUnit(translationsRef.current, unit)
+        && !pendingRef.current.has(unit.id)
+      ));
+    });
+    if (!backgroundBatch) return;
+
+    const backgroundRunId = backgroundRunIdRef.current + 1;
+    backgroundRunIdRef.current = backgroundRunId;
+    setBackgroundBatchActive(true);
+    void translateUnits(uniqueBatchUnits(backgroundBatch), false)
+      .finally(() => {
+        if (backgroundRunIdRef.current === backgroundRunId) {
+          setBackgroundBatchActive(false);
+        }
+      });
   }, [
-    ctrlHeld,
-    eligible,
-    frameIndex,
-    frames,
-    historyOpen,
-    ready,
-    settings.mode,
-    settings.provider,
-    skipMode,
+    activeBatchCount,
+    backgroundBatchActive,
+    batchPlan,
+    machineActive,
+    pendingIds,
+    preparing,
+    retryNonce,
+    schedulerPaused,
     translateUnits,
+    translations,
   ]);
 
   const translatedUnit = useCallback((unit: TranslationUnit) => (
     translationForUnit(manualActive ? manualTranslations : translations, unit)
   ), [manualActive, manualTranslations, translations]);
+
+  const frameTranslated = useCallback((frame: StoryFrame) => (
+    frameTranslationUnits(frame).every((unit) => Boolean(translatedUnit(unit)))
+  ), [translatedUnit]);
 
   const translatedSpeaker = useCallback((frame: StoryFrame) => {
     if (frame.type !== "dialogue") return undefined;
@@ -329,11 +398,8 @@ export function useStoryTranslations({
     return unit ? translatedUnit(unit) : undefined;
   }, [translatedUnit]);
 
-  const currentTranslated = currentUnits.every((unit) => Boolean(translatedUnit(unit)));
-  const currentReady = settings.mode !== "translated"
-    || manualActive
-    || !eligible
-    || (Boolean(settings.provider) && ready && currentTranslated);
+  const currentTranslated = currentUnits.length > 0
+    && currentUnits.every((unit) => Boolean(translatedUnit(unit)));
   const currentPending = !manualActive && currentUnits.some((unit) => pendingIds.has(unit.id));
 
   return {
@@ -342,15 +408,21 @@ export function useStoryTranslations({
     refreshServerConfig,
     providerReady: ready,
     namespace,
-    currentReady,
+    preparing,
+    preparationKey,
+    preparationReadyCount,
+    preparationTotal,
     currentTranslated,
     currentPending,
     currentError,
+    frameTranslated,
     translatedSpeaker,
     translatedText,
     translatedChoice,
     retryCurrent: () => {
       setCurrentError(null);
+      setSchedulerPaused(false);
+      setPreparationFailed(false);
       setRetryNonce((value) => value + 1);
     },
   };

@@ -292,7 +292,12 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   });
   const toastTimer = useRef<number | null>(null);
   const manualTranslationInputRef = useRef<HTMLInputElement>(null);
-  const revealContext = useRef({ frameId: "", mode: "source", ready: true });
+  const revealContext = useRef({ frameId: "", mode: "source", translated: false });
+  const translationVisit = useRef({
+    key: "",
+    waitingForPreparation: false,
+    translated: false,
+  });
 
   const currentFrame = frames[frameIndex] ?? null;
   const manualTranslation = useManualTranslations({
@@ -305,22 +310,40 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   const translation = useStoryTranslations({
     scriptId: story.scriptId,
     frames,
+    sourceFrames: baseFrames,
     frameIndex,
-    historyOpen: panel === "log",
     eligible: remoteTranslationEligible && manualTranslation.resolved && !manualTranslation.active,
     settings: translationSettings,
-    skipMode,
-    ctrlHeld,
     manualActive: manualTranslation.active,
     manualTranslations: manualTranslation.translations,
   });
   const translatedMode = japaneseStoryLoaded && translationSettings.mode === "translated";
-  const displaySpeaker = currentFrame?.type === "dialogue" && translatedMode
+  const translationVisitKey = [
+    translationSettings.mode,
+    frameIndex,
+    currentFrame?.id ?? "",
+    translation.preparationKey,
+  ].join(":");
+  if (translationVisit.current.key !== translationVisitKey) {
+    translationVisit.current = {
+      key: translationVisitKey,
+      waitingForPreparation: translatedMode && translation.preparing,
+      translated: translatedMode && !translation.preparing && translation.currentTranslated,
+    };
+  } else if (translationVisit.current.waitingForPreparation && !translation.preparing) {
+    translationVisit.current = {
+      ...translationVisit.current,
+      waitingForPreparation: false,
+      translated: translatedMode && translation.currentTranslated,
+    };
+  }
+  const currentDisplayTranslated = translatedMode && translationVisit.current.translated;
+  const displaySpeaker = currentFrame?.type === "dialogue" && currentDisplayTranslated
     ? translation.translatedSpeaker(currentFrame) ?? currentFrame.speaker
     : currentFrame?.type === "dialogue"
       ? currentFrame.speaker
       : "回应选择";
-  const displayText = currentFrame?.type === "dialogue" && translatedMode
+  const displayText = currentFrame?.type === "dialogue" && currentDisplayTranslated
     ? translation.translatedText(currentFrame) ?? currentFrame.text
     : currentFrame?.text ?? "";
   const selectedProviderInfo = translation.serverConfig?.providers.find(
@@ -745,17 +768,17 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     const previous = revealContext.current;
     const frameChanged = previous.frameId !== currentFrame.id;
     const modeChanged = previous.mode !== translationSettings.mode;
-    const translationArrived = translatedMode && !previous.ready && translation.currentReady;
+    const translationActivated = translatedMode && !previous.translated && currentDisplayTranslated;
     const showImmediately = currentFrame.type === "choice"
       || settings.reduceMotion
       || modeChanged
-      || translationArrived
-      || (translatedMode && !translation.currentReady);
+      || translationActivated
+      || (translatedMode && !currentDisplayTranslated);
     setRevealedCount(showImmediately ? textCharacters.length : frameChanged ? 0 : textCharacters.length);
     revealContext.current = {
       frameId: currentFrame.id,
       mode: translationSettings.mode,
-      ready: translation.currentReady,
+      translated: currentDisplayTranslated,
     };
     if (currentFrame.type === "choice") {
       setAutoMode(false);
@@ -764,10 +787,10 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   }, [
     currentFrame?.id,
     currentFrame,
+    currentDisplayTranslated,
     settings.reduceMotion,
     textCharacters.length,
     translatedMode,
-    translation.currentReady,
     translationSettings.mode,
   ]);
 
@@ -792,7 +815,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   }, [frameIndex]);
 
   const advance = useCallback(() => {
-    if (!currentFrame || loading) return;
+    if (!currentFrame || loading || translation.preparing) return;
     setAudioUnlocked(true);
     if (uiHidden) {
       setUiHidden(false);
@@ -811,11 +834,16 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
       setAutoMode(false);
       setSkipMode(false);
     }
-  }, [currentFrame, frameIndex, frames.length, loading, markCurrentRead, textCharacters.length, textComplete, uiHidden]);
+  }, [currentFrame, frameIndex, frames.length, loading, markCurrentRead, textCharacters.length, textComplete, translation.preparing, uiHidden]);
 
   const resolveChoice = useCallback(
     (choiceIndex: number) => {
-      if (!currentFrame || currentFrame.type !== "choice" || currentFrame.selected !== undefined) return;
+      if (
+        !currentFrame
+        || currentFrame.type !== "choice"
+        || currentFrame.selected !== undefined
+        || translation.preparing
+      ) return;
       const option = currentFrame.options[choiceIndex];
       if (!option) return;
       setAudioUnlocked(true);
@@ -841,13 +869,20 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
         setCompleted(true);
       }
     },
-    [currentFrame, frameIndex, frames.length, markCurrentRead],
+    [currentFrame, frameIndex, frames.length, markCurrentRead, translation.preparing],
   );
 
   useEffect(() => {
-    if (!autoMode || !windowFocused || panel !== "none" || uiHidden || !textComplete || !currentFrame) return;
+    if (
+      !autoMode
+      || !windowFocused
+      || panel !== "none"
+      || uiHidden
+      || !textComplete
+      || !currentFrame
+      || translation.preparing
+    ) return;
     if (currentFrame.type === "choice") return;
-    if (translatedMode && !translation.currentReady) return;
     const timer = window.setTimeout(advance, settings.autoDelay + Math.min(900, displayText.length * 7));
     return () => window.clearTimeout(timer);
   }, [
@@ -858,16 +893,10 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     panel,
     settings.autoDelay,
     textComplete,
-    translatedMode,
-    translation.currentReady,
+    translation.preparing,
     uiHidden,
     windowFocused,
   ]);
-
-  useEffect(() => {
-    if (!translatedMode || !translationDisplayError) return;
-    setAutoMode(false);
-  }, [translatedMode, translationDisplayError]);
 
   useEffect(() => {
     if (!skipMode || !currentFrame || panel !== "none") return;
@@ -1134,7 +1163,9 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                     active={translatedMode}
                     label={translatedMode ? "原文" : "译文"}
                     shortcut="T"
-                    icon={translation.currentPending ? <LoaderCircle className="spin" size={16} /> : <Languages size={16} />}
+                    icon={translation.preparing || translation.currentPending
+                      ? <LoaderCircle className="spin" size={16} />
+                      : <Languages size={16} />}
                     onClick={toggleTranslation}
                   />
                 )}
@@ -1163,7 +1194,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                   >
                     <kbd>{optionIndex + 1}</kbd>
                     <span>
-                      {translatedMode
+                      {currentDisplayTranslated
                         ? translation.translatedChoice(currentFrame, optionIndex) ?? option.label
                         : option.label}
                     </span>
@@ -1189,7 +1220,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                       ? "请选择你的回应。"
                       : textCharacters.slice(0, revealedCount).join("")}
                   </p>
-                  {currentFrame.type !== "choice" && textComplete && (
+                  {currentFrame.type !== "choice" && textComplete && !translation.preparing && (
                     <span className="advance-indicator" aria-label="继续"><ChevronDown size={20} /></span>
                   )}
                   <div className="dialogue-meta">
@@ -1197,12 +1228,14 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                     {translatedMode && (
                       <span className="translation-state">
                         {manualTranslation.active
-                          ? translation.currentTranslated
+                          ? currentDisplayTranslated
                             ? "IMPORTED"
                             : "SOURCE FALLBACK"
-                          : translation.currentPending
+                          : translation.preparing
+                            ? `PREPARING ${translation.preparationReadyCount}/${translation.preparationTotal}`
+                            : translation.currentPending
                           ? "TRANSLATING"
-                          : translation.currentReady
+                          : currentDisplayTranslated
                             ? "TRANSLATED"
                             : "SOURCE FALLBACK"}
                       </span>
@@ -1210,6 +1243,16 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                     <span>{autoMode ? "AUTO" : skipMode ? "SKIP" : ctrlHeld ? "FAST" : "MANUAL"}</span>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {translatedMode && translation.preparing && (
+              <div className="translation-note" onClick={(event) => event.stopPropagation()}>
+                <LoaderCircle className="spin" size={16} />
+                <span>
+                  正在准备译文 {translation.preparationReadyCount}/{translation.preparationTotal}，
+                  首批完成后即可阅读。
+                </span>
               </div>
             )}
 
@@ -1288,8 +1331,16 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                 <button key={`${frame.id}-${index}`} onClick={() => { setFrameIndex(index); setPanel("none"); }}>
                   <span>{String(index + 1).padStart(3, "0")}</span>
                   <div>
-                    <strong>{translatedMode ? translation.translatedSpeaker(frame) ?? frame.speaker : frame.speaker}</strong>
-                    <p>{translatedMode ? translation.translatedText(frame) ?? frame.text : frame.text}</p>
+                    <strong>
+                      {translatedMode && translation.frameTranslated(frame)
+                        ? translation.translatedSpeaker(frame) ?? frame.speaker
+                        : frame.speaker}
+                    </strong>
+                    <p>
+                      {translatedMode && translation.frameTranslated(frame)
+                        ? translation.translatedText(frame) ?? frame.text
+                        : frame.text}
+                    </p>
                   </div>
                 </button>
               ))}

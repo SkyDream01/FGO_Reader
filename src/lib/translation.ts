@@ -90,8 +90,7 @@ const SETTINGS_KEY = "fgo-reader-translation-settings:v1";
 const CACHE_INDEX_KEY = "fgo-reader-translation-cache-index:v1";
 const CACHE_PREFIX = "fgo-reader-translation-cache:v1:";
 const CACHE_ENTRY_LIMIT = 12;
-export const TRANSLATION_PREFETCH_THRESHOLD = 5;
-export const TRANSLATION_PREFETCH_BATCH_SIZE = 10;
+export const TRANSLATION_FRAME_BATCH_SIZE = 5;
 
 export const defaultTranslationSettings: TranslationSettings = {
   mode: "source",
@@ -380,27 +379,82 @@ export function chunkTranslationUnits(units: TranslationUnit[]) {
   return chunks;
 }
 
-export function nextTranslationPrefetchFrames(
-  frames: StoryFrame[],
-  frameIndex: number,
-  translations: Record<string, CachedTranslation>,
-  threshold = TRANSLATION_PREFETCH_THRESHOLD,
-  batchSize = TRANSLATION_PREFETCH_BATCH_SIZE,
-) {
-  const upcomingFrames = frames.slice(frameIndex + 1);
-  let translatedAhead = 0;
-  for (const frame of upcomingFrames) {
-    const ready = frameTranslationUnits(frame)
-      .every((unit) => Boolean(translationForUnit(translations, unit)));
-    if (!ready) break;
-    translatedAhead += 1;
-  }
-  if (translatedAhead >= threshold) return [];
+export interface TranslationFrameBatchPlan {
+  key: string;
+  priority: 0 | 1 | 2 | 3;
+  frames: StoryFrame[];
+}
 
-  return upcomingFrames
-    .filter((frame) => frameTranslationUnits(frame)
-      .some((unit) => !translationForUnit(translations, unit)))
-    .slice(0, batchSize);
+export function chunkTranslationFrames(
+  frames: StoryFrame[],
+  batchSize = TRANSLATION_FRAME_BATCH_SIZE,
+) {
+  const normalizedSize = Math.max(1, Math.floor(batchSize));
+  const batches: StoryFrame[][] = [];
+  for (let index = 0; index < frames.length; index += normalizedSize) {
+    batches.push(frames.slice(index, index + normalizedSize));
+  }
+  return batches;
+}
+
+function translationFrameBatchKey(frames: StoryFrame[]) {
+  return frames
+    .flatMap(frameTranslationUnits)
+    .map((unit) => `${unit.id}:${translationUnitSourceHash(unit)}`)
+    .join("|");
+}
+
+/** Groups the root story and every nested option branch into five-frame jobs. */
+export function collectScriptTranslationFrameBatches(
+  frames: StoryFrame[],
+  batchSize = TRANSLATION_FRAME_BATCH_SIZE,
+) {
+  const batches: StoryFrame[][] = [];
+  const visit = (branchFrames: StoryFrame[]) => {
+    batches.push(...chunkTranslationFrames(branchFrames, batchSize));
+    for (const frame of branchFrames) {
+      if (frame.type !== "choice") continue;
+      for (const option of frame.options) visit(option.frames);
+    }
+  };
+  visit(frames);
+  return batches;
+}
+
+/**
+ * Creates the scheduler order: current five frames, branches about to be
+ * chosen, the next five frames, the active route, then every other branch.
+ */
+export function createTranslationFrameBatchPlan(
+  frames: StoryFrame[],
+  sourceFrames: StoryFrame[],
+  frameIndex: number,
+  batchSize = TRANSLATION_FRAME_BATCH_SIZE,
+) {
+  const planned = new Map<string, TranslationFrameBatchPlan>();
+  const add = (batchFrames: StoryFrame[], priority: TranslationFrameBatchPlan["priority"]) => {
+    if (!batchFrames.length) return;
+    const key = translationFrameBatchKey(batchFrames);
+    if (!key || planned.has(key)) return;
+    planned.set(key, { key, priority, frames: batchFrames });
+  };
+
+  const routeBatches = chunkTranslationFrames(frames.slice(frameIndex), batchSize);
+  add(routeBatches[0] ?? [], 0);
+
+  // If a choice is close enough to be in the current batch, prepare the first
+  // five frames of every branch before translating the linear continuation.
+  for (const frame of routeBatches[0] ?? []) {
+    if (frame.type !== "choice" || frame.selected !== undefined) continue;
+    for (const option of frame.options) {
+      add(option.frames.slice(0, batchSize), 1);
+    }
+  }
+
+  add(routeBatches[1] ?? [], 1);
+  for (const batch of routeBatches.slice(2)) add(batch, 2);
+  for (const batch of collectScriptTranslationFrameBatches(sourceFrames, batchSize)) add(batch, 3);
+  return [...planned.values()];
 }
 
 export async function fetchTranslationServerConfig(signal?: AbortSignal): Promise<TranslationServerConfig> {

@@ -36,7 +36,7 @@ QUEST = {
             "scripts": [
                 {
                     "scriptId": "1000000099",
-                    "script": "https://example.test/translation.txt",
+                    "script": "https://static.atlasacademy.io/translation-test.txt",
                 }
             ],
         }
@@ -100,7 +100,7 @@ with sync_playwright() as playwright:
         lambda route: route.fulfill(json=WAR_DETAIL),
     )
     page.route(
-        "https://example.test/translation.txt",
+        "https://static.atlasacademy.io/translation-test.txt",
         lambda route: route.fulfill(
             body=SCRIPT,
             content_type="text/plain; charset=utf-8",
@@ -198,7 +198,7 @@ with sync_playwright() as playwright:
 
     page.route("**/translation-api**", translation_handler)
 
-    page.goto(BASE_URL, wait_until="networkidle", timeout=30000)
+    page.goto(BASE_URL, wait_until="domcontentloaded", timeout=30000)
     page.locator(".region-select select").select_option("JP")
     page.get_by_role("button", name="开始观测").click()
     page.locator(".reader-loading").wait_for(state="hidden", timeout=10000)
@@ -254,7 +254,9 @@ with sync_playwright() as playwright:
     page.get_by_text("前辈，早上好。", exact=True).wait_for(timeout=5000)
 
     page.keyboard.press("Space")
-    page.get_by_text("早上好", exact=True).wait_for(timeout=5000)
+    # Choice groups remain in one language; one missing manual entry makes the
+    # complete group use the Japanese source for this visit.
+    page.get_by_text("おはよう", exact=True).wait_for(timeout=5000)
     page.get_by_text("まだ眠い", exact=True).wait_for(timeout=5000)
     page.keyboard.press("1")
     page.get_by_text("今天也请多关照。", exact=True).wait_for(timeout=5000)

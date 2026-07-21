@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  chunkTranslationFrames,
   chunkTranslationUnits,
+  collectScriptTranslationFrameBatches,
+  createTranslationFrameBatchPlan,
   frameTranslationUnits,
-  nextTranslationPrefetchFrames,
   providerConfigFromSettings,
   providerIsReady,
   stableHash,
@@ -79,6 +81,71 @@ describe("translation units", () => {
 });
 
 describe("translation batching and readiness", () => {
+  it("groups story frames into five-step translation batches", () => {
+    const frames: StoryFrame[] = Array.from({ length: 12 }, (_, index) => ({
+      id: `frame-${index}`,
+      type: "dialogue" as const,
+      speaker: "Mash",
+      text: `line ${index}`,
+      scene: null,
+      bgm: null,
+      characters: [],
+      effect: "none" as const,
+      transition: "none" as const,
+    }));
+
+    expect(chunkTranslationFrames(frames).map((batch) => batch.length)).toEqual([5, 5, 2]);
+    expect(chunkTranslationFrames(frames).flat().map((frame) => frame.id))
+      .toEqual(frames.map((frame) => frame.id));
+  });
+
+  it("prioritizes nearby choice branches before route and background batches", () => {
+    const branch = (prefix: string): StoryFrame[] => Array.from({ length: 7 }, (_, index) => ({
+      id: `${prefix}-${index}`,
+      type: "dialogue" as const,
+      speaker: "Mash",
+      text: `${prefix} ${index}`,
+      scene: null,
+      bgm: null,
+      characters: [],
+      effect: "none" as const,
+      transition: "none" as const,
+    }));
+    const optionA = branch("option-a");
+    const optionB = branch("option-b");
+    const choice: StoryFrame = {
+      id: "choice-nearby",
+      type: "choice",
+      speaker: "CHOICE",
+      text: "choose",
+      scene: null,
+      bgm: null,
+      characters: [],
+      effect: "none",
+      transition: "none",
+      options: [
+        { label: "A", frames: optionA },
+        { label: "B", frames: optionB },
+      ],
+    };
+    const route = [
+      ...branch("route-head").slice(0, 2),
+      choice,
+      ...branch("route-tail"),
+    ];
+    const plan = createTranslationFrameBatchPlan(route, route, 0);
+
+    expect(plan[0]).toMatchObject({ priority: 0 });
+    expect(plan[0].frames).toHaveLength(5);
+    expect(plan.slice(1, 3).map((batch) => batch.frames[0]?.id)).toEqual([
+      "option-a-0",
+      "option-b-0",
+    ]);
+    expect(plan.slice(1, 3).every((batch) => batch.priority === 1)).toBe(true);
+    expect(collectScriptTranslationFrameBatches(route).map((batch) => batch.length))
+      .toEqual([5, 5, 5, 2, 5, 2]);
+  });
+
   it("chunks requests at 20 units without changing their order", () => {
     const units = Array.from({ length: 21 }, (_, index) => ({
       id: `unit-${index}`,
@@ -88,44 +155,6 @@ describe("translation batching and readiness", () => {
     const chunks = chunkTranslationUnits(units);
     expect(chunks.map((chunk) => chunk.length)).toEqual([20, 1]);
     expect(chunks.flat().map((unit) => unit.id)).toEqual(units.map((unit) => unit.id));
-  });
-
-  it("starts the next translation round only after the translated buffer drops below the threshold", () => {
-    const frames: StoryFrame[] = Array.from({ length: 18 }, (_, index) => ({
-      id: `frame-${index}`,
-      type: "dialogue" as const,
-      speaker: "マシュ",
-      text: `台詞 ${index}`,
-      scene: null,
-      bgm: null,
-      characters: [],
-      effect: "none" as const,
-      transition: "none" as const,
-    }));
-    const translatedFrames = frames.slice(0, 6);
-    const translations = Object.fromEntries(
-      translatedFrames.flatMap(frameTranslationUnits).map((unit) => [
-        unit.id,
-        {
-          sourceHash: translationUnitSourceHash(unit),
-          translatedText: `译：${unit.text}`,
-        },
-      ]),
-    );
-
-    expect(nextTranslationPrefetchFrames(frames, 0, translations)).toEqual([]);
-    expect(nextTranslationPrefetchFrames(frames, 1, translations).map((frame) => frame.id)).toEqual([
-      "frame-6",
-      "frame-7",
-      "frame-8",
-      "frame-9",
-      "frame-10",
-      "frame-11",
-      "frame-12",
-      "frame-13",
-      "frame-14",
-      "frame-15",
-    ]);
   });
 
   it("recognizes a manual local OpenAI-compatible configuration", () => {
