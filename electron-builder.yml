@@ -9,6 +9,7 @@ files:
   - desktop/**/*
   - server/**/*
   - shared/**/*
+  - third_party/fgogotran/**/*
   - server.mjs
   - package.json
   - "!node_modules/@capacitor/**/*"

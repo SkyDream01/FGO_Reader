@@ -1,6 +1,8 @@
 export type TranslationProvider = "deepl" | "openai" | "bing";
 export type TranslationKind = "speaker" | "dialogue" | "choice";
 
+export const TRANSLATION_QUALITY_VERSION: string;
+
 export interface TranslationItem {
   id: string;
   kind: TranslationKind;

@@ -1,4 +1,5 @@
 import type { StoryFrame } from "../types";
+import { TRANSLATION_QUALITY_VERSION } from "../../shared/translation-core.mjs";
 import { isAndroidNative } from "../platform/runtime";
 import {
   getNativeTranslationConfig,
@@ -239,15 +240,20 @@ export function translationForUnit(
 export function translationNamespace(
   settings: TranslationSettings,
   serverConfig: TranslationServerConfig | null,
+  qualityVersion = TRANSLATION_QUALITY_VERSION,
 ) {
   if (!settings.provider) return "unconfigured";
   const providerInfo = serverConfig?.providers.find((provider) => provider.id === settings.provider);
-  if (settings.provider === "bing") return providerInfo?.configurationId ?? "bing-edge-v1";
+  if (settings.provider === "bing") {
+    return providerInfo?.configurationId
+      ?? `bing-${stableHash(qualityVersion)}`;
+  }
   if (settings.provider === "deepl") {
     if (settings.deepl.authKey.trim() || settings.deepl.serverUrl.trim()) {
       return `client-${stableHash(JSON.stringify({
         provider: "deepl",
         serverUrl: settings.deepl.serverUrl.trim(),
+        qualityVersion,
       }))}`;
     }
   } else if (
@@ -261,9 +267,11 @@ export function translationNamespace(
       baseUrl: settings.openai.baseUrl.trim(),
       model: settings.openai.model.trim(),
       allowNoAuth: settings.openai.allowNoAuth,
+      qualityVersion,
     }))}`;
   }
-  return providerInfo?.configurationId ?? "server-unconfigured";
+  return providerInfo?.configurationId
+    ?? `server-unconfigured-${stableHash(qualityVersion)}`;
 }
 
 interface TranslationCacheEntry {

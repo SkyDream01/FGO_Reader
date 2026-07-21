@@ -94,12 +94,12 @@ describe("provider adapters", () => {
     const fetchImpl = vi.fn(async (_url, init) => {
       const request = JSON.parse(init.body);
       expect(request.model).toBe("local-model");
-      expect(request.messages[1].content).toContain("マシュ");
+      expect(request.messages[1].content).toContain("架空試験文");
       expect(init.headers.authorization).toBeUndefined();
       return new Response(JSON.stringify({
         choices: [{
           message: {
-            content: "```json\n{\"translations\":[{\"id\":\"speaker:1\",\"translatedText\":\"玛修\"}]}\n```",
+            content: "```json\n{\"translations\":[{\"id\":\"speaker:1\",\"translatedText\":\"虚构测试文本\"}]}\n```",
           },
         }],
       }), { status: 200, headers: { "content-type": "application/json" } });
@@ -112,7 +112,7 @@ describe("provider adapters", () => {
         allowNoAuth: true,
         configurationId: "test",
       },
-      [{ id: "speaker:1", kind: "speaker", text: "マシュ" }],
+      [{ id: "speaker:1", kind: "speaker", text: "架空試験文" }],
       {
         fetchImpl,
         timeoutMs: 1_000,
@@ -120,7 +120,8 @@ describe("provider adapters", () => {
         bingClient: { translate: vi.fn() },
       },
     );
-    expect(result.get("speaker:1")).toBe("玛修");
+    expect(result.get("speaker:1")).toBe("虚构测试文本");
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 });
 

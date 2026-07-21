@@ -9,6 +9,7 @@ import {
   providerIsReady,
   stableHash,
   translationForUnit,
+  translationNamespace,
   translationUnitSourceHash,
   type TranslationSettings,
 } from "./translation";
@@ -175,5 +176,12 @@ describe("translation batching and readiness", () => {
   it("produces stable non-secret cache identifiers", () => {
     expect(stableHash("same")).toBe(stableHash("same"));
     expect(stableHash("same")).not.toBe(stableHash("different"));
+  });
+
+  it("changes client cache namespaces when translation quality changes", () => {
+    expect(translationNamespace(settings, null, "quality-v1"))
+      .not.toBe(translationNamespace(settings, null, "quality-v2"));
+    expect(translationNamespace(settings, null, "quality-v1"))
+      .toBe(translationNamespace(settings, null, "quality-v1"));
   });
 });
