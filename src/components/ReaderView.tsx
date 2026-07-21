@@ -310,7 +310,6 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   const translation = useStoryTranslations({
     scriptId: story.scriptId,
     frames,
-    sourceFrames: baseFrames,
     frameIndex,
     eligible: remoteTranslationEligible && manualTranslation.resolved && !manualTranslation.active,
     settings: translationSettings,
@@ -1236,7 +1235,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                             : translation.currentPending
                           ? "TRANSLATING"
                           : currentDisplayTranslated
-                            ? "TRANSLATED"
+                            ? `已译未读 ${translation.translatedUnreadFrameCount} 帧`
                             : "SOURCE FALLBACK"}
                       </span>
                     )}
@@ -1250,8 +1249,8 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
               <div className="translation-note" onClick={(event) => event.stopPropagation()}>
                 <LoaderCircle className="spin" size={16} />
                 <span>
-                  正在准备译文 {translation.preparationReadyCount}/{translation.preparationTotal}，
-                  首批完成后即可阅读。
+                  正在翻译当前帧 {translation.preparationReadyCount}/{translation.preparationTotal}，
+                  完成后即可阅读；后台将持续预译后续 {translation.translatedUnreadFrameTarget} 帧。
                 </span>
               </div>
             )}

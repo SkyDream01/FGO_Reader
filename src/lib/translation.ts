@@ -91,7 +91,7 @@ const SETTINGS_KEY = "fgo-reader-translation-settings:v1";
 const CACHE_INDEX_KEY = "fgo-reader-translation-cache-index:v1";
 const CACHE_PREFIX = "fgo-reader-translation-cache:v1:";
 const CACHE_ENTRY_LIMIT = 12;
-export const TRANSLATION_FRAME_BATCH_SIZE = 5;
+export const TRANSLATION_AHEAD_FRAME_COUNT = 10;
 
 export const defaultTranslationSettings: TranslationSettings = {
   mode: "source",
@@ -387,24 +387,6 @@ export function chunkTranslationUnits(units: TranslationUnit[]) {
   return chunks;
 }
 
-export interface TranslationFrameBatchPlan {
-  key: string;
-  priority: 0 | 1 | 2 | 3;
-  frames: StoryFrame[];
-}
-
-export function chunkTranslationFrames(
-  frames: StoryFrame[],
-  batchSize = TRANSLATION_FRAME_BATCH_SIZE,
-) {
-  const normalizedSize = Math.max(1, Math.floor(batchSize));
-  const batches: StoryFrame[][] = [];
-  for (let index = 0; index < frames.length; index += normalizedSize) {
-    batches.push(frames.slice(index, index + normalizedSize));
-  }
-  return batches;
-}
-
 function translationFrameBatchKey(frames: StoryFrame[]) {
   return frames
     .flatMap(frameTranslationUnits)
@@ -412,57 +394,61 @@ function translationFrameBatchKey(frames: StoryFrame[]) {
     .join("|");
 }
 
-/** Groups the root story and every nested option branch into five-frame jobs. */
-export function collectScriptTranslationFrameBatches(
-  frames: StoryFrame[],
-  batchSize = TRANSLATION_FRAME_BATCH_SIZE,
-) {
-  const batches: StoryFrame[][] = [];
-  const visit = (branchFrames: StoryFrame[]) => {
-    batches.push(...chunkTranslationFrames(branchFrames, batchSize));
-    for (const frame of branchFrames) {
-      if (frame.type !== "choice") continue;
-      for (const option of frame.options) visit(option.frames);
-    }
-  };
-  visit(frames);
-  return batches;
+function mergeTranslationFrameStep(frameGroups: StoryFrame[][]) {
+  const frames = new Map<string, StoryFrame>();
+  for (const frame of frameGroups.flat()) {
+    const key = translationFrameBatchKey([frame]);
+    if (key && !frames.has(key)) frames.set(key, frame);
+  }
+  return [...frames.values()];
 }
 
 /**
- * Creates the scheduler order: current five frames, branches about to be
- * chosen, the next five frames, the active route, then every other branch.
+ * Expands a route into logical translation steps. A normal story frame takes
+ * one step. At an unresolved choice, every option advances by one frame in the
+ * same step; the shared continuation resumes after the longest option branch.
  */
-export function createTranslationFrameBatchPlan(
+function collectTranslationFrameSteps(
   frames: StoryFrame[],
-  sourceFrames: StoryFrame[],
   frameIndex: number,
-  batchSize = TRANSLATION_FRAME_BATCH_SIZE,
+  limit: number,
 ) {
-  const planned = new Map<string, TranslationFrameBatchPlan>();
-  const add = (batchFrames: StoryFrame[], priority: TranslationFrameBatchPlan["priority"]) => {
-    if (!batchFrames.length) return;
-    const key = translationFrameBatchKey(batchFrames);
-    if (!key || planned.has(key)) return;
-    planned.set(key, { key, priority, frames: batchFrames });
-  };
+  const steps: StoryFrame[][] = [];
+  for (let index = Math.max(0, frameIndex); index < frames.length && steps.length < limit; index += 1) {
+    const frame = frames[index];
+    steps.push([frame]);
+    if (frame.type !== "choice" || frame.selected !== undefined || !frame.options.length) continue;
 
-  const routeBatches = chunkTranslationFrames(frames.slice(frameIndex), batchSize);
-  add(routeBatches[0] ?? [], 0);
-
-  // If a choice is close enough to be in the current batch, prepare the first
-  // five frames of every branch before translating the linear continuation.
-  for (const frame of routeBatches[0] ?? []) {
-    if (frame.type !== "choice" || frame.selected !== undefined) continue;
-    for (const option of frame.options) {
-      add(option.frames.slice(0, batchSize), 1);
+    const branchLimit = limit - steps.length;
+    const branches = frame.options.map((option) => (
+      collectTranslationFrameSteps(option.frames, 0, branchLimit)
+    ));
+    const branchDepth = Math.min(
+      branchLimit,
+      branches.reduce((depth, branch) => Math.max(depth, branch.length), 0),
+    );
+    for (let depth = 0; depth < branchDepth; depth += 1) {
+      const branchStep = mergeTranslationFrameStep(
+        branches.map((branch) => branch[depth] ?? []),
+      );
+      if (branchStep.length) steps.push(branchStep);
     }
   }
+  return steps;
+}
 
-  add(routeBatches[1] ?? [], 1);
-  for (const batch of routeBatches.slice(2)) add(batch, 2);
-  for (const batch of collectScriptTranslationFrameBatches(sourceFrames, batchSize)) add(batch, 3);
-  return [...planned.values()];
+/** Returns the current frame plus up to ten logical unread frames. */
+export function createTranslationFrameLookahead(
+  frames: StoryFrame[],
+  frameIndex: number,
+  aheadFrameCount = TRANSLATION_AHEAD_FRAME_COUNT,
+) {
+  const normalizedAheadCount = Math.max(0, Math.floor(aheadFrameCount));
+  return collectTranslationFrameSteps(
+    frames,
+    frameIndex,
+    normalizedAheadCount + (frames[frameIndex] ? 1 : 0),
+  );
 }
 
 export async function fetchTranslationServerConfig(signal?: AbortSignal): Promise<TranslationServerConfig> {

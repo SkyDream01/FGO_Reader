@@ -1,9 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  chunkTranslationFrames,
   chunkTranslationUnits,
-  collectScriptTranslationFrameBatches,
-  createTranslationFrameBatchPlan,
+  createTranslationFrameLookahead,
   frameTranslationUnits,
   providerConfigFromSettings,
   providerIsReady,
@@ -82,7 +80,7 @@ describe("translation units", () => {
 });
 
 describe("translation batching and readiness", () => {
-  it("groups story frames into five-step translation batches", () => {
+  it("keeps ten logical unread frames after the current frame", () => {
     const frames: StoryFrame[] = Array.from({ length: 12 }, (_, index) => ({
       id: `frame-${index}`,
       type: "dialogue" as const,
@@ -95,12 +93,14 @@ describe("translation batching and readiness", () => {
       transition: "none" as const,
     }));
 
-    expect(chunkTranslationFrames(frames).map((batch) => batch.length)).toEqual([5, 5, 2]);
-    expect(chunkTranslationFrames(frames).flat().map((frame) => frame.id))
-      .toEqual(frames.map((frame) => frame.id));
+    const lookahead = createTranslationFrameLookahead(frames, 0);
+    expect(lookahead).toHaveLength(11);
+    expect(lookahead.every((step) => step.length === 1)).toBe(true);
+    expect(lookahead.flat().map((frame) => frame.id))
+      .toEqual(frames.slice(0, 11).map((frame) => frame.id));
   });
 
-  it("prioritizes nearby choice branches before route and background batches", () => {
+  it("counts every branch advancing one frame as one logical frame", () => {
     const branch = (prefix: string): StoryFrame[] => Array.from({ length: 7 }, (_, index) => ({
       id: `${prefix}-${index}`,
       type: "dialogue" as const,
@@ -134,17 +134,55 @@ describe("translation batching and readiness", () => {
       choice,
       ...branch("route-tail"),
     ];
-    const plan = createTranslationFrameBatchPlan(route, route, 0);
+    const lookahead = createTranslationFrameLookahead(route, 1, 6);
 
-    expect(plan[0]).toMatchObject({ priority: 0 });
-    expect(plan[0].frames).toHaveLength(5);
-    expect(plan.slice(1, 3).map((batch) => batch.frames[0]?.id)).toEqual([
-      "option-a-0",
-      "option-b-0",
+    expect(lookahead.map((step) => step.map((frame) => frame.id))).toEqual([
+      ["route-head-1"],
+      ["choice-nearby"],
+      ["option-a-0", "option-b-0"],
+      ["option-a-1", "option-b-1"],
+      ["option-a-2", "option-b-2"],
+      ["option-a-3", "option-b-3"],
+      ["option-a-4", "option-b-4"],
     ]);
-    expect(plan.slice(1, 3).every((batch) => batch.priority === 1)).toBe(true);
-    expect(collectScriptTranslationFrameBatches(route).map((batch) => batch.length))
-      .toEqual([5, 5, 5, 2, 5, 2]);
+  });
+
+  it("resumes the shared route after the longest choice branch", () => {
+    const line = (id: string): StoryFrame => ({
+      id,
+      type: "dialogue",
+      speaker: "Mash",
+      text: id,
+      scene: null,
+      bgm: null,
+      characters: [],
+      effect: "none",
+      transition: "none",
+    });
+    const choice: StoryFrame = {
+      id: "choice",
+      type: "choice",
+      speaker: "CHOICE",
+      text: "choose",
+      scene: null,
+      bgm: null,
+      characters: [],
+      effect: "none",
+      transition: "none",
+      options: [
+        { label: "A", frames: [line("a-0")] },
+        { label: "B", frames: [line("b-0"), line("b-1")] },
+      ],
+    };
+
+    expect(createTranslationFrameLookahead([choice, line("tail-0"), line("tail-1")], 0)
+      .map((step) => step.map((frame) => frame.id))).toEqual([
+      ["choice"],
+      ["a-0", "b-0"],
+      ["b-1"],
+      ["tail-0"],
+      ["tail-1"],
+    ]);
   });
 
   it("chunks requests at 20 units without changing their order", () => {
