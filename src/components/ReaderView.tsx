@@ -3,6 +3,7 @@ import {
   Bookmark,
   Check,
   ChevronDown,
+  ChevronLeft,
   ChevronUp,
   CircleAlert,
   Download,
@@ -41,7 +42,9 @@ import {
 } from "react";
 import {
   backgroundUrl,
+  characterTextureUrl,
   characterUrl,
+  getCharacterFigureMetadata,
   getScriptText,
   offlineDemoScript,
 } from "../data/atlas";
@@ -59,6 +62,11 @@ import {
   isCustomScriptUrl,
   loadCustomScriptByUrl,
 } from "../lib/customScripts";
+import {
+  resolveCharacterBaselineTop,
+  resolveCharacterBodyHeight,
+  resolveCharacterFaceRegion,
+} from "../lib/characterFigure";
 import {
   clearLastObservation,
   createLastObservation,
@@ -145,6 +153,127 @@ function loadSettings(): ReaderSettings {
   }
 }
 
+const FIGURE_CANVAS_SIZE = 1024;
+
+function loadBrowserImage(url: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`立绘资源读取失败：${url}`));
+    image.src = url;
+  });
+}
+
+function AtlasCharacterFigure({
+  character,
+  region,
+  mergedUrl,
+  onError,
+}: {
+  character: CharacterState;
+  region: StoryLaunch["region"];
+  mergedUrl: string;
+  onError: () => void;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [resources, setResources] = useState<{
+    merged: HTMLImageElement;
+    figureWidth: number;
+    figureHeight: number;
+    metadata: Awaited<ReturnType<typeof getCharacterFigureMetadata>>;
+  } | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setResources(null);
+    setReady(false);
+
+    Promise.all([
+      loadBrowserImage(mergedUrl),
+      loadBrowserImage(characterTextureUrl(region, character.id)).catch(() => null),
+      getCharacterFigureMetadata(region, character.id).catch(() => null),
+    ])
+      .then(([merged, texture, metadata]) => {
+        if (cancelled) return;
+        setResources({
+          merged,
+          figureWidth: texture?.naturalWidth || FIGURE_CANVAS_SIZE,
+          figureHeight: texture?.naturalHeight || FIGURE_CANVAS_SIZE,
+          metadata,
+        });
+      })
+      .catch(() => {
+        if (!cancelled) onError();
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [character.id, mergedUrl, region]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !resources) return;
+    const context = canvas.getContext("2d");
+    if (!context) {
+      onError();
+      return;
+    }
+
+    const { merged, figureWidth, figureHeight, metadata } = resources;
+    const figureLeft = (FIGURE_CANVAS_SIZE - figureWidth) / 2 + (metadata?.offsetX ?? 0);
+    const bodyHeight = resolveCharacterBodyHeight(figureHeight, metadata);
+    const figureTop = resolveCharacterBaselineTop(bodyHeight);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = "high";
+    context.drawImage(
+      merged,
+      0,
+      0,
+      figureWidth,
+      bodyHeight,
+      figureLeft,
+      figureTop,
+      figureWidth,
+      bodyHeight,
+    );
+
+    if (metadata) {
+      const face = resolveCharacterFaceRegion(character.face, figureHeight, metadata);
+      if (
+        face &&
+        face.sourceX + face.width <= merged.naturalWidth &&
+        face.sourceY + face.height <= merged.naturalHeight
+      ) {
+        context.drawImage(
+          merged,
+          face.sourceX,
+          face.sourceY,
+          face.width,
+          face.height,
+          figureLeft + metadata.faceX,
+          figureTop + metadata.faceY,
+          face.width,
+          face.height,
+        );
+      }
+    }
+    setReady(true);
+  }, [character.face, resources]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={FIGURE_CANVAS_SIZE}
+      height={FIGURE_CANVAS_SIZE}
+      className={ready ? "ready" : ""}
+      aria-label={character.name}
+    />
+  );
+}
+
 function CharacterSprite({
   character,
   region,
@@ -173,11 +302,11 @@ function CharacterSprite({
 
   return (
     <div
-      className={`character-sprite ${character.active ? "active" : "inactive"} ${character.silhouette ? "silhouette" : ""} ${wideAtlas ? "wide-atlas" : ""}`}
+      className={`character-sprite ${character.active ? "active" : "inactive"} ${character.silhouette ? "silhouette" : ""} ${usingLocalAsset && wideAtlas ? "wide-atlas" : ""}`}
       data-position={character.position}
       data-slot={character.slot}
     >
-      {!failed && url ? (
+      {!failed && url && usingLocalAsset ? (
         <img
           src={url}
           alt={character.name}
@@ -193,6 +322,13 @@ function CharacterSprite({
             setFailed(true);
           }}
           draggable={false}
+        />
+      ) : !failed && url ? (
+        <AtlasCharacterFigure
+          character={character}
+          region={region}
+          mergedUrl={url}
+          onError={() => setFailed(true)}
         />
       ) : failed ? (
         <div className="character-fallback" aria-label={`${character.name} 立绘不可用`}>
@@ -236,6 +372,7 @@ function ToggleButton({
 
 const shortcutRows = [
   ["Enter / Space / PageDown", "补全文字 / 下一句"],
+  ["←", "上一句"],
   ["A", "自动播放"],
   ["S", "跳过已读"],
   ["按住 Ctrl", "临时快进"],
@@ -293,6 +430,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   const toastTimer = useRef<number | null>(null);
   const manualTranslationInputRef = useRef<HTMLInputElement>(null);
   const revealContext = useRef({ frameId: "", mode: "source", translated: false });
+  const revealImmediatelyOnNavigation = useRef(false);
   const translationVisit = useRef({
     key: "",
     waitingForPreparation: false,
@@ -770,10 +908,12 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     const translationActivated = translatedMode && !previous.translated && currentDisplayTranslated;
     const showImmediately = currentFrame.type === "choice"
       || settings.reduceMotion
+      || revealImmediatelyOnNavigation.current
       || modeChanged
       || translationActivated
       || (translatedMode && !currentDisplayTranslated);
     setRevealedCount(showImmediately ? textCharacters.length : frameChanged ? 0 : textCharacters.length);
+    revealImmediatelyOnNavigation.current = false;
     revealContext.current = {
       frameId: currentFrame.id,
       mode: translationSettings.mode,
@@ -813,6 +953,19 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     setReadMax((current) => Math.max(current, frameIndex));
   }, [frameIndex]);
 
+  const goBack = useCallback(() => {
+    if (loading || (!completed && frameIndex <= 0)) return;
+    setAutoMode(false);
+    setSkipMode(false);
+    setUiHidden(false);
+    if (completed) {
+      setCompleted(false);
+      return;
+    }
+    revealImmediatelyOnNavigation.current = true;
+    setFrameIndex((index) => Math.max(0, index - 1));
+  }, [completed, frameIndex, loading]);
+
   const advance = useCallback(() => {
     if (!currentFrame || loading || translation.preparing) return;
     setAudioUnlocked(true);
@@ -820,7 +973,13 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
       setUiHidden(false);
       return;
     }
-    if (currentFrame.type === "choice") return;
+    if (currentFrame.type === "choice") {
+      if (currentFrame.selected === undefined) return;
+      markCurrentRead();
+      if (frameIndex < frames.length - 1) setFrameIndex((index) => index + 1);
+      else setCompleted(true);
+      return;
+    }
     if (!textComplete) {
       setRevealedCount(textCharacters.length);
       return;
@@ -1017,12 +1176,17 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
         }
         if (event.key === "Enter" || event.code === "Space") {
           event.preventDefault();
-          resolveChoice(choiceFocus);
+          if (currentFrame.selected !== undefined) advance();
+          else resolveChoice(choiceFocus);
           return;
         }
       }
 
       switch (event.code) {
+        case "ArrowLeft":
+          event.preventDefault();
+          goBack();
+          break;
         case "Enter":
         case "Space":
         case "PageDown":
@@ -1071,7 +1235,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
-  }, [advance, choiceFocus, currentFrame, panel, resolveChoice, saveBookmark, toggleFullscreen, toggleTranslation]);
+  }, [advance, choiceFocus, currentFrame, goBack, panel, resolveChoice, saveBookmark, toggleFullscreen, toggleTranslation]);
 
   useEffect(() => () => {
     if (toastTimer.current) window.clearTimeout(toastTimer.current);
@@ -1156,6 +1320,13 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                 </div>
               </div>
               <div className="reader-toolbar">
+                <ToggleButton
+                  label="后退"
+                  shortcut="←"
+                  icon={<ChevronLeft size={16} />}
+                  onClick={goBack}
+                  disabled={frameIndex === 0}
+                />
                 <ToggleButton label="记录" shortcut="L" icon={<MessageSquareText size={16} />} onClick={() => setPanel("log")} />
                 {japaneseStoryLoaded && (
                   <ToggleButton
@@ -1187,9 +1358,13 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                 {currentFrame.options.map((option, optionIndex) => (
                   <button
                     key={`${option.label}-${optionIndex}`}
-                    className={choiceFocus === optionIndex ? "focused" : ""}
+                    className={`${choiceFocus === optionIndex ? "focused" : ""} ${currentFrame.selected === optionIndex ? "selected" : ""}`}
+                    disabled={currentFrame.selected !== undefined && currentFrame.selected !== optionIndex}
                     onMouseEnter={() => setChoiceFocus(optionIndex)}
-                    onClick={() => resolveChoice(optionIndex)}
+                    onClick={() => {
+                      if (currentFrame.selected !== undefined) advance();
+                      else resolveChoice(optionIndex);
+                    }}
                   >
                     <kbd>{optionIndex + 1}</kbd>
                     <span>
@@ -1703,6 +1878,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
                 : "当前播放队列已结束。你可以重新播放这段记录，或返回目录选择其他剧情。"}
             </p>
             <div>
+              <button onClick={goBack}><ChevronLeft size={17} /> 返回最后一句</button>
               <button onClick={replay}><RotateCcw size={17} /> 重新播放</button>
               <button className={nextStory ? "" : "primary"} onClick={onExit}><ListMusic size={17} /> 返回目录</button>
               {nextStory && (

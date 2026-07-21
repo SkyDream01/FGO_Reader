@@ -100,7 +100,6 @@ export function useStoryTranslations({
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [currentError, setCurrentError] = useState<CurrentTranslationError | null>(null);
   const [activeBatchCount, setActiveBatchCount] = useState(0);
-  const [backgroundBatchActive, setBackgroundBatchActive] = useState(false);
   const [schedulerPaused, setSchedulerPaused] = useState(false);
   const [preparationFailed, setPreparationFailed] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
@@ -108,7 +107,6 @@ export function useStoryTranslations({
   const pendingRef = useRef(new Set<string>());
   const controllersRef = useRef(new Set<AbortController>());
   const generationRef = useRef(0);
-  const backgroundRunIdRef = useRef(0);
 
   const namespace = useMemo(
     () => translationNamespace(settings, serverConfig),
@@ -147,13 +145,11 @@ export function useStoryTranslations({
   }, [loadServerConfig]);
 
   const abortRequests = useCallback(() => {
-    backgroundRunIdRef.current += 1;
     for (const controller of controllersRef.current) controller.abort();
     controllersRef.current.clear();
     pendingRef.current.clear();
     setPendingIds(new Set());
     setActiveBatchCount(0);
-    setBackgroundBatchActive(false);
   }, []);
 
   useEffect(() => {
@@ -338,39 +334,26 @@ export function useStoryTranslations({
     if (
       !machineActive
       || schedulerPaused
-      || preparing
-      || backgroundBatchActive
       || activeBatchCount >= MAX_CONCURRENT_BATCHES
       || translatedMachineUnreadFrameCount >= unreadFrameRefillGoal
     ) return;
 
-    const firstIncompleteStep = aheadFrameSteps.find((step) => (
-      !step.every((frame) => frameHasTranslations(translationsRef.current, frame))
-    ));
-    const backgroundFrame = firstIncompleteStep?.find((frame) => (
-      uniqueFrameUnits(frame).some((unit) => (
-        !translationForUnit(translationsRef.current, unit)
-        && !pendingRef.current.has(unit.id)
-      ))
-    ));
+    const backgroundFrame = aheadFrameSteps
+      .flat()
+      .find((frame) => (
+        uniqueFrameUnits(frame).some((unit) => (
+          !translationForUnit(translationsRef.current, unit)
+          && !pendingRef.current.has(unit.id)
+        ))
+      ));
     if (!backgroundFrame) return;
 
-    const backgroundRunId = backgroundRunIdRef.current + 1;
-    backgroundRunIdRef.current = backgroundRunId;
-    setBackgroundBatchActive(true);
-    void translateFrame(backgroundFrame, false)
-      .finally(() => {
-        if (backgroundRunIdRef.current === backgroundRunId) {
-          setBackgroundBatchActive(false);
-        }
-      });
+    void translateFrame(backgroundFrame, false);
   }, [
     activeBatchCount,
-    backgroundBatchActive,
     aheadFrameSteps,
     machineActive,
     pendingIds,
-    preparing,
     retryNonce,
     schedulerPaused,
     translateFrame,
@@ -397,12 +380,14 @@ export function useStoryTranslations({
 
   const translatedSpeaker = useCallback((frame: StoryFrame) => {
     if (frame.type !== "dialogue") return undefined;
-    return translatedUnit(frameTranslationUnits(frame)[0]);
+    const unit = frameTranslationUnits(frame).find(({ kind }) => kind === "speaker");
+    return unit ? translatedUnit(unit) : undefined;
   }, [translatedUnit]);
 
   const translatedText = useCallback((frame: StoryFrame) => {
     if (frame.type !== "dialogue") return undefined;
-    return translatedUnit(frameTranslationUnits(frame)[1]);
+    const unit = frameTranslationUnits(frame).find(({ kind }) => kind === "dialogue");
+    return unit ? translatedUnit(unit) : undefined;
   }, [translatedUnit]);
 
   const translatedChoice = useCallback((frame: StoryFrame, optionIndex: number) => {

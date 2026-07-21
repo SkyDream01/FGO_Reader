@@ -22,6 +22,7 @@ interface CharacterDefinition {
 
 interface ParserState {
   scene: string | null;
+  scenePending: boolean;
   bgm: string | null;
   talkSlot: string | null;
   characters: Map<string, CharacterDefinition>;
@@ -78,7 +79,11 @@ function normalizeName(value: string) {
   return value.trim().replace(/^['\"]|['\"]$/g, "");
 }
 
-function applyCommand(commandText: string, state: ParserState) {
+function applyCommand(
+  commandText: string,
+  state: ParserState,
+  beforeSceneChange?: () => void,
+) {
   const command = commandText.trim();
   const lower = command.toLowerCase();
 
@@ -89,15 +94,15 @@ function applyCommand(commandText: string, state: ParserState) {
     return;
   }
 
-  match = command.match(/^charaSet\s+(\S+)\s+(-?\d+)\s+\S+\s+(.+)$/i);
+  match = command.match(/^charaSet\s+(\S+)\s+(-?\d+)\s+(-?\d+)\s+(.+)$/i);
   if (match) {
-    const [, slot, id, rawName] = match;
+    const [, slot, id, rawFace, rawName] = match;
     const name = normalizeName(rawName);
     state.characters.set(slot, {
       slot,
       id,
       name,
-      face: 0,
+      face: Number(rawFace),
       visible: false,
       onStage: true,
       position: "center",
@@ -172,6 +177,15 @@ function applyCommand(commandText: string, state: ParserState) {
     return;
   }
 
+  match = command.match(
+    /^charaSpecialEffect\s+(\S+)\s+(?:appearanceReverse|enemyErasure|flashErasure)(?:\s|$)/i,
+  );
+  if (match) {
+    const character = state.characters.get(match[1]);
+    if (character) character.visible = false;
+    return;
+  }
+
   if (/^(charaFadeoutAll|charaClearAll|charaHideAll)/i.test(command)) {
     for (const character of state.characters.values()) character.visible = false;
     return;
@@ -193,7 +207,9 @@ function applyCommand(commandText: string, state: ParserState) {
 
   match = command.match(/^scene\s+(\d+)/i);
   if (match) {
+    if (state.scene !== null && state.scene !== match[1]) beforeSceneChange?.();
     state.scene = match[1];
+    state.scenePending = true;
     return;
   }
 
@@ -227,9 +243,13 @@ function applyCommand(commandText: string, state: ParserState) {
   }
 }
 
-function applyCommandsFromLine(line: string, state: ParserState) {
+function applyCommandsFromLine(
+  line: string,
+  state: ParserState,
+  beforeSceneChange?: () => void,
+) {
   for (const match of line.matchAll(/\[([^\[\]]+)\]/g)) {
-    applyCommand(match[1], state);
+    applyCommand(match[1], state, beforeSceneChange);
   }
 }
 
@@ -248,11 +268,15 @@ export function cleanScriptText(value: string, masterName = "御主") {
     .trim();
 }
 
-function snapshotCharacters(state: ParserState, speaker: string): CharacterState[] {
+function snapshotCharacters(
+  state: ParserState,
+  speaker: string,
+  useTalkSlot = true,
+): CharacterState[] {
   const byName = [...state.characters.values()].find(
     (character) => character.name === speaker,
   );
-  const activeSlot = byName?.slot ?? state.talkSlot;
+  const activeSlot = byName?.slot ?? (useTalkSlot ? state.talkSlot : null);
 
   return [...state.characters.values()]
     .filter(
@@ -300,6 +324,24 @@ function parseBlock(
 ): { frames: StoryFrame[]; state: ParserState } {
   const frames: StoryFrame[] = [];
   let state = initialState;
+  const pushPendingSceneFrame = () => {
+    if (!state.scenePending || state.scene === null) return;
+    const presentation = consumePresentationState(state);
+    frames.push({
+      id: context.nextId(),
+      type: "dialogue",
+      speaker: "旁白",
+      text: "",
+      scene: state.scene,
+      bgm: state.bgm,
+      characters: snapshotCharacters(state, "", false),
+      ...presentation,
+    });
+    state.scenePending = false;
+  };
+  const applyLineCommands = (line: string) => {
+    applyCommandsFromLine(line, state, pushPendingSceneFrame);
+  };
 
   for (let index = 0; index < lines.length; index += 1) {
     const rawLine = lines[index];
@@ -307,6 +349,9 @@ function parseBlock(
     if (!trimmed) continue;
 
     if (isChoiceHeader(trimmed)) {
+      // The choice frame itself presents the current scene, so it does not
+      // need a separate empty frame before its branches are parsed.
+      state.scenePending = false;
       const branches: Array<{ label: string; lines: string[] }> = [];
       let cursor = index;
       let current: { label: string; lines: string[] } | null = null;
@@ -356,7 +401,7 @@ function parseBlock(
       continue;
     }
 
-    applyCommandsFromLine(rawLine, state);
+    applyLineCommands(rawLine);
 
     if (trimmed.startsWith("＠")) {
       const rawSpeaker = cleanScriptText(trimmed.slice(1), context.masterName) || "旁白";
@@ -369,29 +414,29 @@ function parseBlock(
 
       for (index += 1; index < lines.length; index += 1) {
         const dialogueLine = lines[index];
-        applyCommandsFromLine(dialogueLine, state);
+        applyLineCommands(dialogueLine);
         dialogueLines.push(dialogueLine);
         if (/\[(?:k|page)(?:\s+[^\]]+)?\]/i.test(dialogueLine)) break;
       }
 
       const text = cleanScriptText(dialogueLines.join("\n"), context.masterName);
-      if (text) {
-        const presentation = consumePresentationState(state);
-        frames.push({
-          id: context.nextId(),
-          type: "dialogue",
-          speaker,
-          text,
-          scene: state.scene,
-          bgm: state.bgm,
-          characters: snapshotCharacters(state, speaker),
-          ...presentation,
-        });
-      }
+      const presentation = consumePresentationState(state);
+      frames.push({
+        id: context.nextId(),
+        type: "dialogue",
+        speaker,
+        text,
+        scene: state.scene,
+        bgm: state.bgm,
+        characters: snapshotCharacters(state, speaker),
+        ...presentation,
+      });
+      state.scenePending = false;
       continue;
     }
   }
 
+  pushPendingSceneFrame();
   return { frames, state };
 }
 
@@ -407,6 +452,7 @@ export function parseFgoScript(
   };
   const initialState: ParserState = {
     scene: null,
+    scenePending: false,
     bgm: null,
     talkSlot: null,
     characters: new Map(),

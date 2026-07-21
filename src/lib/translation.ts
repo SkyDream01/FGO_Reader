@@ -213,17 +213,17 @@ export function frameTranslationUnits(frame: StoryFrame): TranslationUnit[] {
   }
   const speakerId = `speaker:${stableHash(frame.speaker)}`;
   return [
-    {
+    ...(frame.speaker.trim() ? [{
       id: speakerId,
-      kind: "speaker",
+      kind: "speaker" as const,
       text: frame.speaker,
-    },
-    {
+    }] : []),
+    ...(frame.text.trim() ? [{
       id: `${frame.id}:dialogue`,
-      kind: "dialogue",
+      kind: "dialogue" as const,
       speaker: frame.speaker,
       text: frame.text,
-    },
+    }] : []),
   ];
 }
 

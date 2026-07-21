@@ -47,6 +47,38 @@ describe("cleanScriptText", () => {
 });
 
 describe("parseFgoScript", () => {
+  it("keeps empty dialogue frames for images that have no dialogue", () => {
+    const script = `
+[charaSet A 1001001 1 玛修]
+[charaTalk A]
+[charaPut A 1]
+[scene 100]
+[fadein black 0.5]
+[scene 200]
+＠旁白
+第二张图片有正文。
+[k]
+[scene 300]
+＠旁白
+[k]
+[scene 400]
+[fadein white 0.5]
+`;
+
+    const parsed = parseFgoScript(script, "image-only-scenes");
+
+    expect(parsed.frames.map(({ scene, text }) => ({ scene, text }))).toEqual([
+      { scene: "100", text: "" },
+      { scene: "200", text: "第二张图片有正文。" },
+      { scene: "300", text: "" },
+      { scene: "400", text: "" },
+    ]);
+    expect(parsed.frames[0].characters).toEqual([
+      expect.objectContaining({ slot: "A", active: false }),
+    ]);
+    expect(parsed.sceneCount).toBe(4);
+  });
+
   it("keeps effect anchors, sub-camera slots and parked objects out of the character layer", () => {
     const script = `
 [charaSet S 98115000 1 エフェクト用]
@@ -97,6 +129,75 @@ describe("parseFgoScript", () => {
     }))).toEqual([
       { slot: "A", id: "1001001", position: "left" },
       { slot: "B", id: "1001001", position: "right" },
+    ]);
+  });
+
+  it("removes characters erased by charaSpecialEffect flashErasure", () => {
+    const script = `
+[charaSet D 1098273900 1 演出用_Ｅ－オルガマリー]
+[charaTalk D]
+[charaFadein D 0.1 1]
+＠Ｅ－オルガマリー
+消去前のセリフ。
+[k]
+[charaSpecialEffect D flashErasure 1 1.7]
+[wait charaSpecialEffect D]
+[charaSet B 1098257300 1 ダ・ヴィンチ]
+[charaTalk B]
+[charaFadein B 0.1 1]
+＠ダ・ヴィンチ
+消去後のセリフ。
+[k]
+`;
+
+    const parsed = parseFgoScript(script, "flash-erasure");
+
+    expect(parsed.frames[0].characters).toEqual([
+      expect.objectContaining({ slot: "D", face: 1, visible: true }),
+    ]);
+    expect(parsed.frames[1].characters).toEqual([
+      expect.objectContaining({ slot: "B", visible: true }),
+    ]);
+  });
+
+  it("removes animation stand-ins erased by appearanceReverse", () => {
+    const script = `
+[charaSet A 1098330800 7 マシュ]
+[charaSet C 8001900 21 マシュ]
+[charaSet E 1098341100 25 オルガマリー]
+[charaPut A 200,0]
+[charaSpecialEffect A appearanceReverse 1 0.25]
+[charaFadein C 0.5 250,-50]
+[charaFadein E 0.5 -175,-115]
+＠C：マシュ
+突然の乱入、失礼します！
+[k]
+`;
+
+    const parsed = parseFgoScript(script, "appearance-reverse");
+
+    expect(parsed.frames[0].characters.map(({ slot }) => slot)).toEqual(["C", "E"]);
+    expect(parsed.frames[0].characters).not.toContainEqual(
+      expect.objectContaining({ slot: "A" }),
+    );
+  });
+
+  it("removes enemies erased by enemyErasure", () => {
+    const script = `
+[charaSet A 1098154000 1 空想樹の種子]
+[charaSet B 8001900 1 マシュ]
+[charaPut A 1]
+[charaSpecialEffect A enemyErasure 1 1.7]
+[charaPut B 1]
+＠マシュ
+戦闘終了です。
+[k]
+`;
+
+    const parsed = parseFgoScript(script, "enemy-erasure");
+
+    expect(parsed.frames[0].characters).toEqual([
+      expect.objectContaining({ slot: "B", name: "マシュ" }),
     ]);
   });
 

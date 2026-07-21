@@ -64,6 +64,15 @@ describe("translation units", () => {
       "choice-1:choice:0",
       "choice-1:choice:1",
     ]);
+
+    expect(frameTranslationUnits({
+      ...dialogue,
+      id: "image-only-frame",
+      speaker: "旁白",
+      text: "",
+    })).toEqual([
+      expect.objectContaining({ kind: "speaker", text: "旁白" }),
+    ]);
   });
 
   it("invalidates cached translations when the source changes", () => {

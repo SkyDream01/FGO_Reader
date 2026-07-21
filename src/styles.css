@@ -1919,13 +1919,23 @@ html[data-runtime="android"] .custom-library-backdrop {
 .character-sprite[data-position="left"] { left: 27%; }
 .character-sprite[data-position="right"] { left: 73%; }
 
-.character-sprite img {
+.character-sprite img,
+.character-sprite canvas {
   width: 100%;
   height: 100%;
   clip-path: inset(0 0 25% 0);
   object-fit: contain;
   object-position: center bottom;
   filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.42));
+}
+
+.character-sprite canvas {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.character-sprite canvas.ready {
+  opacity: 1;
 }
 
 .character-sprite.wide-atlas img {
@@ -1943,7 +1953,8 @@ html[data-runtime="android"] .custom-library-backdrop {
   opacity: 0.82;
 }
 
-.character-sprite.silhouette img {
+.character-sprite.silhouette img,
+.character-sprite.silhouette canvas {
   filter: brightness(0) opacity(0.86) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.6));
 }
 
@@ -2327,6 +2338,16 @@ html[data-runtime="android"] .custom-library-backdrop {
   clip-path: polygon(0 0, 97% 0, 100% 50%, 97% 100%, 0 100%, 1.5% 50%);
   backdrop-filter: blur(8px);
   transition: 140ms ease;
+}
+
+.choice-menu button:disabled {
+  cursor: default;
+  opacity: 0.38;
+}
+
+.choice-menu button.selected {
+  border-color: rgba(198, 168, 101, 0.7);
+  background: rgba(84, 68, 31, 0.72);
 }
 
 .choice-menu button:hover,

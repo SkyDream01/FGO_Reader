@@ -13,6 +13,19 @@ const STATIC_ROOT = "https://static.atlasacademy.io";
 
 const basicWarCache = new Map<Region, Promise<BasicWar[]>>();
 const bgmCache = new Map<Region, Promise<BgmEntry[]>>();
+const characterFigureMetadataCache = new Map<string, Promise<CharacterFigureMetadata | null>>();
+
+export interface CharacterFigureMetadata {
+  id: number;
+  faceX: number;
+  faceY: number;
+  offsetX: number;
+  offsetY: number;
+  extendData: {
+    faceSize?: number;
+    faceSizeRect?: [number, number];
+  };
+}
 
 async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
   const response = await runtimeFetch(url, { signal });
@@ -103,7 +116,54 @@ export function backgroundUrl(region: Region, sceneId: string | null) {
 }
 
 export function characterUrl(region: Region, characterId: string) {
+  return `${STATIC_ROOT}/${region}/CharaFigure/${characterId}/${characterId}_merged.png`;
+}
+
+export function characterTextureUrl(region: Region, characterId: string) {
   return `${STATIC_ROOT}/${region}/CharaFigure/${characterId}/${characterId}.png`;
+}
+
+export function getCharacterFigureMetadata(region: Region, characterId: string) {
+  const key = `${region}:${characterId}`;
+  if (!characterFigureMetadataCache.has(key)) {
+    const request = fetchJson<unknown>(
+      `/atlas-api/raw/${region}/svtScript?charaId=${encodeURIComponent(characterId)}`,
+    )
+      .then((value) => {
+        if (!Array.isArray(value)) return null;
+        const record = value.find((item): item is Record<string, unknown> => (
+          typeof item === "object" && item !== null && String(item.id) === characterId
+        ));
+        if (!record) return null;
+        const extendData = typeof record.extendData === "object" && record.extendData !== null
+          ? record.extendData as Record<string, unknown>
+          : {};
+        const faceSizeRect = Array.isArray(extendData.faceSizeRect) &&
+          extendData.faceSizeRect.length >= 2 &&
+          extendData.faceSizeRect.every((entry) => typeof entry === "number")
+          ? [extendData.faceSizeRect[0], extendData.faceSizeRect[1]] as [number, number]
+          : undefined;
+        return {
+          id: Number(record.id),
+          faceX: typeof record.faceX === "number" ? record.faceX : 0,
+          faceY: typeof record.faceY === "number" ? record.faceY : 0,
+          offsetX: typeof record.offsetX === "number" ? record.offsetX : 0,
+          offsetY: typeof record.offsetY === "number" ? record.offsetY : 0,
+          extendData: {
+            ...(typeof extendData.faceSize === "number"
+              ? { faceSize: extendData.faceSize }
+              : {}),
+            ...(faceSizeRect ? { faceSizeRect } : {}),
+          },
+        } satisfies CharacterFigureMetadata;
+      })
+      .catch((error) => {
+        characterFigureMetadataCache.delete(key);
+        throw error;
+      });
+    characterFigureMetadataCache.set(key, request);
+  }
+  return characterFigureMetadataCache.get(key)!;
 }
 
 export function fallbackBgmUrl(region: Region, fileName: string) {
