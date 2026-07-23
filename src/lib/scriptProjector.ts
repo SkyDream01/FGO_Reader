@@ -24,8 +24,18 @@ interface CharacterDefinition {
   onStage: boolean;
   position: CharacterPosition;
   layer: "main" | "sub";
+  depth: number | null;
   effectOnly: boolean;
   silhouette: boolean;
+}
+
+interface SceneLayerDefinition {
+  slot: string;
+  visible: boolean;
+  onStage: boolean;
+  position: CharacterPosition;
+  layer: "main" | "sub";
+  depth: number | null;
 }
 
 interface ProjectionState {
@@ -35,6 +45,7 @@ interface ProjectionState {
   bgm: string | null;
   talkSlot: string | null;
   characters: Map<string, CharacterDefinition>;
+  sceneLayers: Map<string, SceneLayerDefinition>;
   nextEffect: FrameEffect;
   nextTransition: FrameTransition;
 }
@@ -81,6 +92,7 @@ function initialState(): ProjectionState {
     bgm: null,
     talkSlot: null,
     characters: new Map(),
+    sceneLayers: new Map(),
     nextEffect: "none",
     nextTransition: "none",
   };
@@ -92,6 +104,9 @@ function cloneState(state: ProjectionState): ProjectionState {
     sceneAnchor: state.sceneAnchor ? { ...state.sceneAnchor } : null,
     characters: new Map(
       [...state.characters].map(([slot, character]) => [slot, { ...character }]),
+    ),
+    sceneLayers: new Map(
+      [...state.sceneLayers].map(([slot, layer]) => [slot, { ...layer }]),
     ),
   };
 }
@@ -225,6 +240,17 @@ function snapshotCharacters(
       : uniqueByName.length === 1
         ? uniqueByName[0].slot
         : null;
+  const occludingDepths = [...state.sceneLayers.values()]
+    .filter((layer) => (
+      layer.visible
+      && layer.onStage
+      && layer.layer === "main"
+      && layer.depth !== null
+    ))
+    .map((layer) => layer.depth as number);
+  const occludingDepth = occludingDepths.length
+    ? Math.max(...occludingDepths)
+    : null;
 
   return [...state.characters.values()]
     .filter(
@@ -232,7 +258,8 @@ function snapshotCharacters(
         character.visible
         && character.onStage
         && character.layer === "main"
-        && !character.effectOnly,
+        && !character.effectOnly
+        && (occludingDepth === null || (character.depth ?? 0) > occludingDepth),
     )
     .map((character) => ({
       slot: character.slot,
@@ -324,11 +351,19 @@ function requireArgs(
   return false;
 }
 
-function applyPlacement(character: CharacterDefinition, token?: string, visible?: boolean) {
+function applyPlacement(
+  target: CharacterDefinition | SceneLayerDefinition,
+  token?: string,
+  visible?: boolean,
+) {
   const placement = placementFromToken(token);
-  character.position = placement.position;
-  character.onStage = placement.onStage;
-  if (visible !== undefined) character.visible = visible;
+  target.position = placement.position;
+  target.onStage = placement.onStage;
+  if (visible !== undefined) target.visible = visible;
+}
+
+function getStageSlot(state: ProjectionState, slot: string) {
+  return state.characters.get(slot) ?? state.sceneLayers.get(slot);
 }
 
 function applyCommand(
@@ -340,8 +375,26 @@ function applyCommand(
   const name = command.normalizedName;
   const args = command.args;
 
-  if (["imageset", "verticalimageset", "horizontalimageset", "equipset", "sceneset"].includes(name)) {
-    if (args[0]) state.characters.delete(args[0]);
+  if (name === "sceneset") {
+    if (!args[0]) return;
+    const slot = args[0];
+    state.characters.delete(slot);
+    state.sceneLayers.set(slot, {
+      slot,
+      visible: false,
+      onStage: true,
+      position: "center",
+      layer: "main",
+      depth: null,
+    });
+    return;
+  }
+
+  if (["imageset", "verticalimageset", "horizontalimageset", "equipset"].includes(name)) {
+    if (args[0]) {
+      state.characters.delete(args[0]);
+      state.sceneLayers.delete(args[0]);
+    }
     return;
   }
 
@@ -354,6 +407,7 @@ function applyCommand(
       addDiagnostic(context, command, "invalid_character_face", "角色表情编号无效");
       return;
     }
+    state.sceneLayers.delete(slot);
     state.characters.set(slot, {
       slot,
       id,
@@ -363,6 +417,7 @@ function applyCommand(
       onStage: true,
       position: "center",
       layer: "main",
+      depth: null,
       effectOnly: isEffectOnlyCharacter(id, characterName),
       silhouette: false,
     });
@@ -375,6 +430,7 @@ function applyCommand(
     const face = Number.parseInt(rawFace, 10);
     const current = state.characters.get(slot);
     const characterName = current?.name ?? "";
+    state.sceneLayers.delete(slot);
     state.characters.set(slot, {
       slot,
       id,
@@ -384,6 +440,7 @@ function applyCommand(
       onStage: current?.onStage ?? true,
       position: current?.position ?? "center",
       layer: current?.layer ?? "main",
+      depth: current?.depth ?? null,
       effectOnly: isEffectOnlyCharacter(id, characterName),
       silhouette: current?.silhouette ?? false,
     });
@@ -413,47 +470,56 @@ function applyCommand(
 
   if (name === "charalayer") {
     if (!requireArgs(command, 2, context)) return;
-    const character = state.characters.get(args[0]);
-    if (character) character.layer = args[1].toLowerCase().startsWith("sub") ? "sub" : "main";
+    const target = getStageSlot(state, args[0]);
+    if (target) target.layer = args[1].toLowerCase().startsWith("sub") ? "sub" : "main";
+    return;
+  }
+
+  if (name === "charadepth") {
+    if (!requireArgs(command, 2, context)) return;
+    const target = getStageSlot(state, args[0]);
+    const depth = Number.parseFloat(args[1]);
+    if (target && Number.isFinite(depth)) target.depth = depth;
     return;
   }
 
   if (name.startsWith("charafadein")) {
     if (!requireArgs(command, 1, context)) return;
-    const character = state.characters.get(args[0]);
-    if (character) applyPlacement(character, args[2], true);
+    const target = getStageSlot(state, args[0]);
+    if (target) applyPlacement(target, args[2], true);
     return;
   }
 
   if (name === "charaput" || name === "charaputfsr" || name === "charaputfsl") {
     if (!requireArgs(command, 1, context)) return;
-    const character = state.characters.get(args[0]);
-    if (character) applyPlacement(character, args[1], true);
+    const target = getStageSlot(state, args[0]);
+    if (target) applyPlacement(target, args[1], true);
     return;
   }
 
   if (name.startsWith("charamove")) {
     if (!requireArgs(command, 1, context)) return;
-    const character = state.characters.get(args[0]);
-    if (character && args[1]) applyPlacement(character, args[1]);
+    const target = getStageSlot(state, args[0]);
+    if (target && args[1]) applyPlacement(target, args[1]);
     if (name.includes("return")) state.nextEffect = "shake";
     return;
   }
 
   if (["charafadeoutall", "characlearall", "charahideall"].includes(name)) {
     for (const character of state.characters.values()) character.visible = false;
+    for (const layer of state.sceneLayers.values()) layer.visible = false;
     return;
   }
 
   if (name.startsWith("charafadeout")) {
-    const character = state.characters.get(args[0]);
-    if (character) character.visible = false;
+    const target = getStageSlot(state, args[0]);
+    if (target) target.visible = false;
     return;
   }
 
   if (["characlear", "charahide", "charadelete"].includes(name)) {
-    const character = state.characters.get(args[0]);
-    if (character) character.visible = false;
+    const target = getStageSlot(state, args[0]);
+    if (target) target.visible = false;
     return;
   }
 
@@ -534,8 +600,22 @@ function characterEquals(
     && left.onStage === right.onStage
     && left.position === right.position
     && left.layer === right.layer
+    && left.depth === right.depth
     && left.effectOnly === right.effectOnly
     && left.silhouette === right.silhouette;
+}
+
+function sceneLayerEquals(
+  left: SceneLayerDefinition | undefined,
+  right: SceneLayerDefinition | undefined,
+) {
+  if (!left || !right) return left === right;
+  return left.slot === right.slot
+    && left.visible === right.visible
+    && left.onStage === right.onStage
+    && left.position === right.position
+    && left.layer === right.layer
+    && left.depth === right.depth;
 }
 
 function mergeChoiceStates(
@@ -563,6 +643,20 @@ function mergeChoiceStates(
     if (branches.every((branch) => characterEquals(branch.characters.get(slot), first))) {
       if (first) result.characters.set(slot, { ...first });
       else result.characters.delete(slot);
+    } else {
+      divergent = true;
+    }
+  }
+
+  const sceneLayerSlots = new Set([
+    ...base.sceneLayers.keys(),
+    ...branches.flatMap((branch) => [...branch.sceneLayers.keys()]),
+  ]);
+  for (const slot of sceneLayerSlots) {
+    const first = branches[0].sceneLayers.get(slot);
+    if (branches.every((branch) => sceneLayerEquals(branch.sceneLayers.get(slot), first))) {
+      if (first) result.sceneLayers.set(slot, { ...first });
+      else result.sceneLayers.delete(slot);
     } else {
       divergent = true;
     }

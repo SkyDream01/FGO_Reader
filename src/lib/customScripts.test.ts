@@ -208,6 +208,15 @@ describe("custom script package parser", () => {
       sceneCount: 2,
       bgmCount: 2,
     });
+
+    const sharedContinuation = await parseCustomScriptArchive(storedZip({
+      "manifest.json": manifest(),
+      "story.txt": "？1：Continue\n？！\n＠旁白\nShared continuation[k]",
+    }));
+    expect(sharedContinuation.parsedScript.frames[0]).toMatchObject({
+      type: "choice",
+      options: [{ label: "Continue", frames: [] }],
+    });
   });
 });
 

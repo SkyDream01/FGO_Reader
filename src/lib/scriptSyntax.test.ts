@@ -60,7 +60,10 @@ describe("script syntax", () => {
       });
     }
     expect(document.diagnostics.map((diagnostic) => diagnostic.code)).toEqual(
-      expect.arrayContaining(["nested_choice", "empty_choice_option", "unclosed_bracket"]),
+      expect.arrayContaining(["nested_choice", "unclosed_bracket"]),
     );
+    expect(document.diagnostics).not.toContainEqual(expect.objectContaining({
+      code: "empty_choice_option",
+    }));
   });
 });

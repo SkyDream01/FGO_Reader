@@ -132,6 +132,33 @@ describe("parseFgoScript", () => {
     ]);
   });
 
+  it("hides characters behind visible scene layers by depth", () => {
+    const script = `
+[charaSet B 1098341100 1 オルガマリー]
+[charaSet D 1098341100 3 オルガマリー]
+[sceneSet J 269400 1]
+[charaDepth D 6]
+[charaDepth J 4]
+[charaDepth B 2]
+[charaFadein D 0.4 -250,0]
+[charaFadein J 0.4 -150,-300]
+[charaFadein B 0.1 1]
+＠D：オルガマリー
+前景の立ち絵だけを表示する。
+[k]
+[charaFadeout D 0.4]
+[charaFadeout J 0.4]
+＠B：オルガマリー
+背景レイヤーの退場後に表示する。
+[k]
+`;
+
+    const parsed = parseFgoScript(script, "scene-layer-depth");
+
+    expect(parsed.frames[0].characters.map(({ slot }) => slot)).toEqual(["D"]);
+    expect(parsed.frames[1].characters.map(({ slot }) => slot)).toEqual(["B"]);
+  });
+
   it("removes characters erased by charaSpecialEffect flashErasure", () => {
     const script = `
 [charaSet D 1098273900 1 演出用_Ｅ－オルガマリー]
@@ -273,6 +300,32 @@ describe("parseFgoScript", () => {
         "source-id@v2:d:7:1:0",
       ]);
     }
+  });
+
+  it("allows a choice with no branch-specific frames before shared continuation", () => {
+    const parsed = parseFgoScript([
+      "[wt 1.5]",
+      "？1：[line 3]消えてしまった[line 3]",
+      "",
+      "？！",
+      "",
+      "＠旁白",
+      "Shared continuation[k]",
+    ].join("\n"), "empty-choice-result");
+
+    expect(parsed.diagnostics).not.toContainEqual(expect.objectContaining({
+      severity: "error",
+    }));
+    expect(parsed.frames).toHaveLength(2);
+    const choice = parsed.frames[0];
+    expect(choice.type).toBe("choice");
+    if (choice.type === "choice") {
+      expect(choice.options).toEqual([{
+        label: "——消えてしまった——",
+        frames: [],
+      }]);
+    }
+    expect(parsed.frames[1]).toMatchObject({ text: "Shared continuation" });
   });
 
   it("uses the complete numeric placement table and an explicit speaker slot", () => {

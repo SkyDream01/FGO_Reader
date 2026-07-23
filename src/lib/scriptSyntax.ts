@@ -735,15 +735,6 @@ function parseSequence(records: LineRecord[], context: SyntaxContext): ScriptNod
             column: header.column,
           });
         }
-        if (!bodyRecords.some((line) => line.content.trim())) {
-          context.diagnostics.add({
-            severity: "error",
-            code: "empty_choice_option",
-            message: "选项分支不能为空",
-            line: headerRecord.line,
-            column: header.column,
-          });
-        }
         const optionEnd = bodyRecords.at(-1) ?? headerRecord;
         options.push({
           id: header.id,
