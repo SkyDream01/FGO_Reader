@@ -82,8 +82,10 @@ with sync_playwright() as playwright:
         "localStorage.clear();"
         "localStorage.setItem('fgo-reader-settings', JSON.stringify({reduceMotion:true}));"
     )
-    page.goto(BASE_URL, wait_until="domcontentloaded", timeout=30000)
+    page.goto(BASE_URL, wait_until="commit", timeout=30000)
     page.get_by_role("button", name="导入 ZIP 资源包").wait_for(timeout=30000)
+    # Ignore unrelated library artwork requested before the local story opens.
+    atlas_asset_requests.clear()
 
     page.locator("input[type=file]").set_input_files(
         {
@@ -99,7 +101,8 @@ with sync_playwright() as playwright:
     assert page.get_by_label("允许此脚本使用翻译服务").is_checked()
     page.get_by_role("button", name="导入并开始观测").click()
 
-    page.locator(".reader-loading").wait_for(state="hidden", timeout=15000)
+    loader = page.locator(".reader-loading")
+    loader.wait_for(state="hidden", timeout=15000)
     page.get_by_text("本地资源已经载入。", exact=True).wait_for(timeout=10000)
     assert page.locator(".scene-image").get_attribute("src").startswith("blob:")
     assert page.locator(".character-sprite img").get_attribute("src").startswith("blob:")

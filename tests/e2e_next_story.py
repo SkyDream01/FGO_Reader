@@ -87,10 +87,25 @@ with sync_playwright() as playwright:
             headers={"access-control-allow-origin": "*"},
         ),
     )
+    page.route(
+        "**/atlas-api/nice/CN/script/1000000001",
+        lambda route: route.fulfill(
+            body="＠测试终端\n第一段剧情结束。[k]",
+            content_type="text/plain; charset=utf-8",
+        ),
+    )
+    page.route(
+        "**/atlas-api/nice/CN/script/1000000002",
+        lambda route: route.fulfill(
+            body="＠测试终端\n第二段剧情开始。[k]",
+            content_type="text/plain; charset=utf-8",
+        ),
+    )
 
     page.goto(BASE_URL, wait_until="networkidle", timeout=30000)
     page.get_by_role("button", name="开始观测").click()
-    page.locator(".reader-loading").wait_for(state="hidden", timeout=10000)
+    loader = page.locator(".reader-loading")
+    loader.wait_for(state="hidden", timeout=10000)
     page.locator(".dialogue-box").wait_for(timeout=5000)
 
     page.keyboard.press("Space")
@@ -99,7 +114,7 @@ with sync_playwright() as playwright:
     assert "连续观测记录" in page.locator(".completion-panel p").text_content()
 
     next_button.click()
-    page.locator(".reader-loading").wait_for(state="hidden", timeout=10000)
+    loader.wait_for(state="hidden", timeout=10000)
     page.locator(".dialogue-box").wait_for(timeout=5000)
     assert page.locator(".dialogue-text").text_content() == "第二段剧情开始。"
     assert page.locator(".dialogue-meta span").first.text_content() == "LOG 001"
@@ -108,8 +123,8 @@ with sync_playwright() as playwright:
         "Object.keys(localStorage).filter(key => key.startsWith('fgo-reader-progress:')).sort()"
     )
     assert progress_keys == [
-        "fgo-reader-progress:1000000001",
-        "fgo-reader-progress:1000000002",
+        "fgo-reader-progress:v2:1000000001",
+        "fgo-reader-progress:v2:1000000002",
     ]
 
     page.keyboard.press("Space")

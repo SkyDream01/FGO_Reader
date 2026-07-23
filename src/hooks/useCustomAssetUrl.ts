@@ -4,6 +4,7 @@ import { getCustomScriptAssetBlob } from "../lib/customScripts";
 interface UseCustomAssetUrlOptions {
   packageId?: string | null;
   assetPath?: string | null;
+  preloadedUrl?: string | null;
   fallbackUrl: string;
 }
 
@@ -20,6 +21,7 @@ interface LocalAssetUrl {
 export function useCustomAssetUrl({
   packageId = null,
   assetPath = null,
+  preloadedUrl = null,
   fallbackUrl,
 }: UseCustomAssetUrlOptions) {
   const assetKey = useMemo(
@@ -34,7 +36,7 @@ export function useCustomAssetUrl({
     let cancelled = false;
     let objectUrl = "";
 
-    if (!assetKey || !packageId || !assetPath) return undefined;
+    if (!assetKey || !packageId || !assetPath || preloadedUrl) return undefined;
 
     getCustomScriptAssetBlob(packageId, assetPath)
       .then((blob) => {
@@ -54,9 +56,9 @@ export function useCustomAssetUrl({
       cancelled = true;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [assetKey, assetPath, packageId]);
+  }, [assetKey, assetPath, packageId, preloadedUrl]);
 
-  const localUrl = localAsset.key === assetKey ? localAsset.url : "";
+  const localUrl = preloadedUrl || (localAsset.key === assetKey ? localAsset.url : "");
   const preferFallback = fallbackAssetKey === assetKey;
   const localReadFailed = failedAssetKey === assetKey;
   const usingLocalAsset = Boolean(localUrl && !preferFallback);

@@ -45,8 +45,6 @@ import {
   characterTextureUrl,
   characterUrl,
   getCharacterFigureMetadata,
-  getScriptText,
-  offlineDemoScript,
 } from "../data/atlas";
 import { useBgm } from "../hooks/useBgm";
 import { useCustomAssetUrl } from "../hooks/useCustomAssetUrl";
@@ -55,13 +53,7 @@ import { useStoryTranslations } from "../hooks/useStoryTranslations";
 import {
   addChoiceDecision,
   clearChoiceTrail,
-  replayChoiceTrail,
-  validateChoiceTrail,
 } from "../lib/choiceTrail";
-import {
-  isCustomScriptUrl,
-  loadCustomScriptByUrl,
-} from "../lib/customScripts";
 import {
   resolveCharacterBaselineTop,
   resolveCharacterBodyHeight,
@@ -72,13 +64,16 @@ import {
   createLastObservation,
   saveLastObservation,
 } from "../lib/lastObservation";
-import { parseFgoScript } from "../lib/scriptParser";
 import {
   BOOKMARK_STORAGE_KEY,
   choiceTrailStorageKey,
   progressStorageKey,
   readProgressStorageKey,
 } from "../lib/scriptParserVersion";
+import type {
+  PreparedCustomPackage,
+  PreparedStory,
+} from "../lib/storyPreparation";
 import {
   MANUAL_TRANSLATION_MAX_BYTES,
   ManualTranslationError,
@@ -109,6 +104,7 @@ import type {
 
 interface ReaderViewProps {
   story: StoryLaunch;
+  prepared: PreparedStory;
   nextStory: StoryLaunch | null;
   onNext: () => void;
   onExit: () => void;
@@ -124,61 +120,6 @@ const defaultSettings: ReaderSettings = {
   reduceMotion: false,
   masterName: "御主",
 };
-
-interface CustomPackageContext {
-  id: string;
-  scriptText: string;
-  translationAllowed: boolean;
-  assets?: {
-    backgrounds?: Record<string, string>;
-    characters?: Record<string, string>;
-    bgm?: Record<string, string>;
-  };
-}
-
-class StoryScriptParseError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "StoryScriptParseError";
-  }
-}
-
-function parsePlayableStory(
-  source: string,
-  story: Pick<StoryLaunch, "scriptId" | "region">,
-  masterName: string,
-) {
-  let parsed: ReturnType<typeof parseFgoScript>;
-  try {
-    parsed = parseFgoScript(source, story.scriptId, {
-      region: story.region,
-      masterName,
-    });
-  } catch (reason) {
-    throw new StoryScriptParseError(
-      reason instanceof Error ? reason.message : "解析器发生未知错误",
-    );
-  }
-  const fatal = parsed.diagnostics.find((diagnostic) => diagnostic.severity === "error");
-  if (fatal) {
-    throw new StoryScriptParseError(
-      `第 ${fatal.line} 行第 ${fatal.column} 列：${fatal.message}`,
-    );
-  }
-  if (!parsed.frames.length) throw new StoryScriptParseError("脚本中没有可播放的对话");
-  return parsed;
-}
-
-function loadStoredChoiceTrail(scriptId: string): ChoiceTrail {
-  try {
-    const value: unknown = JSON.parse(
-      localStorage.getItem(choiceTrailStorageKey(scriptId)) || "[]",
-    );
-    return validateChoiceTrail(value) ? value : [];
-  } catch {
-    return [];
-  }
-}
 
 function loadSettings(): ReaderSettings {
   try {
@@ -317,7 +258,7 @@ function CharacterSprite({
 }: {
   character: CharacterState;
   region: StoryLaunch["region"];
-  customPackage: CustomPackageContext | null;
+  customPackage: PreparedCustomPackage | null;
 }) {
   const [failed, setFailed] = useState(false);
   const [wideAtlas, setWideAtlas] = useState(false);
@@ -329,6 +270,7 @@ function CharacterSprite({
   } = useCustomAssetUrl({
     packageId: customPackage?.id,
     assetPath: customPackage?.assets?.characters?.[character.id],
+    preloadedUrl: customPackage?.assetUrls.characters[character.id],
     fallbackUrl,
   });
 
@@ -423,21 +365,29 @@ const shortcutRows = [
   ["Esc", "关闭当前面板"],
 ];
 
-export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps) {
+export function ReaderView({
+  story,
+  prepared,
+  nextStory,
+  onNext,
+  onExit,
+}: ReaderViewProps) {
   const [settings, setSettings] = useState<ReaderSettings>(loadSettings);
   const [translationSettings, setTranslationSettings] = useState<TranslationSettings>(loadTranslationSettings);
   const [translationDraft, setTranslationDraft] = useState<TranslationSettings>(loadTranslationSettings);
-  const [frames, setFrames] = useState<StoryFrame[]>([]);
-  const [baseFrames, setBaseFrames] = useState<StoryFrame[]>([]);
-  const [choiceTrail, setChoiceTrail] = useState<ChoiceTrail>(() =>
-    story.choiceTrail ?? loadStoredChoiceTrail(story.scriptId),
-  );
-  const [customPackage, setCustomPackage] = useState<CustomPackageContext | null>(null);
-  const [frameIndex, setFrameIndex] = useState(0);
-  const [revealedCount, setRevealedCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadNote, setLoadNote] = useState("");
-  const [loadError, setLoadError] = useState("");
+  const [frames, setFrames] = useState<StoryFrame[]>(prepared.frames);
+  const baseFrames = prepared.baseFrames;
+  const [choiceTrail, setChoiceTrail] = useState<ChoiceTrail>(prepared.choiceTrail);
+  const customPackage = prepared.customPackage;
+  const [frameIndex, setFrameIndex] = useState(prepared.startIndex);
+  const [revealedCount, setRevealedCount] = useState(() => {
+    const initialFrame = prepared.frames[prepared.startIndex];
+    return settings.reduceMotion && initialFrame?.type === "dialogue"
+      ? Array.from(initialFrame.text).length
+      : 0;
+  });
+  const loading = false;
+  const loadNote = prepared.loadNote;
   const [panel, setPanel] = useState<Panel>("none");
   const [autoMode, setAutoMode] = useState(false);
   const [skipMode, setSkipMode] = useState(false);
@@ -450,9 +400,9 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   const [completed, setCompleted] = useState(false);
   const [toast, setToast] = useState("");
   const [backgroundFailed, setBackgroundFailed] = useState(false);
-  const [japaneseStoryLoaded, setJapaneseStoryLoaded] = useState(false);
-  const [remoteTranslationEligible, setRemoteTranslationEligible] = useState(false);
-  const [loadedMasterName, setLoadedMasterName] = useState(settings.masterName);
+  const japaneseStoryLoaded = prepared.japaneseStoryLoaded;
+  const remoteTranslationEligible = prepared.remoteTranslationEligible;
+  const [loadedMasterName] = useState(settings.masterName);
   const [openAiDraftDirty, setOpenAiDraftDirty] = useState(false);
   const [clearOpenAiApiKey, setClearOpenAiApiKey] = useState(false);
   const [translationConfigSaving, setTranslationConfigSaving] = useState(false);
@@ -558,6 +508,9 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     assetPath: currentFrame?.scene
       ? customPackage?.assets?.backgrounds?.[currentFrame.scene]
       : undefined,
+    preloadedUrl: currentFrame?.scene
+      ? customPackage?.assetUrls.backgrounds[currentFrame.scene]
+      : undefined,
     fallbackUrl: backgroundFallbackUrl,
   });
   const {
@@ -568,6 +521,9 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
     packageId: customPackage?.id,
     assetPath: currentFrame?.bgm
       ? customPackage?.assets?.bgm?.[currentFrame.bgm]
+      : undefined,
+    preloadedUrl: currentFrame?.bgm
+      ? customPackage?.assetUrls.bgm[currentFrame.bgm]
       : undefined,
     fallbackUrl: "",
   });
@@ -856,86 +812,6 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
       createLastObservation({ ...story, choiceTrail }, frameIndex),
     );
   }, [choiceTrail, completed, frameIndex, frames.length, nextStory, story]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const customSource = isCustomScriptUrl(story.scriptUrl);
-    const scriptMasterName = settings.masterName;
-    setLoading(true);
-    setLoadNote("");
-    setLoadError("");
-    setFrames([]);
-    setBaseFrames([]);
-    setCompleted(false);
-    setJapaneseStoryLoaded(false);
-    setRemoteTranslationEligible(false);
-    setLoadedMasterName(scriptMasterName);
-    setCustomPackage(null);
-
-    const sourcePromise = customSource
-      ? loadCustomScriptByUrl(story.scriptUrl).then((record) => {
-          if (!record) throw new Error("本地资源包已不存在或已被删除");
-          setCustomPackage(record);
-          return { source: record.scriptText, record };
-        })
-      : getScriptText(story.scriptUrl, controller.signal, story.region, story.scriptId)
-          .then((source) => ({ source, record: null }));
-
-    sourcePromise
-      .then(({ source, record }) => {
-        const parsed = parsePlayableStory(source, story, scriptMasterName);
-        const restoredTrail = story.choiceTrail ?? loadStoredChoiceTrail(story.scriptId);
-        const replayed = replayChoiceTrail(parsed.frames, restoredTrail);
-        const savedProgress = Number(localStorage.getItem(progressStorageKey(story.scriptId)) || 0);
-        const startIndex = Math.max(
-          0,
-          Math.min(story.startIndex ?? savedProgress, replayed.frames.length - 1),
-        );
-        setBaseFrames(parsed.frames);
-        setFrames(replayed.frames);
-        setChoiceTrail(replayed.choiceTrail);
-        setFrameIndex(startIndex);
-        setJapaneseStoryLoaded(story.region === "JP");
-        setRemoteTranslationEligible(
-          story.region === "JP" && (!customSource || record?.translationAllowed === true),
-        );
-      })
-      .catch((reason: unknown) => {
-        if (controller.signal.aborted) return;
-        if (customSource) {
-          setLoadError(
-            reason instanceof Error
-              ? `无法打开本地资源包：${reason.message}`
-              : "无法打开本地资源包，请返回目录后重新导入。",
-          );
-          return;
-        }
-        if (reason instanceof StoryScriptParseError) {
-          setLoadError(`脚本解析失败：${reason.message}`);
-          return;
-        }
-        const parsed = parseFgoScript(offlineDemoScript, "offline-demo", {
-          region: "CN",
-          masterName: scriptMasterName,
-        });
-        setBaseFrames(parsed.frames);
-        setFrames(parsed.frames);
-        setChoiceTrail(clearChoiceTrail());
-        setFrameIndex(0);
-        setJapaneseStoryLoaded(false);
-        setRemoteTranslationEligible(false);
-        setLoadNote(
-          `Atlas 数据暂时无法读取，已进入离线演示：${reason instanceof Error ? reason.message : "未知错误"}`,
-        );
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
-      });
-
-    return () => controller.abort();
-    // Master name is intentionally applied when a script is loaded.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [story.choiceTrail, story.scriptId, story.scriptUrl]);
 
   useEffect(() => {
     setBackgroundFailed(false);
@@ -1500,27 +1376,8 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
           </button>
         )}
 
-        {loading && (
-          <div className="reader-loading">
-            <div className="loading-orbit"><span /><span /><LoaderCircle className="spin" /></div>
-            <p>正在展开灵子记录</p>
-            <small>{story.scriptId}</small>
-          </div>
-        )}
-
         {loadNote && !loading && (
           <div className="load-note"><CircleAlert size={17} /> {loadNote}</div>
-        )}
-
-        {loadError && !loading && (
-          <div className="reader-load-error" onClick={(event) => event.stopPropagation()}>
-            <CircleAlert size={19} />
-            <div>
-              <strong>本地记录无法展开</strong>
-              <p>{loadError}</p>
-            </div>
-            <button onClick={onExit}>返回目录</button>
-          </div>
         )}
 
         {toast && <div className="reader-toast"><Check size={16} /> {toast}</div>}
