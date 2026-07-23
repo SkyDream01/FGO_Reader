@@ -16,7 +16,7 @@
 
 ## 视频介绍
 
-[在哔哩哔哩观看项目介绍视频](https://www.bilibili.com/video/BV1n7Nv6jE58/)
+[在哔哩哔哩观看项目介绍视频](https://www.bilibili.com/video/av116969256787693/)
 
 ## 运行
 
