@@ -8,10 +8,16 @@ SCRIPT = """
 [charaSet B 1098341100 16 オルガマリー]
 [charaSet A 1098330800 7 マシュ]
 [charaSet C 8001900 21 マシュ]
+[charaSet D 1098165800 1 仿古自动人偶]
 [charaSet E 1098341100 25 オルガマリー]
+[charaSet G 98109200 1 特效用dummy]
 [charaFadein B 0.1 -200,-50]
 [charaPut A 200,0]
 [charaSpecialEffect A appearanceReverse 1 0.25]
+[charaFadein D 0.1 1]
+[charaSpecialEffect D erasureReverse 1 0.3]
+[charaPut G 600,800]
+[charaEffect G bit_talk_impactlanding]
 [charaFadein C 0.5 250,-50]
 [charaFadein E 0.5 -175,-115]
 ＠C：マシュ
@@ -54,6 +60,8 @@ with sync_playwright() as playwright:
     assert slots == ["B", "C", "E"]
     assert page.locator('.character-sprite[data-slot="A"]').count() == 0
     assert page.locator('.character-sprite[data-slot="C"]').count() == 1
+    assert page.locator('.character-sprite[data-slot="D"]').count() == 0
+    assert page.locator('.character-sprite[data-slot="G"]').count() == 0
     assert not page_errors, f"Page errors: {page_errors}"
 
     browser.close()

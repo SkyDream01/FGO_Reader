@@ -79,8 +79,8 @@ interface ProjectionContext {
   stopped: boolean;
 }
 
-const EFFECT_ONLY_CHARACTER_IDS = new Set(["98115000"]);
-const EFFECT_ONLY_NAME = /^(?:エフェクト用|特效用|特效专用|特效專用|이펙트용|effect\s*(?:only|anchor|use)?)$/i;
+const EFFECT_ONLY_CHARACTER_IDS = new Set(["98109200", "98115000"]);
+const EFFECT_ONLY_NAME = /^(?:エフェクト用|特效用|特效专用|特效專用|이펙트용|effect\s*(?:only|anchor|use)?)(?:[\s_-]*(?:dummy|ダミー|더미))?$/i;
 const POSITION_X = [-256, 0, 256, -438, -512, 438, 512];
 const OFF_STAGE_X = 1000;
 
@@ -534,7 +534,12 @@ function applyCommand(
     const character = state.characters.get(args[0]);
     if (
       character
-      && ["appearancereverse", "enemyerasure", "flasherasure"].includes(args[1]?.toLowerCase())
+      && [
+        "appearancereverse",
+        "enemyerasure",
+        "erasurereverse",
+        "flasherasure",
+      ].includes(args[1]?.toLowerCase())
     ) character.visible = false;
     return;
   }

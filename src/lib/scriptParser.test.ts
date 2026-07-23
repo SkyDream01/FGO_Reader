@@ -82,6 +82,7 @@ describe("parseFgoScript", () => {
   it("keeps effect anchors, sub-camera slots and parked objects out of the character layer", () => {
     const script = `
 [charaSet S 98115000 1 エフェクト用]
+[charaSet G 98109200 1 特效用dummy]
 [charaSet T 2000001 1 サブカメラ用]
 [charaSet U 2000002 1 画面外]
 [charaSet V 2000003 1 伯爵]
@@ -89,6 +90,8 @@ describe("parseFgoScript", () => {
 [charaTalk depthOff]
 [charaPut S 1]
 [charaEffect S bit_talk_4elements_light]
+[charaPut G 600,800]
+[charaEffect G bit_talk_impactlanding]
 [charaPut T 0,-30]
 [charaEffect T bit_talk_4elements_light]
 [charaPut U 2000,2000]
@@ -185,6 +188,30 @@ describe("parseFgoScript", () => {
     expect(parsed.frames[1].characters).toEqual([
       expect.objectContaining({ slot: "B", visible: true }),
     ]);
+  });
+
+  it("removes characters erased by erasureReverse before the next speaker appears", () => {
+    const script = `
+[charaSet A 4032000 1 埃尔梅罗Ⅱ世]
+[charaSet B 1098165800 1 仿古自动人偶]
+[charaTalk B]
+[charaFadein B 0.1 1]
+[charaSpecialEffect B erasureReverse 1 0.3]
+[charaTalk A]
+[charaFadein A 0.1 1]
+＠埃尔梅罗Ⅱ世
+哼，逃走了吗？
+[k]
+`;
+
+    const parsed = parseFgoScript(script, "erasure-reverse");
+
+    expect(parsed.frames[0].characters).toEqual([
+      expect.objectContaining({ slot: "A", name: "埃尔梅罗Ⅱ世", visible: true }),
+    ]);
+    expect(parsed.frames[0].characters).not.toContainEqual(
+      expect.objectContaining({ slot: "B" }),
+    );
   });
 
   it("removes animation stand-ins erased by appearanceReverse", () => {
