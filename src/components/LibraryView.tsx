@@ -42,6 +42,19 @@ import {
 } from "../lib/customScripts";
 import { buildStorySequence } from "../lib/storyQueue";
 import {
+  BOOKMARK_STORAGE_KEY,
+  LAST_OBSERVATION_STORAGE_KEY,
+  LEGACY_BOOKMARK_STORAGE_KEY,
+  LEGACY_LAST_OBSERVATION_STORAGE_KEY,
+  choiceTrailStorageKey,
+  consumeParserUpgradeNotice,
+  legacyChoiceTrailStorageKey,
+  legacyProgressStorageKey,
+  legacyReadProgressStorageKey,
+  progressStorageKey,
+  readProgressStorageKey,
+} from "../lib/scriptParserVersion";
+import {
   isAndroidNative,
   openExternalUrl,
   registerAndroidBackHandler,
@@ -105,8 +118,22 @@ function formatBytes(value: number) {
 }
 
 function customPackageProgress(scriptId: string) {
-  const value = Number(localStorage.getItem(`fgo-reader-progress:${scriptId}`));
+  const value = Number(localStorage.getItem(progressStorageKey(scriptId)));
   return Number.isInteger(value) && value > 0 ? value : 0;
+}
+
+function storedLaunchMatches(key: string, scriptUrl: string) {
+  try {
+    const value: unknown = JSON.parse(localStorage.getItem(key) || "null");
+    return Boolean(
+      value
+      && typeof value === "object"
+      && "scriptUrl" in value
+      && value.scriptUrl === scriptUrl,
+    );
+  } catch {
+    return false;
+  }
 }
 
 function sameChoiceTrail(
@@ -136,10 +163,13 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
   const [loadingWars, setLoadingWars] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [error, setError] = useState("");
+  const [parserUpgradeNotice, setParserUpgradeNotice] = useState(
+    () => consumeParserUpgradeNotice(),
+  );
   const [lastObservation, setLastObservation] = useState<LastObservation | null>(loadLastObservation);
   const [bookmark, setBookmark] = useState<Bookmark | null>(() => {
     try {
-      const value = localStorage.getItem("fgo-reader-bookmark");
+      const value = localStorage.getItem(BOOKMARK_STORAGE_KEY);
       return value ? (JSON.parse(value) as Bookmark) : null;
     } catch {
       return null;
@@ -277,7 +307,7 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
   const selectedProgress = useMemo(() => {
     if (!selectedScript) return 0;
     const value = Number(
-      localStorage.getItem(`fgo-reader-progress:${selectedScript.scriptId}`),
+      localStorage.getItem(progressStorageKey(selectedScript.scriptId)),
     );
     return Number.isInteger(value) && value > 0 ? value : 0;
   }, [selectedScript]);
@@ -409,16 +439,27 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
     if (!window.confirm(`删除「${record.title}」及其本地资源？此操作不会影响 Atlas 剧情。`)) return;
     try {
       await deleteCustomScriptPackage(record.id);
-      localStorage.removeItem(`fgo-reader-progress:${record.scriptId}`);
-      localStorage.removeItem(`fgo-reader-read:${record.scriptId}`);
-      localStorage.removeItem(`fgo-reader-choice-trail:${record.scriptId}`);
+      for (const key of [
+        progressStorageKey(record.scriptId),
+        readProgressStorageKey(record.scriptId),
+        choiceTrailStorageKey(record.scriptId),
+        legacyProgressStorageKey(record.scriptId),
+        legacyReadProgressStorageKey(record.scriptId),
+        legacyChoiceTrailStorageKey(record.scriptId),
+      ]) localStorage.removeItem(key);
+      const scriptUrl = customScriptUrl(record.id);
       if (lastObservation?.scriptUrl === customScriptUrl(record.id)) {
         clearLastObservation();
         setLastObservation(null);
       }
-      if (bookmark?.scriptUrl === customScriptUrl(record.id)) {
-        localStorage.removeItem("fgo-reader-bookmark");
+      for (const key of [LAST_OBSERVATION_STORAGE_KEY, LEGACY_LAST_OBSERVATION_STORAGE_KEY]) {
+        if (storedLaunchMatches(key, scriptUrl)) localStorage.removeItem(key);
+      }
+      if (bookmark?.scriptUrl === scriptUrl) {
         setBookmark(null);
+      }
+      for (const key of [BOOKMARK_STORAGE_KEY, LEGACY_BOOKMARK_STORAGE_KEY]) {
+        if (storedLaunchMatches(key, scriptUrl)) localStorage.removeItem(key);
       }
       await refreshCustomPackages();
     } catch (reason) {
@@ -477,6 +518,17 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
         <button className="error-banner" onClick={() => setError("")}>
           <CircleAlert size={17} />
           <span>{error}</span>
+          <small>点击关闭</small>
+        </button>
+      )}
+
+      {parserUpgradeNotice && !error && (
+        <button
+          className="error-banner parser-upgrade-banner"
+          onClick={() => setParserUpgradeNotice(false)}
+        >
+          <CircleAlert size={17} />
+          <span>剧情解析器已升级；旧版阅读进度、书签、选择记录与翻译缓存未继续沿用。</span>
           <small>点击关闭</small>
         </button>
       )}
@@ -865,6 +917,18 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
                 <p className="custom-import-note">
                   脚本与本地资源保存在当前浏览器；未映射的场景、立绘和 BGM 将按包内区服从 Atlas 读取。
                 </p>
+                {importPreview.parsedScript.diagnostics.some(
+                  (diagnostic) => diagnostic.severity === "warning",
+                ) && (
+                  <p className="custom-import-note custom-import-warning">
+                    <CircleAlert size={14} />
+                    解析器记录了 {
+                      importPreview.parsedScript.diagnostics
+                        .filter((diagnostic) => diagnostic.severity === "warning")
+                        .reduce((total, diagnostic) => total + (diagnostic.count ?? 1), 0)
+                    } 条警告；不支持的命令不会改变画面。
+                  </p>
+                )}
                 <div className="custom-modal-actions">
                   <button type="button" onClick={closeCustomPanel} disabled={importingPackage}>取消</button>
                   <button type="button" className="primary" onClick={confirmImport} disabled={importingPackage}>

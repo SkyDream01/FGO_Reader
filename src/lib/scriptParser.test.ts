@@ -244,6 +244,129 @@ describe("parseFgoScript", () => {
       expect(choice.options[0].frames[0]).toMatchObject({ text: "好的。" });
     }
   });
+
+  it("uses source positions for stable v2 frame ids and accepts q/KR punctuation", () => {
+    const parsed = parseFgoScript([
+      "@Narrator",
+      "First[line3][q]",
+      "?1:Continue",
+      "@Narrator",
+      "Branch A[q]",
+      "?2：Stop",
+      "@Narrator",
+      "Branch B[k]",
+      "?!",
+    ].join("\n"), "source-id", { region: "KR" });
+
+    expect(parsed.parserVersion).toBe(2);
+    expect(parsed.frames.map((frame) => frame.id)).toEqual([
+      "source-id@v2:d:1:1:0",
+      "source-id@v2:c:3:1:0",
+    ]);
+    expect(parsed.frames[0]).toMatchObject({ text: "First——" });
+    const choice = parsed.frames[1];
+    expect(choice.type).toBe("choice");
+    if (choice.type === "choice") {
+      expect(choice.options.map((option) => option.label)).toEqual(["Continue", "Stop"]);
+      expect(choice.options.map((option) => option.frames[0]?.id)).toEqual([
+        "source-id@v2:d:4:1:0",
+        "source-id@v2:d:7:1:0",
+      ]);
+    }
+  });
+
+  it("uses the complete numeric placement table and an explicit speaker slot", () => {
+    const setup = Array.from({ length: 7 }, (_, index) => [
+      `[charaSet S${index} ${index + 1} 0 "Same Name"]`,
+      `[charaPut S${index} ${index}]`,
+    ].join("\n")).join("\n");
+    const parsed = parseFgoScript(`${setup}\n＠S5：Same Name\nPosition test[k]`, "placements");
+
+    expect(parsed.frames[0].characters.map((character) => character.position)).toEqual([
+      "left",
+      "center",
+      "right",
+      "left",
+      "left",
+      "right",
+      "right",
+    ]);
+    expect(parsed.frames[0].characters.filter((character) => character.active).map((character) => character.slot))
+      .toEqual(["S5"]);
+  });
+
+  it("consumes choice presentation once and preserves only branch-identical state", () => {
+    const parsed = parseFgoScript([
+      "[scene 100]",
+      "[bgm BASE]",
+      "[fadein black 0.2]",
+      "？1：Left",
+      "[scene 200]",
+      "[bgm LEFT]",
+      "＠旁白",
+      "Left branch[k]",
+      "？2：Right",
+      "[scene 300]",
+      "[bgm RIGHT]",
+      "＠旁白",
+      "Right branch[k]",
+      "？！",
+      "＠旁白",
+      "Shared continuation[k]",
+    ].join("\n"), "choice-state");
+
+    const choice = parsed.frames[0];
+    expect(choice).toMatchObject({ type: "choice", scene: "100", bgm: "BASE", transition: "fade" });
+    if (choice.type === "choice") {
+      expect(choice.options.map((option) => option.frames[0])).toEqual([
+        expect.objectContaining({ scene: "200", bgm: "LEFT", transition: "none" }),
+        expect.objectContaining({ scene: "300", bgm: "RIGHT", transition: "none" }),
+      ]);
+    }
+    expect(parsed.frames[1]).toMatchObject({
+      text: "Shared continuation",
+      scene: "100",
+      bgm: "BASE",
+    });
+    expect(parsed.diagnostics).toContainEqual(expect.objectContaining({
+      code: "divergent_choice_state",
+    }));
+  });
+
+  it("counts frames and resources recursively and keeps parser diagnostics", () => {
+    const parsed = parseFgoScript([
+      "？1：A",
+      "[scene 101]",
+      "[bgm A]",
+      "[charaSet A 1001 0 A]",
+      "[charaPut A 0]",
+      "＠A：A",
+      "Branch A[k]",
+      "？2：B",
+      "[scene 202]",
+      "[bgm B]",
+      "[charaSet B 2002 0 B]",
+      "[charaPut B 2]",
+      "＠B：B",
+      "Branch B[k]",
+      "？！",
+      "[futureCommand one]",
+      "[futureCommand two]",
+    ].join("\n"), "recursive-counts");
+
+    expect(parsed).toMatchObject({
+      frameCount: 3,
+      choiceCount: 1,
+      characterCount: 2,
+      sceneCount: 2,
+      bgmCount: 2,
+    });
+    expect(parsed.diagnostics).toContainEqual(expect.objectContaining({
+      code: "unknown_command",
+      command: "futureCommand",
+      count: 2,
+    }));
+  });
 });
 
 describe("custom script package example", () => {

@@ -1,5 +1,6 @@
 import { parseFgoScript } from "./scriptParser";
-import type { ParsedScript, Region, StoryFrame } from "../types";
+import { SCRIPT_PARSER_VERSION } from "./scriptParserVersion";
+import type { ParsedScript, Region } from "../types";
 
 export const CUSTOM_SCRIPT_URL_PREFIX = "fgo-reader-custom://";
 export const CUSTOM_SCRIPT_FORMAT = "fgo-reader-script-package";
@@ -37,6 +38,7 @@ export interface CustomScriptAssetMappings {
 }
 
 export interface CustomScriptPreviewCounts {
+  parserVersion: typeof SCRIPT_PARSER_VERSION;
   frameCount: number;
   choiceCount: number;
   characterCount: number;
@@ -138,6 +140,10 @@ export interface CustomScriptPackageStorage {
   load(id: string): Promise<CustomScriptPackageRecord | null>;
   delete(id: string): Promise<boolean>;
   setTranslationAllowed(id: string, allowed: boolean): Promise<CustomScriptPackageRecord | null>;
+  updatePreview?(
+    id: string,
+    preview: CustomScriptPreviewCounts,
+  ): Promise<CustomScriptPackageRecord | null>;
   getAsset(id: string, path: string): Promise<Blob | null>;
 }
 
@@ -540,64 +546,35 @@ function validateAssetEntries(entries: Map<string, ZipEntry>, prefix: string, as
   }
 }
 
-function inspectFrames(frames: StoryFrame[]) {
-  let frameCount = 0;
-  let choiceCount = 0;
-  const pending = [...frames];
-  while (pending.length) {
-    const frame = pending.pop()!;
-    frameCount += 1;
-    if (frameCount > MAX_FLATTENED_FRAMES) {
-      packageError(`script has more than ${MAX_FLATTENED_FRAMES} flattened frames`, "invalid_script");
-    }
-    if (frame.type !== "choice") continue;
-    choiceCount += 1;
-    if (!frame.options.length) packageError("script contains an empty choice", "invalid_script");
-    if (frame.options.length > MAX_CHOICE_OPTIONS) {
-      packageError(`a script choice may contain at most ${MAX_CHOICE_OPTIONS} options`, "invalid_script");
-    }
-    for (const option of frame.options) pending.push(...option.frames);
-  }
-  if (!frameCount) packageError("script contains no playable frames", "invalid_script");
-  return { frameCount, choiceCount };
+function previewFromParsedScript(parsedScript: ParsedScript): CustomScriptPreviewCounts {
+  return {
+    parserVersion: SCRIPT_PARSER_VERSION,
+    frameCount: parsedScript.frameCount,
+    choiceCount: parsedScript.choiceCount,
+    characterCount: parsedScript.characterCount,
+    sceneCount: parsedScript.sceneCount,
+    bgmCount: parsedScript.bgmCount,
+  };
 }
 
-function inspectScriptSourceBudget(source: string) {
-  const slots = new Set<string>();
-  let frameCandidates = 0;
-  let inChoiceGroup = false;
-
-  for (const line of source.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    const characterMatch = trimmed.match(/^\[charaSet\s+(\S+)/i);
-    if (characterMatch) {
-      slots.add(characterMatch[1]);
-      if (slots.size > MAX_CHARACTER_SLOTS) {
-        packageError(
-          `script may define at most ${MAX_CHARACTER_SLOTS} character slots`,
-          "invalid_script",
-        );
-      }
-    }
-
-    if (trimmed.startsWith("＠")) {
-      frameCandidates += 1;
-    } else if (/^？\d+[：:]/.test(trimmed)) {
-      if (!inChoiceGroup) {
-        frameCandidates += 1;
-        inChoiceGroup = true;
-      }
-    } else if (/^？！/.test(trimmed)) {
-      inChoiceGroup = false;
-    }
-
-    if (frameCandidates > MAX_FLATTENED_FRAMES) {
-      packageError(
-        `script has more than ${MAX_FLATTENED_FRAMES} possible frames`,
-        "invalid_script",
-      );
-    }
+function parseCustomScript(source: string, scriptId: string, region: Region) {
+  const parsedScript = parseFgoScript(source, scriptId, {
+    region,
+    limits: {
+      maxFrames: MAX_FLATTENED_FRAMES,
+      maxChoiceOptions: MAX_CHOICE_OPTIONS,
+      maxCharacterSlots: MAX_CHARACTER_SLOTS,
+    },
+  });
+  const fatal = parsedScript.diagnostics.find((diagnostic) => diagnostic.severity === "error");
+  if (fatal) {
+    packageError(
+      `script parse error at ${fatal.line}:${fatal.column}: ${fatal.message}`,
+      "invalid_script",
+    );
   }
+  if (!parsedScript.frameCount) packageError("script contains no playable frames", "invalid_script");
+  return parsedScript;
 }
 
 async function hashArchive(archive: ArrayBuffer) {
@@ -652,9 +629,7 @@ export async function parseCustomScriptArchive(input: CustomScriptArchiveInput):
 
   const id = await hashArchive(archive);
   const scriptText = decodeUtf8(new Uint8Array(await extractZipEntry(archive, scriptEntry)), "script", true);
-  inspectScriptSourceBudget(scriptText);
-  const parsedScript = parseFgoScript(scriptText, id);
-  const frameInfo = inspectFrames(parsedScript.frames);
+  const parsedScript = parseCustomScript(scriptText, id, manifest.region);
 
   const assetByPath = new Map<string, CustomScriptAssetBlob>();
   for (const kind of ["backgrounds", "characters", "bgm"] as const) {
@@ -688,13 +663,7 @@ export async function parseCustomScriptArchive(input: CustomScriptArchiveInput):
       archiveName,
       byteSize: archive.byteLength,
       translationAllowed: false,
-      preview: {
-        frameCount: frameInfo.frameCount,
-        choiceCount: frameInfo.choiceCount,
-        characterCount: parsedScript.characterCount,
-        sceneCount: parsedScript.sceneCount,
-        bgmCount: parsedScript.bgmCount,
-      },
+      preview: previewFromParsedScript(parsedScript),
     },
     parsedScript,
     assets: [...assetByPath.values()],
@@ -917,6 +886,27 @@ const indexedDbStorage: CustomScriptPackageStorage = {
     return recordFromSummary(updated, source.scriptText);
   },
 
+  async updatePreview(id, preview) {
+    const database = await openPackageDatabase();
+    const transaction = database.transaction([PACKAGE_STORE, SCRIPT_STORE], "readwrite");
+    const packages = transaction.objectStore(PACKAGE_STORE);
+    const [existing, source] = await Promise.all([
+      requestResult(packages.get(id)) as Promise<CustomScriptPackageSummary | undefined>,
+      requestResult(transaction.objectStore(SCRIPT_STORE).get(id)) as Promise<StoredScript | undefined>,
+    ]);
+    if (!existing || source?.scriptText === undefined) {
+      await transactionDone(transaction);
+      return null;
+    }
+    const updated: CustomScriptPackageSummary = {
+      ...cloneSummary(existing),
+      preview: { ...preview },
+    };
+    packages.put(updated);
+    await transactionDone(transaction);
+    return recordFromSummary(updated, source.scriptText);
+  },
+
   async getAsset(id, path) {
     const database = await openPackageDatabase();
     const transaction = database.transaction(ASSET_STORE, "readonly");
@@ -942,18 +932,48 @@ export async function saveCustomScriptPackage(preview: CustomScriptArchivePrevie
   return activeStorage().save(preview);
 }
 
+function previewIsCurrent(record: Pick<CustomScriptPackageRecord, "preview">) {
+  return record.preview?.parserVersion === SCRIPT_PARSER_VERSION;
+}
+
+async function refreshCustomScriptPreview(
+  record: CustomScriptPackageRecord,
+  storage: CustomScriptPackageStorage,
+) {
+  if (previewIsCurrent(record)) return record;
+  try {
+    const parsed = parseCustomScript(record.scriptText, record.scriptId, record.region);
+    const preview = previewFromParsedScript(parsed);
+    if (storage.updatePreview) {
+      return await storage.updatePreview(record.id, preview) ?? { ...record, preview };
+    }
+    return { ...record, preview };
+  } catch {
+    return record;
+  }
+}
+
 /** Lists package metadata without opening the asset Blob store. */
-export function listCustomScriptPackages() {
-  return activeStorage().list();
+export async function listCustomScriptPackages() {
+  const storage = activeStorage();
+  const records = await storage.list();
+  return Promise.all(records.map(async (summary) => {
+    if (previewIsCurrent(summary)) return summary;
+    const record = await storage.load(summary.id);
+    if (!record) return summary;
+    return summaryFromRecord(await refreshCustomScriptPreview(record, storage));
+  }));
 }
 
 export async function loadCustomScriptPackage(id: string) {
-  return activeStorage().load(requirePackageId(id));
+  const storage = activeStorage();
+  const record = await storage.load(requirePackageId(id));
+  return record ? refreshCustomScriptPreview(record, storage) : null;
 }
 
 export async function loadCustomScriptByUrl(url: string) {
   const id = customScriptId(url);
-  return id ? activeStorage().load(id) : null;
+  return id ? loadCustomScriptPackage(id) : null;
 }
 
 export async function deleteCustomScriptPackage(id: string) {

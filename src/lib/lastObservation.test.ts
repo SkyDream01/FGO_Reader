@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { StoryLaunch } from "../types";
 import {
+  LAST_OBSERVATION_KEY,
+  clearLastObservation,
   createLastObservation,
   lastObservationToLaunch,
+  loadLastObservation,
   parseLastObservation,
+  saveLastObservation,
 } from "./lastObservation";
 
 const story: StoryLaunch = {
@@ -98,5 +102,24 @@ describe("last observation", () => {
         }),
       ),
     ).toEqual(legacyObservation);
+  });
+
+  it("persists only in the parser-v2 observation namespace", () => {
+    const values = new Map<string, string>([
+      ["fgo-reader-last-observation", JSON.stringify(createLastObservation(story, 9, 1234))],
+    ]);
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+      removeItem: (key: string) => values.delete(key),
+    };
+
+    expect(LAST_OBSERVATION_KEY).toBe("fgo-reader-last-observation:v2");
+    expect(loadLastObservation(storage)).toBeNull();
+    saveLastObservation(createLastObservation(story, 3, 5678), storage);
+    expect(loadLastObservation(storage)?.frameIndex).toBe(3);
+    clearLastObservation(storage);
+    expect(values.has(LAST_OBSERVATION_KEY)).toBe(false);
+    expect(values.has("fgo-reader-last-observation")).toBe(true);
   });
 });

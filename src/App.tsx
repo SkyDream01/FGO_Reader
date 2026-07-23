@@ -6,6 +6,7 @@ import {
   saveLastObservation,
 } from "./lib/lastObservation";
 import { getNextStoryLaunch } from "./lib/storyQueue";
+import { progressStorageKey } from "./lib/scriptParserVersion";
 import type { StoryLaunch } from "./types";
 
 export default function App() {
@@ -13,7 +14,7 @@ export default function App() {
   const nextStory = activeStory ? getNextStoryLaunch(activeStory) : null;
   const openStory = (story: StoryLaunch) => {
     const savedProgress = Number(
-      localStorage.getItem(`fgo-reader-progress:${story.scriptId}`),
+      localStorage.getItem(progressStorageKey(story.scriptId)),
     );
     const startIndex = story.startIndex ?? (
       Number.isInteger(savedProgress) && savedProgress >= 0 ? savedProgress : 0

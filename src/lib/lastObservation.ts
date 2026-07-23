@@ -5,8 +5,9 @@ import type {
   StorySequenceItem,
 } from "../types";
 import { normalizeChoiceTrail, validateChoiceTrail } from "./choiceTrail";
+import { LAST_OBSERVATION_STORAGE_KEY } from "./scriptParserVersion";
 
-export const LAST_OBSERVATION_KEY = "fgo-reader-last-observation";
+export const LAST_OBSERVATION_KEY = LAST_OBSERVATION_STORAGE_KEY;
 
 const regions = new Set<Region>(["CN", "JP", "NA", "TW", "KR"]);
 

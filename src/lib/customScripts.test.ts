@@ -12,6 +12,7 @@ import {
   setCustomScriptPackageStorageForTesting,
   setCustomScriptTranslationAllowed,
   type CustomScriptArchivePreview,
+  type CustomScriptPreviewCounts,
   type CustomScriptPackageRecord,
   type CustomScriptPackageStorage,
   type CustomScriptPackageSummary,
@@ -136,7 +137,7 @@ describe("custom script package parser", () => {
       title: "测试剧本",
       region: "JP",
       translationAllowed: false,
-      preview: { frameCount: 1, characterCount: 0 },
+      preview: { parserVersion: 2, frameCount: 1, characterCount: 0 },
     });
     expect(preview.assets.map((asset) => asset.path).sort()).toEqual([
       "assets/background.png",
@@ -170,6 +171,43 @@ describe("custom script package parser", () => {
       "manifest.json": manifest(),
       "story.txt": `${slots}\n${playableScript}`,
     }))).rejects.toMatchObject({ code: "invalid_script" });
+  });
+
+  it("uses parser diagnostics as import validation and counts branch resources recursively", async () => {
+    await expect(parseCustomScriptArchive(storedZip({
+      "manifest.json": manifest({ region: "KR" }),
+      "story.txt": "?1:Outer\n?1:Nested\n@N\nText[q]\n?!\n?!",
+    }))).rejects.toMatchObject({ code: "invalid_script" });
+
+    const preview = await parseCustomScriptArchive(storedZip({
+      "manifest.json": manifest({ region: "KR" }),
+      "story.txt": [
+        "?1:A",
+        "[scene 101]",
+        "[bgm A]",
+        "[charaSet A 1001 0 A]",
+        "[charaPut A 0]",
+        "@A:A",
+        "Branch A[q]",
+        "?2:B",
+        "[scene 202]",
+        "[bgm B]",
+        "[charaSet B 2002 0 B]",
+        "[charaPut B 2]",
+        "@B:B",
+        "Branch B[q]",
+        "?!",
+      ].join("\n"),
+    }));
+
+    expect(preview.record.preview).toEqual({
+      parserVersion: 2,
+      frameCount: 3,
+      choiceCount: 1,
+      characterCount: 2,
+      sceneCount: 2,
+      bgmCount: 2,
+    });
   });
 });
 
@@ -220,5 +258,51 @@ describe("custom script package persistence facade", () => {
     expect(await getCustomScriptAssetBlob(savedRecord.id, "scene.png")).toBeInstanceOf(Blob);
     expect(assetReads).toBe(1);
     expect(await deleteCustomScriptPackage(savedRecord.id)).toBe(true);
+  });
+
+  it("lazily refreshes stale preview metadata without replacing package assets", async () => {
+    const imported = await parseCustomScriptArchive(storedZip({
+      "manifest.json": manifest({ assets: { backgrounds: { "1": "scene.png" } } }),
+      "story.txt": playableScript,
+      "scene.png": new Uint8Array([1]),
+    }));
+    const stalePreview = { ...imported.record.preview, frameCount: 0 };
+    delete (stalePreview as Partial<CustomScriptPreviewCounts>).parserVersion;
+    let saved: CustomScriptPackageRecord = {
+      ...imported.record,
+      preview: stalePreview as CustomScriptPreviewCounts,
+    };
+    let updateCount = 0;
+    let assetReads = 0;
+    const summary = () => {
+      const { scriptText: _scriptText, ...value } = saved;
+      return value;
+    };
+    const storage: CustomScriptPackageStorage = {
+      save: async () => saved,
+      list: async () => [summary()],
+      load: async () => saved,
+      delete: async () => false,
+      setTranslationAllowed: async () => saved,
+      updatePreview: async (_id, preview) => {
+        updateCount += 1;
+        saved = { ...saved, preview };
+        return saved;
+      },
+      getAsset: async () => {
+        assetReads += 1;
+        return null;
+      },
+    };
+    setCustomScriptPackageStorageForTesting(storage);
+
+    expect((await listCustomScriptPackages())[0].preview).toMatchObject({
+      parserVersion: 2,
+      frameCount: 1,
+    });
+    expect(updateCount).toBe(1);
+    expect(assetReads).toBe(0);
+    await listCustomScriptPackages();
+    expect(updateCount).toBe(1);
   });
 });

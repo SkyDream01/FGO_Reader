@@ -88,8 +88,8 @@ export class TranslationRequestError extends Error {
 }
 
 const SETTINGS_KEY = "fgo-reader-translation-settings:v1";
-const CACHE_INDEX_KEY = "fgo-reader-translation-cache-index:v1";
-const CACHE_PREFIX = "fgo-reader-translation-cache:v1:";
+const CACHE_INDEX_KEY = "fgo-reader-translation-cache-index:v2";
+const CACHE_PREFIX = "fgo-reader-translation-cache:v2:";
 const CACHE_ENTRY_LIMIT = 12;
 export const TRANSLATION_AHEAD_FRAME_COUNT = 10;
 

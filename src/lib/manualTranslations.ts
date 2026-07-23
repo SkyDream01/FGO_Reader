@@ -10,7 +10,7 @@ import {
 } from "./translation";
 
 export const MANUAL_TRANSLATION_FORMAT = "fgo-reader-translation-template";
-export const MANUAL_TRANSLATION_VERSION = 1;
+export const MANUAL_TRANSLATION_VERSION = 2;
 export const MANUAL_TRANSLATION_MAX_BYTES = 8 * 1024 * 1024;
 
 const DATABASE_NAME = "fgo-reader-manual-translations";
@@ -26,7 +26,7 @@ export interface TranslationTemplateEntry {
   translatedText: string;
 }
 
-export interface TranslationTemplateV1 {
+export interface TranslationTemplateV2 {
   format: typeof MANUAL_TRANSLATION_FORMAT;
   version: typeof MANUAL_TRANSLATION_VERSION;
   scriptId: string;
@@ -156,7 +156,7 @@ export function translationSourceSignature(frames: StoryFrame[]) {
 export function createTranslationTemplate(
   context: TranslationTemplateContext,
   existingTranslations: Record<string, CachedTranslation> = {},
-): TranslationTemplateV1 {
+): TranslationTemplateV2 {
   const entries = collectScriptTranslationUnits(context.frames).map((unit) => ({
     id: unit.id,
     kind: unit.kind,

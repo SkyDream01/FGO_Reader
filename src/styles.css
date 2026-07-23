@@ -877,6 +877,17 @@ select:focus-visible {
   line-height: 1.6;
 }
 
+.custom-import-warning {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #c8ad72;
+}
+
+.custom-import-warning svg {
+  flex: 0 0 auto;
+}
+
 .custom-modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -1721,6 +1732,16 @@ select:focus-visible {
 .error-banner small {
   color: #b9897c;
   font-size: 9px;
+}
+
+.parser-upgrade-banner {
+  border-color: rgba(198, 168, 101, 0.42);
+  color: #eadbb4;
+  background: rgba(45, 35, 18, 0.95);
+}
+
+.parser-upgrade-banner small {
+  color: #aa9569;
 }
 
 /* Story reader */

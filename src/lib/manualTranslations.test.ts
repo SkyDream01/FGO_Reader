@@ -11,7 +11,7 @@ import {
   setManualTranslationStorageForTesting,
   type ManualTranslationRecord,
   type ManualTranslationStorage,
-  type TranslationTemplateV1,
+  type TranslationTemplateV2,
 } from "./manualTranslations";
 
 function dialogue(id: string, speaker: string, text: string): StoryFrame {
@@ -75,6 +75,7 @@ describe("manual translation template", () => {
 
   it("round-trips UTF-8 JSON with a BOM and permits blank untranslated entries", () => {
     const template = createTranslationTemplate(context);
+    expect(template.version).toBe(2);
     template.entries[0].translatedText = "玛修";
     template.entries[1].translatedText = "前辈。\r\n早上好。";
     const record = parseTranslationTemplate(`\uFEFF${JSON.stringify(template)}`, context, 1234);
@@ -94,7 +95,7 @@ describe("manual translation template", () => {
   it("strictly rejects incomplete, duplicate, stale, empty, and cross-script files", () => {
     const template = createTranslationTemplate(context);
     template.entries[0].translatedText = "玛修";
-    const parse = (next: TranslationTemplateV1) => parseTranslationTemplate(JSON.stringify(next), context);
+    const parse = (next: TranslationTemplateV2) => parseTranslationTemplate(JSON.stringify(next), context);
 
     expect(() => parse({ ...template, scriptId: "other" })).toThrow("不属于当前脚本");
     expect(() => parse({ ...template, masterName: "藤丸立香" })).toThrow("不同的御主名称");

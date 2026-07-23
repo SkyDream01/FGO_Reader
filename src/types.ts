@@ -120,6 +120,18 @@ export interface ChoiceFrame {
 
 export type StoryFrame = DialogueFrame | ChoiceFrame;
 
+export type ScriptDiagnosticSeverity = "warning" | "error";
+
+export interface ScriptDiagnostic {
+  severity: ScriptDiagnosticSeverity;
+  code: string;
+  message: string;
+  line: number;
+  column: number;
+  command?: string;
+  count?: number;
+}
+
 /** A resolved choice, addressed by the parser's stable choice-frame id. */
 export interface ChoiceDecision {
   choiceId: string;
@@ -131,10 +143,14 @@ export type ChoiceTrail = ChoiceDecision[];
 
 export interface ParsedScript {
   scriptId: string;
+  parserVersion: 2;
   frames: StoryFrame[];
+  frameCount: number;
+  choiceCount: number;
   characterCount: number;
   sceneCount: number;
   bgmCount: number;
+  diagnostics: ScriptDiagnostic[];
 }
 
 export interface ReaderSettings {

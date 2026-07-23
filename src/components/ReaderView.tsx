@@ -74,6 +74,12 @@ import {
 } from "../lib/lastObservation";
 import { parseFgoScript } from "../lib/scriptParser";
 import {
+  BOOKMARK_STORAGE_KEY,
+  choiceTrailStorageKey,
+  progressStorageKey,
+  readProgressStorageKey,
+} from "../lib/scriptParserVersion";
+import {
   MANUAL_TRANSLATION_MAX_BYTES,
   ManualTranslationError,
 } from "../lib/manualTranslations";
@@ -119,9 +125,6 @@ const defaultSettings: ReaderSettings = {
   masterName: "御主",
 };
 
-const choiceTrailStorageKey = (scriptId: string) =>
-  `fgo-reader-choice-trail:${scriptId}`;
-
 interface CustomPackageContext {
   id: string;
   scriptText: string;
@@ -131,6 +134,39 @@ interface CustomPackageContext {
     characters?: Record<string, string>;
     bgm?: Record<string, string>;
   };
+}
+
+class StoryScriptParseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "StoryScriptParseError";
+  }
+}
+
+function parsePlayableStory(
+  source: string,
+  story: Pick<StoryLaunch, "scriptId" | "region">,
+  masterName: string,
+) {
+  let parsed: ReturnType<typeof parseFgoScript>;
+  try {
+    parsed = parseFgoScript(source, story.scriptId, {
+      region: story.region,
+      masterName,
+    });
+  } catch (reason) {
+    throw new StoryScriptParseError(
+      reason instanceof Error ? reason.message : "解析器发生未知错误",
+    );
+  }
+  const fatal = parsed.diagnostics.find((diagnostic) => diagnostic.severity === "error");
+  if (fatal) {
+    throw new StoryScriptParseError(
+      `第 ${fatal.line} 行第 ${fatal.column} 列：${fatal.message}`,
+    );
+  }
+  if (!parsed.frames.length) throw new StoryScriptParseError("脚本中没有可播放的对话");
+  return parsed;
 }
 
 function loadStoredChoiceTrail(scriptId: string): ChoiceTrail {
@@ -424,7 +460,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   const [manualTranslationBusy, setManualTranslationBusy] = useState(false);
   const [manualTranslationError, setManualTranslationError] = useState("");
   const [readMax, setReadMax] = useState(() => {
-    const value = localStorage.getItem(`fgo-reader-read:${story.scriptId}`);
+    const value = localStorage.getItem(readProgressStorageKey(story.scriptId));
     return value === null ? -1 : Number(value);
   });
   const toastTimer = useRef<number | null>(null);
@@ -785,12 +821,12 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
   }, [settings]);
 
   useEffect(() => {
-    localStorage.setItem(`fgo-reader-read:${story.scriptId}`, String(readMax));
+    localStorage.setItem(readProgressStorageKey(story.scriptId), String(readMax));
   }, [readMax, story.scriptId]);
 
   useEffect(() => {
     if (!frames.length) return;
-    localStorage.setItem(`fgo-reader-progress:${story.scriptId}`, String(frameIndex));
+    localStorage.setItem(progressStorageKey(story.scriptId), String(frameIndex));
   }, [frameIndex, frames.length, story.scriptId]);
 
   useEffect(() => {
@@ -847,11 +883,10 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
 
     sourcePromise
       .then(({ source, record }) => {
-        const parsed = parseFgoScript(source, story.scriptId, scriptMasterName);
-        if (!parsed.frames.length) throw new Error("脚本中没有可播放的对话");
+        const parsed = parsePlayableStory(source, story, scriptMasterName);
         const restoredTrail = story.choiceTrail ?? loadStoredChoiceTrail(story.scriptId);
         const replayed = replayChoiceTrail(parsed.frames, restoredTrail);
-        const savedProgress = Number(localStorage.getItem(`fgo-reader-progress:${story.scriptId}`) || 0);
+        const savedProgress = Number(localStorage.getItem(progressStorageKey(story.scriptId)) || 0);
         const startIndex = Math.max(
           0,
           Math.min(story.startIndex ?? savedProgress, replayed.frames.length - 1),
@@ -875,7 +910,14 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
           );
           return;
         }
-        const parsed = parseFgoScript(offlineDemoScript, "offline-demo", scriptMasterName);
+        if (reason instanceof StoryScriptParseError) {
+          setLoadError(`脚本解析失败：${reason.message}`);
+          return;
+        }
+        const parsed = parseFgoScript(offlineDemoScript, "offline-demo", {
+          region: "CN",
+          masterName: scriptMasterName,
+        });
         setBaseFrames(parsed.frames);
         setFrames(parsed.frames);
         setChoiceTrail(clearChoiceTrail());
@@ -1096,7 +1138,7 @@ export function ReaderView({ story, nextStory, onNext, onExit }: ReaderViewProps
       sequenceIndex: story.sequenceIndex,
       choiceTrail,
     };
-    localStorage.setItem("fgo-reader-bookmark", JSON.stringify(value));
+    localStorage.setItem(BOOKMARK_STORAGE_KEY, JSON.stringify(value));
     showToast("已保存当前位置");
   }, [choiceTrail, frameIndex, showToast, story]);
 
