@@ -79,7 +79,7 @@ interface ProjectionContext {
   stopped: boolean;
 }
 
-const EFFECT_ONLY_CHARACTER_IDS = new Set(["98109200", "98115000"]);
+const EFFECT_ONLY_CHARACTER_IDS = new Set(["98014000", "98109200", "98115000"]);
 const EFFECT_ONLY_NAME = /^(?:エフェクト用|特效用|特效专用|特效專用|이펙트용|effect\s*(?:only|anchor|use)?)(?:[\s_-]*(?:dummy|ダミー|더미))?$/i;
 const POSITION_X = [-256, 0, 256, -438, -512, 438, 512];
 const OFF_STAGE_X = 1000;
@@ -455,6 +455,14 @@ function applyCommand(
     else if (!Number.isFinite(face)) {
       addDiagnostic(context, command, "invalid_character_face", "角色表情编号无效");
     }
+    return;
+  }
+
+  if (name === "charafadetime") {
+    if (!requireArgs(command, 3, context)) return;
+    const character = state.characters.get(args[0]);
+    const opacity = Number.parseFloat(args[2]);
+    if (character && Number.isFinite(opacity)) character.visible = opacity > 0;
     return;
   }
 

@@ -112,6 +112,38 @@ describe("parseFgoScript", () => {
     ]);
   });
 
+  it("shows a faded-in communicator without rendering its noise effect anchor", () => {
+    const script = `
+[charaSet F 99502600 1 玛修]
+[charaFilter F silhouette 00000080]
+[charaSet I 98014000 1 通信噪音]
+[charaPut I 1]
+[charaEffect I bit_talk_10]
+[charaTalk F]
+[charaFace F 0]
+[charaFadeTime F 0.4 0.7]
+＠玛修
+前辈！　听得……到吗……！
+[k]
+`;
+
+    const parsed = parseFgoScript(script, "communication-noise");
+
+    expect(parsed.frames[0].characters).toEqual([
+      expect.objectContaining({
+        slot: "F",
+        id: "99502600",
+        name: "玛修",
+        visible: true,
+        silhouette: true,
+        active: true,
+      }),
+    ]);
+    expect(parsed.frames[0].characters).not.toContainEqual(
+      expect.objectContaining({ slot: "I" }),
+    );
+  });
+
   it("preserves legitimate same-id character instances in separate slots", () => {
     const script = `
 [charaSet A 1001001 1 玛修]
