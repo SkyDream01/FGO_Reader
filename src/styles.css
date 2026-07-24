@@ -2166,6 +2166,25 @@ html[data-runtime="android"] .custom-library-backdrop {
   bottom: 4.6%;
 }
 
+.dialogue-wrap.from-animation {
+  animation: dialogue-return 260ms cubic-bezier(0.2, 0.78, 0.3, 1) both;
+}
+
+.dialogue-wrap.leaving-for-animation {
+  pointer-events: none;
+  animation: dialogue-depart 180ms ease-in both;
+}
+
+@keyframes dialogue-return {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes dialogue-depart {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(8px); }
+}
+
 .dialogue-box {
   position: absolute;
   inset: 10px 0 0;
@@ -2336,6 +2355,22 @@ html[data-runtime="android"] .custom-library-backdrop {
   font-family: "Noto Serif SC", "Source Han Serif SC", serif;
   font-size: clamp(10px, 0.72vw, 13px);
   letter-spacing: 0.14em;
+  overflow: hidden;
+  animation: animation-cue-enter 180ms 80ms ease-out both;
+}
+
+.animation-advance.timed::after {
+  position: absolute;
+  height: 2px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  content: "";
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  box-shadow: 0 0 7px rgba(117, 216, 211, 0.62);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: animation-progress var(--animation-duration) linear forwards;
 }
 
 .animation-advance svg {
@@ -2350,6 +2385,15 @@ html[data-runtime="android"] .custom-library-backdrop {
 
 @keyframes animation-advance-pulse {
   50% { opacity: 0.45; transform: translateY(3px); }
+}
+
+@keyframes animation-cue-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes animation-progress {
+  to { transform: scaleX(1); }
 }
 
 @keyframes advance-pulse {

@@ -14,7 +14,7 @@ SCRIPT = """
 [charaFadein F 0.1 -350,250]
 [charaFadein G 0.1 150,250]
 [subRenderFadein #A 0.3 -50,-360]
-[wt 1.0]
+[wt 2.0]
 [subRenderFadeout #A 0.4]
 [wt 0.5]
 ＠A：マシュ
@@ -49,7 +49,7 @@ with sync_playwright() as playwright:
     direct_input.press("Enter")
 
     page.locator(".reader-loading").wait_for(state="hidden", timeout=60000)
-    animation_button = page.get_by_role("button", name="继续演出")
+    animation_button = page.get_by_role("button", name="跳过演出")
     animation_button.wait_for(timeout=15000)
 
     slots = page.locator(".character-sprite").evaluate_all(
@@ -61,12 +61,11 @@ with sync_playwright() as playwright:
     ).count() == 1
     assert page.locator(".dialogue-box").count() == 0
 
-    animation_button.click()
-    assert page.locator(".character-sprite").evaluate_all(
-        "elements => elements.map(element => element.dataset.slot)"
-    ) == ["A"]
-
-    animation_button.click()
+    page.wait_for_function(
+        "() => Array.from(document.querySelectorAll('.character-sprite'))"
+        ".map(element => element.dataset.slot).join(',') === 'A'",
+        timeout=3500,
+    )
     page.locator(".dialogue-box").wait_for(timeout=5000)
     page.wait_for_function(
         '() => document.querySelector(".dialogue-text")?.textContent'

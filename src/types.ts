@@ -104,6 +104,8 @@ export interface AnimationFrame {
   type: "animation";
   speaker: "";
   text: "";
+  /** Script-authored playback time. Null means the reader waits for input. */
+  durationMs: number | null;
   scene: string | null;
   bgm: string | null;
   characters: CharacterState[];

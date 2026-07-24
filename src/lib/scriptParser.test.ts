@@ -431,12 +431,14 @@ describe("parseFgoScript", () => {
       type: "animation",
       speaker: "",
       text: "",
+      durationMs: 1000,
       characters: [
         expect.objectContaining({ slot: "A", id: "8001900" }),
         expect.objectContaining({ slot: "F", id: "1098154000" }),
         expect.objectContaining({ slot: "G", id: "1098154000" }),
       ],
     });
+    expect(parsed.frames[1]).toMatchObject({ durationMs: 500 });
     expect(parsed.frames[1].characters.map(({ slot }) => slot)).toEqual(["A"]);
     expect(parsed.characterCount).toBe(2);
   });

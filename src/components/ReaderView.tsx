@@ -414,6 +414,7 @@ export function ReaderView({
     return value === null ? -1 : Number(value);
   });
   const toastTimer = useRef<number | null>(null);
+  const dialogueTransitionTimer = useRef<number | null>(null);
   const manualTranslationInputRef = useRef<HTMLInputElement>(null);
   const revealContext = useRef({ frameId: "", mode: "source", translated: false });
   const revealImmediatelyOnNavigation = useRef(false);
@@ -424,6 +425,8 @@ export function ReaderView({
   });
 
   const currentFrame = frames[frameIndex] ?? null;
+  const previousFrame = frames[frameIndex - 1] ?? null;
+  const [dialogueLeaving, setDialogueLeaving] = useState(false);
   const manualTranslation = useManualTranslations({
     eligible: japaneseStoryLoaded,
     scriptId: story.scriptId,
@@ -873,6 +876,11 @@ export function ReaderView({
 
   const goBack = useCallback(() => {
     if (loading || (!completed && frameIndex <= 0)) return;
+    if (dialogueTransitionTimer.current !== null) {
+      window.clearTimeout(dialogueTransitionTimer.current);
+      dialogueTransitionTimer.current = null;
+    }
+    setDialogueLeaving(false);
     setAutoMode(false);
     setSkipMode(false);
     setUiHidden(false);
@@ -885,7 +893,7 @@ export function ReaderView({
   }, [completed, frameIndex, loading]);
 
   const advance = useCallback(() => {
-    if (!currentFrame || loading || translation.preparing) return;
+    if (!currentFrame || loading || translation.preparing || dialogueLeaving) return;
     setAudioUnlocked(true);
     if (uiHidden) {
       setUiHidden(false);
@@ -904,13 +912,46 @@ export function ReaderView({
     }
     markCurrentRead();
     if (frameIndex < frames.length - 1) {
+      if (
+        currentFrame.type === "dialogue"
+        && frames[frameIndex + 1]?.type === "animation"
+        && !settings.reduceMotion
+      ) {
+        setDialogueLeaving(true);
+        dialogueTransitionTimer.current = window.setTimeout(() => {
+          dialogueTransitionTimer.current = null;
+          setFrameIndex((index) => index + 1);
+          setDialogueLeaving(false);
+        }, 180);
+        return;
+      }
       setFrameIndex((index) => index + 1);
     } else {
       setCompleted(true);
       setAutoMode(false);
       setSkipMode(false);
     }
-  }, [currentFrame, frameIndex, frames.length, loading, markCurrentRead, textCharacters.length, textComplete, translation.preparing, uiHidden]);
+  }, [currentFrame, dialogueLeaving, frameIndex, frames, loading, markCurrentRead, settings.reduceMotion, textCharacters.length, textComplete, translation.preparing, uiHidden]);
+
+  useEffect(() => {
+    if (
+      currentFrame?.type !== "animation"
+      || currentFrame.durationMs === null
+      || !windowFocused
+      || panel !== "none"
+      || translation.preparing
+    ) return;
+    const duration = settings.reduceMotion ? 1 : Math.max(80, currentFrame.durationMs);
+    const timer = window.setTimeout(advance, duration);
+    return () => window.clearTimeout(timer);
+  }, [
+    advance,
+    currentFrame,
+    panel,
+    settings.reduceMotion,
+    translation.preparing,
+    windowFocused,
+  ]);
 
   const resolveChoice = useCallback(
     (choiceIndex: number) => {
@@ -1157,6 +1198,9 @@ export function ReaderView({
 
   useEffect(() => () => {
     if (toastTimer.current) window.clearTimeout(toastTimer.current);
+    if (dialogueTransitionTimer.current !== null) {
+      window.clearTimeout(dialogueTransitionTimer.current);
+    }
   }, []);
 
   const logEntries = useMemo(
@@ -1297,7 +1341,13 @@ export function ReaderView({
             )}
 
             {currentFrame && currentFrame.type !== "animation" && (
-              <div className="dialogue-wrap">
+              <div
+                className={[
+                  "dialogue-wrap",
+                  previousFrame?.type === "animation" ? "from-animation" : "",
+                  dialogueLeaving ? "leaving-for-animation" : "",
+                ].filter(Boolean).join(" ")}
+              >
                 <div className="dialogue-track" aria-hidden="true">
                   <span className="track-fill" />
                   {Array.from({ length: 13 }).map((_, nodeIndex) => <i key={nodeIndex} />)}
@@ -1340,11 +1390,14 @@ export function ReaderView({
 
             {currentFrame?.type === "animation" && (
               <button
-                className="animation-advance"
+                className={`animation-advance ${currentFrame.durationMs !== null ? "timed" : ""}`}
                 onClick={advance}
-                aria-label="继续演出"
+                aria-label={currentFrame.durationMs !== null ? "跳过演出" : "继续演出"}
+                style={currentFrame.durationMs !== null
+                  ? { "--animation-duration": `${Math.max(80, currentFrame.durationMs)}ms` } as CSSProperties
+                  : undefined}
               >
-                <span>演出</span>
+                <span>{currentFrame.durationMs !== null ? "演出中" : "继续演出"}</span>
                 <ChevronDown size={19} />
               </button>
             )}

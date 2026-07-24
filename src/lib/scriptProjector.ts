@@ -314,6 +314,16 @@ function resetPendingAnimation(state: ProjectionState) {
   state.animationBaseline = null;
 }
 
+function animationDurationMs(command: ScriptCommandNode) {
+  if (command.normalizedName !== "wt" && command.normalizedName !== "twt") {
+    return null;
+  }
+  const seconds = Number(command.args[0]);
+  if (!Number.isFinite(seconds) || seconds < 0) return null;
+  // Keep malformed custom scripts from creating effectively permanent timers.
+  return Math.min(120_000, Math.round(seconds * 1000));
+}
+
 function trackAnimationMutation(
   state: ProjectionState,
   before: string,
@@ -370,6 +380,7 @@ function flushPendingAnimation(
   target: StoryFrame[],
   context: ProjectionContext,
   fallbackSpan: SourceSpan,
+  durationMs: number | null = null,
 ) {
   if (!state.animationPending || context.stopped) return;
   const baseline = state.animationBaseline;
@@ -384,6 +395,7 @@ function flushPendingAnimation(
     type: "animation",
     speaker: "",
     text: "",
+    durationMs,
     scene: state.scene,
     bgm: state.bgm,
     characters: snapshotCharacters(state, "", [], false),
@@ -896,7 +908,13 @@ function projectNodes(
           node.normalizedName,
         )
       ) {
-        flushPendingAnimation(state, frames, context, node.span);
+        flushPendingAnimation(
+          state,
+          frames,
+          context,
+          node.span,
+          animationDurationMs(node),
+        );
       }
       const before = animationSnapshotKey(state);
       const shouldStop = applyCommand(node, state, frames, context) === true;
