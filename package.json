@@ -2,7 +2,7 @@
   "name": "fgo-chronicle-reader",
   "description": "Unofficial local FGO story reader powered by Atlas Academy data",
   "private": true,
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "MIT",
   "type": "module",
   "main": "desktop/main.mjs",
