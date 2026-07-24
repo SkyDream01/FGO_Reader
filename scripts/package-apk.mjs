@@ -92,7 +92,7 @@ try {
   run(process.execPath, [path.join(root, "node_modules", "@capacitor", "cli", "bin", "capacitor"), "sync", "android"]);
   runScript(
   process.platform === "win32" ? "gradlew.bat" : "./gradlew",
-    ["assembleDebug", "--no-daemon"],
+    ["assembleRelease", "--no-daemon"],
     path.join(root, "android"),
   );
   run(process.execPath, [path.join(root, "scripts", "collect-artifacts.mjs")]);

@@ -6,8 +6,8 @@ import process from "node:process";
 const root = path.resolve(import.meta.dirname, "..");
 const releaseDirectory = path.join(root, "release");
 const packageJson = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
-const apkSource = path.join(root, "android", "app", "build", "outputs", "apk", "debug", "app-debug.apk");
-const apkName = `FGO-Chronicle-Reader-${packageJson.version}-android-debug.apk`;
+const apkSource = path.join(root, "android", "app", "build", "outputs", "apk", "release", "app-release.apk");
+const apkName = `FGO-Chronicle-Reader-${packageJson.version}-android.apk`;
 
 await mkdir(releaseDirectory, { recursive: true });
 try {
