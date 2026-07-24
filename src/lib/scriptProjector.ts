@@ -429,10 +429,9 @@ function applyCommand(
     const id = name === "masterset"
       ? (context.options.masterGender === "female" ? args[2] : args[1])
       : rawId;
-    const masterFlag = name === "masterset" ? args[3] : rawFace;
+    const faceToken = name === "masterset" ? args[3] : rawFace;
     const nameParts = name === "masterset" ? [] : rawName;
-    const rawDisplay = masterFlag;
-    const face = name === "masterset" ? 0 : Number.parseInt(rawFace, 10);
+    const face = Number.parseInt(faceToken, 10);
     const characterName = name === "masterset"
       ? context.options.masterName
       : nameParts.join(" ").trim();
@@ -446,7 +445,9 @@ function applyCommand(
       id,
       name: characterName,
       face,
-      visible: Number.parseInt(rawDisplay, 10) > 0,
+      // charaSet/masterSet only preload a figure. The numeric argument is the
+      // initial face, not a visibility flag; stage commands reveal it later.
+      visible: false,
       onStage: true,
       position: "center",
       layer: "main",
@@ -459,10 +460,9 @@ function applyCommand(
 
   if (name === "charachange" || name === "characrossfade") {
     if (!requireArgs(command, 3, context)) return;
-    const [slot, id, rawMode] = args;
+    const [slot, id, rawFace] = args;
     const current = state.characters.get(slot);
-    const parsedMode = Number.parseInt(rawMode, 10);
-    const face = name === "characrossfade" ? parsedMode : current?.face ?? 0;
+    const face = Number.parseInt(rawFace, 10);
     const characterName = current?.name ?? "";
     state.sceneLayers.delete(slot);
     state.characters.set(slot, {
@@ -470,9 +470,7 @@ function applyCommand(
       id,
       name: characterName,
       face: Number.isFinite(face) ? face : current?.face ?? 0,
-      visible: name === "charachange" && Number.isFinite(parsedMode)
-        ? parsedMode > 0
-        : current?.visible ?? false,
+      visible: current?.visible ?? false,
       onStage: current?.onStage ?? true,
       position: current?.position ?? "center",
       layer: current?.layer ?? "main",

@@ -51,6 +51,7 @@ describe("parseFgoScript", () => {
     const parsed = parseFgoScript([
       "＄01-00-00-01-1-0",
       "[charaSet A 98001000 1 マシュ]",
+      "[charaPut A 1]",
       "＠A：マシュ",
       "……マスター。[k]",
       "本日もよろしくお願いします。[k]",
@@ -73,6 +74,8 @@ describe("parseFgoScript", () => {
       "[charaSet A 1001 1 A]",
       "[charaSet B 1002 1 B]",
       "[charaFilter A X silhouette 00000080]",
+      "[charaPut A 0]",
+      "[charaPut B 2]",
       "＠二人=spot[A,B]",
       "同時発言。[k]",
     ].join("\n"), "spot-dialogue");
@@ -111,6 +114,7 @@ describe("parseFgoScript", () => {
     const parsed = parseFgoScript([
       "[masterSet L 1098348300 1098348310 1]",
       "[masterScene 276600 276601 1.0]",
+      "[charaFadein L 0.1 1]",
       "＠L：[%1]",
       "選択された姿です。[k]",
       "[end]",
@@ -133,6 +137,43 @@ describe("parseFgoScript", () => {
         }),
       ],
     });
+  });
+
+  it("does not show preloaded figures before their entrance and preserves charaChange visibility", () => {
+    const parsed = parseFgoScript([
+      "[charaSet A 4032000 1 埃尔梅罗Ⅱ世]",
+      "[charaSet C 1098123200 1 ？？？]",
+      "[charaFilter C silhouette 00000080]",
+      "[charaSet D 9005001 1 ？？？]",
+      "[charaFilter D silhouette 00000080]",
+      "[charaSet E 98001000 1 ？？？]",
+      "[charaFilter E silhouette 00000080]",
+      "[charaTalk A]",
+      "[charaFace A 7]",
+      "[charaFadein A 0.4 1]",
+      "＠A：谜之少女",
+      "终于醒了啊。我的弟子。[k]",
+      "[charaChange A 1098164900 5 nomal 0]",
+      "＠A：谜之少女",
+      "立绘切换后仍在场。[k]",
+    ].join("\n"), "cn-preloaded-figures");
+
+    expect(parsed.frames[0].characters).toEqual([
+      expect.objectContaining({
+        slot: "A",
+        id: "4032000",
+        face: 7,
+        visible: true,
+      }),
+    ]);
+    expect(parsed.frames[1].characters).toEqual([
+      expect.objectContaining({
+        slot: "A",
+        id: "1098164900",
+        face: 5,
+        visible: true,
+      }),
+    ]);
   });
 
   it("keeps empty dialogue frames for images that have no dialogue", () => {
