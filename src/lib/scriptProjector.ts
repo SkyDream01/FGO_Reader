@@ -14,6 +14,7 @@ import type {
   ScriptNode,
   SourceSpan,
 } from "./scriptSyntax";
+import { SCRIPT_PARSER_VERSION } from "./scriptParserVersion";
 
 interface CharacterDefinition {
   slot: string;
@@ -203,7 +204,7 @@ function makeFrameId(
   const key = `${kind}:${span.startLine}:${span.startColumn}`;
   const ordinal = context.idOrdinals.get(key) ?? 0;
   context.idOrdinals.set(key, ordinal + 1);
-  return `${context.scriptId}@v2:${kind}:${span.startLine}:${span.startColumn}:${ordinal}`;
+  return `${context.scriptId}@v${SCRIPT_PARSER_VERSION}:${kind}:${span.startLine}:${span.startColumn}:${ordinal}`;
 }
 
 function addDiagnostic(
@@ -227,19 +228,28 @@ function addDiagnostic(
 function snapshotCharacters(
   state: ProjectionState,
   speaker: string,
-  explicitSlot?: string,
+  explicitSlots?: string[],
   useTalkSlot = true,
 ): CharacterState[] {
   const uniqueByName = [...state.characters.values()].filter(
     (character) => character.name === speaker,
   );
-  const activeSlot = explicitSlot && state.characters.has(explicitSlot)
-    ? explicitSlot
-    : useTalkSlot && state.talkSlot && state.characters.has(state.talkSlot)
-      ? state.talkSlot
-      : uniqueByName.length === 1
-        ? uniqueByName[0].slot
-        : null;
+  const validExplicitSlots = (explicitSlots ?? []).filter((slot) => state.characters.has(slot));
+  const talkSlots = useTalkSlot
+    ? (state.talkSlot ?? "")
+      .split(",")
+      .map((slot) => slot.trim())
+      .filter((slot) => state.characters.has(slot))
+    : [];
+  const activeSlots = new Set(
+    validExplicitSlots.length
+      ? validExplicitSlots
+      : talkSlots.length
+        ? talkSlots
+        : uniqueByName.length === 1
+          ? [uniqueByName[0].slot]
+          : [],
+  );
   const occludingDepths = [...state.sceneLayers.values()]
     .filter((layer) => (
       layer.visible
@@ -269,7 +279,7 @@ function snapshotCharacters(
       visible: character.visible,
       position: character.position,
       silhouette: character.silhouette,
-      active: character.slot === activeSlot,
+      active: activeSlots.has(character.slot),
     }));
 }
 
@@ -330,7 +340,7 @@ function flushPendingScene(
     text: "",
     scene: state.scene,
     bgm: state.bgm,
-    characters: snapshotCharacters(state, "", undefined, false),
+    characters: snapshotCharacters(state, "", [], false),
     ...presentation,
   }, context, span);
   state.scenePending = false;
@@ -375,6 +385,12 @@ function applyCommand(
   const name = command.normalizedName;
   const args = command.args;
 
+  if (name === "end" || name === "endfade" || name === "interruption") {
+    if (name === "endfade") state.nextTransition = "fade";
+    flushPendingScene(state, target, context);
+    return true;
+  }
+
   if (name === "sceneset") {
     if (!args[0]) return;
     const slot = args[0];
@@ -390,7 +406,16 @@ function applyCommand(
     return;
   }
 
-  if (["imageset", "verticalimageset", "horizontalimageset", "equipset"].includes(name)) {
+  if (
+    [
+      "imageset",
+      "imagechange",
+      "verticalimageset",
+      "horizontalimageset",
+      "equipset",
+      "masterimageset",
+    ].includes(name)
+  ) {
     if (args[0]) {
       state.characters.delete(args[0]);
       state.sceneLayers.delete(args[0]);
@@ -398,11 +423,19 @@ function applyCommand(
     return;
   }
 
-  if (name === "charaset") {
+  if (name === "charaset" || name === "masterset") {
     if (!requireArgs(command, 4, context)) return;
-    const [slot, id, rawFace, ...rawName] = args;
-    const face = Number.parseInt(rawFace, 10);
-    const characterName = rawName.join(" ").trim();
+    const [slot, rawId, rawFace, ...rawName] = args;
+    const id = name === "masterset"
+      ? (context.options.masterGender === "female" ? args[2] : args[1])
+      : rawId;
+    const masterFlag = name === "masterset" ? args[3] : rawFace;
+    const nameParts = name === "masterset" ? [] : rawName;
+    const rawDisplay = masterFlag;
+    const face = name === "masterset" ? 0 : Number.parseInt(rawFace, 10);
+    const characterName = name === "masterset"
+      ? context.options.masterName
+      : nameParts.join(" ").trim();
     if (!Number.isFinite(face)) {
       addDiagnostic(context, command, "invalid_character_face", "角色表情编号无效");
       return;
@@ -413,7 +446,7 @@ function applyCommand(
       id,
       name: characterName,
       face,
-      visible: false,
+      visible: Number.parseInt(rawDisplay, 10) > 0,
       onStage: true,
       position: "center",
       layer: "main",
@@ -426,9 +459,10 @@ function applyCommand(
 
   if (name === "charachange" || name === "characrossfade") {
     if (!requireArgs(command, 3, context)) return;
-    const [slot, id, rawFace] = args;
-    const face = Number.parseInt(rawFace, 10);
+    const [slot, id, rawMode] = args;
     const current = state.characters.get(slot);
+    const parsedMode = Number.parseInt(rawMode, 10);
+    const face = name === "characrossfade" ? parsedMode : current?.face ?? 0;
     const characterName = current?.name ?? "";
     state.sceneLayers.delete(slot);
     state.characters.set(slot, {
@@ -436,7 +470,9 @@ function applyCommand(
       id,
       name: characterName,
       face: Number.isFinite(face) ? face : current?.face ?? 0,
-      visible: current?.visible ?? false,
+      visible: name === "charachange" && Number.isFinite(parsedMode)
+        ? parsedMode > 0
+        : current?.visible ?? false,
       onStage: current?.onStage ?? true,
       position: current?.position ?? "center",
       layer: current?.layer ?? "main",
@@ -498,22 +534,28 @@ function applyCommand(
     return;
   }
 
-  if (name === "charaput" || name === "charaputfsr" || name === "charaputfsl") {
+  if (name.startsWith("charaput")) {
     if (!requireArgs(command, 1, context)) return;
     const target = getStageSlot(state, args[0]);
     if (target) applyPlacement(target, args[1], true);
     return;
   }
 
-  if (name.startsWith("charamove")) {
+  if (name.startsWith("charamove") && !name.startsWith("charamovescale")) {
     if (!requireArgs(command, 1, context)) return;
     const target = getStageSlot(state, args[0]);
     if (target && args[1]) applyPlacement(target, args[1]);
-    if (name.includes("return")) state.nextEffect = "shake";
     return;
   }
 
-  if (["charafadeoutall", "characlearall", "charahideall"].includes(name)) {
+  if (name === "characlearall") {
+    state.characters.clear();
+    state.sceneLayers.clear();
+    state.talkSlot = null;
+    return;
+  }
+
+  if (["charafadeoutall", "charahideall"].includes(name)) {
     for (const character of state.characters.values()) character.visible = false;
     for (const layer of state.sceneLayers.values()) layer.visible = false;
     return;
@@ -525,7 +567,17 @@ function applyCommand(
     return;
   }
 
-  if (["characlear", "charahide", "charadelete"].includes(name)) {
+  if (name === "characlear" || name === "charadelete") {
+    state.characters.delete(args[0]);
+    state.sceneLayers.delete(args[0]);
+    if (
+      state.talkSlot
+      && state.talkSlot.split(",").map((slot) => slot.trim()).includes(args[0])
+    ) state.talkSlot = null;
+    return;
+  }
+
+  if (name === "charahide") {
     const target = getStageSlot(state, args[0]);
     if (target) target.visible = false;
     return;
@@ -534,7 +586,20 @@ function applyCommand(
   if (name === "charafilter") {
     if (!requireArgs(command, 2, context)) return;
     const character = state.characters.get(args[0]);
-    if (character) character.silhouette = args[1].toLowerCase() === "silhouette";
+    const mode = args.find((arg) => ["silhouette", "normal"].includes(arg.toLowerCase()));
+    if (character && mode) character.silhouette = mode.toLowerCase() === "silhouette";
+    return;
+  }
+
+  if (name === "characutin") {
+    const target = getStageSlot(state, args[0]);
+    if (target) target.visible = true;
+    return;
+  }
+
+  if (name === "characutout") {
+    const target = getStageSlot(state, args[0]);
+    if (target) target.visible = false;
     return;
   }
 
@@ -544,17 +609,23 @@ function applyCommand(
       character
       && [
         "appearancereverse",
+        "darkerasure",
+        "darkenemyerasure",
+        "erasure",
         "enemyerasure",
         "erasurereverse",
         "flasherasure",
       ].includes(args[1]?.toLowerCase())
     ) character.visible = false;
+    if (character && args[1]?.toLowerCase() === "appearance") character.visible = true;
     return;
   }
 
-  if (name === "scene") {
-    if (!requireArgs(command, 1, context)) return;
-    const scene = args[0];
+  if (name === "scene" || name === "masterscene") {
+    if (!requireArgs(command, name === "masterscene" ? 2 : 1, context)) return;
+    const scene = name === "masterscene"
+      ? (context.options.masterGender === "female" ? args[1] : args[0])
+      : args[0];
     if (state.scene !== null && state.scene !== scene) flushPendingScene(state, target, context);
     state.scene = scene;
     state.scenePending = true;
@@ -568,36 +639,55 @@ function applyCommand(
     return;
   }
 
-  if (["bgmstop", "bgmstopend", "soundstopall", "soundstopallend"].includes(name)) {
+  if (
+    [
+      "bgmstop",
+      "bgmstopend",
+      "soundstopall",
+      "soundstopallend",
+      "soundstopallfade",
+    ].includes(name)
+  ) {
     state.bgm = null;
     return;
   }
 
-  if (name === "fadein" || name === "fadeout") {
+  if (name === "fadein" || name === "fadeout" || name === "fademove") {
     state.nextTransition = "fade";
     if (args.some((arg) => arg.toLowerCase() === "white")) state.nextEffect = "flash";
     return;
   }
 
-  if (name.startsWith("wipe")) {
+  if (name === "wipein" || name === "wipeout" || name === "wipefilter") {
     state.nextTransition = "wipe";
     return;
   }
 
-  if (name.startsWith("flash")) {
+  if (name === "wipeoff") return;
+
+  if (name === "flashin" || name === "flashout") {
     state.nextEffect = "flash";
     return;
   }
 
+  if (name === "flashoff") return;
+
+  if (name.startsWith("mask") || name.startsWith("stretch")) {
+    state.nextTransition = "fade";
+    return;
+  }
+
   if (
-    name.includes("shake")
+    (name.includes("shake") && !name.endsWith("stop"))
     || name.includes("quake")
     || name.includes("vibrate")
+    || name === "charaattack"
     || name === "cameramovereturn"
     || (name === "se" && args[0]?.toLowerCase().startsWith("ad9"))
   ) {
     state.nextEffect = "shake";
   }
+  return false;
 }
 
 function characterEquals(
@@ -701,7 +791,7 @@ function projectNodes(
   for (const node of nodes) {
     if (context.stopped) break;
     if (node.type === "command") {
-      applyCommand(node, state, frames, context);
+      if (applyCommand(node, state, frames, context) === true) break;
       continue;
     }
 
@@ -710,8 +800,13 @@ function projectNodes(
       const text = renderInlineNodes(node.body, context.options, (command) => {
         applyCommand(command, state, frames, context);
       });
-      if (node.speaker.slot && state.characters.has(node.speaker.slot)) {
-        state.talkSlot = node.speaker.slot;
+      const explicitSlots = node.speaker.spots?.length
+        ? node.speaker.spots
+        : node.speaker.slot
+          ? [node.speaker.slot]
+          : [];
+      if (explicitSlots.some((slot) => state.characters.has(slot))) {
+        state.talkSlot = explicitSlots.join(",");
       }
       const presentation = consumePresentationState(state);
       pushFrame(frames, {
@@ -721,7 +816,7 @@ function projectNodes(
         text,
         scene: state.scene,
         bgm: state.bgm,
-        characters: snapshotCharacters(state, speaker, node.speaker.slot),
+        characters: snapshotCharacters(state, speaker, explicitSlots),
         ...presentation,
       }, context, node.span);
       state.scenePending = false;
@@ -748,7 +843,7 @@ function projectNodes(
       text: "选择回应",
       scene: state.scene,
       bgm: state.bgm,
-      characters: snapshotCharacters(state, ""),
+      characters: snapshotCharacters(state, "", []),
       options: parsedBranches.map((branch) => ({
         label: branch.label,
         frames: branch.frames,

@@ -123,8 +123,8 @@ with sync_playwright() as playwright:
         "Object.keys(localStorage).filter(key => key.startsWith('fgo-reader-progress:')).sort()"
     )
     assert progress_keys == [
-        "fgo-reader-progress:v2:1000000001",
-        "fgo-reader-progress:v2:1000000002",
+        "fgo-reader-progress:v3:1000000001",
+        "fgo-reader-progress:v3:1000000002",
     ]
 
     page.keyboard.press("Space")

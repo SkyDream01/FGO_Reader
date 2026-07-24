@@ -47,6 +47,94 @@ describe("cleanScriptText", () => {
 });
 
 describe("parseFgoScript", () => {
+  it("splits consecutive click markers into frames while retaining the speaker", () => {
+    const parsed = parseFgoScript([
+      "＄01-00-00-01-1-0",
+      "[charaSet A 98001000 1 マシュ]",
+      "＠A：マシュ",
+      "……マスター。[k]",
+      "本日もよろしくお願いします。[k]",
+    ].join("\n"), "documented-dialogue");
+
+    expect(parsed.frames.map((frame) => ({
+      speaker: frame.speaker,
+      text: frame.text,
+    }))).toEqual([
+      { speaker: "マシュ", text: "……マスター。" },
+      { speaker: "マシュ", text: "本日もよろしくお願いします。" },
+    ]);
+    expect(parsed.frames[0].characters).toEqual([
+      expect.objectContaining({ slot: "A", visible: true, active: true }),
+    ]);
+  });
+
+  it("activates every spot speaker and accepts the full charaFilter argument form", () => {
+    const parsed = parseFgoScript([
+      "[charaSet A 1001 1 A]",
+      "[charaSet B 1002 1 B]",
+      "[charaFilter A X silhouette 00000080]",
+      "＠二人=spot[A,B]",
+      "同時発言。[k]",
+    ].join("\n"), "spot-dialogue");
+
+    expect(parsed.frames[0].characters).toEqual([
+      expect.objectContaining({ slot: "A", active: true, silhouette: true }),
+      expect.objectContaining({ slot: "B", active: true, silhouette: false }),
+    ]);
+  });
+
+  it("supports comma-separated charaTalk slots without treating stop commands as effects", () => {
+    const parsed = parseFgoScript([
+      "[charaSet A 1001 1 A]",
+      "[charaSet B 1002 1 B]",
+      "[charaPut A -256,0]",
+      "[charaPut B 256,0]",
+      "[charaMoveScale A 2.5 1.0]",
+      "[charaTalk A,B]",
+      "[flashOff]",
+      "[shakeStop]",
+      "＠二人",
+      "同時発言。[k]",
+    ].join("\n"), "multi-talk");
+
+    expect(parsed.frames[0]).toMatchObject({
+      effect: "none",
+      transition: "none",
+      characters: [
+        expect.objectContaining({ slot: "A", position: "left", active: true }),
+        expect.objectContaining({ slot: "B", position: "right", active: true }),
+      ],
+    });
+  });
+
+  it("selects gender-dependent master assets and stops at the end command", () => {
+    const parsed = parseFgoScript([
+      "[masterSet L 1098348300 1098348310 1]",
+      "[masterScene 276600 276601 1.0]",
+      "＠L：[%1]",
+      "選択された姿です。[k]",
+      "[end]",
+      "この行は終了後なので表示しない。[k]",
+    ].join("\n"), "master-assets", {
+      masterName: "藤丸",
+      masterGender: "female",
+    });
+
+    expect(parsed.frames).toHaveLength(1);
+    expect(parsed.frames[0]).toMatchObject({
+      speaker: "藤丸",
+      scene: "276601",
+      characters: [
+        expect.objectContaining({
+          slot: "L",
+          id: "1098348310",
+          name: "藤丸",
+          active: true,
+        }),
+      ],
+    });
+  });
+
   it("keeps empty dialogue frames for images that have no dialogue", () => {
     const script = `
 [charaSet A 1001001 1 玛修]
@@ -344,10 +432,10 @@ describe("parseFgoScript", () => {
       "?!",
     ].join("\n"), "source-id", { region: "KR" });
 
-    expect(parsed.parserVersion).toBe(2);
+    expect(parsed.parserVersion).toBe(3);
     expect(parsed.frames.map((frame) => frame.id)).toEqual([
-      "source-id@v2:d:1:1:0",
-      "source-id@v2:c:3:1:0",
+      "source-id@v3:d:1:1:0",
+      "source-id@v3:c:3:1:0",
     ]);
     expect(parsed.frames[0]).toMatchObject({ text: "First——" });
     const choice = parsed.frames[1];
@@ -355,8 +443,8 @@ describe("parseFgoScript", () => {
     if (choice.type === "choice") {
       expect(choice.options.map((option) => option.label)).toEqual(["Continue", "Stop"]);
       expect(choice.options.map((option) => option.frames[0]?.id)).toEqual([
-        "source-id@v2:d:4:1:0",
-        "source-id@v2:d:7:1:0",
+        "source-id@v3:d:4:1:0",
+        "source-id@v3:d:7:1:0",
       ]);
     }
   });

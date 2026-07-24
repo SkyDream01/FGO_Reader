@@ -139,10 +139,13 @@ const ASSET_COMMANDS = new Set([
   "charachange",
   "characrossfade",
   "imageset",
+  "imagechange",
   "verticalimageset",
   "horizontalimageset",
   "equipset",
   "sceneset",
+  "masterset",
+  "masterimageset",
 ]);
 
 const CHARACTER_COMMANDS = new Set([
@@ -154,15 +157,35 @@ const CHARACTER_COMMANDS = new Set([
   "charaput",
   "charaputfsr",
   "charaputfsl",
+  "charaputfssidel",
+  "charaputfssider",
   "charascale",
   "charadepth",
   "charalayer",
   "characutin",
   "characutinpause",
+  "characutout",
+  "charaattack",
+  "charabackeffect",
+  "charabackeffectstop",
+  "charabackeffectdestroy",
   "charaeffect",
   "charaeffectstop",
   "charaeffectdestroy",
+  "charaeffectpause",
+  "charaeffectstart",
+  "charaeffectedgeblur",
+  "charaeffectedgeblurdestroy",
+  "charaeffectedgeblurstop",
+  "charaeffectedgeblurpause",
+  "charaeffectedgeblurstart",
   "charaspecialeffect",
+  "charaspecialeffectstop",
+  "charashadow",
+  "chararoll",
+  "chararollaxis",
+  "chararollmove",
+  "chararollmoveex",
   "characlear",
   "charahide",
   "charadelete",
@@ -173,6 +196,7 @@ const CHARACTER_COMMANDS = new Set([
 
 const BACKGROUND_COMMANDS = new Set([
   "scene",
+  "masterscene",
   "pictureframe",
   "pictureframetop",
   "enablefullscreen",
@@ -184,11 +208,14 @@ const BGM_COMMANDS = new Set([
   "bgmstopend",
   "soundstopall",
   "soundstopallend",
+  "soundstopallfade",
 ]);
 
 const TRANSITION_COMMANDS = new Set([
   "fadein",
   "fadeout",
+  "fademove",
+  "endfade",
   "wipein",
   "wipeout",
   "wipefilter",
@@ -198,47 +225,79 @@ const TRANSITION_COMMANDS = new Set([
   "flashoff",
   "maskin",
   "maskout",
+  "stretchin",
+  "stretchout",
 ]);
 
 const EFFECT_COMMANDS = new Set([
   "effect",
   "effectstop",
   "effectdestroy",
+  "effectforcestop",
+  "effectstart",
+  "effectpause",
   "effectmessage",
   "effectmessagestop",
   "shake",
+  "shakestop",
   "messageshake",
+  "messageshakestop",
   "charashake",
   "charashakestop",
   "quake",
   "vibrate",
+  "distortionstart",
+  "distortionstop",
+  "specialeffect",
 ]);
 
 const AUDIO_COMMANDS = new Set([
   "se",
   "sestop",
+  "seloop",
   "sevolume",
   "secontinue",
+  "secontinuestop",
+  "secontinuevolume",
   "cuese",
   "cuesestop",
   "cuesevolume",
   "cuesecontinue",
   "cuesecontinuestop",
+  "cuesecontinuevolume",
   "voice",
+  "voicestop",
   "tvoice",
   "tvoiceuser",
+  "jingle",
 ]);
 
 const FLOW_COMMANDS = new Set([
   "label",
   "branch",
+  "branchquestclear",
   "branchquestnotclear",
+  "branchmaterial",
+  "branchrouteselect",
+  "branchnotrouteselect",
+  "branchrouteselectcount",
+  "branchsetgrandsvtcount",
   "masterbranch",
+  "input",
+  "skip",
+  "tapskip",
+  "ifclear",
+  "else",
+  "endif",
   "flag",
   "wait",
   "wt",
+  "twt",
   "messageoff",
+  "messageon",
+  "selectionuse",
   "end",
+  "interruption",
   "clear",
 ]);
 
@@ -253,6 +312,42 @@ const PRESENTATION_PREFIXES = [
   "blur",
   "scroll",
 ];
+
+const PRESENTATION_COMMANDS = new Set([
+  "autoandbacklog",
+  "backcameracolor",
+  "backlogstart",
+  "backlogend",
+  "capture",
+  "capturerelease",
+  "communicationchara",
+  "communicationcharaclear",
+  "communicationcharaface",
+  "communicationcharaloop",
+  "communicationcharastop",
+  "crimovie",
+  "enablewaitloadassetwhenresume",
+  "fsmobjdestroy",
+  "fsmobjlayer",
+  "fsmobjsendevent",
+  "fsmobjset",
+  "fsmobjsetstate",
+  "image",
+  "insertionanimationend",
+  "insertionanimationsetfssider",
+  "insertionanimationstart",
+  "masternamewidth",
+  "messagealign",
+  "messagechange",
+  "messagespeedforcednormal",
+  "movie",
+  "substretch",
+  "talknameback",
+  "traidshortname",
+  "turnpageoff",
+  "turnpageon",
+  "usesimplemeshfigure",
+]);
 
 function classifyCommand(normalizedName: string): ScriptCommandKind {
   if (ASSET_COMMANDS.has(normalizedName)) return "asset";
@@ -272,10 +367,7 @@ function classifyCommand(normalizedName: string): ScriptCommandKind {
   if (PRESENTATION_PREFIXES.some((prefix) => normalizedName.startsWith(prefix))) {
     return "presentation";
   }
-  if (
-    normalizedName === "enablewaitloadassetwhenresume"
-    || normalizedName === "criMovie".toLowerCase()
-  ) return "presentation";
+  if (PRESENTATION_COMMANDS.has(normalizedName)) return "presentation";
   return "unknown";
 }
 
@@ -457,7 +549,7 @@ function commandFromSegment(
     span: segment.span,
   };
 
-  if (normalizedName === "charaset" && parameters[0]) {
+  if ((normalizedName === "charaset" || normalizedName === "masterset") && parameters[0]) {
     context.definedCharacterSlots.add(parameters[0]);
     if (context.definedCharacterSlots.size > context.maxCharacterSlots) {
       context.diagnostics.add({
@@ -487,6 +579,11 @@ function commandFromSegment(
 interface ParsedInlineLine {
   nodes: ScriptInlineNode[];
   terminatesDialogue: boolean;
+  parts: Array<{
+    nodes: ScriptInlineNode[];
+    terminated: boolean;
+    endSpan?: SourceSpan;
+  }>;
 }
 
 function parseInlineText(
@@ -495,7 +592,8 @@ function parseInlineText(
   context: SyntaxContext,
   baseColumn = 1,
 ): ParsedInlineLine {
-  const nodes: ScriptInlineNode[] = [];
+  const parts: ParsedInlineLine["parts"] = [{ nodes: [], terminated: false }];
+  let nodes = parts[0].nodes;
   let terminatesDialogue = false;
 
   for (const segment of scanSegments(text, line, context.diagnostics, baseColumn)) {
@@ -515,10 +613,16 @@ function parseInlineText(
     }
     if (["k", "page", "q"].includes(normalized.split(/\s+/, 1)[0])) {
       terminatesDialogue = true;
+      parts[parts.length - 1].terminated = true;
+      parts[parts.length - 1].endSpan = segment.span;
+      parts.push({ nodes: [], terminated: false });
+      nodes = parts[parts.length - 1].nodes;
       continue;
     }
-    if (normalized === "%1") {
-      nodes.push({ type: "masterName", span: segment.span });
+    if (/^%\d+$/.test(normalized)) {
+      if (normalized === "%1" || normalized === "%5") {
+        nodes.push({ type: "masterName", span: segment.span });
+      }
       continue;
     }
 
@@ -566,7 +670,7 @@ function parseInlineText(
       });
       continue;
     }
-    if (marker === "image" || marker === "i") {
+    if ((marker === "image" && parameters.length === 1) || marker === "i") {
       nodes.push({ type: "format", name: marker, span: segment.span });
       continue;
     }
@@ -578,7 +682,8 @@ function parseInlineText(
       || marker === "align"
       || marker === "s"
       || marker === "speed"
-      || /^[0-9a-f]{6}$/i.test(marker ?? "")
+      || /^(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(marker ?? "")
+      || /^[a-z](?:,[a-z])+$/i.test(marker ?? "")
     ) {
       nodes.push({
         type: "format",
@@ -593,7 +698,14 @@ function parseInlineText(
     if (command) nodes.push(command);
   }
 
-  return { nodes, terminatesDialogue };
+  if (!parts.at(-1)?.terminated && parts.at(-1)?.nodes.length === 0 && parts.length > 1) {
+    parts.pop();
+  }
+  return {
+    nodes: parts.flatMap((part) => part.nodes),
+    terminatesDialogue,
+    parts,
+  };
 }
 
 function firstNonWhitespaceColumn(value: string) {
@@ -615,9 +727,12 @@ function parseSpeaker(record: LineRecord, context: SyntaxContext): ScriptSpeaker
     }
   }
 
-  const spotMatch = rawName.match(/=spot\(([^)]*)\)\s*$/i);
+  const spotMatch = rawName.match(/=spot(?:\[([^\]]*)\]|\(([^)]*)\))\s*$/i);
   if (spotMatch) {
-    spots = spotMatch[1].split(",").map((spot) => spot.trim()).filter(Boolean);
+    spots = (spotMatch[1] ?? spotMatch[2] ?? "")
+      .split(",")
+      .map((spot) => spot.trim())
+      .filter(Boolean);
     rawName = rawName.slice(0, spotMatch.index).trim();
   }
 
@@ -812,9 +927,10 @@ function parseSequence(records: LineRecord[], context: SyntaxContext): ScriptNod
     const leftTrimmed = record.content.trimStart();
     if (leftTrimmed.startsWith("＠") || leftTrimmed.startsWith("@")) {
       const speaker = parseSpeaker(record, context);
-      const body: ScriptInlineNode[] = [];
+      let body: ScriptInlineNode[] = [];
       let cursor = index + 1;
-      let terminated = false;
+      let emittedDialogue = false;
+      let bodyStart = record;
       let endRecord = record;
 
       while (cursor < records.length) {
@@ -827,15 +943,68 @@ function parseSequence(records: LineRecord[], context: SyntaxContext): ScriptNod
           || isChoiceEnd(bodyRecord)
         ) break;
 
+        if (!bodyRecord.content.trim()) {
+          if (body.length) {
+            body.push({
+              type: "newline",
+              span: spanForText(bodyRecord.line, 1, ""),
+            });
+          }
+          cursor += 1;
+          continue;
+        }
+
         const parsedLine = parseInlineText(bodyRecord.content, bodyRecord.line, context);
-        body.push(...parsedLine.nodes);
+        const onlyStandaloneCommands = !parsedLine.terminatesDialogue
+          && parsedLine.nodes.some((node) => node.type === "command")
+          && parsedLine.nodes.every(
+            (node) => node.type === "command"
+              || (node.type === "text" && !node.value.trim()),
+          );
+        if (onlyStandaloneCommands && body.length === 0) {
+          nodes.push(
+            ...parsedLine.nodes.filter(
+              (node): node is ScriptCommandNode => node.type === "command",
+            ),
+          );
+          endRecord = bodyRecord;
+          cursor += 1;
+          continue;
+        }
+
+        for (const part of parsedLine.parts) {
+          if (!body.length && part.nodes.length) {
+            bodyStart = emittedDialogue ? bodyRecord : record;
+          }
+          body.push(...part.nodes);
+          if (!part.terminated) continue;
+
+          const partEnd = part.endSpan ?? spanForText(
+            bodyRecord.line,
+            bodyRecord.content.length + 1,
+            "",
+          );
+          nodes.push({
+            type: "dialogue",
+            speaker,
+            body,
+            span: {
+              startLine: bodyStart.line,
+              startColumn: emittedDialogue
+                ? firstNonWhitespaceColumn(bodyStart.content)
+                : firstNonWhitespaceColumn(record.content),
+              endLine: partEnd.endLine,
+              endColumn: partEnd.endColumn,
+            },
+          });
+          body = [];
+          emittedDialogue = true;
+          bodyStart = bodyRecord;
+        }
+
         endRecord = bodyRecord;
         cursor += 1;
-        if (parsedLine.terminatesDialogue) {
-          terminated = true;
-          break;
-        }
-        if (cursor < records.length) {
+        if (body.length) {
           body.push({
             type: "newline",
             span: spanForText(bodyRecord.line, bodyRecord.content.length + 1, ""),
@@ -843,7 +1012,7 @@ function parseSequence(records: LineRecord[], context: SyntaxContext): ScriptNod
         }
       }
 
-      if (!terminated) {
+      if (body.length || !emittedDialogue) {
         context.diagnostics.add({
           severity: "warning",
           code: "unclosed_dialogue",
@@ -851,18 +1020,20 @@ function parseSequence(records: LineRecord[], context: SyntaxContext): ScriptNod
           line: record.line,
           column: firstNonWhitespaceColumn(record.content),
         });
+        nodes.push({
+          type: "dialogue",
+          speaker,
+          body,
+          span: {
+            startLine: bodyStart.line,
+            startColumn: emittedDialogue
+              ? firstNonWhitespaceColumn(bodyStart.content)
+              : firstNonWhitespaceColumn(record.content),
+            endLine: endRecord.line,
+            endColumn: endRecord.content.length + 1,
+          },
+        });
       }
-      nodes.push({
-        type: "dialogue",
-        speaker,
-        body,
-        span: {
-          startLine: record.line,
-          startColumn: firstNonWhitespaceColumn(record.content),
-          endLine: endRecord.line,
-          endColumn: endRecord.content.length + 1,
-        },
-      });
       index = Math.max(cursor, index + 1);
       continue;
     }

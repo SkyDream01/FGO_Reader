@@ -114,7 +114,7 @@ describe("last observation", () => {
       removeItem: (key: string) => values.delete(key),
     };
 
-    expect(LAST_OBSERVATION_KEY).toBe("fgo-reader-last-observation:v2");
+    expect(LAST_OBSERVATION_KEY).toBe("fgo-reader-last-observation:v3");
     expect(loadLastObservation(storage)).toBeNull();
     saveLastObservation(createLastObservation(story, 3, 5678), storage);
     expect(loadLastObservation(storage)?.frameIndex).toBe(3);
