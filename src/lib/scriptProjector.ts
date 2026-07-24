@@ -45,8 +45,12 @@ interface ProjectionState {
   sceneAnchor: SourceSpan | null;
   bgm: string | null;
   talkSlot: string | null;
+  subRenderVisible: boolean;
   characters: Map<string, CharacterDefinition>;
   sceneLayers: Map<string, SceneLayerDefinition>;
+  animationPending: boolean;
+  animationAnchor: SourceSpan | null;
+  animationBaseline: string | null;
   nextEffect: FrameEffect;
   nextTransition: FrameTransition;
 }
@@ -92,8 +96,12 @@ function initialState(): ProjectionState {
     sceneAnchor: null,
     bgm: null,
     talkSlot: null,
+    subRenderVisible: false,
     characters: new Map(),
     sceneLayers: new Map(),
+    animationPending: false,
+    animationAnchor: null,
+    animationBaseline: null,
     nextEffect: "none",
     nextTransition: "none",
   };
@@ -103,6 +111,7 @@ function cloneState(state: ProjectionState): ProjectionState {
   return {
     ...state,
     sceneAnchor: state.sceneAnchor ? { ...state.sceneAnchor } : null,
+    animationAnchor: state.animationAnchor ? { ...state.animationAnchor } : null,
     characters: new Map(
       [...state.characters].map(([slot, character]) => [slot, { ...character }]),
     ),
@@ -198,7 +207,7 @@ export function renderScriptText(
 
 function makeFrameId(
   context: ProjectionContext,
-  kind: "d" | "c" | "s",
+  kind: "d" | "a" | "c" | "s",
   span: SourceSpan,
 ) {
   const key = `${kind}:${span.startLine}:${span.startColumn}`;
@@ -267,9 +276,12 @@ function snapshotCharacters(
       (character) =>
         character.visible
         && character.onStage
-        && character.layer === "main"
         && !character.effectOnly
-        && (occludingDepth === null || (character.depth ?? 0) > occludingDepth),
+        && (
+          character.layer === "sub"
+            ? state.subRenderVisible
+            : occludingDepth === null || (character.depth ?? 0) > occludingDepth
+        ),
     )
     .map((character) => ({
       slot: character.slot,
@@ -281,6 +293,39 @@ function snapshotCharacters(
       silhouette: character.silhouette,
       active: activeSlots.has(character.slot),
     }));
+}
+
+function animationSnapshotKey(state: ProjectionState) {
+  return JSON.stringify({
+    scene: state.scene,
+    characters: snapshotCharacters(state, "", [], false).map((character) => ({
+      slot: character.slot,
+      id: character.id,
+      face: character.face,
+      position: character.position,
+      silhouette: character.silhouette,
+    })),
+  });
+}
+
+function resetPendingAnimation(state: ProjectionState) {
+  state.animationPending = false;
+  state.animationAnchor = null;
+  state.animationBaseline = null;
+}
+
+function trackAnimationMutation(
+  state: ProjectionState,
+  before: string,
+  span: SourceSpan,
+) {
+  const after = animationSnapshotKey(state);
+  if (before === after) return;
+  if (!state.animationPending) {
+    state.animationPending = true;
+    state.animationAnchor = { ...span };
+    state.animationBaseline = before;
+  }
 }
 
 function consumePresentationState(state: ProjectionState) {
@@ -320,6 +365,34 @@ function pushFrame(
   return true;
 }
 
+function flushPendingAnimation(
+  state: ProjectionState,
+  target: StoryFrame[],
+  context: ProjectionContext,
+  fallbackSpan: SourceSpan,
+) {
+  if (!state.animationPending || context.stopped) return;
+  const baseline = state.animationBaseline;
+  const current = animationSnapshotKey(state);
+  const span = state.animationAnchor ?? fallbackSpan;
+  resetPendingAnimation(state);
+  if (baseline === current) return;
+
+  const presentation = consumePresentationState(state);
+  pushFrame(target, {
+    id: makeFrameId(context, "a", span),
+    type: "animation",
+    speaker: "",
+    text: "",
+    scene: state.scene,
+    bgm: state.bgm,
+    characters: snapshotCharacters(state, "", [], false),
+    ...presentation,
+  }, context, span);
+  state.scenePending = false;
+  state.sceneAnchor = null;
+}
+
 function flushPendingScene(
   state: ProjectionState,
   target: StoryFrame[],
@@ -343,6 +416,7 @@ function flushPendingScene(
     characters: snapshotCharacters(state, "", [], false),
     ...presentation,
   }, context, span);
+  resetPendingAnimation(state);
   state.scenePending = false;
 }
 
@@ -550,6 +624,7 @@ function applyCommand(
     state.characters.clear();
     state.sceneLayers.clear();
     state.talkSlot = null;
+    state.subRenderVisible = false;
     return;
   }
 
@@ -670,6 +745,24 @@ function applyCommand(
 
   if (name === "flashoff") return;
 
+  if (
+    name.startsWith("subrenderfadein")
+    || name === "subrenderon"
+  ) {
+    state.subRenderVisible = true;
+    return;
+  }
+
+  if (
+    name.startsWith("subrenderfadeout")
+    || name === "subrenderoff"
+    || name === "subrenderdestroy"
+    || name === "subcameraoff"
+  ) {
+    state.subRenderVisible = false;
+    return;
+  }
+
   if (name.startsWith("mask") || name.startsWith("stretch")) {
     state.nextTransition = "fade";
     return;
@@ -734,6 +827,12 @@ function mergeChoiceStates(
     if (branches.every((branch) => branch[field] === first)) result[field] = first;
     else divergent = true;
   }
+  const firstSubRenderVisible = branches[0].subRenderVisible;
+  if (branches.every((branch) => branch.subRenderVisible === firstSubRenderVisible)) {
+    result.subRenderVisible = firstSubRenderVisible;
+  } else {
+    divergent = true;
+  }
 
   const slots = new Set([
     ...base.characters.keys(),
@@ -765,6 +864,9 @@ function mergeChoiceStates(
 
   result.scenePending = false;
   result.sceneAnchor = null;
+  result.animationPending = false;
+  result.animationAnchor = null;
+  result.animationBaseline = null;
   result.nextEffect = "none";
   result.nextTransition = "none";
   if (divergent) {
@@ -789,7 +891,17 @@ function projectNodes(
   for (const node of nodes) {
     if (context.stopped) break;
     if (node.type === "command") {
-      if (applyCommand(node, state, frames, context) === true) break;
+      if (
+        ["wait", "wt", "twt", "end", "endfade", "interruption"].includes(
+          node.normalizedName,
+        )
+      ) {
+        flushPendingAnimation(state, frames, context, node.span);
+      }
+      const before = animationSnapshotKey(state);
+      const shouldStop = applyCommand(node, state, frames, context) === true;
+      trackAnimationMutation(state, before, node.span);
+      if (shouldStop) break;
       continue;
     }
 
@@ -817,10 +929,12 @@ function projectNodes(
         characters: snapshotCharacters(state, speaker, explicitSlots),
         ...presentation,
       }, context, node.span);
+      resetPendingAnimation(state);
       state.scenePending = false;
       continue;
     }
 
+    resetPendingAnimation(state);
     state.scenePending = false;
     state.sceneAnchor = null;
     const presentation = consumePresentationState(state);
@@ -856,6 +970,13 @@ function projectNodes(
     );
   }
 
+  const endSpan = nodes[nodes.length - 1]?.span ?? {
+    startLine: 1,
+    startColumn: 1,
+    endLine: 1,
+    endColumn: 1,
+  };
+  flushPendingAnimation(state, frames, context, endSpan);
   flushPendingScene(state, frames, context);
   return { frames, state };
 }

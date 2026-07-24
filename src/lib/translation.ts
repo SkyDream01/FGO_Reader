@@ -5,6 +5,7 @@ import {
   getNativeTranslationConfig,
   requestNativeTranslations,
 } from "../platform/nativeTranslation";
+import { SCRIPT_PARSER_VERSION } from "./scriptParserVersion";
 
 export type TranslationProvider = "deepl" | "openai" | "bing";
 export type TranslationMode = "source" | "translated";
@@ -88,8 +89,8 @@ export class TranslationRequestError extends Error {
 }
 
 const SETTINGS_KEY = "fgo-reader-translation-settings:v1";
-const CACHE_INDEX_KEY = "fgo-reader-translation-cache-index:v3";
-const CACHE_PREFIX = "fgo-reader-translation-cache:v3:";
+const CACHE_INDEX_KEY = `fgo-reader-translation-cache-index:v${SCRIPT_PARSER_VERSION}`;
+const CACHE_PREFIX = `fgo-reader-translation-cache:v${SCRIPT_PARSER_VERSION}:`;
 const CACHE_ENTRY_LIMIT = 12;
 export const TRANSLATION_AHEAD_FRAME_COUNT = 10;
 
@@ -204,6 +205,7 @@ export function translationUnitSourceHash(unit: TranslationUnit) {
 }
 
 export function frameTranslationUnits(frame: StoryFrame): TranslationUnit[] {
+  if (frame.type === "animation") return [];
   if (frame.type === "choice") {
     return frame.options.map((option, index) => ({
       id: `${frame.id}:choice:${index}`,

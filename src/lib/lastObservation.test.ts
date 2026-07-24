@@ -104,7 +104,7 @@ describe("last observation", () => {
     ).toEqual(legacyObservation);
   });
 
-  it("persists only in the parser-v2 observation namespace", () => {
+  it("persists only in the current parser observation namespace", () => {
     const values = new Map<string, string>([
       ["fgo-reader-last-observation", JSON.stringify(createLastObservation(story, 9, 1234))],
     ]);
@@ -114,7 +114,7 @@ describe("last observation", () => {
       removeItem: (key: string) => values.delete(key),
     };
 
-    expect(LAST_OBSERVATION_KEY).toBe("fgo-reader-last-observation:v3");
+    expect(LAST_OBSERVATION_KEY).toBe("fgo-reader-last-observation:v4");
     expect(loadLastObservation(storage)).toBeNull();
     saveLastObservation(createLastObservation(story, 3, 5678), storage);
     expect(loadLastObservation(storage)?.frameIndex).toBe(3);

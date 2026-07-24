@@ -1296,7 +1296,7 @@ export function ReaderView({
               </div>
             )}
 
-            {currentFrame && (
+            {currentFrame && currentFrame.type !== "animation" && (
               <div className="dialogue-wrap">
                 <div className="dialogue-track" aria-hidden="true">
                   <span className="track-fill" />
@@ -1336,6 +1336,17 @@ export function ReaderView({
                   </div>
                 </div>
               </div>
+            )}
+
+            {currentFrame?.type === "animation" && (
+              <button
+                className="animation-advance"
+                onClick={advance}
+                aria-label="继续演出"
+              >
+                <span>演出</span>
+                <ChevronDown size={19} />
+              </button>
             )}
 
             {translatedMode && translation.preparing && (

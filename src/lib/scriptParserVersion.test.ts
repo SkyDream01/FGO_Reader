@@ -30,13 +30,13 @@ class MemoryStorage {
 }
 
 describe("script parser persistence version", () => {
-  it("uses one v3 namespace for every frame-dependent record", () => {
-    expect(SCRIPT_PARSER_VERSION).toBe(3);
-    expect(BOOKMARK_STORAGE_KEY).toBe("fgo-reader-bookmark:v3");
-    expect(LAST_OBSERVATION_STORAGE_KEY).toBe("fgo-reader-last-observation:v3");
-    expect(progressStorageKey("script")).toBe("fgo-reader-progress:v3:script");
-    expect(readProgressStorageKey("script")).toBe("fgo-reader-read:v3:script");
-    expect(choiceTrailStorageKey("script")).toBe("fgo-reader-choice-trail:v3:script");
+  it("uses one v4 namespace for every frame-dependent record", () => {
+    expect(SCRIPT_PARSER_VERSION).toBe(4);
+    expect(BOOKMARK_STORAGE_KEY).toBe("fgo-reader-bookmark:v4");
+    expect(LAST_OBSERVATION_STORAGE_KEY).toBe("fgo-reader-last-observation:v4");
+    expect(progressStorageKey("script")).toBe("fgo-reader-progress:v4:script");
+    expect(readProgressStorageKey("script")).toBe("fgo-reader-read:v4:script");
+    expect(choiceTrailStorageKey("script")).toBe("fgo-reader-choice-trail:v4:script");
   });
 
   it("reports legacy state once and ignores already-versioned state", () => {

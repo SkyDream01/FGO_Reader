@@ -346,7 +346,11 @@ describe("parseFgoScript", () => {
     expect(parsed.frames[0].characters).toEqual([
       expect.objectContaining({ slot: "D", face: 1, visible: true }),
     ]);
-    expect(parsed.frames[1].characters).toEqual([
+    expect(parsed.frames[1]).toMatchObject({
+      type: "animation",
+      characters: [],
+    });
+    expect(parsed.frames[2].characters).toEqual([
       expect.objectContaining({ slot: "B", visible: true }),
     ]);
   });
@@ -395,6 +399,46 @@ describe("parseFgoScript", () => {
     expect(parsed.frames[0].characters).not.toContainEqual(
       expect.objectContaining({ slot: "A" }),
     );
+  });
+
+  it("creates silent animation frames for visible sub-render characters", () => {
+    const script = `
+[charaSet A 8001900 1 マシュ]
+[charaSet F 1098154000 1 空想樹の種子]
+[charaSet G 1098154000 1 空想樹の種子]
+[charaFadein A 0.1 1]
+[charaLayer F sub #A]
+[charaLayer G sub #A]
+[charaFadein F 0.1 -350,250]
+[charaFadein G 0.1 150,250]
+[subRenderFadein #A 0.3 -50,-360]
+[wt 1.0]
+[subRenderFadeout #A 0.4]
+[wt 0.5]
+＠A：マシュ
+空想樹の種子を確認しました。
+[k]
+`;
+
+    const parsed = parseFgoScript(script, "silent-sub-render");
+
+    expect(parsed.frames.map(({ type }) => type)).toEqual([
+      "animation",
+      "animation",
+      "dialogue",
+    ]);
+    expect(parsed.frames[0]).toMatchObject({
+      type: "animation",
+      speaker: "",
+      text: "",
+      characters: [
+        expect.objectContaining({ slot: "A", id: "8001900" }),
+        expect.objectContaining({ slot: "F", id: "1098154000" }),
+        expect.objectContaining({ slot: "G", id: "1098154000" }),
+      ],
+    });
+    expect(parsed.frames[1].characters.map(({ slot }) => slot)).toEqual(["A"]);
+    expect(parsed.characterCount).toBe(2);
   });
 
   it("removes enemies erased by enemyErasure", () => {
@@ -473,10 +517,10 @@ describe("parseFgoScript", () => {
       "?!",
     ].join("\n"), "source-id", { region: "KR" });
 
-    expect(parsed.parserVersion).toBe(3);
+    expect(parsed.parserVersion).toBe(4);
     expect(parsed.frames.map((frame) => frame.id)).toEqual([
-      "source-id@v3:d:1:1:0",
-      "source-id@v3:c:3:1:0",
+      "source-id@v4:d:1:1:0",
+      "source-id@v4:c:3:1:0",
     ]);
     expect(parsed.frames[0]).toMatchObject({ text: "First——" });
     const choice = parsed.frames[1];
@@ -484,8 +528,8 @@ describe("parseFgoScript", () => {
     if (choice.type === "choice") {
       expect(choice.options.map((option) => option.label)).toEqual(["Continue", "Stop"]);
       expect(choice.options.map((option) => option.frames[0]?.id)).toEqual([
-        "source-id@v3:d:4:1:0",
-        "source-id@v3:d:7:1:0",
+        "source-id@v4:d:4:1:0",
+        "source-id@v4:d:7:1:0",
       ]);
     }
   });

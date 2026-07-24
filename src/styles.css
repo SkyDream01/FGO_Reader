@@ -2318,6 +2318,40 @@ html[data-runtime="android"] .custom-library-backdrop {
   transform: rotate(-45deg);
 }
 
+.animation-advance {
+  position: absolute;
+  z-index: 13;
+  display: flex;
+  align-items: center;
+  right: 3.4%;
+  bottom: 4.8%;
+  gap: 8px;
+  padding: 9px 13px 9px 16px;
+  border: 1px solid rgba(117, 216, 211, 0.3);
+  border-radius: 999px;
+  color: rgba(225, 244, 244, 0.9);
+  background: rgba(4, 15, 24, 0.56);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(8px);
+  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-size: clamp(10px, 0.72vw, 13px);
+  letter-spacing: 0.14em;
+}
+
+.animation-advance svg {
+  color: var(--teal);
+  animation: animation-advance-pulse 1.25s ease-in-out infinite;
+}
+
+.animation-advance:hover {
+  border-color: rgba(117, 216, 211, 0.62);
+  background: rgba(21, 65, 75, 0.68);
+}
+
+@keyframes animation-advance-pulse {
+  50% { opacity: 0.45; transform: translateY(3px); }
+}
+
 @keyframes advance-pulse {
   50% { opacity: 0.45; transform: rotate(45deg) translate(2px, 2px); }
 }

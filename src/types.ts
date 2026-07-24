@@ -99,6 +99,18 @@ export interface DialogueFrame {
   transition: FrameTransition;
 }
 
+export interface AnimationFrame {
+  id: string;
+  type: "animation";
+  speaker: "";
+  text: "";
+  scene: string | null;
+  bgm: string | null;
+  characters: CharacterState[];
+  effect: FrameEffect;
+  transition: FrameTransition;
+}
+
 export interface ChoiceOption {
   label: string;
   frames: StoryFrame[];
@@ -118,7 +130,7 @@ export interface ChoiceFrame {
   selected?: number;
 }
 
-export type StoryFrame = DialogueFrame | ChoiceFrame;
+export type StoryFrame = DialogueFrame | AnimationFrame | ChoiceFrame;
 
 export type ScriptDiagnosticSeverity = "warning" | "error";
 
@@ -143,7 +155,7 @@ export type ChoiceTrail = ChoiceDecision[];
 
 export interface ParsedScript {
   scriptId: string;
-  parserVersion: 3;
+  parserVersion: 4;
   frames: StoryFrame[];
   frameCount: number;
   choiceCount: number;

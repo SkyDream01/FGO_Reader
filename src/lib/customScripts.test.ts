@@ -137,7 +137,7 @@ describe("custom script package parser", () => {
       title: "测试剧本",
       region: "JP",
       translationAllowed: false,
-      preview: { parserVersion: 3, frameCount: 1, characterCount: 0 },
+      preview: { parserVersion: 4, frameCount: 1, characterCount: 0 },
     });
     expect(preview.assets.map((asset) => asset.path).sort()).toEqual([
       "assets/background.png",
@@ -201,7 +201,7 @@ describe("custom script package parser", () => {
     }));
 
     expect(preview.record.preview).toEqual({
-      parserVersion: 3,
+      parserVersion: 4,
       frameCount: 3,
       choiceCount: 1,
       characterCount: 2,
@@ -306,7 +306,7 @@ describe("custom script package persistence facade", () => {
     setCustomScriptPackageStorageForTesting(storage);
 
     expect((await listCustomScriptPackages())[0].preview).toMatchObject({
-      parserVersion: 3,
+      parserVersion: 4,
       frameCount: 1,
     });
     expect(updateCount).toBe(1);
