@@ -1714,7 +1714,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 [subCameraMove #A 0.1 10,0 1.1]
 [subCameraMoveEase #A 0,-50 0.5 easeOutQuart 1.2]
 [subCameraHome #A 1.0]
-[subCameraRoll #A 30 0,0
+[subCameraRoll #A 30 0,0]
 ```
 
 #### 滤镜
