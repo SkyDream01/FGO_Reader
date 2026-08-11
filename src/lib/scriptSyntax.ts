@@ -57,7 +57,7 @@ export interface ScriptDialogueNode {
 
 export interface ScriptChoiceRouteInfo {
   route?: number;
-  saveCollection: boolean;
+  saveMaterial: boolean;
   routeType: "none" | "true" | "bad";
 }
 
@@ -328,10 +328,12 @@ const PRESENTATION_COMMANDS = new Set([
   "crimovie",
   "enablewaitloadassetwhenresume",
   "fsmobjdestroy",
+  "fsmobjfinished",
   "fsmobjlayer",
   "fsmobjsendevent",
   "fsmobjset",
   "fsmobjsetstate",
+  "fastplaydraw",
   "image",
   "insertionanimationend",
   "insertionanimationsetfssider",
@@ -774,12 +776,13 @@ function parseChoiceHeader(record: LineRecord): ParsedChoiceHeader | null {
   let routeInfo: ScriptChoiceRouteInfo | undefined;
   if (routeParts.length > 1) {
     const route = Number.parseInt(routeParts[1], 10);
+    const metadata = routeParts.slice(2).map((part) => part.toLowerCase());
     routeInfo = {
       ...(Number.isInteger(route) ? { route } : {}),
-      saveCollection: routeParts[2] === "saveCollection",
-      routeType: routeParts[3] === "trueRoute"
+      saveMaterial: metadata.includes("savematerial") || metadata.includes("savecollection"),
+      routeType: metadata.includes("trueroute")
         ? "true"
-        : routeParts[3] === "badRoute"
+        : metadata.includes("badroute")
           ? "bad"
           : "none",
     };
@@ -797,6 +800,213 @@ function isChoiceEnd(record: LineRecord) {
   return /^[？?][！!]/.test(record.content.trimStart());
 }
 
+interface ParsedChoiceBlockOption {
+  header: ParsedChoiceHeader;
+  headerRecord: LineRecord;
+  bodyRecords: LineRecord[];
+  optionEnd: LineRecord;
+}
+
+interface ParsedChoiceBlock {
+  choiceStart: LineRecord;
+  options: ParsedChoiceBlockOption[];
+  ended: boolean;
+  endRecord: LineRecord;
+  nextIndex: number;
+}
+
+interface StandaloneCommand {
+  normalizedName: string;
+  args: string[];
+}
+
+interface RoutedChoiceResolution {
+  optionBodies: LineRecord[][];
+  resumeIndex: number;
+}
+
+function parseChoiceBlock(records: LineRecord[], startIndex: number): ParsedChoiceBlock {
+  const choiceStart = records[startIndex];
+  const options: ParsedChoiceBlockOption[] = [];
+  let cursor = startIndex;
+  let ended = false;
+  let endRecord = choiceStart;
+
+  while (cursor < records.length) {
+    const headerRecord = records[cursor];
+    const header = parseChoiceHeader(headerRecord);
+    if (!header) break;
+
+    const bodyStart = cursor + 1;
+    let bodyEnd = bodyStart;
+    while (bodyEnd < records.length) {
+      if (parseChoiceHeader(records[bodyEnd]) || isChoiceEnd(records[bodyEnd])) break;
+      bodyEnd += 1;
+    }
+    const bodyRecords = records.slice(bodyStart, bodyEnd);
+    options.push({
+      header,
+      headerRecord,
+      bodyRecords,
+      optionEnd: bodyRecords.at(-1) ?? headerRecord,
+    });
+
+    cursor = bodyEnd;
+    if (cursor < records.length && isChoiceEnd(records[cursor])) {
+      ended = true;
+      endRecord = records[cursor];
+      cursor += 1;
+      break;
+    }
+  }
+
+  if (!ended) endRecord = records[Math.max(startIndex, cursor - 1)] ?? choiceStart;
+  return {
+    choiceStart,
+    options,
+    ended,
+    endRecord,
+    nextIndex: Math.max(cursor, startIndex + 1),
+  };
+}
+
+function standaloneBracketContent(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed.startsWith("[") || !trimmed.endsWith("]")) return null;
+
+  let depth = 0;
+  let quote: string | null = null;
+  for (let index = 0; index < trimmed.length; index += 1) {
+    const character = trimmed[index];
+    if (quote) {
+      if (character === "\\") index += 1;
+      else if (character === quote) quote = null;
+      continue;
+    }
+    if (character === '"' || character === "'") {
+      quote = character;
+    } else if (character === "[") {
+      depth += 1;
+    } else if (character === "]") {
+      depth -= 1;
+      if (depth === 0) return index === trimmed.length - 1 ? trimmed.slice(1, -1) : null;
+      if (depth < 0) return null;
+    }
+  }
+  return null;
+}
+
+function parseStandaloneCommand(record: LineRecord): StandaloneCommand | null {
+  const content = standaloneBracketContent(record.content);
+  if (content === null) return null;
+  const parameters = parseCommandParameters(content.trim());
+  const name = parameters.shift();
+  return name
+    ? { normalizedName: name.toLowerCase(), args: parameters }
+    : null;
+}
+
+function previousNonEmptyRecord(records: LineRecord[], beforeIndex: number) {
+  for (let index = beforeIndex - 1; index >= 0; index -= 1) {
+    if (records[index].content.trim()) return index;
+  }
+  return -1;
+}
+
+function hasChoiceInputLabel(records: LineRecord[], choiceIndex: number) {
+  const labelIndex = previousNonEmptyRecord(records, choiceIndex);
+  if (labelIndex < 0) return false;
+  const label = parseStandaloneCommand(records[labelIndex]);
+  if (label?.normalizedName !== "label" || !label.args[0]) return false;
+
+  for (let index = labelIndex - 1; index >= 0; index -= 1) {
+    const command = parseStandaloneCommand(records[index]);
+    if (command?.normalizedName === "input") return command.args[0] === label.args[0];
+    // Do not associate this choice with an input section that belongs to an earlier label.
+    if (command?.normalizedName === "label") return false;
+  }
+  return false;
+}
+
+function choiceBranchTarget(records: LineRecord[]) {
+  const meaningfulRecords = records.filter((record) => record.content.trim());
+  if (meaningfulRecords.length !== 1) return null;
+  const command = parseStandaloneCommand(meaningfulRecords[0]);
+  return command?.normalizedName === "branch" && command.args[0]
+    ? command.args[0]
+    : null;
+}
+
+function findLabelIndex(records: LineRecord[], name: string, startIndex: number) {
+  for (let index = startIndex; index < records.length; index += 1) {
+    const command = parseStandaloneCommand(records[index]);
+    if (command?.normalizedName === "label" && command.args[0] === name) return index;
+  }
+  return -1;
+}
+
+function nextLabel(records: LineRecord[], startIndex: number) {
+  for (let index = startIndex; index < records.length; index += 1) {
+    const command = parseStandaloneCommand(records[index]);
+    if (command?.normalizedName === "label" && command.args[0]) {
+      return { index, name: command.args[0] };
+    }
+  }
+  return null;
+}
+
+function resolveRoutedChoice(
+  records: LineRecord[],
+  block: ParsedChoiceBlock,
+): RoutedChoiceResolution | null {
+  if (!block.ended) return null;
+  const targets = block.options.map((option) => choiceBranchTarget(option.bodyRecords));
+  if (targets.some((target) => target === null)) return null;
+
+  const targetBlocks = targets.map((target) => {
+    const labelIndex = findLabelIndex(records, target!, block.nextIndex);
+    if (labelIndex < 0) return null;
+    const followingLabel = nextLabel(records, labelIndex + 1);
+    const blockEnd = followingLabel?.index ?? records.length;
+    let branchIndex = -1;
+    let exitTarget = followingLabel?.name ?? null;
+    for (let index = labelIndex + 1; index < blockEnd; index += 1) {
+      const command = parseStandaloneCommand(records[index]);
+      if (command?.normalizedName === "branch" && command.args[0]) {
+        branchIndex = index;
+        exitTarget = command.args[0];
+        break;
+      }
+    }
+    return {
+      labelIndex,
+      endIndex: branchIndex >= 0 ? branchIndex : blockEnd,
+      exitTarget,
+    };
+  });
+  if (targetBlocks.some((blockEntry) => blockEntry === null)) return null;
+
+  const resolvedBlocks = targetBlocks as Array<NonNullable<typeof targetBlocks[number]>>;
+  const joinTarget = resolvedBlocks[0]?.exitTarget;
+  if (!joinTarget || !resolvedBlocks.every((blockEntry) => blockEntry.exitTarget === joinTarget)) {
+    return null;
+  }
+  const joinIndex = findLabelIndex(records, joinTarget, block.nextIndex);
+  if (
+    joinIndex < 0
+    || joinIndex <= Math.max(...resolvedBlocks.map((blockEntry) => blockEntry.labelIndex))
+    || resolvedBlocks.some((blockEntry) => blockEntry.endIndex > joinIndex)
+  ) return null;
+
+  return {
+    optionBodies: resolvedBlocks.map((blockEntry) => (
+      records.slice(blockEntry.labelIndex + 1, blockEntry.endIndex)
+    )),
+    // The shared label itself is a control-flow marker and has no visible output.
+    resumeIndex: joinIndex + 1,
+  };
+}
+
 function parseSequence(records: LineRecord[], context: SyntaxContext): ScriptNode[] {
   const nodes: ScriptNode[] = [];
   let index = 0;
@@ -804,78 +1014,58 @@ function parseSequence(records: LineRecord[], context: SyntaxContext): ScriptNod
   while (index < records.length) {
     const record = records[index];
     const trimmed = record.content.trim();
-    if (!trimmed || trimmed.startsWith("//") || trimmed.startsWith("＄")) {
+    if (!trimmed) {
       index += 1;
       continue;
     }
 
     const choiceHeader = parseChoiceHeader(record);
     if (choiceHeader) {
+      const block = parseChoiceBlock(records, index);
+      const routedChoice = hasChoiceInputLabel(records, index);
+      const routed = routedChoice ? resolveRoutedChoice(records, block) : null;
       const options: ScriptChoiceOptionNode[] = [];
-      const choiceStart = record;
-      let cursor = index;
-      let ended = false;
-      let endRecord = record;
 
-      while (cursor < records.length) {
-        const headerRecord = records[cursor];
-        const header = parseChoiceHeader(headerRecord);
-        if (!header) break;
-
-        const bodyStart = cursor + 1;
-        let bodyEnd = bodyStart;
-        while (bodyEnd < records.length) {
-          if (parseChoiceHeader(records[bodyEnd]) || isChoiceEnd(records[bodyEnd])) break;
-          bodyEnd += 1;
-        }
-        const bodyRecords = records.slice(bodyStart, bodyEnd);
-        const nextHeader = bodyEnd < records.length
-          ? parseChoiceHeader(records[bodyEnd])
-          : null;
-        if (nextHeader && nextHeader.id <= header.id) {
+      for (let optionIndex = 0; optionIndex < block.options.length; optionIndex += 1) {
+        const option = block.options[optionIndex];
+        const nextOption = block.options[optionIndex + 1];
+        if (nextOption && nextOption.header.id <= option.header.id) {
           context.diagnostics.add({
             severity: "error",
             code: "nested_choice",
             message: "不支持嵌套选项；请先结束当前选项组",
-            line: records[bodyEnd].line,
-            column: nextHeader.column,
+            line: nextOption.headerRecord.line,
+            column: nextOption.header.column,
           });
         }
-        if (!header.labelText.trim()) {
+        if (!option.header.labelText.trim()) {
           context.diagnostics.add({
             severity: "error",
             code: "empty_choice_label",
             message: "选项文字不能为空",
-            line: headerRecord.line,
-            column: header.column,
+            line: option.headerRecord.line,
+            column: option.header.column,
           });
         }
-        const optionEnd = bodyRecords.at(-1) ?? headerRecord;
+        const bodyRecords = routed?.optionBodies[optionIndex] ?? option.bodyRecords;
         options.push({
-          id: header.id,
+          id: option.header.id,
           label: parseInlineText(
-            header.labelText,
-            headerRecord.line,
+            option.header.labelText,
+            option.headerRecord.line,
             context,
-            header.column + headerRecord.content.trimStart().indexOf(header.labelText),
+            option.header.column
+              + option.headerRecord.content.trimStart().indexOf(option.header.labelText),
           ).nodes,
           body: parseSequence(bodyRecords, context),
-          ...(header.routeInfo ? { routeInfo: header.routeInfo } : {}),
+          ...(option.header.routeInfo ? { routeInfo: option.header.routeInfo } : {}),
           span: {
-            startLine: headerRecord.line,
-            startColumn: header.column,
-            endLine: optionEnd.line,
-            endColumn: optionEnd.content.length + 1,
+            startLine: option.headerRecord.line,
+            startColumn: option.header.column,
+            endLine: option.optionEnd.line,
+            endColumn: option.optionEnd.content.length + 1,
           },
         });
-
-        cursor = bodyEnd;
-        if (cursor < records.length && isChoiceEnd(records[cursor])) {
-          ended = true;
-          endRecord = records[cursor];
-          cursor += 1;
-          break;
-        }
       }
 
       if (options.length > context.maxChoiceOptions) {
@@ -883,32 +1073,40 @@ function parseSequence(records: LineRecord[], context: SyntaxContext): ScriptNod
           severity: "error",
           code: "choice_option_limit",
           message: `一组选项超过 ${context.maxChoiceOptions} 个限制`,
-          line: choiceStart.line,
+          line: block.choiceStart.line,
           column: choiceHeader.column,
         });
       }
-      if (!ended) {
+      if (!block.ended) {
         context.diagnostics.add({
           severity: "error",
           code: "unclosed_choice",
           message: "选项组缺少结束标记？！",
-          line: choiceStart.line,
+          line: block.choiceStart.line,
           column: choiceHeader.column,
         });
-        endRecord = records[Math.max(index, cursor - 1)] ?? choiceStart;
+      }
+      if (routedChoice && !routed) {
+        context.diagnostics.add({
+          severity: "warning",
+          code: "unresolved_choice_routes",
+          message: "选择分支标签无法解析；已按旧式内联选项处理",
+          line: block.choiceStart.line,
+          column: choiceHeader.column,
+        });
       }
 
       nodes.push({
         type: "choice",
         options,
         span: {
-          startLine: choiceStart.line,
+          startLine: block.choiceStart.line,
           startColumn: choiceHeader.column,
-          endLine: endRecord.line,
-          endColumn: endRecord.content.length + 1,
+          endLine: block.endRecord.line,
+          endColumn: block.endRecord.content.length + 1,
         },
       });
-      index = Math.max(cursor, index + 1);
+      index = routed?.resumeIndex ?? block.nextIndex;
       continue;
     }
 
@@ -1069,6 +1267,13 @@ export function parseScriptDocument(
     content,
     line: index + 1,
   }));
+  // v1.3 observes the optional script identifier only within the first five lines.
+  // Preserve line numbers while removing it from the playable source.
+  for (let index = 0; index < Math.min(records.length, 5); index += 1) {
+    if (/^＄\d{2}-\d{2}-\d{2}-\d{2}-\d-\d\s*$/.test(records[index].content.trim())) {
+      records[index] = { ...records[index], content: "" };
+    }
+  }
   const context: SyntaxContext = {
     diagnostics,
     definedCharacterSlots: new Set(),

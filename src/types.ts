@@ -157,7 +157,7 @@ export type ChoiceTrail = ChoiceDecision[];
 
 export interface ParsedScript {
   scriptId: string;
-  parserVersion: 4;
+  parserVersion: 5;
   frames: StoryFrame[];
   frameCount: number;
   choiceCount: number;

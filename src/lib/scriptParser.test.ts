@@ -506,7 +506,45 @@ describe("parseFgoScript", () => {
     }
   });
 
-  it("uses source positions for stable v2 frame ids and accepts q/KR punctuation", () => {
+  it("projects v1.3 label-based choices without playing every labeled branch", () => {
+    const parsed = parseFgoScript([
+      "[input selectBranch]",
+      "[label selectBranch]",
+      "？1：选择 A",
+      "[branch lblBranchA]",
+      "？2：选择 B",
+      "[branch lblBranchB]",
+      "？！",
+      "[label lblBranchA]",
+      "＠A：A",
+      "A 路线内容。[k]",
+      "[branch lblEnd]",
+      "[label lblBranchB]",
+      "＠B：B",
+      "B 路线内容。[k]",
+      "[label lblEnd]",
+      "＠N：旁白",
+      "共通后续内容。[k]",
+    ].join("\n"), "documented-choice-routes");
+
+    expect(parsed.frames).toHaveLength(2);
+    const choice = parsed.frames[0];
+    expect(choice.type).toBe("choice");
+    if (choice.type === "choice") {
+      expect(choice.options.map((option) => option.label)).toEqual(["选择 A", "选择 B"]);
+      expect(choice.options.map((option) => option.frames[0]?.text)).toEqual([
+        "A 路线内容。",
+        "B 路线内容。",
+      ]);
+    }
+    expect(parsed.frames[1]).toMatchObject({ text: "共通后续内容。" });
+    expect(parsed.diagnostics).not.toContainEqual(expect.objectContaining({
+      code: "unresolved_choice_routes",
+    }));
+    expect(parsed.diagnostics).not.toContainEqual(expect.objectContaining({ code: "orphan_text" }));
+  });
+
+  it("uses source positions for stable v5 frame ids and accepts q/KR punctuation", () => {
     const parsed = parseFgoScript([
       "@Narrator",
       "First[line3][q]",
@@ -519,10 +557,10 @@ describe("parseFgoScript", () => {
       "?!",
     ].join("\n"), "source-id", { region: "KR" });
 
-    expect(parsed.parserVersion).toBe(4);
+    expect(parsed.parserVersion).toBe(5);
     expect(parsed.frames.map((frame) => frame.id)).toEqual([
-      "source-id@v4:d:1:1:0",
-      "source-id@v4:c:3:1:0",
+      "source-id@v5:d:1:1:0",
+      "source-id@v5:c:3:1:0",
     ]);
     expect(parsed.frames[0]).toMatchObject({ text: "First——" });
     const choice = parsed.frames[1];
@@ -530,8 +568,8 @@ describe("parseFgoScript", () => {
     if (choice.type === "choice") {
       expect(choice.options.map((option) => option.label)).toEqual(["Continue", "Stop"]);
       expect(choice.options.map((option) => option.frames[0]?.id)).toEqual([
-        "source-id@v4:d:4:1:0",
-        "source-id@v4:d:7:1:0",
+        "source-id@v5:d:4:1:0",
+        "source-id@v5:d:7:1:0",
       ]);
     }
   });

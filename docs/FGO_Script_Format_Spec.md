@@ -34,9 +34,9 @@ FGO（Fate/Grand Order）使用自定义文本 DSL 作为视觉小说脚本引�
 ### 设计原则
 
 - **事件驱动**：脚本按顺序执行，无函数/循环结构
-- **无变量系统**：使用硬编码 ID 和标签跳转
+- **有限状态控制**：没有通用表达式/变量系统，但存在 `flag`、任务条件、路线计数和文本替换
 - **视觉小说范式**：以对话为核心，命令控制演出效果
-- **角色槽位制**：A-Z 单字母标识角色/效果槽位
+- **角色槽位制**：A-Z 单字母标识角色、效果、图像等槽位；具体用途不是固定分区
 
 ### 文件编码
 
@@ -62,7 +62,7 @@ scripts/
 
 ### 文件命名规则
 
-文件名为 10 位数字 ID + `.txt`：
+当前样本中的文件名均为 10 位数字 ID + `.txt`：
 
 ```
 XXXXXXXXXX.txt
@@ -72,7 +72,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 
 | 位置 | 含义 | 示例值 |
 |------|------|--------|
-| XX | 大类别 | 01=特异点, 02=?, 03=异闻带/活动, 04=主线/活动, 05=特殊 |
+| XX | 大类别 | 01=特异点, 02=伪特异点/活动, 03=异闻带, 04=主线/活动, 05=特殊 |
 | XX | 章节号 | 00, 01... |
 | XX | 子章节/任务号 | 03, 06, 07... |
 | XX | 场景/阶段号 | 01, 02... |
@@ -83,18 +83,21 @@ ID 编码规则（对应头部 `＄` 标签）：
 - `0100030110.txt` → 特异点, 子章节03, 场景01, 变体1, 子0
 - `0300060750.txt` → 异闻带, 子章节06, 场景07, 变体5, 子0
 
+以上拆解是基于文件名的观察结果，不应视为引擎公开定义。当前样本中还存在少量头部使用 `93` 等其他大类别值的文件。
+
 ### 脚本头部
 
-大多数脚本以标识符开头（约 93.4% 的文件包含此头部）：
+大多数脚本包含此标识符（当前 2,583 个文件中有 2,413 个，约 93.4%）：
 
 ```
 ＄01-00-03-01-1-0
 ```
 
 - 使用全角 `＄` 符号
-- 格式与文件名 ID 对应
-- **注意**：约 6.6% 的脚本文件没有此头部，直接以命令开始
-- 部分文件的 `＄` 位于第 2 行（首行为空行）
+- 格式通常与文件名 ID 对应，但不是绝对约束
+- **注意**：约 6.6%（170 个）的脚本文件没有此头部，直接以命令或空行开始
+- 头部可能位于第 1-5 行，前面可能有一个或多个空行；当前样本各行分布为 484/714/693/460/62
+- 当前样本中有 74 个文件的文件名 ID 与头部 ID 不一致，应将其视为异常或历史兼容数据
 
 ---
 
@@ -109,6 +112,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 - 方括号包裹
 - 命令名与参数以空格分隔
 - 参数数量因命令而异
+- 签名中的 `<参数>` 表示占位符，`<参数>?` 表示可选参数；命令外层的 `[]` 是脚本中的实际字符
+- 命令既可以独占一行，也可以嵌入台词文本行；解析器按方括号识别命令
 
 ### 对话格式
 
@@ -118,7 +123,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 ```
 
 - `＠`（全角 at 标记）标识说话者
-- 台词独占一行
+- 台词通常独占一行，但可以在台词中嵌入命令和文本标记
 - `[k]` 表示等待玩家点击继续
 - `[r]` 表示换行（不等待）
 
@@ -126,16 +131,18 @@ ID 编码规则（对应头部 `＄` 标签）：
 
 使用大写字母 A-Z 作为槽位标识：
 
-| 槽位范围 | 用途 |
+| 常见范围 | 用途（仅为观察到的惯例） |
 |----------|------|
 | A-G | 主要角色 |
 | H-J | 特效/次要角色 |
 | K-M | 额外角色/效果 |
 | N-Z | 子摄像机/特殊用途 |
 
+槽位用途并非硬性分区；实际脚本会把任意 A-Z 槽位用于角色、效果、图像或临时对象。
+
 ### 注释
 
-脚本中无专用注释语法。不使用命令的行被视为对话文本或空行。
+当前样本中没有观察到专用注释语法。不使用命令的行通常被视为对话文本或空行。本文档代码块中的 `# ...` 仅是说明，不应复制到脚本中；`sub #A` 等情况中的 `#` 则是实际参数的一部分。
 
 ---
 
@@ -216,8 +223,10 @@ ID 编码规则（对应头部 `＄` 标签）：
 ```
 [align center]
 [align right]
-[align left]
+[align]
 ```
+
+`[align]` 用于恢复默认对齐；当前样本未观察到 `[align left]`。
 
 ### 字体控制
 
@@ -228,8 +237,13 @@ ID 编码规则（对应头部 `＄` 标签）：
 
 [fontSize large]
 [fontSize x-large]
+[fontSize -]
 [f small]         # 小字体（简写）
 [f -]             # 默认字体
+[f medium]
+[f x-small]
+[f small center]
+[f x-small center]
 ```
 
 ### 消息速度
@@ -237,7 +251,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 ```
 [speed -]         # 默认速度
 [speed 32]        # 指定速度
-[messageSpeedForcedNormal on/off]  # 强制正常速度
+[messageSpeedForcedNormal on|off]  # 强制正常速度
 ```
 
 ---
@@ -265,20 +279,21 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 命名场景
 
 ```
-[sceneSet 槽位 场景ID 模式]
+[sceneSet 槽位 场景ID 模式 参数?]
 ```
 
 **示例**：
 ```
 [sceneSet Q 142200 1]
 [sceneSet R 142200 1]
+[sceneSet G 120901 1 1]
 ```
 
 #### 淡入淡出
 
 ```
-[fadein 颜色 时长]
-[fadeout 颜色 时长]
+[fadein 颜色 时长? 参数?]
+[fadeout 颜色 时长 参数?]
 ```
 
 | 参数 | 类型 | 说明 |
@@ -319,8 +334,9 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 擦除过渡
 
 ```
-[wipein 方向 时长 参数]
-[wipeout 方向 时长 参数]
+[wipein 方向 时长 参数?]
+[wipeout 方向 时长 参数?]
+[wipeFilter 方向/模式 时长 参数]
 ```
 
 **方向类型**：
@@ -331,45 +347,47 @@ ID 编码规则（对应头部 `＄` 标签）：
 | `rightToLeft` | 从右到左 | 高 |
 | `leftDownToRightUp` | 左下到右上（对角线） | 中 |
 | `rightUpToLeftDown` | 右上到左下（对角线） | 中 |
-| `leftuptorightdown` | 左上到右下（对角线） | 低 |
-| `rightdowntoleftup` | 右下到左上（对角线） | 低 |
+| `leftUpToRightDown` | 左上到右下（对角线） | 低 |
+| `rightDownToLeftUp` | 右下到左上（对角线） | 低 |
 | `circleIn` | 圆形收缩 | 高 |
 | `circleOut` | 圆形扩散 | 低 |
 | `openEye` | 睁眼效果 | 中 |
-| `cinema` | 电影模式 | 中 |
-| `downtoup` | 从下到上 | 中 |
-| `uptodown` | 从上到下 | 中 |
-| `rollright` | 向右滚动 | 中 |
-| `rollleft` | 向左滚动 | 中 |
-| `rollflashright` | 向右滚动闪光 | 低 |
-| `rectanglestriplefttoright` | 三条矩形从左到右 | 高 |
-| `rectanglestriprighttoleft` | 三条矩形从右到左 | 高 |
-| `rectanglestripuptodown` | 三条矩形从上到下 | 中 |
-| `rectanglestripdowntoup` | 三条矩形从下到上 | 中 |
-| `rectanglelefttoright` | 单矩形从左到右 | 低 |
-| `rectanglerighttoleft` | 单矩形从右到左 | 低 |
-| `sideblind` | 百叶窗侧向 | 低 |
-| `verblind` | 百叶窗垂直 | 低 |
-| `cutver` | 垂直切割 | 低 |
-| `cutside` | 侧向切割 | 低 |
-| `cutacross` | 横向切割 | 低 |
+| `downToUp` | 从下到上 | 中 |
+| `upToDown` | 从上到下 | 中 |
+| `rollRight` | 向右滚动 | 中 |
+| `rollLeft` | 向左滚动 | 中 |
+| `rollFlashRight` | 向右滚动闪光 | 低 |
+| `rectangleStripLeftToRight` | 三条矩形从左到右 | 高 |
+| `rectangleStripRightToLeft` | 三条矩形从右到左 | 高 |
+| `rectangleStripUpToDown` | 三条矩形从上到下 | 中 |
+| `rectangleStripDownToUp` | 三条矩形从下到上 | 中 |
+| `rectangleLeftToRight` | 单矩形从左到右 | 低 |
+| `rectangleRightToLeft` | 单矩形从右到左 | 低 |
+| `sideBlind` | 百叶窗侧向 | 低 |
+| `verBlind` | 百叶窗垂直 | 低 |
+| `cutVer` | 垂直切割 | 低 |
+| `cutSide` | 侧向切割 | 低 |
+| `cutAcross` | 横向切割 | 低 |
 | `noise` | 噪点过渡 | 低 |
 | `windmill` | 风车旋转 | 低 |
 | `uzumaki` | 涡旋 | 低 |
-| `uzumakibig` | 大涡旋 | 低 |
+| `uzumakiBig` | 大涡旋 | 低 |
 | `moya` | 朦胧 | 低 |
 | `magic` | 魔法阵 | 低 |
 | `gunya` | 抖动 | 低 |
 | `clash` | 碰撞 | 低 |
 | `fire` | 火焰 | 低 |
 | `sazanami` | 涟漪 | 低 |
-| `mozafade` | 马赛克淡出 | 低 |
+| `mozaFade` | 马赛克淡出 | 低 |
 | `mezo` | 马赛克 | 低 |
-| `diaout` | 菱形扩散 | 低 |
+| `diaOut` | 菱形扩散 | 低 |
 | `polka02` / `polka04` | 圆点图案 | 低 |
-| `heartout` / `heartoutbig` | 心形扩散 | 低 |
+| `heartOut` / `heartOutBig` | 心形扩散 | 低 |
 | `guruguru` | 旋转 | 低 |
 | `damage` | 伤害闪烁 | 低 |
+| `square` | 方形效果 | 低 |
+
+`cinema` 等模式主要通过 `wipeFilter` 使用。命令名和方向值建议保持脚本中的大小写；当前样本使用 camelCase 形式。
 
 **示例**：
 ```
@@ -377,8 +395,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 [wipeout circleIn 0.5 1]
 [wipein openEye 1.0 1.0]
 [wipeFilter cinema 0.5 0]
-[wipein rollright 0.5 1]
-[wipeout rectanglestriplefttoright 0.5 1]
+[wipein rollRight 0.5 1]
+[wipeout rectangleStripLeftToRight 0.5 1]
 ```
 
 #### 遮罩
@@ -455,7 +473,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 角色淡入淡出
 
 ```
-[charaFadein 槽位 时长 位置]
+[charaFadein 槽位 时长 位置?]
 [charaFadeout 槽位 时长]
 ```
 
@@ -489,7 +507,9 @@ ID 编码规则（对应头部 `＄` 标签）：
 [charaMoveReturnEaseFSR 槽位 X,Y 时长 缓入 缓出]  # 右侧缓动返回
 ```
 
-**缓动函数**：`easeOutQuad`, `easeOutSine`, `easeInOutSine`, `easeOutExpo`, `easeOutCirc`, `easeOutQuart`, `easeInOutQuad`, `easeInOutQuint`, `easeInSine`, `easeOutCubic`, `easeInOutExpo`
+**缓动函数（当前样本中观察到）**：`easeInBack`, `easeInCubic`, `easeInExpo`, `easeInOutCubic`, `easeInOutExpo`, `easeInOutQuad`, `easeInOutQuart`, `easeInOutQuint`, `easeInOutSine`, `easeInQuad`, `easeInSine`, `easeOutBack`, `easeOutCirc`, `easeOutCubic`, `easeOutElastic`, `easeOutExpo`, `easeOutQuad`, `easeOutQuart`, `easeOutQuint`, `easeOutSine`
+
+部分 FSL/FSR/Side 变体还允许在时长后追加缓动函数，例如 `[charaMoveFSR B 260,0 0.3 easeOutQuint]`。
 
 **示例**：
 ```
@@ -519,11 +539,13 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 角色旋转
 
 ```
-[charaRoll 槽位 角度]                     # 设置旋转角度
+[charaRoll 槽位 角度 X,Y?]                 # 设置旋转角度
 [charaRollAxis 槽位 轴 角度 时长]         # 绕指定轴旋转
 [charaRollMove 槽位 时长 角度]            # 旋转动画
-[charaRollMoveEx 槽位 时长 角度 X,Y]      # 扩展旋转（带位移）
+[charaRollMoveEx 槽位 时长 角度 X,Y?]     # 扩展旋转（带位移）
 ```
+
+`charaRoll` 可带可选的旋转中心坐标；`charaRollAxis` 和 `charaRollMoveEx` 还存在额外参数变体，具体含义尚未完全确认。
 
 **示例**：
 ```
@@ -572,11 +594,11 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 角色效果
 
 ```
-[charaEffect 槽位 效果名]
-[charaEffectStop 槽位 效果名]
-[charaEffectDestroy 槽位 效果名]
-[charaEffectPause 槽位 效果名 X,Y 参数]   # 暂停效果
-[charaEffectStart 槽位 效果名]             # 恢复效果
+[charaEffect 槽位 效果名 X,Y? 层?]
+[charaEffectStop 槽位 效果名? X,Y? 层?]
+[charaEffectDestroy 槽位 效果名? X,Y? 层?]
+[charaEffectPause 槽位 效果名 X,Y? 层?]
+[charaEffectStart 槽位 效果名?]
 ```
 
 **常用效果名**：
@@ -611,6 +633,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 | 强度 | 整数/浮点数 | 效果强度 |
 | 模糊度 | 整数/浮点数 | 模糊程度 |
 
+`charaEffectEdgeBlur`、`charaEffectEdgeBlurStop` 和 `charaEffectEdgeBlurDestroy` 在样本中都存在省略参数的变体；上面的完整形式用于需要显式设置参数的场景。
+
 **示例**：
 ```
 [charaEffectEdgeBlur A ffffff ffffff 4 1]
@@ -622,25 +646,24 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 角色滤镜
 
 ```
-[charaFilter 槽位 字母模式 silhouette/normal 颜色]
+[charaFilter 槽位 模式 颜色?]
 ```
 
 **参数说明**：
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | 槽位 | 字母 | A-Z |
-| 字母模式 | 字母 | A-Z（通常为单字母标识，如 A, B, C 等） |
 | 模式 | 字符串 | `silhouette` — 剪影效果 / `normal` — 恢复正常显示 |
-| 颜色 | 十六进制 | 颜色值，如 `00000080`, `FFFFFF00`, `16161680` 等 |
+| 颜色 | 十六进制，可选 | 剪影颜色；`normal` 模式可以省略 |
 
 **示例**：
 ```
-[charaFilter G A silhouette 00000080]   # 变为剪影
-[charaFilter G A normal 00000080]       # 恢复正常
-[charaFilter H B silhouette 00000000]
-[charaFilter I C silhouette 00000080]
-[charaFilter D A silhouette FFFFFF00]
-[charaFilter F B normal 16161680]
+[charaFilter G silhouette 00000080]
+[charaFilter G normal]
+[charaFilter H silhouette 00000000]
+[charaFilter I silhouette 00000080]
+[charaFilter D silhouette FFFFFF00]
+[charaFilter F normal 16161680]
 ```
 
 #### 角色阴影
@@ -686,7 +709,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 [charaTalk depthOff]                # 关闭深度显示
 [charaTalk A,B]                     # 双角色同时说话
 [charaTalk A,B,C]                   # 三角色同时说话
-[charaTalk A,B,C,D,E,F]             # 最多6角色同时说话
+[charaTalk A,B,C,D,E,F]             # 多角色同时说话
 [charaTalk D,L,C,N,O,B,M,K]         # 8人同时说话（多人场景）
 ```
 
@@ -698,6 +721,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 [charaTalk B,C]                     # B和C同时说话
 [charaTalk D,L,C,N,O,B,M,K]         # 8人同时说话（多人场景）
 ```
+
+当前样本观察到的多人形式最多包含 8 个槽位；引擎的硬性上限尚未确认，不应写成“最多 6 个”。
 
 #### 多角色对话标记（spot）
 
@@ -753,7 +778,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 高级视觉效果，用于角色出现/消失、闪白、擦除等。
 
 ```
-[charaSpecialEffect 槽位 效果类型 参数 时长]
+[charaSpecialEffect 槽位 效果类型 参数...]
 [charaSpecialEffectStop 槽位]                    # 停止效果
 [charaSpecialEffectStop 槽位 效果类型]            # 停止指定类型
 [charaSpecialEffectStop 槽位 参数]                # 停止指定参数的效果
@@ -775,9 +800,12 @@ ID 编码规则（对应头部 `＄` 标签）：
 | `flash` | 闪光效果 |
 | `wipe` | 擦除过渡 |
 
-**参数说明**：
-- 参数1：整数，模式选择（0 或 1）
-- 时长：浮点数，效果持续时间
+**常见参数说明**：
+- 部分效果使用整数模式参数（常见为 `0` 或 `1`）
+- 部分效果使用浮点时长
+- 具体参数数量和含义依效果类型而定
+
+不同效果类型的参数数量并不完全一致：样本中既有只写槽位和效果类型的形式，也有包含多个控制参数的形式。`参数1` 和“时长”不能推广到所有效果类型。
 
 **示例**：
 ```
@@ -845,9 +873,9 @@ ID 编码规则（对应头部 `＄` 标签）：
 在角色背后显示的特殊效果（如光环、魔法阵等）。
 
 ```
-[charaBackEffect 槽位 效果名 X,Y]
-[charaBackEffectDestroy 槽位 效果名]
-[charaBackEffectStop 槽位 效果名 时长]
+[charaBackEffect 槽位 效果名 X,Y? 层?]
+[charaBackEffectDestroy 槽位? 效果名? X,Y?]
+[charaBackEffectStop 槽位? 效果名? 时长?]
 ```
 
 **示例**：
@@ -871,6 +899,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 [charaPutFSSideL 槽位 X,Y]         # 侧左放置 (Full Screen Side Left)
 [charaPutFSSideR 槽位 X,Y]         # 侧右放置 (Full Screen Side Right)
 ```
+
+样本中还存在少量非坐标参数形式的 `charaPut`，其参数含义尚未完全确认。
 
 **示例**：
 ```
@@ -930,6 +960,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 [charaRelativeLoopMoveStop K]
 ```
 
+部分脚本使用扩展参数形式（例如包含第三个坐标和额外时长/模式参数）；这些参数的确切语义尚未完全确认。
+
 #### 角色淡出时间
 
 ```
@@ -988,7 +1020,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 背景音乐
 
 ```
-[bgm BGM标识 淡入时长] [音量]
+[bgm BGM标识 淡入时长? 音量?]
 [bgmStop BGM标识 淡出时长]
 [bgmStopEnd BGM标识 淡出时长]
 ```
@@ -1005,6 +1037,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 - `BGM_BATTLE_` — 战斗音乐
 - `BGM_ENDING_` — 结尾音乐
 
+实际资源前缀不止以上四类，例如还观察到 `BGM_MYROOM_`、`BGM_HALLOWEEN_` 等；这里的列表仅作示例。
+
 **示例**：
 ```
 [bgm BGM_EVENT_38 0.1]
@@ -1016,12 +1050,12 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 音效
 
 ```
-[se 音效标识]
-[seStop 音效标识 淡出时长]
+[se 音效标识 参数...]
+[seStop 音效标识 参数...]
 [seLoop 音效标识]
 [seVolume 音效标识 淡入 淡出]
-[seContinue 音效标识 参数 音量 编号]
-[seContinueStop 音效标识 时长 编号]
+[seContinue 音效标识 参数...]
+[seContinueStop 音效标识 参数...]
 [seContinueVolume 音效标识 时长 音量 编号]
 ```
 
@@ -1050,15 +1084,15 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 提示音
 
 ```
-[cueSe 类别 标识]
-[cueSeStop 标识 时长]
+[cueSe 类别 标识 参数...]
+[cueSeStop 标识 参数...]
 [cueSeVolume 标识 淡入 淡出]
-[cueSeContinue 类别 标识 参数 音量 编号]
-[cueSeContinueStop 标识 时长 编号]
+[cueSeContinue 类别 标识 参数...]
+[cueSeContinueStop 标识 参数...]
 [cueSeContinueVolume 标识 时长 音量 编号]
 ```
 
-**类别**：`SE_21`, `NoblePhantasm_9943010`, `Servants_100100`
+**类别**：`Battle`, `SE_21`, `NoblePhantasm_9943010`, `Servants_100100` 等；类别与资源标识共同决定音效资源。
 
 **示例**：
 ```
@@ -1091,7 +1125,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 ```
 [voice 语音标识]
 [voiceStop 语音标识]
-[voiceStop 语音标识 参数]
+[voiceStop 语音标识 参数?]
 ```
 
 **示例**：
@@ -1121,7 +1155,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 
 ```
 [cameraMove 时长 X,Y 缩放]
-[cameraMoveEase 时长 X,Y 缩放 缓动函数]
+[cameraMoveEase X,Y 时长 缓动函数 缩放]
 ```
 
 **示例**：
@@ -1134,7 +1168,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 归位
 
 ```
-[cameraHome 时长]
+[cameraHome 时长?]
 ```
 
 **示例**：
@@ -1146,7 +1180,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 旋转
 
 ```
-[cameraRoll 角度 X,Y]
+[cameraRoll 角度 X,Y?]
 [cameraRollMove 时长 角度]
 ```
 
@@ -1161,7 +1195,10 @@ ID 编码规则（对应头部 `＄` 标签）：
 
 ```
 [cameraFilter 模式 参数...]
+[cameraFilter]
 ```
+
+无参数形式用于清除或恢复摄像机滤镜。
 
 **模式**：`gray`, `normal`, `aberration`, `darkred`
 
@@ -1186,9 +1223,9 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 全局效果
 
 ```
-[effect 效果名]
-[effectStop 效果名]
-[effectDestroy 效果名]
+[effect 效果名 X,Y? 层?]
+[effectStop 效果名? X,Y? 层?]
+[effectDestroy 效果名? X,Y? 层?]
 [effectForceStop 效果名]
 [effectStart]              # 恢复暂停的效果
 [effectPause 效果名]        # 暂停指定效果
@@ -1222,9 +1259,9 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 前向效果
 
 ```
-[fowardEffect 效果名]
-[fowardEffectStop 效果名]
-[fowardEffectDestroy 效果名]
+[fowardEffect 效果名 X,Y? 层?]
+[fowardEffectStop 效果名? X,Y? 层?]
+[fowardEffectDestroy 效果名? X,Y? 层?]
 [fowardEffectStart]              # 恢复暂停的前向效果
 [fowardEffectPause 效果名]        # 暂停指定前向效果
 ```
@@ -1246,12 +1283,14 @@ ID 编码规则（对应头部 `＄` 标签）：
 [fowardEffectStart]
 ```
 
+`fowardEffect` 是引擎实际使用的拼写（少一个 `r`），不要自行改写为 `forwardEffect`。
+
 #### 背景效果
 
 ```
-[backEffect 效果名]
-[backEffectStop 效果名 时长]
-[backEffectDestroy 效果名]
+[backEffect 效果名 X,Y? 层?]
+[backEffectStop 效果名? 时长?]
+[backEffectDestroy 效果名?]
 ```
 
 **示例**：
@@ -1291,8 +1330,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 模糊
 
 ```
-[blur 类型 参数1 参数2 参数3]
-[blurOff 类型 时长]
+[blur 类型 参数...]
+[blurOff 类型 时长? 模式?]
 ```
 
 **类型**：`lens`, `motion`, `glass`
@@ -1305,6 +1344,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 [blur glass 0.5 2 10]
 [blurOff lens 0.1]
 ```
+
+样本中 `blur` 还存在更长的参数形式；参数含义依赖模糊类型，不能按固定三个参数处理。
 
 #### 闪光
 
@@ -1367,9 +1408,11 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 电影滤镜
 
 ```
-[pictureFrame 画面标识]
-[pictureFrameTop 画面标识]
+[pictureFrame 画面标识?]
+[pictureFrameTop 画面标识?]
 ```
+
+省略画面标识的形式用于清除或恢复当前电影滤镜。
 
 **示例**：
 ```
@@ -1380,7 +1423,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 画面比例
 
 ```
-[turnPageOn]
+[turnPageOn 参数?]
 [turnPageOff]
 [messageChange cinema]
 ```
@@ -1450,6 +1493,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 [branchRouteSelectCount 标志名 数量 比较 任务ID列表 标签列表]
 [branchSetGrandSvtCount 标签名 数量 比较]
 ```
+
+样本中观察到的 `比较` 值包括 `EQUAL` 和 `ABOVE`；其他比较符号尚未确认。
 
 **示例**：
 ```
@@ -1562,7 +1607,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 
 ```
 [messageOff]              # 隐藏消息窗口
-[messageOn]               # 显示消息窗口（隐含）
+[messageOn]               # 显示消息窗口（当前样本未出现）
 [messageChange cinema]    # 电影模式
 [messageAlign bottom]     # 底部对齐
 ```
@@ -1583,7 +1628,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 文字背景
 
 ```
-[talkNameBack 图片标识]
+[talkNameBack 图片标识?]
 ```
 
 **示例**：
@@ -1605,34 +1650,35 @@ ID 编码规则（对应头部 `＄` 标签）：
 | `fade` | 等待淡入淡出完成 | 无 |
 | `wipe` | 等待擦除完成 | 无 |
 | `mask` | 等待遮罩完成 | 无 |
-| `charaCrossFade 槽位` | 等待角色交叉淡化完成 | 槽位字母 |
-| `charaSpecialEffect` | 等待角色特殊效果完成 | 无 |
-| `charaMove 槽位` | 等待角色移动完成 | 槽位字母 |
+| `charaCrossFade 槽位?` | 等待角色交叉淡化完成 | 槽位可选 |
+| `charaSpecialEffect 槽位? 效果类型?` | 等待角色特殊效果完成 | 槽位和效果类型可选 |
+| `charaMove 槽位?` | 等待角色移动完成 | 槽位可选 |
 | `charaMoveReturn 槽位` | 等待角色返回原位完成 | 槽位字母 |
-| `charaChange` | 等待角色切换完成 | 无 |
-| `charaCut` | 等待角色切入/切出完成 | 无 |
-| `charaEffect 效果名` | 等待角色效果完成 | 效果名称 |
-| `charaEffectStart` | 等待角色效果恢复完成 | 无 |
-| `charaBackEffect` | 等待角色背景效果完成 | 无 |
+| `charaChange 槽位?` | 等待角色切换完成 | 槽位可选 |
+| `charaCut 槽位?` | 等待角色切入/切出完成 | 槽位可选 |
+| `charaEffect 槽位? 效果名?` | 等待角色效果完成 | 槽位/效果名称可选 |
+| `charaEffectStart 槽位? 效果名?` | 等待角色效果恢复完成 | 参数可选 |
+| `charaBackEffect 槽位? 效果名?` | 等待角色背景效果完成 | 参数可选 |
 | `camera` | 等待摄像机移动完成 | 无 |
 | `cameraRoll` | 等待摄像机旋转完成 | 无 |
-| `effect` | 等待全局效果完成 | 无 |
-| `fowardEffect` | 等待前向效果完成 | 无 |
+| `effect 效果名?` | 等待全局效果完成 | 效果名称可选 |
+| `fowardEffect 效果名?` | 等待前向效果完成 | 效果名称可选 |
 | `fowardEffectStart` | 等待前向效果恢复完成 | 无 |
 | `flash` | 等待闪光完成 | 无 |
 | `se 音效标识` | 等待音效播放完成 | 音效 ID |
 | `voice` | 等待语音播放完成 | 无 |
-| `tvoice` | 等待测试语音完成 | 无 |
+| `tVoice` | 等待测试语音完成 | 参数可选 |
 | `scene` | 等待场景加载完成 | 无 |
 | `specialEffect` | 等待特殊效果完成 | 无 |
 | `subCamera` | 等待子摄像机移动完成 | 无 |
 | `insertionAnimationStart 标识` | 等待插入动画开始完成 | 动画标识 |
 | `insertionAnimationEnd 标识` | 等待插入动画结束完成 | 动画标识 |
-| `subRenderMoveFSSideL #层` | 等待子渲染层左侧移动完成 | 层编号 |
-| `subRenderMoveFSSideR #层` | 等待子渲染层右侧移动完成 | 层编号 |
-| `imageSet` | 等待图像设置完成 | 无 |
-| `fastPlayDraw` | 等待快速绘制完成 | 无 |
-| `fsmObjFinished` | 等待 FSM 对象完成 | 无 |
+| `subRenderMoveFSSideL #层?` | 等待子渲染层左侧移动完成 | 层编号可选 |
+| `subRenderMoveFSSideR #层?` | 等待子渲染层右侧移动完成 | 层编号可选 |
+| `imageSet 槽位?` | 等待图像设置完成 | 槽位可选 |
+| `fastPlayDraw 参数?` | 等待快速绘制完成 | 参数可选 |
+| `fsmObjFinished 槽位?` | 等待 FSM 对象完成 | 槽位可选 |
+| `communicationChara` | 等待通信角色完成 | 无 |
 | `touch` | 等待触摸输入 | 无 |
 
 **示例**：
@@ -1683,7 +1729,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 开关
 
 ```
-[subCameraOn 编号]
+[subCameraOn 编号?]
 [subCameraOff]
 ```
 
@@ -1700,7 +1746,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 [subCameraMove #层 时长 X,Y 缩放]
 [subCameraMoveEase #层 X,Y 时长 缓动函数 缩放]
 [subCameraHome #层 时长]
-[subCameraRoll #层 角度 X,Y]
+[subCameraRoll #层 角度 X,Y?]
 [subCameraRollMove #层 时长 角度]
 ```
 
@@ -1720,8 +1766,10 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 滤镜
 
 ```
-[subCameraFilter #层 模式 参数...]
+[subCameraFilter #层? 模式 参数...]
 ```
+
+省略 `#层` 时作用于当前或默认子摄像机；不同模式的参数数量不同。
 
 **模式**：`through`, `mask`, `maskEdge`, `maskEdge&gray`, `mask&gray`, `inversion`, `gray`, `normal`
 
@@ -1741,28 +1789,30 @@ ID 编码规则（对应头部 `＄` 标签）：
 
 ```
 [subRenderDepth #层 层级]
-[subRenderFadein #层 时长 X,Y]
+[subRenderFadein #层? 时长 X,Y]
 [subRenderFadeinFSL #层 时长 X,Y]       # 左侧淡入
-[subRenderFadeinFSR #层 时长 X,Y]       # 右侧淡入
+[subRenderFadeinFSR #层? 时长 X,Y]       # 右侧淡入
 [subRenderFadeinFSSideL #层 时长 X,Y]   # 侧左淡入
-[subRenderFadeinFSSideR #层 时长 X,Y]   # 侧右淡入
-[subRenderFadeout #层 时长]
-[subRenderMove #层 X,Y 时长]
+[subRenderFadeinFSSideR #层? 时长 X,Y]   # 侧右淡入
+[subRenderFadeout #层? 时长]
+[subRenderMove #层? X,Y 时长]
 [subRenderMoveEase #层 X,Y 时长 缓动函数]
 [subRenderMoveFSL #层 X,Y 时长]         # 左侧移动
 [subRenderMoveFSR #层 X,Y 时长]         # 右侧移动
 [subRenderMoveFSSideL #层 X,Y 时长]     # 侧左移动
-[subRenderMoveFSSideR #层 X,Y 时长]     # 侧右移动
+[subRenderMoveFSSideR #层? X,Y 时长]     # 侧右移动
 [subRenderMoveEaseFSL #层 X,Y 时长 缓动函数]   # 左侧缓动移动
-[subRenderMoveEaseFSR #层 X,Y 时长 缓动函数]   # 右侧缓动移动
+[subRenderMoveEaseFSR #层? X,Y 时长 缓动函数]   # 右侧缓动移动
 [subRenderMoveEaseFSSideL #层 X,Y 时长 缓动函数]  # 侧左缓动移动
-[subRenderMoveEaseFSSideR #层 X,Y 时长 缓动函数]  # 侧右缓动移动
+[subRenderMoveEaseFSSideR #层? X,Y 时长 缓动函数]  # 侧右缓动移动
 [subRenderMoveScale #层 倍率 时长]      # 缩放移动
 [subRenderMoveScaleEase #层 倍率 时长 缓动函数]  # 缓动缩放移动
-[subRenderScale #层 倍率]
+[subRenderScale #层? 倍率]
 [subRenderShake #层 幅度 X强度 Y强度 参数]
 [subRenderShakeStop #层]
 ```
+
+当前样本中确认可省略 `#层` 的命令包括：`subRenderFadein`、`subRenderFadeinFSR`、`subRenderFadeinFSSideR`、`subRenderFadeout`、`subRenderMove`、`subRenderMoveFSSideR`、`subRenderMoveEaseFSR`、`subRenderMoveEaseFSSideR` 和 `subRenderScale`；省略时作用于当前或默认子渲染层。其他变体目前仅观察到显式指定 `#层` 的形式。部分 FSL/FSR/Side 移动变体还允许追加缓动函数。
 
 **示例**：
 ```
@@ -1800,13 +1850,14 @@ ID 编码规则（对应头部 `＄` 标签）：
 #### 叠加淡入
 
 ```
-[overlayFadein 槽位 时长 X,Y]
+[overlayFadein 槽位 时长 X,Y?]
 ```
 
 **示例**：
 ```
 [overlayFadein I 0.1 0,734]
 [overlayFadein J 0.1 0,-734]
+[overlayFadein P 2.0]
 ```
 
 #### 图像设置
@@ -1832,7 +1883,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 
 ```
 [masterSet 槽位 男性ID 女性ID 参数]
-[masterScene 男性场景ID 女性场景ID 时长]
+[masterScene 男性场景ID 女性场景ID 时长?]
 [masterImageSet 槽位 男性ID 女性ID 参数]
 [masterBranch _Male标签 _Female标签]
 [masterNameWidth 参数 名称1 名称2 名称3]
@@ -1841,7 +1892,7 @@ ID 编码规则（对应头部 `＄` 标签）：
 | 命令 | 参数 | 说明 |
 |------|------|------|
 | `masterSet` | `槽位 男性ID 女性ID 初始表情` | 设置主角角色（根据性别自动选择）；仍需通过角色登场命令显示 |
-| `masterScene` | `男性场景ID 女性场景ID 时长` | 设置主角场景 |
+| `masterScene` | `男性场景ID 女性场景ID 时长?` | 设置主角场景 |
 | `masterImageSet` | `槽位 男性ID 女性ID 参数` | 设置主角图像 |
 | `masterBranch` | `_Male标签 _Female标签` | 性别分支跳转 |
 | `masterNameWidth` | `参数 名称1 名称2 名称3` | 设置主角名称显示宽度 |
@@ -2021,12 +2072,12 @@ ID 编码规则（对应头部 `＄` 标签）：
 ```
 [input selectBranch]
 
-？1：選択肢Aのテキスト
-？2：選択肢Bのテキスト
-？！
-
 [label selectBranch]
+？1：選択肢Aのテキスト
 [branch lblBranch01]
+？2：選択肢Bのテキスト
+[branch lblBranch02]
+？！
 
 [label lblBranch01]
 ... 分支A的内容 ...
@@ -2038,6 +2089,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 [label lblEnd]
 ... 后续共通内容 ...
 ```
+
+选择项也可能带有额外元数据，例如 `？1,1000,saveMaterial：选项文本`。`[input 标签名]` 与后面的同名 `[label 标签名]` 共同标记选择段，实际分支目标由每个选项后的 `[branch 标签]` 指定。
 
 ### 任务进度条件分支
 
@@ -2066,7 +2119,6 @@ ID 编码规则（对应头部 `＄` 标签）：
 [bgm BGM_MAP_XX 0.1]
 [fadein black 0.5]
 [wait fade]
-[messageOn]
 ```
 
 ### 角色登场序列
@@ -2133,12 +2185,12 @@ ID 编码规则（对应头部 `＄` 标签）：
 
 [input selectBranch]
 
-？1：作戦を確認する
-？2：準備ができていない
-？！
-
 [label selectBranch]
+？1：作戦を確認する
 [branch lblReady]
+？2：準備ができていない
+[branch lblNotReady]
+？！
 
 [label lblReady]
 [charaFace A 1]
@@ -2148,10 +2200,18 @@ ID 编码规则（对应头部 `＄` 标签）：
 ……（作戦説明）[k]
 [fadeout black 0.5]
 [bgmStop BGM_EVENT_38 1.0]
+[branch lblEnd]
+
+[label lblNotReady]
+[charaTalk A]
+＠マシュ
+準備ができるまでお待ちします。[k]
+
+[label lblEnd]
 [end]
 ```
 
-### 带战斗过渡的完整任务脚本
+### 进入战斗前过渡的任务脚本
 
 ```
 ＄03-00-06-01-1-0
@@ -2175,7 +2235,6 @@ ID 编码规则（对应头部 `＄` 标签）：
 [criMovie talk_mov148 bgmPlay true]
 [fadein black 0.5]
 [wait fade]
-[messageOn]
 [charaTalk A]
 ＠シオン
 ……敵のサーヴァントです。[k]
@@ -2200,6 +2259,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 | 1098182300+ | 尼莫 |
 | 98115000+ | 通信角色 |
 
+这些 ID 前缀是样本中的资源命名惯例，不是严格的数值范围定义；同一角色或用途可能存在例外。
+
 ### BGM 标识索引
 
 | 前缀 | 用途 |
@@ -2208,6 +2269,8 @@ ID 编码规则（对应头部 `＄` 标签）：
 | `BGM_MAP_` | 地图探索音乐 |
 | `BGM_BATTLE_` | 战斗音乐 |
 | `BGM_ENDING_` | 结尾音乐 |
+
+当前样本还观察到 `BGM_MYROOM_`、`BGM_HALLOWEEN_`、`BGM_TITLE_` 等前缀；本表不是完整索引。
 
 ### 场景 ID 范围
 
@@ -2218,26 +2281,36 @@ ID 编码规则（对应头部 `＄` 标签）：
 | 95200+ | 特殊场景 |
 | 142200+ | 异闻带场景 |
 
+这些是样本中观察到的 ID 聚类，不应理解为互不重叠或覆盖全部场景的严格范围。
+
 ### 缓动函数参考
 
 | 名称 | 效果 |
 |------|------|
+| `easeInBack` | 缓入（回弹） |
+| `easeInCubic` | 缓入（三次） |
+| `easeInExpo` | 缓入（指数） |
+| `easeInOutCubic` | 入出（三次） |
+| `easeInOutQuart` | 入出（四次） |
+| `easeInQuad` | 缓入（二次） |
 | `easeOutQuad` | 缓出（二次） |
 | `easeOutSine` | 缓出（正弦） |
 | `easeOutExpo` | 缓出（指数） |
+| `easeOutBack` | 缓出（回弹） |
 | `easeOutCirc` | 缓出（圆形） |
 | `easeOutQuart` | 缓出（四次） |
 | `easeOutQuint` | 缓出（五次） |
 | `easeOutCubic` | 缓出（三次） |
+| `easeOutElastic` | 缓出（弹性） |
 | `easeInOutSine` | 入出（正弦） |
 | `easeInOutQuad` | 入出（二次） |
 | `easeInOutExpo` | 入出（指数） |
 | `easeInOutQuint` | 入出（五次） |
 | `easeInSine` | 缓入（正弦） |
 
-### 命令统计
+### 命令统计（部分）
 
-基于 2,583 个脚本文件的命令使用频率（Top 30）：
+基于 2,583 个脚本文件的原始出现次数；命令嵌入台词时也计数。以下是常用命令和本版本新增/修订命令的部分统计，不等同于完整排名。
 
 | 命令 | 出现次数 | 用途 |
 |------|----------|------|
@@ -2271,16 +2344,16 @@ ID 编码规则（对应头部 `＄` 标签）：
 | `fowardEffect` | 1,303 | 前向效果 |
 | `flashin` | 1,231 | 闪光 |
 | `shake` | 2,426 | 震动 |
-| `charaFilter` | — | 角色滤镜（剪影/正常） |
-| `charaLayer` | — | 角色图层（normal/main/sub #A~#D/mask） |
-| `charaEffectEdgeBlur` | — | 角色边缘模糊 |
-| `subCameraFilter` | — | 子摄像机滤镜（8种模式） |
-| `blur` | — | 模糊（lens/motion/glass） |
-| `cameraFilter` | — | 摄像机滤镜（含 darkred） |
-| `masterNameWidth` | — | 主角名称宽度 |
-| `backlogStart/End` | — | 日志段落标记 |
-| `effectStart/Pause` | — | 全局效果恢复/暂停 |
-| `fowardEffectStart/Pause` | — | 前向效果恢复/暂停 |
+| `charaFilter` | 890 | 角色滤镜（剪影/正常） |
+| `charaLayer` | 8,269 | 角色图层（normal/main/sub #A~#D/mask） |
+| `charaEffectEdgeBlur` | 178 | 角色边缘模糊 |
+| `subCameraFilter` | 1,948 | 子摄像机滤镜（8种模式） |
+| `blur` | 523 | 模糊（lens/motion/glass） |
+| `cameraFilter` | 356 | 摄像机滤镜（含 darkred） |
+| `masterNameWidth` | 1 | 主角名称宽度 |
+| `backlogStart/End` | 16/16 | 日志段落标记 |
+| `effectStart/Pause` | 1/1 | 全局效果恢复/暂停 |
+| `fowardEffectStart/Pause` | 4/4 | 前向效果恢复/暂停 |
 
 ### 特殊标记说明
 
@@ -2308,15 +2381,16 @@ ID 编码规则（对应头部 `＄` 标签）：
 | `tapSkip` | 点击跳过标记 |
 | `useSimpleMeshFigure` | 简化网格模型显示 |
 | `autoAndBackLog` | 自动返回日志 |
-| `wipeFilter` | 擦除滤镜（参数类型除 `cinema` 外还支持 `circleIn` 等方向值） |
+| `wipeFilter` | 擦除滤镜（支持 `cinema`、`circleIn`、`openEye`、`downToUp` 等模式） |
 | `voiceStop` 双参数形式 | 第二个参数（如 `0`）含义不明，可能是停止模式 |
 
 ---
 
-> **文档版本**: v1.2
-> **生成日期**: 2026-07-24
+> **文档版本**: v1.3
+> **生成日期**: 2026-08-05
 > **基于文件数**: 2,583 个脚本
 > **更新内容**: 
-> - v1.2: 补充 `wait` 完整类型列表（25+种）、扩展淡入淡出颜色值（18+种）、扩展擦除方向（30+种）、修正 `charaFilter` 格式描述、补充 `charaLayer` 子层（#C/#D/#mask/main）、补充 `subCameraFilter` 模式、补充模糊类型（motion/glass）、补充 `cameraFilter darkred`、添加 `masterNameWidth` 命令、添加 `soundStopAllFade` 参数说明、添加 `effectStart`/`effectPause`/`fowardEffectStart`/`fowardEffectPause` 详细说明、添加 `seContinueVolume`/`cueseContinueVolume` 参数表、修正 `＄` 头部非必需说明、修正 `voiceStop` 双参数形式
+> - v1.3: 修正头部位置和文件名映射说明；明确命令可嵌入台词；统一可选参数表示；修正 `cameraMoveEase`、`charaFilter`、擦除方向和 `tVoice` 大小写；补充分支选择语法、等待参数变体、缓动函数和统计口径；精确化 `overlayFadein`、等待类型和子渲染层可选参数；修正完整分支示例
+> - v1.2: 补充 `wait` 完整类型列表（25+种）、扩展淡入淡出颜色值（18+种）、扩展擦除方向（30+种）、修正 `charaFilter` 格式描述、补充 `charaLayer` 子层（#C/#D/#mask/main）、补充 `subCameraFilter` 模式、补充模糊类型（motion/glass）、补充 `cameraFilter darkred`、添加 `masterNameWidth` 命令、添加 `soundStopAllFade` 参数说明、添加 `effectStart`/`effectPause`/`fowardEffectStart`/`fowardEffectPause` 详细说明、添加 `seContinueVolume`/`cueSeContinueVolume` 参数表、修正 `＄` 头部非必需说明、修正 `voiceStop` 双参数形式
 > - v1.1: 补充了多角色对话标记（spot）、多角色 charaTalk、角色移动位置变体（FSL/FSR/SideL/SideR）、子渲染层完整命令、角色效果暂停/恢复、对话模式开关（charaTalk on）等
-> **说明**: 本文档基于实际脚本文件逆向分析，部分命令参数含义为推测，可能存在偏差。
+> **说明**: 本文档基于实际脚本文件逆向分析。命令拼写和常见参数形式以样本为准；资源 ID、效果参数和少量控制流语义仍可能存在推测或历史兼容差异。

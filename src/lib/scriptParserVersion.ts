@@ -1,4 +1,4 @@
-export const SCRIPT_PARSER_VERSION = 4 as const;
+export const SCRIPT_PARSER_VERSION = 5 as const;
 
 const VERSION_NAMESPACE = `v${SCRIPT_PARSER_VERSION}`;
 
@@ -35,9 +35,12 @@ const PARSER_VERSION_MARKER = "fgo-reader-script-parser-version";
 const LEGACY_EXACT_KEYS = [
   LEGACY_BOOKMARK_STORAGE_KEY,
   LEGACY_LAST_OBSERVATION_STORAGE_KEY,
+  "fgo-reader-bookmark:v4",
+  "fgo-reader-last-observation:v4",
   "fgo-reader-translation-cache-index:v1",
   "fgo-reader-translation-cache-index:v2",
   "fgo-reader-translation-cache-index:v3",
+  "fgo-reader-translation-cache-index:v4",
 ];
 const LEGACY_PREFIXES = [
   "fgo-reader-progress:",
@@ -46,6 +49,7 @@ const LEGACY_PREFIXES = [
   "fgo-reader-translation-cache:v1:",
   "fgo-reader-translation-cache:v2:",
   "fgo-reader-translation-cache:v3:",
+  "fgo-reader-translation-cache:v4:",
 ];
 
 export function consumeParserUpgradeNotice(
