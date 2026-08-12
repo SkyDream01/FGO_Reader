@@ -264,7 +264,7 @@ describe("translation batching and readiness", () => {
       } as Response;
     }));
 
-    const progress: Array<{ completed: number; total: number; translatedCount: number }> = [];
+    const progress: Array<{ completed: number; total: number; translatedCount: number; tps?: number }> = [];
     const result = await translateTranslationUnits({
       provider: "bing",
       scriptId: "script",
@@ -277,7 +277,8 @@ describe("translation batching and readiness", () => {
     expect(result.configurationId).toBe("test-config");
     expect(result.translations[units[0].id].translatedText).toBe("已有译文");
     expect(Object.keys(result.translations)).toHaveLength(21);
-    expect(progress.at(-1)).toEqual({ completed: 21, total: 21, translatedCount: 21 });
+    expect(progress.at(-1)).toMatchObject({ completed: 21, total: 21, translatedCount: 21 });
+    expect(progress.at(-1)?.tps).toBeGreaterThan(0);
   });
 
   it("translates supplied one-shot batches serially and in order", async () => {
@@ -375,10 +376,9 @@ describe("translation batching and readiness", () => {
         json: async () => ({
           provider: "openai",
           configurationId: "test-config",
-          outputTokens: payload.items.length * 10,
           translations: payload.items.map((item) => ({
             id: item.id,
-            translatedText: `译：${item.text}`,
+            translatedText: "一二",
           })),
         }),
       } as Response;
@@ -393,7 +393,7 @@ describe("translation batching and readiness", () => {
     });
 
     await vi.advanceTimersByTimeAsync(5_000);
-    expect(progress.at(-1)?.tps).toBeCloseTo(2, 5);
+    expect(progress.at(-1)?.tps).toBeCloseTo(0.4, 5);
 
     await vi.advanceTimersByTimeAsync(5_000);
     expect(progress.at(-1)?.tps).toBe(0);

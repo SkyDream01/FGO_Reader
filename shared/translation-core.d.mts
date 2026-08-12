@@ -36,7 +36,6 @@ export interface TranslationResult {
   provider: TranslationProvider;
   configurationId: string;
   translations: Array<{ id: string; translatedText: string }>;
-  outputTokens?: number;
 }
 
 export class TranslationError extends Error {

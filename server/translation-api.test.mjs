@@ -126,7 +126,7 @@ describe("provider adapters", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
-  it("forwards OpenAI-compatible output token usage", async () => {
+  it("does not expose provider token usage metadata", async () => {
     const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
       choices: [{
         message: {
@@ -152,7 +152,7 @@ describe("provider adapters", () => {
       items: [{ id: "dialogue:1", kind: "dialogue", text: "架空试験文" }],
     });
 
-    expect(result.outputTokens).toBe(17);
+    expect(result.outputTokens).toBeUndefined();
   });
 });
 

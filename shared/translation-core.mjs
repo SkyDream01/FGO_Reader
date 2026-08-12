@@ -394,19 +394,6 @@ function parseOpenAiTranslations(content, items) {
   return validateProviderTranslations(items, parsed?.translations);
 }
 
-function readOutputTokenCount(data) {
-  const candidates = [
-    data?.usage?.completion_tokens,
-    data?.usage?.output_tokens,
-    data?.eval_count,
-  ];
-  for (const candidate of candidates) {
-    const value = Number(candidate);
-    if (Number.isFinite(value) && value >= 0) return Math.floor(value);
-  }
-  return undefined;
-}
-
 async function translateWithOpenAi(config, items, context) {
   const endpoint = config.baseUrl.endsWith("/chat/completions")
     ? config.baseUrl
@@ -454,7 +441,6 @@ async function translateWithOpenAi(config, items, context) {
   }
   return {
     translations: parseOpenAiTranslations(content, items),
-    outputTokens: readOutputTokenCount(data),
   };
 }
 
@@ -585,7 +571,6 @@ async function translateItemsWithProviderDetailed(config, items, context) {
     }
     return {
       translations: new Map(items.map((item) => [item.id, translated.get(item.id)])),
-      outputTokens: providerResult.outputTokens,
     };
   }
 
@@ -613,7 +598,6 @@ async function translateWithCache({ config, items, cache, inflight, context }) {
   const ownerItems = [];
   const ownerEntries = [];
   const ownerKeys = new Set();
-  let ownerBatchPromise = null;
 
   for (let index = 0; index < items.length; index += 1) {
     const key = itemKeys[index];
@@ -625,7 +609,6 @@ async function translateWithCache({ config, items, cache, inflight, context }) {
 
   if (ownerItems.length) {
     const batchPromise = translateItemsWithProviderDetailed(config, ownerItems, context);
-    ownerBatchPromise = batchPromise;
     ownerEntries.forEach(({ item, key }) => {
       const itemPromise = batchPromise.then((result) => {
         const translatedText = result.translations.get(item.id);
@@ -654,10 +637,8 @@ async function translateWithCache({ config, items, cache, inflight, context }) {
     return pending;
   }));
 
-  const ownerBatchResult = ownerBatchPromise ? await ownerBatchPromise : undefined;
   return {
     translations: items.map((item, index) => ({ id: item.id, translatedText: translated[index] })),
-    outputTokens: ownerBatchResult?.outputTokens,
   };
 }
 
@@ -732,7 +713,6 @@ export function createTranslationEngine({
       provider: validated.provider,
       configurationId: config.configurationId,
       translations: result.translations,
-      ...(result.outputTokens === undefined ? {} : { outputTokens: result.outputTokens }),
     };
   };
 

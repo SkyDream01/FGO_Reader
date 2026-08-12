@@ -68,7 +68,6 @@ export interface TranslationServerConfig {
 export interface TranslationResponse {
   provider: TranslationProvider;
   configurationId: string;
-  outputTokens?: number;
   translations: Array<{
     id: string;
     translatedText: string;
@@ -484,6 +483,41 @@ function translationClock() {
   return Date.now();
 }
 
+function isCjkLikeCharacter(character: string) {
+  return /[\u3400-\u9fff\u3040-\u30ff\uac00-\ud7af]/u.test(character);
+}
+
+function isAsciiWordCharacter(character: string) {
+  return /[A-Za-z0-9]/u.test(character);
+}
+
+/** Estimates generated tokens locally without depending on provider usage metadata. */
+function estimateLocalOutputTokens(text: string) {
+  let tokens = 0;
+  let asciiRunLength = 0;
+  const flushAsciiRun = () => {
+    if (!asciiRunLength) return;
+    tokens += Math.max(1, Math.ceil(asciiRunLength / 4));
+    asciiRunLength = 0;
+  };
+
+  for (const character of text) {
+    if (/\s/u.test(character)) {
+      flushAsciiRun();
+    } else if (isCjkLikeCharacter(character)) {
+      flushAsciiRun();
+      tokens += 1;
+    } else if (isAsciiWordCharacter(character)) {
+      asciiRunLength += 1;
+    } else {
+      flushAsciiRun();
+      tokens += 1;
+    }
+  }
+  flushAsciiRun();
+  return Math.max(1, tokens);
+}
+
 interface OutputTokenSample {
   completedAt: number;
   tokens: number;
@@ -540,8 +574,6 @@ export async function translateTranslationUnits({
   const chunks = prepareTranslationChunks(missingUnits, unitBatches);
   let completed = Object.keys(translations).length;
   let configurationId: string | undefined;
-  let outputTokenCountAvailable = true;
-  let hasOutputTokenSample = false;
   let publishedTps: number | undefined;
   const outputTokenSamples: OutputTokenSample[] = [];
   let currentProgress: FullTranslationProgress = {
@@ -556,7 +588,7 @@ export async function translateTranslationUnits({
     });
   };
   const refreshTps = () => {
-    if (!outputTokenCountAvailable || !hasOutputTokenSample) {
+    if (!outputTokenSamples.length) {
       publishedTps = undefined;
     } else {
       publishedTps = rollingOutputTokensPerSecond(outputTokenSamples, translationClock());
@@ -595,16 +627,6 @@ export async function translateTranslationUnits({
       if (!response || signal?.aborted) {
         throw new DOMException("Translation cancelled", "AbortError");
       }
-      if (typeof response.outputTokens === "number" && Number.isFinite(response.outputTokens)) {
-        outputTokenSamples.push({
-          completedAt: translationClock(),
-          tokens: Math.max(0, response.outputTokens),
-        });
-        hasOutputTokenSample = true;
-      } else {
-        outputTokenCountAvailable = false;
-        publishedTps = undefined;
-      }
 
       const sourceById = new Map(chunk.map((unit) => [unit.id, unit]));
       const batchTranslations: Record<string, CachedTranslation> = {};
@@ -630,6 +652,11 @@ export async function translateTranslationUnits({
       }
 
       Object.assign(translations, batchTranslations);
+      outputTokenSamples.push({
+        completedAt: translationClock(),
+        tokens: Object.values(batchTranslations)
+          .reduce((total, translation) => total + estimateLocalOutputTokens(translation.translatedText), 0),
+      });
       configurationId = response.configurationId || configurationId;
       completed += chunk.length;
       onBatch?.(batchTranslations, configurationId);
@@ -638,7 +665,7 @@ export async function translateTranslationUnits({
         total: units.length,
         translatedCount: Object.keys(translations).length,
       };
-      publishProgress();
+      refreshTps();
     }
 
     if (Object.keys(translations).length !== units.length) {
