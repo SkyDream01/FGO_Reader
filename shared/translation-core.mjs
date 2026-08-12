@@ -394,6 +394,51 @@ function parseOpenAiTranslations(content, items) {
   return validateProviderTranslations(items, parsed?.translations);
 }
 
+function streamContentFromOpenAiChunk(chunk) {
+  return openAiContentToString(chunk?.choices?.[0]?.delta?.content);
+}
+
+async function readOpenAiStream(response, onOutputText) {
+  if (!response.body?.getReader) {
+    throw new TranslationError(502, "provider_invalid_response", "OpenAI 兼容接口未返回可读取的流", true);
+  }
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let content = "";
+  const processEvent = (event) => {
+    const data = event
+      .split(/\r?\n/u)
+      .filter((line) => line.startsWith("data:"))
+      .map((line) => line.slice(5).trimStart())
+      .join("\n")
+      .trim();
+    if (!data || data === "[DONE]") return;
+    let parsed;
+    try {
+      parsed = JSON.parse(data);
+    } catch {
+      return;
+    }
+    const delta = streamContentFromOpenAiChunk(parsed);
+    if (!delta) return;
+    content += delta;
+    onOutputText?.(delta);
+  };
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const events = buffer.split(/\r?\n\r?\n/u);
+    buffer = events.pop() ?? "";
+    for (const event of events) processEvent(event);
+  }
+  buffer += decoder.decode();
+  if (buffer.trim()) processEvent(buffer);
+  return content;
+}
+
 async function translateWithOpenAi(config, items, context) {
   const endpoint = config.baseUrl.endsWith("/chat/completions")
     ? config.baseUrl
@@ -412,7 +457,7 @@ async function translateWithOpenAi(config, items, context) {
       headers,
       body: JSON.stringify({
         model: config.model,
-        stream: false,
+        stream: Boolean(context.onOutputText),
         temperature: 0,
         messages: [
           {
@@ -434,6 +479,13 @@ async function translateWithOpenAi(config, items, context) {
     context.signal,
   );
   throwForUpstreamStatus("OpenAI 兼容接口", response);
+  if (context.onOutputText && response.headers?.get?.("content-type")?.includes("text/event-stream")) {
+    const content = await readOpenAiStream(response, context.onOutputText);
+    if (!content) {
+      throw new TranslationError(502, "provider_invalid_response", "OpenAI 兼容接口没有返回正文", true);
+    }
+    return { translations: parseOpenAiTranslations(content, items) };
+  }
   const data = await parseJsonResponse(response);
   const content = openAiContentToString(data?.choices?.[0]?.message?.content);
   if (!content) {
@@ -692,7 +744,7 @@ export function createTranslationEngine({
     };
   };
 
-  const translate = async (body, signal) => {
+  const translate = async (body, signal, onOutputText) => {
     const validated = validateTranslationRequest(body);
     if (!clientOverridesAllowed && Object.keys(validated.providerConfig).length) {
       throw new TranslationError(400, "invalid_provider_config", "服务端已禁止页面覆盖翻译配置");
@@ -707,7 +759,13 @@ export function createTranslationEngine({
       items: validated.items,
       cache,
       inflight,
-      context: { fetchImpl, timeoutMs, signal, bingClient },
+      context: {
+        fetchImpl,
+        timeoutMs,
+        signal,
+        bingClient,
+        onOutputText: body.stream === true && body.provider === "openai" ? onOutputText : undefined,
+      },
     });
     return {
       provider: validated.provider,

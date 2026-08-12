@@ -127,7 +127,7 @@ const CACHE_INDEX_KEY = `fgo-reader-translation-cache-index:v${SCRIPT_PARSER_VER
 const CACHE_PREFIX = `fgo-reader-translation-cache:v${SCRIPT_PARSER_VERSION}:`;
 const CACHE_ENTRY_LIMIT = 12;
 export const TRANSLATION_AHEAD_FRAME_COUNT = 10;
-export const TRANSLATION_TPS_WINDOW_MS = 5_000;
+export const TRANSLATION_TPS_WINDOW_MS = 1_000;
 
 export const defaultTranslationSettings: TranslationSettings = {
   mode: "source",
@@ -515,7 +515,7 @@ function estimateLocalOutputTokens(text: string) {
     }
   }
   flushAsciiRun();
-  return Math.max(1, tokens);
+  return tokens;
 }
 
 interface OutputTokenSample {
@@ -604,7 +604,23 @@ export async function translateTranslationUnits({
     for (const chunk of chunks) {
       if (signal?.aborted) throw new DOMException("Translation cancelled", "AbortError");
       let response: TranslationResponse | null = null;
+      let attemptSamples: OutputTokenSample[] = [];
       for (let attempt = 0; attempt < 2; attempt += 1) {
+        let observedOutputText = "";
+        let observedOutputTokens = 0;
+        attemptSamples = [];
+        const onOutputText = (text: string) => {
+          observedOutputText += text;
+          const nextTokens = estimateLocalOutputTokens(observedOutputText);
+          const deltaTokens = Math.max(0, nextTokens - observedOutputTokens);
+          observedOutputTokens = nextTokens;
+          if (deltaTokens) {
+            const sample = { completedAt: translationClock(), tokens: deltaTokens };
+            outputTokenSamples.push(sample);
+            attemptSamples.push(sample);
+            refreshTps();
+          }
+        };
         try {
           response = await requestTranslations({
             provider,
@@ -612,9 +628,14 @@ export async function translateTranslationUnits({
             providerConfig,
             items: chunk,
             signal,
+            onOutputText,
           });
           break;
         } catch (error) {
+          for (const sample of attemptSamples) {
+            const index = outputTokenSamples.indexOf(sample);
+            if (index >= 0) outputTokenSamples.splice(index, 1);
+          }
           const retryable = error instanceof TranslationRequestError && error.retryable;
           if (attempt === 0 && retryable && !signal?.aborted) {
             await waitForTranslationRetry(signal);
@@ -652,11 +673,6 @@ export async function translateTranslationUnits({
       }
 
       Object.assign(translations, batchTranslations);
-      outputTokenSamples.push({
-        completedAt: translationClock(),
-        tokens: Object.values(batchTranslations)
-          .reduce((total, translation) => total + estimateLocalOutputTokens(translation.translatedText), 0),
-      });
       configurationId = response.configurationId || configurationId;
       completed += chunk.length;
       onBatch?.(batchTranslations, configurationId);
@@ -806,22 +822,99 @@ export async function deleteLocalOpenAiConfig() {
   return parseLocalConfigResponse(response);
 }
 
+function emitTranslationText(response: TranslationResponse, onOutputText?: (text: string) => void) {
+  if (!onOutputText) return;
+  for (const translation of response.translations) {
+    if (translation.translatedText) onOutputText(translation.translatedText);
+  }
+}
+
+async function readStreamedTranslationResponse(
+  response: Response,
+  onOutputText: (text: string) => void,
+): Promise<TranslationResponse> {
+  if (!response.body?.getReader) {
+    const result = await response.json() as TranslationResponse;
+    emitTranslationText(result, onOutputText);
+    return result;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let result: TranslationResponse | null = null;
+  let streamedOutput = false;
+  const processLine = (line: string) => {
+    if (!line.trim()) return;
+    let envelope: {
+      type?: string;
+      text?: string;
+      result?: TranslationResponse;
+      detail?: string;
+      code?: string;
+      provider?: TranslationProvider;
+      retryable?: boolean;
+    };
+    try {
+      envelope = JSON.parse(line) as typeof envelope;
+    } catch {
+      throw new TranslationRequestError("翻译服务返回了无效的流数据", "provider_invalid_response", true);
+    }
+    if (envelope.type === "chunk") {
+      if (envelope.text) {
+        streamedOutput = true;
+        onOutputText(envelope.text);
+      }
+      return;
+    }
+    if (envelope.type === "error") {
+      throw new TranslationRequestError(
+        envelope.detail || "翻译服务暂时不可用",
+        envelope.code || "provider_unavailable",
+        envelope.retryable === true,
+        envelope.provider,
+      );
+    }
+    if (envelope.type === "result" && envelope.result) result = envelope.result;
+  };
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split(/\r?\n/u);
+    buffer = lines.pop() ?? "";
+    for (const line of lines) processLine(line);
+  }
+  buffer += decoder.decode();
+  if (buffer.trim()) processLine(buffer);
+  if (!result) {
+    throw new TranslationRequestError("翻译服务未返回完整结果", "provider_invalid_response", true);
+  }
+  if (!streamedOutput) emitTranslationText(result, onOutputText);
+  return result;
+}
+
 export async function requestTranslations({
   provider,
   scriptId,
   providerConfig,
   items,
   signal,
+  onOutputText,
 }: {
   provider: TranslationProvider;
   scriptId: string;
   providerConfig?: object;
   items: TranslationUnit[];
   signal?: AbortSignal;
+  onOutputText?: (text: string) => void;
 }): Promise<TranslationResponse> {
   if (isAndroidNative()) {
     try {
-      return await requestNativeTranslations({ provider, scriptId, providerConfig, items, signal });
+      const result = await requestNativeTranslations({ provider, scriptId, providerConfig, items, signal });
+      emitTranslationText(result, onOutputText);
+      return result;
     } catch (error) {
       const nativeError = error as {
         detail?: unknown;
@@ -841,10 +934,11 @@ export async function requestTranslations({
       );
     }
   }
+  const stream = Boolean(onOutputText && provider === "openai");
   const response = await fetch("/translation-api", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ provider, scriptId, providerConfig, items }),
+    body: JSON.stringify({ provider, scriptId, providerConfig, items, stream }),
     signal,
   });
   if (!response.ok) {
@@ -861,5 +955,8 @@ export async function requestTranslations({
     }
     throw new TranslationRequestError(detail, code, retryable, provider);
   }
-  return response.json() as Promise<TranslationResponse>;
+  if (stream) return readStreamedTranslationResponse(response, onOutputText!);
+  const result = await response.json() as TranslationResponse;
+  emitTranslationText(result, onOutputText);
+  return result;
 }

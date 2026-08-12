@@ -6,6 +6,7 @@ import {
   frameTranslationUnits,
   providerConfigFromSettings,
   providerIsReady,
+  requestTranslations,
   stableHash,
   translateTranslationUnits,
   translationForUnit,
@@ -359,7 +360,7 @@ describe("translation batching and readiness", () => {
     expect(requests[0].items).toHaveLength(21);
   });
 
-  it("refreshes the five-second rolling output TPS while translation is in progress", async () => {
+  it("refreshes the one-second rolling output TPS while translation is in progress", async () => {
     const units = [
       { id: "unit-0", kind: "dialogue" as const, text: "文 0" },
       { id: "unit-1", kind: "dialogue" as const, text: "文 1" },
@@ -392,14 +393,44 @@ describe("translation batching and readiness", () => {
       onProgress: (value) => progress.push(value),
     });
 
-    await vi.advanceTimersByTimeAsync(5_000);
-    expect(progress.at(-1)?.tps).toBeCloseTo(0.4, 5);
-
-    await vi.advanceTimersByTimeAsync(5_000);
-    expect(progress.at(-1)?.tps).toBe(0);
+    await vi.advanceTimersByTimeAsync(1_000);
+    expect(progress.at(-1)?.tps).toBeCloseTo(2, 5);
 
     await vi.advanceTimersByTimeAsync(1_000);
+    expect(progress.at(-1)?.tps).toBe(0);
+
+    await vi.advanceTimersByTimeAsync(10_000);
     await translationPromise;
+  });
+
+  it("reads streamed local translation responses for local TPS sampling", async () => {
+    const result = {
+      provider: "openai" as const,
+      configurationId: "test-config",
+      translations: [{ id: "unit-0", translatedText: "一二" }],
+    };
+    const responseBody = [
+      { type: "chunk", text: "一" },
+      { type: "chunk", text: "二" },
+      { type: "result", result },
+    ].map((envelope) => JSON.stringify(envelope)).join("\n") + "\n";
+    const output: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      expect(JSON.parse(String(init?.body)).stream).toBe(true);
+      return new Response(responseBody, {
+        status: 200,
+        headers: { "content-type": "application/x-ndjson" },
+      });
+    }));
+
+    await expect(requestTranslations({
+      provider: "openai",
+      scriptId: "script",
+      providerConfig: settings.openai,
+      items: [{ id: "unit-0", kind: "dialogue", text: "架空試験文" }],
+      onOutputText: (text) => output.push(text),
+    })).resolves.toEqual(result);
+    expect(output).toEqual(["一", "二"]);
   });
 
   it("recognizes a manual local OpenAI-compatible configuration", () => {

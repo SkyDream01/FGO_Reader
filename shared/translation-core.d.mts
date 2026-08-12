@@ -15,6 +15,7 @@ export interface TranslationRequest {
   scriptId: string;
   providerConfig?: Record<string, unknown>;
   items: TranslationItem[];
+  stream?: boolean;
 }
 
 export interface TranslationProviderInfo {
@@ -48,7 +49,11 @@ export class TranslationError extends Error {
 
 export interface TranslationEngine {
   getPublicConfig(): TranslationPublicConfig;
-  translate(body: TranslationRequest, signal?: AbortSignal): Promise<TranslationResult>;
+  translate(
+    body: TranslationRequest,
+    signal?: AbortSignal,
+    onOutputText?: (text: string) => void,
+  ): Promise<TranslationResult>;
 }
 
 export function createMemoryCache(options?: {

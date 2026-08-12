@@ -126,6 +126,45 @@ describe("provider adapters", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("forwards OpenAI-compatible streaming output while parsing the final result", async () => {
+    const content = '{"translations":[{"id":"dialogue:1","translatedText":"译文"}]}';
+    const streamBody = [content.slice(0, 20), content.slice(20)]
+      .map((chunk) => `data: ${JSON.stringify({ choices: [{ delta: { content: chunk } }] })}\n\n`)
+      .concat("data: [DONE]\n\n")
+      .join("");
+    const fetchImpl = vi.fn(async (_url, init) => {
+      const request = JSON.parse(init.body);
+      expect(request.stream).toBe(true);
+      return new Response(streamBody, {
+        status: 200,
+        headers: { "content-type": "text/event-stream" },
+      });
+    });
+    const output = [];
+    const engine = createTranslationEngine({
+      fetchImpl,
+      timeoutMs: 1_000,
+      clientOverridesAllowed: true,
+    });
+
+    const result = await engine.translate({
+      provider: "openai",
+      scriptId: "script",
+      stream: true,
+      providerConfig: {
+        baseUrl: "http://127.0.0.1:11434/v1",
+        model: "local-model",
+        allowNoAuth: true,
+      },
+      items: [{ id: "dialogue:1", kind: "dialogue", text: "架空試験文" }],
+    }, undefined, (text) => output.push(text));
+
+    expect(output.join("")).toBe(content);
+    expect(result.translations).toEqual([
+      { id: "dialogue:1", translatedText: "译文" },
+    ]);
+  });
+
   it("does not expose provider token usage metadata", async () => {
     const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
       choices: [{
@@ -157,6 +196,45 @@ describe("provider adapters", () => {
 });
 
 describe("translation HTTP API", () => {
+  it("streams OpenAI-compatible translation responses as NDJSON", async () => {
+    const content = '{"translations":[{"id":"dialogue:1","translatedText":"译文"}]}';
+    const upstreamBody = [content.slice(0, 20), content.slice(20)]
+      .map((chunk) => `data: ${JSON.stringify({ choices: [{ delta: { content: chunk } }] })}\n\n`)
+      .concat("data: [DONE]\n\n")
+      .join("");
+    const fetchImpl = vi.fn(async () => new Response(upstreamBody, {
+      status: 200,
+      headers: { "content-type": "text/event-stream" },
+    }));
+    const app = createTranslationApp({ fetchImpl, timeoutMs: 1_000 });
+    const origin = await serve(app);
+
+    const response = await fetch(origin, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        provider: "openai",
+        scriptId: "script",
+        stream: true,
+        providerConfig: {
+          baseUrl: "http://127.0.0.1:11434/v1",
+          model: "local-model",
+          allowNoAuth: true,
+        },
+        items: [{ id: "dialogue:1", kind: "dialogue", text: "架空試験文" }],
+      }),
+    });
+    const envelopes = (await response.text()).trim().split(/\n/u).map((line) => JSON.parse(line));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("application/x-ndjson");
+    expect(envelopes.map((envelope) => envelope.type)).toEqual(["chunk", "chunk", "result"]);
+    expect(envelopes.at(-1).result.translations).toEqual([
+      { id: "dialogue:1", translatedText: "译文" },
+    ]);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("does not expose secrets and never falls back from an explicitly selected provider", async () => {
     const fetchImpl = vi.fn(async () => new Response("unavailable", { status: 503 }));
     const app = createTranslationApp({

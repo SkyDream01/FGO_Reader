@@ -199,6 +199,44 @@ export function createTranslationApp({
     const controller = new AbortController();
     const abort = () => controller.abort();
     request.once("aborted", abort);
+    const wantsStream = request.body?.stream === true && request.body?.provider === "openai";
+    if (wantsStream) {
+      response.status(200).set({
+        "cache-control": "no-cache",
+        "content-type": "application/x-ndjson; charset=utf-8",
+        connection: "keep-alive",
+        "x-accel-buffering": "no",
+      });
+      response.flushHeaders?.();
+      try {
+        const result = await engine.translate(
+          request.body,
+          controller.signal,
+          (text) => {
+            if (!controller.signal.aborted && !response.writableEnded) {
+              response.write(`${JSON.stringify({ type: "chunk", text })}\n`);
+            }
+          },
+        );
+        if (!controller.signal.aborted && !response.writableEnded) {
+          response.end(`${JSON.stringify({ type: "result", result })}\n`);
+        }
+      } catch (error) {
+        if (!controller.signal.aborted && !response.writableEnded) {
+          const translatedError = toTranslationError(error);
+          response.end(`${JSON.stringify({
+            type: "error",
+            detail: translatedError.detail,
+            code: translatedError.code,
+            provider: request.body?.provider,
+            retryable: translatedError.retryable,
+          })}\n`);
+        }
+      } finally {
+        request.off("aborted", abort);
+      }
+      return;
+    }
     try {
       const result = await engine.translate(request.body, controller.signal);
       if (!controller.signal.aborted) response.json(result);
