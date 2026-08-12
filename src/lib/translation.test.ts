@@ -28,6 +28,7 @@ const settings: TranslationSettings = {
 };
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllGlobals();
 });
 
@@ -357,14 +358,18 @@ describe("translation batching and readiness", () => {
     expect(requests[0].items).toHaveLength(21);
   });
 
-  it("reports cumulative output tokens per second when the provider supplies usage", async () => {
+  it("refreshes the five-second rolling output TPS while translation is in progress", async () => {
     const units = [
       { id: "unit-0", kind: "dialogue" as const, text: "文 0" },
       { id: "unit-1", kind: "dialogue" as const, text: "文 1" },
     ];
     const progress: Array<{ tps?: number }> = [];
+    let requestIndex = 0;
+    vi.useFakeTimers();
     vi.stubGlobal("fetch", vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
       const payload = JSON.parse(String(init?.body)) as { items: typeof units };
+      const delayMs = requestIndex++ === 0 ? 1_000 : 10_000;
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
       return {
         ok: true,
         json: async () => ({
@@ -379,7 +384,7 @@ describe("translation batching and readiness", () => {
       } as Response;
     }));
 
-    await translateTranslationUnits({
+    const translationPromise = translateTranslationUnits({
       provider: "openai",
       scriptId: "script",
       units,
@@ -387,7 +392,14 @@ describe("translation batching and readiness", () => {
       onProgress: (value) => progress.push(value),
     });
 
-    expect(progress.at(-1)?.tps).toBeGreaterThan(0);
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(progress.at(-1)?.tps).toBeCloseTo(2, 5);
+
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(progress.at(-1)?.tps).toBe(0);
+
+    await vi.advanceTimersByTimeAsync(1_000);
+    await translationPromise;
   });
 
   it("recognizes a manual local OpenAI-compatible configuration", () => {

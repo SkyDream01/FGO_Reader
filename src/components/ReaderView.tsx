@@ -1706,7 +1706,7 @@ export function ReaderView({
                               ? <>
                                 <span>翻译中 {oneShotTranslationProgress.completed}/{oneShotTranslationProgress.total}</span>
                                 <small className="manual-translation-tps">
-                                  TPS {typeof oneShotTranslationProgress.tps === "number"
+                                  TPS(5s) {typeof oneShotTranslationProgress.tps === "number"
                                     ? `${oneShotTranslationProgress.tps.toFixed(1)} tok/s`
                                     : "—"}
                                 </small>

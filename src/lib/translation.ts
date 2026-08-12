@@ -128,6 +128,7 @@ const CACHE_INDEX_KEY = `fgo-reader-translation-cache-index:v${SCRIPT_PARSER_VER
 const CACHE_PREFIX = `fgo-reader-translation-cache:v${SCRIPT_PARSER_VERSION}:`;
 const CACHE_ENTRY_LIMIT = 12;
 export const TRANSLATION_AHEAD_FRAME_COUNT = 10;
+export const TRANSLATION_TPS_WINDOW_MS = 5_000;
 
 export const defaultTranslationSettings: TranslationSettings = {
   mode: "source",
@@ -480,7 +481,19 @@ function waitForTranslationRetry(signal?: AbortSignal) {
 }
 
 function translationClock() {
-  return typeof performance !== "undefined" ? performance.now() : Date.now();
+  return Date.now();
+}
+
+interface OutputTokenSample {
+  completedAt: number;
+  tokens: number;
+}
+
+function rollingOutputTokensPerSecond(samples: OutputTokenSample[], now: number) {
+  const windowStart = now - TRANSLATION_TPS_WINDOW_MS;
+  while (samples.length && samples[0].completedAt <= windowStart) samples.shift();
+  const tokens = samples.reduce((total, sample) => total + sample.tokens, 0);
+  return tokens / (TRANSLATION_TPS_WINDOW_MS / 1_000);
 }
 
 /**
@@ -527,20 +540,38 @@ export async function translateTranslationUnits({
   const chunks = prepareTranslationChunks(missingUnits, unitBatches);
   let completed = Object.keys(translations).length;
   let configurationId: string | undefined;
-  let outputTokens = 0;
   let outputTokenCountAvailable = true;
-  let elapsedMs = 0;
-  onProgress?.({
+  let hasOutputTokenSample = false;
+  let publishedTps: number | undefined;
+  const outputTokenSamples: OutputTokenSample[] = [];
+  let currentProgress: FullTranslationProgress = {
     completed: Object.keys(translations).length,
     total: units.length,
     translatedCount: Object.keys(translations).length,
-  });
+  };
+  const publishProgress = () => {
+    onProgress?.({
+      ...currentProgress,
+      ...(publishedTps === undefined ? {} : { tps: publishedTps }),
+    });
+  };
+  const refreshTps = () => {
+    if (!outputTokenCountAvailable || !hasOutputTokenSample) {
+      publishedTps = undefined;
+    } else {
+      publishedTps = rollingOutputTokensPerSecond(outputTokenSamples, translationClock());
+    }
+    publishProgress();
+  };
+  const tpsRefreshTimer = onProgress
+    ? setInterval(refreshTps, TRANSLATION_TPS_WINDOW_MS)
+    : undefined;
+  publishProgress();
 
   try {
     for (const chunk of chunks) {
       if (signal?.aborted) throw new DOMException("Translation cancelled", "AbortError");
       let response: TranslationResponse | null = null;
-      const requestStartedAt = translationClock();
       for (let attempt = 0; attempt < 2; attempt += 1) {
         try {
           response = await requestTranslations({
@@ -564,11 +595,15 @@ export async function translateTranslationUnits({
       if (!response || signal?.aborted) {
         throw new DOMException("Translation cancelled", "AbortError");
       }
-      elapsedMs += Math.max(0, translationClock() - requestStartedAt);
       if (typeof response.outputTokens === "number" && Number.isFinite(response.outputTokens)) {
-        outputTokens += Math.max(0, response.outputTokens);
+        outputTokenSamples.push({
+          completedAt: translationClock(),
+          tokens: Math.max(0, response.outputTokens),
+        });
+        hasOutputTokenSample = true;
       } else {
         outputTokenCountAvailable = false;
+        publishedTps = undefined;
       }
 
       const sourceById = new Map(chunk.map((unit) => [unit.id, unit]));
@@ -598,14 +633,12 @@ export async function translateTranslationUnits({
       configurationId = response.configurationId || configurationId;
       completed += chunk.length;
       onBatch?.(batchTranslations, configurationId);
-      onProgress?.({
+      currentProgress = {
         completed,
         total: units.length,
         translatedCount: Object.keys(translations).length,
-        ...(outputTokenCountAvailable && elapsedMs > 0
-          ? { tps: outputTokens / (elapsedMs / 1_000) }
-          : {}),
-      });
+      };
+      publishProgress();
     }
 
     if (Object.keys(translations).length !== units.length) {
@@ -632,6 +665,8 @@ export async function translateTranslationUnits({
       Object.keys(translations).length,
       units.length,
     );
+  } finally {
+    if (tpsRefreshTimer !== undefined) clearInterval(tpsRefreshTimer);
   }
 
   return { translations, configurationId };
