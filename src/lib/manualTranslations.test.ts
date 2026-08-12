@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import type { StoryFrame } from "../types";
 import {
+  collectScriptTranslationUnitBatches,
   collectScriptTranslationUnits,
   createTranslationTemplate,
   inspectManualTranslationRecord,
@@ -13,6 +14,7 @@ import {
   type ManualTranslationStorage,
   type TranslationTemplateV2,
 } from "./manualTranslations";
+import { frameTranslationUnits } from "./translation";
 
 function dialogue(id: string, speaker: string, text: string): StoryFrame {
   return {
@@ -20,6 +22,21 @@ function dialogue(id: string, speaker: string, text: string): StoryFrame {
     type: "dialogue",
     speaker,
     text,
+    scene: null,
+    bgm: null,
+    characters: [],
+    effect: "none",
+    transition: "none",
+  };
+}
+
+function animation(id: string): StoryFrame {
+  return {
+    id,
+    type: "animation",
+    speaker: "",
+    text: "",
+    durationMs: 0,
     scene: null,
     bgm: null,
     characters: [],
@@ -71,6 +88,20 @@ describe("manual translation template", () => {
       ["dialogue", "もう少し休みたまえ。"],
     ]);
     expect(units.filter((unit) => unit.kind === "speaker" && unit.text === "マシュ")).toHaveLength(1);
+  });
+
+  it("groups one-shot translation units by five story frames", () => {
+    const scriptFrames = [
+      dialogue("frame-0", "speaker-0", "text-0"),
+      ...Array.from({ length: 4 }, (_, index) => animation(`animation-${index + 1}`)),
+      dialogue("frame-5", "speaker-5", "text-5"),
+    ];
+
+    expect(collectScriptTranslationUnitBatches(scriptFrames).map((batch) => batch.map((unit) => unit.id)))
+      .toEqual([
+        frameTranslationUnits(scriptFrames[0]).map((unit) => unit.id),
+        frameTranslationUnits(scriptFrames.at(-1)!).map((unit) => unit.id),
+      ]);
   });
 
   it("round-trips UTF-8 JSON with a BOM and permits blank untranslated entries", () => {

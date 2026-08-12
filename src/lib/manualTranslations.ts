@@ -12,6 +12,7 @@ import {
 export const MANUAL_TRANSLATION_FORMAT = "fgo-reader-translation-template";
 export const MANUAL_TRANSLATION_VERSION = 2;
 export const MANUAL_TRANSLATION_MAX_BYTES = 8 * 1024 * 1024;
+export const ONE_SHOT_TRANSLATION_FRAME_BATCH_SIZE = 5;
 
 const DATABASE_NAME = "fgo-reader-manual-translations";
 const DATABASE_VERSION = 1;
@@ -110,6 +111,20 @@ function cloneManualTranslationRecord(record: ManualTranslationRecord): ManualTr
   };
 }
 
+function flattenScriptFrames(frames: StoryFrame[]) {
+  const flattened: StoryFrame[] = [];
+  const visit = (branchFrames: StoryFrame[]) => {
+    for (const frame of branchFrames) {
+      flattened.push(frame);
+      if (frame.type === "choice") {
+        for (const option of frame.options) visit(option.frames);
+      }
+    }
+  };
+  visit(frames);
+  return flattened;
+}
+
 /** Collects every translatable unit, including frames nested below every choice branch. */
 export function collectScriptTranslationUnits(frames: StoryFrame[]) {
   const units: TranslationUnit[] = [];
@@ -145,6 +160,37 @@ export function collectScriptTranslationUnits(frames: StoryFrame[]) {
 
   visit(frames);
   return units;
+}
+
+/** Collects one-shot translation batches in groups of story frames. */
+export function collectScriptTranslationUnitBatches(
+  frames: StoryFrame[],
+  frameBatchSize = ONE_SHOT_TRANSLATION_FRAME_BATCH_SIZE,
+) {
+  const normalizedBatchSize = Number.isFinite(frameBatchSize)
+    ? Math.max(1, Math.floor(frameBatchSize))
+    : ONE_SHOT_TRANSLATION_FRAME_BATCH_SIZE;
+  const units = collectScriptTranslationUnits(frames);
+  const unitById = new Map(units.map((unit) => [unit.id, unit]));
+  const seen = new Set<string>();
+  const flattenedFrames = flattenScriptFrames(frames);
+  const batches: TranslationUnit[][] = [];
+
+  for (let index = 0; index < flattenedFrames.length; index += normalizedBatchSize) {
+    const batch: TranslationUnit[] = [];
+    for (const frame of flattenedFrames.slice(index, index + normalizedBatchSize)) {
+      for (const unit of frameTranslationUnits(frame)) {
+        if (seen.has(unit.id)) continue;
+        const canonical = unitById.get(unit.id);
+        if (!canonical) continue;
+        seen.add(unit.id);
+        batch.push(canonical);
+      }
+    }
+    if (batch.length) batches.push(batch);
+  }
+
+  return batches;
 }
 
 export function translationSourceSignature(frames: StoryFrame[]) {

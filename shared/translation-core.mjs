@@ -354,17 +354,20 @@ async function translateWithDeepL(config, items, context) {
   );
   throwForUpstreamStatus("DeepL", response);
   const data = await parseJsonResponse(response);
-  const translations = data?.translations;
-  if (!Array.isArray(translations) || translations.length !== items.length) {
+  const providerTranslations = data?.translations;
+  if (!Array.isArray(providerTranslations) || providerTranslations.length !== items.length) {
     throw new TranslationError(502, "provider_invalid_response", "DeepL 返回的译文数量不完整", true);
   }
-  return new Map(items.map((item, index) => {
-    const translatedText = typeof translations[index]?.text === "string" ? translations[index].text.trim() : "";
+  const translations = new Map(items.map((item, index) => {
+    const translatedText = typeof providerTranslations[index]?.text === "string"
+      ? providerTranslations[index].text.trim()
+      : "";
     if (!translatedText) {
       throw new TranslationError(502, "provider_invalid_response", "DeepL 返回了空译文", true);
     }
     return [item.id, translatedText];
   }));
+  return { translations };
 }
 
 function openAiContentToString(content) {
@@ -391,6 +394,19 @@ function parseOpenAiTranslations(content, items) {
   return validateProviderTranslations(items, parsed?.translations);
 }
 
+function readOutputTokenCount(data) {
+  const candidates = [
+    data?.usage?.completion_tokens,
+    data?.usage?.output_tokens,
+    data?.eval_count,
+  ];
+  for (const candidate of candidates) {
+    const value = Number(candidate);
+    if (Number.isFinite(value) && value >= 0) return Math.floor(value);
+  }
+  return undefined;
+}
+
 async function translateWithOpenAi(config, items, context) {
   const endpoint = config.baseUrl.endsWith("/chat/completions")
     ? config.baseUrl
@@ -410,6 +426,7 @@ async function translateWithOpenAi(config, items, context) {
       body: JSON.stringify({
         model: config.model,
         stream: false,
+        temperature: 0,
         messages: [
           {
             role: "system",
@@ -435,7 +452,10 @@ async function translateWithOpenAi(config, items, context) {
   if (!content) {
     throw new TranslationError(502, "provider_invalid_response", "OpenAI 兼容接口没有返回正文", true);
   }
-  return parseOpenAiTranslations(content, items);
+  return {
+    translations: parseOpenAiTranslations(content, items),
+    outputTokens: readOutputTokenCount(data),
+  };
 }
 
 function decodeBase64Url(value) {
@@ -460,23 +480,38 @@ function decodeJwtExpiry(token, fallbackNow) {
 function createBingClient({ fetchImpl, timeoutMs, now }) {
   let token = "";
   let expiresAt = 0;
+  let tokenRequest = null;
 
-  const getToken = async (signal, force = false) => {
+  const getToken = (signal, force = false) => {
     if (!force && token && expiresAt - 60_000 > now()) return token;
-    const response = await fetchWithTimeout(
-      fetchImpl,
-      "https://edge.microsoft.com/translate/auth",
-      { headers: { "user-agent": "Mozilla/5.0 FGO-Chronicle-Reader/0.1" } },
-      timeoutMs,
-      signal,
+    if (tokenRequest) return tokenRequest;
+
+    const request = (async () => {
+      const response = await fetchWithTimeout(
+        fetchImpl,
+        "https://edge.microsoft.com/translate/auth",
+        { headers: { "user-agent": "Mozilla/5.0 FGO-Chronicle-Reader/0.1" } },
+        timeoutMs,
+        signal,
+      );
+      throwForUpstreamStatus("Bing / Edge", response);
+      token = (await response.text()).trim();
+      if (!token) {
+        throw new TranslationError(502, "provider_invalid_response", "Bing / Edge 未返回临时令牌", true);
+      }
+      expiresAt = decodeJwtExpiry(token, now());
+      return token;
+    })();
+    tokenRequest = request;
+    request.then(
+      () => {
+        if (tokenRequest === request) tokenRequest = null;
+      },
+      () => {
+        if (tokenRequest === request) tokenRequest = null;
+      },
     );
-    throwForUpstreamStatus("Bing / Edge", response);
-    token = (await response.text()).trim();
-    if (!token) {
-      throw new TranslationError(502, "provider_invalid_response", "Bing / Edge 未返回临时令牌", true);
-    }
-    expiresAt = decodeJwtExpiry(token, now());
-    return token;
+    return request;
   };
 
   const requestTranslation = async (items, signal, forceToken = false) => {
@@ -502,7 +537,7 @@ function createBingClient({ fetchImpl, timeoutMs, now }) {
     if (!Array.isArray(data) || data.length !== items.length) {
       throw new TranslationError(502, "provider_invalid_response", "Bing / Edge 返回的译文数量不完整", true);
     }
-    return new Map(items.map((item, index) => {
+    const translations = new Map(items.map((item, index) => {
       const translatedText = typeof data[index]?.translations?.[0]?.text === "string"
         ? data[index].translations[0].text.trim()
         : "";
@@ -511,6 +546,7 @@ function createBingClient({ fetchImpl, timeoutMs, now }) {
       }
       return [item.id, translatedText];
     }));
+    return { translations };
   };
 
   return { translate: requestTranslation };
@@ -529,7 +565,7 @@ async function translateUnresolvedItemsWithProvider(config, items, context) {
   }
 }
 
-export async function translateItemsWithProvider(config, items, context) {
+async function translateItemsWithProviderDetailed(config, items, context) {
   const translated = new Map();
   const unresolved = [];
   for (const item of items) {
@@ -539,17 +575,26 @@ export async function translateItemsWithProvider(config, items, context) {
   }
 
   if (unresolved.length) {
-    const providerTranslations = await translateUnresolvedItemsWithProvider(config, unresolved, context);
+    const providerResult = await translateUnresolvedItemsWithProvider(config, unresolved, context);
     for (const item of unresolved) {
-      const translatedText = providerTranslations.get(item.id);
+      const translatedText = providerResult.translations.get(item.id);
       if (!translatedText) {
         throw new TranslationError(502, "provider_invalid_response", "翻译结果缺少项目", true);
       }
       translated.set(item.id, translatedText);
     }
+    return {
+      translations: new Map(items.map((item) => [item.id, translated.get(item.id)])),
+      outputTokens: providerResult.outputTokens,
+    };
   }
 
-  return new Map(items.map((item) => [item.id, translated.get(item.id)]));
+  return { translations: new Map(items.map((item) => [item.id, translated.get(item.id)])) };
+}
+
+export async function translateItemsWithProvider(config, items, context) {
+  const result = await translateItemsWithProviderDetailed(config, items, context);
+  return result.translations;
 }
 
 function itemCacheKey(provider, configurationId, item) {
@@ -566,21 +611,24 @@ function itemCacheKey(provider, configurationId, item) {
 async function translateWithCache({ config, items, cache, inflight, context }) {
   const itemKeys = items.map((item) => itemCacheKey(config.provider, config.configurationId, item));
   const ownerItems = [];
-  const ownerKeys = [];
+  const ownerEntries = [];
+  const ownerKeys = new Set();
+  let ownerBatchPromise = null;
 
   for (let index = 0; index < items.length; index += 1) {
     const key = itemKeys[index];
-    if (cache.get(key) !== undefined || inflight.has(key) || ownerKeys.includes(key)) continue;
-    ownerKeys.push(key);
+    if (cache.get(key) !== undefined || inflight.has(key) || ownerKeys.has(key)) continue;
+    ownerKeys.add(key);
     ownerItems.push(items[index]);
+    ownerEntries.push({ item: items[index], key });
   }
 
   if (ownerItems.length) {
-    const batchPromise = translateItemsWithProvider(config, ownerItems, context);
-    ownerItems.forEach((item, index) => {
-      const key = ownerKeys[index];
+    const batchPromise = translateItemsWithProviderDetailed(config, ownerItems, context);
+    ownerBatchPromise = batchPromise;
+    ownerEntries.forEach(({ item, key }) => {
       const itemPromise = batchPromise.then((result) => {
-        const translatedText = result.get(item.id);
+        const translatedText = result.translations.get(item.id);
         if (!translatedText) {
           throw new TranslationError(502, "provider_invalid_response", "翻译结果缺少项目", true);
         }
@@ -606,7 +654,11 @@ async function translateWithCache({ config, items, cache, inflight, context }) {
     return pending;
   }));
 
-  return items.map((item, index) => ({ id: item.id, translatedText: translated[index] }));
+  const ownerBatchResult = ownerBatchPromise ? await ownerBatchPromise : undefined;
+  return {
+    translations: items.map((item, index) => ({ id: item.id, translatedText: translated[index] })),
+    outputTokens: ownerBatchResult?.outputTokens,
+  };
 }
 
 function safeProviderStatus(provider, env) {
@@ -669,7 +721,7 @@ export function createTranslationEngine({
       env,
       clientOverridesAllowed ? validated.providerConfig : {},
     );
-    const translations = await translateWithCache({
+    const result = await translateWithCache({
       config,
       items: validated.items,
       cache,
@@ -679,7 +731,8 @@ export function createTranslationEngine({
     return {
       provider: validated.provider,
       configurationId: config.configurationId,
-      translations,
+      translations: result.translations,
+      ...(result.outputTokens === undefined ? {} : { outputTokens: result.outputTokens }),
     };
   };
 

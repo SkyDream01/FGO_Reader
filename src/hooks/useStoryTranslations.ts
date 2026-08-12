@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   chunkTranslationUnits,
+  collectTranslationUnits,
   createTranslationFrameLookahead,
   fetchTranslationServerConfig,
   frameTranslationUnits,
@@ -39,17 +40,12 @@ interface CurrentTranslationError {
 
 type TranslationRunResult = "success" | "failed" | "deferred";
 
-const MAX_CONCURRENT_BATCHES = 2;
+const MAX_CONCURRENT_BATCHES = 3;
+const BACKGROUND_BATCH_UNIT_LIMIT = 20;
 const RETRY_DELAY_MS = 1_000;
 
 function uniqueFrameUnits(frame: StoryFrame | null | undefined) {
-  if (!frame) return [];
-  const unique = new Map<string, TranslationUnit>();
-  for (const unit of frameTranslationUnits(frame)) {
-    const key = `${unit.id}:${translationUnitSourceHash(unit)}`;
-    if (!unique.has(key)) unique.set(key, unit);
-  }
-  return [...unique.values()];
+  return frame ? collectTranslationUnits([frame]) : [];
 }
 
 function frameHasTranslations(
@@ -67,6 +63,35 @@ function translatedFrameStepCount(
   return steps.filter((step) => (
     step.every((frame) => frameHasTranslations(translations, frame))
   )).length;
+}
+
+function collectBackgroundBatch(
+  steps: StoryFrame[][],
+  translations: Record<string, CachedTranslation>,
+  pendingIds: Set<string>,
+  startIndex: number,
+) {
+  const frames: StoryFrame[] = [];
+  let missingUnitCount = 0;
+  let index = startIndex;
+
+  while (index < steps.length) {
+    const step = steps[index];
+    const stepUnits = collectTranslationUnits(step).filter((unit) => (
+      !translationForUnit(translations, unit) && !pendingIds.has(unit.id)
+    ));
+    if (!stepUnits.length) {
+      index += 1;
+      continue;
+    }
+    if (frames.length && missingUnitCount + stepUnits.length > BACKGROUND_BATCH_UNIT_LIMIT) break;
+    frames.push(...step);
+    missingUnitCount += stepUnits.length;
+    index += 1;
+    if (missingUnitCount >= BACKGROUND_BATCH_UNIT_LIMIT) break;
+  }
+
+  return { frames, nextIndex: index };
 }
 
 function retryDelay(signal: AbortSignal) {
@@ -215,17 +240,12 @@ export function useStoryTranslations({
     ? `${scriptId}:${frameIndex}:${currentFrame.id}`
     : "";
 
-  const translateFrame = useCallback(async (
-    frame: StoryFrame,
+  const translateFrames = useCallback(async (
+    framesToTranslate: StoryFrame[],
     surfaceError: boolean,
   ): Promise<TranslationRunResult> => {
     if (!machineActive || !settings.provider) return "deferred";
-    const unique = new Map<string, TranslationUnit>();
-    for (const unit of uniqueFrameUnits(frame)) {
-      const key = `${unit.id}:${translationUnitSourceHash(unit)}`;
-      if (!unique.has(key)) unique.set(key, unit);
-    }
-    const missing = [...unique.values()].filter((unit) => (
+    const missing = collectTranslationUnits(framesToTranslate).filter((unit) => (
       !translationForUnit(translationsRef.current, unit) && !pendingRef.current.has(unit.id)
     ));
     if (!missing.length) return "success";
@@ -321,7 +341,7 @@ export function useStoryTranslations({
       || !currentFrameUnits.length
       || activeBatchCount >= MAX_CONCURRENT_BATCHES
     ) return;
-    if (currentFrame) void translateFrame(currentFrame, true);
+    if (currentFrame) void translateFrames([currentFrame], true);
   }, [
     activeBatchCount,
     currentFrame,
@@ -330,7 +350,7 @@ export function useStoryTranslations({
     pendingIds,
     retryNonce,
     schedulerPaused,
-    translateFrame,
+    translateFrames,
     translations,
   ]);
 
@@ -342,17 +362,18 @@ export function useStoryTranslations({
       || translatedMachineUnreadFrameCount >= unreadFrameRefillGoal
     ) return;
 
-    const backgroundFrame = aheadFrameSteps
-      .flat()
-      .find((frame) => (
-        uniqueFrameUnits(frame).some((unit) => (
-          !translationForUnit(translationsRef.current, unit)
-          && !pendingRef.current.has(unit.id)
-        ))
-      ));
-    if (!backgroundFrame) return;
-
-    void translateFrame(backgroundFrame, false);
+    let nextStepIndex = 0;
+    while (controllersRef.current.size < MAX_CONCURRENT_BATCHES && nextStepIndex < aheadFrameSteps.length) {
+      const batch = collectBackgroundBatch(
+        aheadFrameSteps,
+        translationsRef.current,
+        pendingRef.current,
+        nextStepIndex,
+      );
+      if (!batch.frames.length) break;
+      void translateFrames(batch.frames, false);
+      nextStepIndex = batch.nextIndex;
+    }
   }, [
     activeBatchCount,
     aheadFrameSteps,
@@ -360,7 +381,7 @@ export function useStoryTranslations({
     pendingIds,
     retryNonce,
     schedulerPaused,
-    translateFrame,
+    translateFrames,
     translatedMachineUnreadFrameCount,
     translations,
     unreadFrameRefillGoal,

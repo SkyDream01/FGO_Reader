@@ -68,6 +68,7 @@ export interface TranslationServerConfig {
 export interface TranslationResponse {
   provider: TranslationProvider;
   configurationId: string;
+  outputTokens?: number;
   translations: Array<{
     id: string;
     translatedText: string;
@@ -78,6 +79,7 @@ export interface FullTranslationProgress {
   completed: number;
   total: number;
   translatedCount: number;
+  tps?: number;
 }
 
 export interface FullTranslationResult {
@@ -262,6 +264,18 @@ export function frameTranslationUnits(frame: StoryFrame): TranslationUnit[] {
   ];
 }
 
+/** Collects unique translation units from a group of frames in display order. */
+export function collectTranslationUnits(frames: StoryFrame[]) {
+  const units = new Map<string, TranslationUnit>();
+  for (const frame of frames) {
+    for (const unit of frameTranslationUnits(frame)) {
+      const key = `${unit.id}:${translationUnitSourceHash(unit)}`;
+      if (!units.has(key)) units.set(key, unit);
+    }
+  }
+  return [...units.values()];
+}
+
 export function translationForUnit(
   translations: Record<string, CachedTranslation>,
   unit: TranslationUnit,
@@ -422,6 +436,32 @@ export function chunkTranslationUnits(units: TranslationUnit[]) {
   return chunks;
 }
 
+function prepareTranslationChunks(
+  missingUnits: TranslationUnit[],
+  unitBatches?: TranslationUnit[][],
+) {
+  if (!unitBatches) return chunkTranslationUnits(missingUnits);
+
+  const missingById = new Map(missingUnits.map((unit) => [unit.id, unit]));
+  const assigned = new Set<string>();
+  const chunks: TranslationUnit[][] = [];
+  for (const batch of unitBatches) {
+    const filtered = batch.filter((unit) => {
+      if (!missingById.has(unit.id) || assigned.has(unit.id)) return false;
+      assigned.add(unit.id);
+      return true;
+    });
+    // A supplied batch is already the requested five-frame conversation. Keep
+    // it intact so the provider receives one system prompt plus exactly one
+    // frame group, and the next group starts a new request.
+    if (filtered.length) chunks.push(filtered);
+  }
+
+  const unassigned = missingUnits.filter((unit) => !assigned.has(unit.id));
+  if (unassigned.length) chunks.push(unassigned);
+  return chunks;
+}
+
 function waitForTranslationRetry(signal?: AbortSignal) {
   return new Promise<void>((resolve) => {
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -439,16 +479,23 @@ function waitForTranslationRetry(signal?: AbortSignal) {
   });
 }
 
+function translationClock() {
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
+}
+
 /**
  * Translates an entire script in provider-sized batches for manual-template
- * export. The caller can persist each successful batch through onBatch, so a
- * later retry does not have to discard work completed before a failure.
+ * export. When unitBatches is supplied, those logical batches are processed
+ * in order as separate requests. The caller can persist each successful batch
+ * through onBatch, so a later retry does not have to discard work completed
+ * before a failure.
  */
 export async function translateTranslationUnits({
   provider,
   scriptId,
   providerConfig,
   units,
+  unitBatches,
   existingTranslations = {},
   signal,
   onProgress,
@@ -458,6 +505,7 @@ export async function translateTranslationUnits({
   scriptId: string;
   providerConfig?: object;
   units: TranslationUnit[];
+  unitBatches?: TranslationUnit[][];
   existingTranslations?: Record<string, CachedTranslation>;
   signal?: AbortSignal;
   onProgress?: (progress: FullTranslationProgress) => void;
@@ -476,9 +524,12 @@ export async function translateTranslationUnits({
     };
     return false;
   });
-  const chunks = chunkTranslationUnits(missingUnits);
+  const chunks = prepareTranslationChunks(missingUnits, unitBatches);
   let completed = Object.keys(translations).length;
   let configurationId: string | undefined;
+  let outputTokens = 0;
+  let outputTokenCountAvailable = true;
+  let elapsedMs = 0;
   onProgress?.({
     completed: Object.keys(translations).length,
     total: units.length,
@@ -489,6 +540,7 @@ export async function translateTranslationUnits({
     for (const chunk of chunks) {
       if (signal?.aborted) throw new DOMException("Translation cancelled", "AbortError");
       let response: TranslationResponse | null = null;
+      const requestStartedAt = translationClock();
       for (let attempt = 0; attempt < 2; attempt += 1) {
         try {
           response = await requestTranslations({
@@ -511,6 +563,12 @@ export async function translateTranslationUnits({
 
       if (!response || signal?.aborted) {
         throw new DOMException("Translation cancelled", "AbortError");
+      }
+      elapsedMs += Math.max(0, translationClock() - requestStartedAt);
+      if (typeof response.outputTokens === "number" && Number.isFinite(response.outputTokens)) {
+        outputTokens += Math.max(0, response.outputTokens);
+      } else {
+        outputTokenCountAvailable = false;
       }
 
       const sourceById = new Map(chunk.map((unit) => [unit.id, unit]));
@@ -544,6 +602,9 @@ export async function translateTranslationUnits({
         completed,
         total: units.length,
         translatedCount: Object.keys(translations).length,
+        ...(outputTokenCountAvailable && elapsedMs > 0
+          ? { tps: outputTokens / (elapsedMs / 1_000) }
+          : {}),
       });
     }
 

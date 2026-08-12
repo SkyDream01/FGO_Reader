@@ -12,6 +12,7 @@ import {
   translateItemsWithProvider,
   validateTranslationRequest,
 } from "./translation-api.mjs";
+import { createTranslationEngine } from "../shared/translation-core.mjs";
 
 const servers = [];
 const temporaryDirectories = [];
@@ -94,6 +95,7 @@ describe("provider adapters", () => {
     const fetchImpl = vi.fn(async (_url, init) => {
       const request = JSON.parse(init.body);
       expect(request.model).toBe("local-model");
+      expect(request.temperature).toBe(0);
       expect(request.messages[1].content).toContain("架空試験文");
       expect(init.headers.authorization).toBeUndefined();
       return new Response(JSON.stringify({
@@ -122,6 +124,35 @@ describe("provider adapters", () => {
     );
     expect(result.get("speaker:1")).toBe("虚构测试文本");
     expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("forwards OpenAI-compatible output token usage", async () => {
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
+      choices: [{
+        message: {
+          content: '{"translations":[{"id":"dialogue:1","translatedText":"译文"}]}',
+        },
+      }],
+      usage: { completion_tokens: 17 },
+    }), { status: 200, headers: { "content-type": "application/json" } }));
+    const engine = createTranslationEngine({
+      fetchImpl,
+      timeoutMs: 1_000,
+      clientOverridesAllowed: true,
+    });
+
+    const result = await engine.translate({
+      provider: "openai",
+      scriptId: "script",
+      providerConfig: {
+        baseUrl: "http://127.0.0.1:11434/v1",
+        model: "local-model",
+        allowNoAuth: true,
+      },
+      items: [{ id: "dialogue:1", kind: "dialogue", text: "架空试験文" }],
+    });
+
+    expect(result.outputTokens).toBe(17);
   });
 });
 

@@ -150,7 +150,7 @@ function sameChoiceTrail(
 }
 
 export function LibraryView({ onOpenStory }: LibraryViewProps) {
-  const [region, setRegion] = useState<Region>("CN");
+  const [region, setRegion] = useState<Region>("JP");
   const [category, setCategory] = useState<"main" | "event">("main");
   const [warQuery, setWarQuery] = useState("");
   const [wars, setWars] = useState<BasicWar[]>([]);

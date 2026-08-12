@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   chunkTranslationUnits,
+  collectTranslationUnits,
   createTranslationFrameLookahead,
   frameTranslationUnits,
   providerConfigFromSettings,
@@ -77,6 +78,27 @@ describe("translation units", () => {
       text: "",
     })).toEqual([
       expect.objectContaining({ kind: "speaker", text: "旁白" }),
+    ]);
+  });
+
+  it("merges frame units in display order without repeating shared speakers", () => {
+    const first: StoryFrame = {
+      id: "frame-1",
+      type: "dialogue",
+      speaker: "マシュ",
+      text: "最初の文",
+      scene: null,
+      bgm: null,
+      characters: [],
+      effect: "none",
+      transition: "none",
+    };
+    const second: StoryFrame = { ...first, id: "frame-2", text: "次の文" };
+
+    expect(collectTranslationUnits([first, second]).map((unit) => unit.id)).toEqual([
+      `speaker:${stableHash("マシュ")}`,
+      "frame-1:dialogue",
+      "frame-2:dialogue",
     ]);
   });
 
@@ -255,6 +277,117 @@ describe("translation batching and readiness", () => {
     expect(result.translations[units[0].id].translatedText).toBe("已有译文");
     expect(Object.keys(result.translations)).toHaveLength(21);
     expect(progress.at(-1)).toEqual({ completed: 21, total: 21, translatedCount: 21 });
+  });
+
+  it("translates supplied one-shot batches serially and in order", async () => {
+    const units = Array.from({ length: 4 }, (_, index) => ({
+      id: `unit-${index}`,
+      kind: "dialogue" as const,
+      text: `文 ${index}`,
+    }));
+    const requests: Array<{ items: typeof units }> = [];
+    let activeRequests = 0;
+    let maxActiveRequests = 0;
+    vi.stubGlobal("fetch", vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const payload = JSON.parse(String(init?.body)) as { items: typeof units };
+      requests.push(payload);
+      activeRequests += 1;
+      maxActiveRequests = Math.max(maxActiveRequests, activeRequests);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      activeRequests -= 1;
+      return {
+        ok: true,
+        json: async () => ({
+          provider: "bing",
+          configurationId: "test-config",
+          translations: payload.items.map((item) => ({
+            id: item.id,
+            translatedText: `译：${item.text}`,
+          })),
+        }),
+      } as Response;
+    }));
+
+    const result = await translateTranslationUnits({
+      provider: "bing",
+      scriptId: "script",
+      units,
+      unitBatches: [units.slice(0, 2), units.slice(2)],
+    });
+
+    expect(requests.map((request) => request.items.map((item) => item.id))).toEqual([
+      ["unit-0", "unit-1"],
+      ["unit-2", "unit-3"],
+    ]);
+    expect(maxActiveRequests).toBe(1);
+    expect(Object.keys(result.translations)).toHaveLength(4);
+  });
+
+  it("does not split a supplied one-shot frame group into provider-sized requests", async () => {
+    const units = Array.from({ length: 21 }, (_, index) => ({
+      id: `unit-${index}`,
+      kind: "dialogue" as const,
+      text: `文 ${index}`,
+    }));
+    const requests: Array<{ items: typeof units }> = [];
+    vi.stubGlobal("fetch", vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const payload = JSON.parse(String(init?.body)) as { items: typeof units };
+      requests.push(payload);
+      return {
+        ok: true,
+        json: async () => ({
+          provider: "bing",
+          configurationId: "test-config",
+          translations: payload.items.map((item) => ({
+            id: item.id,
+            translatedText: `译：${item.text}`,
+          })),
+        }),
+      } as Response;
+    }));
+
+    await translateTranslationUnits({
+      provider: "bing",
+      scriptId: "script",
+      units,
+      unitBatches: [units],
+    });
+
+    expect(requests).toHaveLength(1);
+    expect(requests[0].items).toHaveLength(21);
+  });
+
+  it("reports cumulative output tokens per second when the provider supplies usage", async () => {
+    const units = [
+      { id: "unit-0", kind: "dialogue" as const, text: "文 0" },
+      { id: "unit-1", kind: "dialogue" as const, text: "文 1" },
+    ];
+    const progress: Array<{ tps?: number }> = [];
+    vi.stubGlobal("fetch", vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const payload = JSON.parse(String(init?.body)) as { items: typeof units };
+      return {
+        ok: true,
+        json: async () => ({
+          provider: "openai",
+          configurationId: "test-config",
+          outputTokens: payload.items.length * 10,
+          translations: payload.items.map((item) => ({
+            id: item.id,
+            translatedText: `译：${item.text}`,
+          })),
+        }),
+      } as Response;
+    }));
+
+    await translateTranslationUnits({
+      provider: "openai",
+      scriptId: "script",
+      units,
+      unitBatches: [[units[0]], [units[1]]],
+      onProgress: (value) => progress.push(value),
+    });
+
+    expect(progress.at(-1)?.tps).toBeGreaterThan(0);
   });
 
   it("recognizes a manual local OpenAI-compatible configuration", () => {

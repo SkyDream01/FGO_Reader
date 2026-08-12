@@ -3175,6 +3175,15 @@ html[data-runtime="android"] .custom-library-backdrop {
   background: rgba(5, 17, 26, 0.78);
 }
 
+.manual-translation-actions button .manual-translation-tps {
+  color: #a6c7c9;
+  font-family: "Bahnschrift", monospace;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
 .manual-translation-actions button.primary {
   border-color: rgba(117, 216, 211, 0.45);
   color: #e9ffff;

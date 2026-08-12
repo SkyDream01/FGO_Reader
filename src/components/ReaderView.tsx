@@ -75,6 +75,7 @@ import type {
   PreparedStory,
 } from "../lib/storyPreparation";
 import {
+  collectScriptTranslationUnitBatches,
   collectScriptTranslationUnits,
   MANUAL_TRANSLATION_MAX_BYTES,
   ManualTranslationError,
@@ -91,6 +92,7 @@ import {
   translateTranslationUnits,
   TranslationBatchError,
   type CachedTranslation,
+  type FullTranslationProgress,
   type TranslationSettings,
 } from "../lib/translation";
 import {
@@ -416,11 +418,7 @@ export function ReaderView({
   const [translationConfigError, setTranslationConfigError] = useState("");
   const [manualTranslationBusy, setManualTranslationBusy] = useState(false);
   const [manualTranslationError, setManualTranslationError] = useState("");
-  const [oneShotTranslationProgress, setOneShotTranslationProgress] = useState<{
-    completed: number;
-    total: number;
-    translatedCount: number;
-  } | null>(null);
+  const [oneShotTranslationProgress, setOneShotTranslationProgress] = useState<FullTranslationProgress | null>(null);
   const [readMax, setReadMax] = useState(() => {
     const value = localStorage.getItem(readProgressStorageKey(story.scriptId));
     return value === null ? -1 : Number(value);
@@ -597,6 +595,7 @@ export function ReaderView({
     }
 
     const units = collectScriptTranslationUnits(baseFrames);
+    const unitBatches = collectScriptTranslationUnitBatches(baseFrames);
     if (!units.length) {
       setManualTranslationError("当前脚本没有可翻译的文本");
       return;
@@ -627,6 +626,7 @@ export function ReaderView({
         scriptId: story.scriptId,
         providerConfig: providerConfigFromSettings(translationSettings),
         units,
+        unitBatches,
         existingTranslations: {
           ...cachedTranslations,
           ...manualTranslation.translations,
@@ -1703,7 +1703,14 @@ export function ReaderView({
                               ? <LoaderCircle className="spin" size={15} />
                               : <Languages size={15} />}
                             {oneShotTranslationProgress
-                              ? `翻译中 ${oneShotTranslationProgress.completed}/${oneShotTranslationProgress.total}`
+                              ? <>
+                                <span>翻译中 {oneShotTranslationProgress.completed}/{oneShotTranslationProgress.total}</span>
+                                <small className="manual-translation-tps">
+                                  TPS {typeof oneShotTranslationProgress.tps === "number"
+                                    ? `${oneShotTranslationProgress.tps.toFixed(1)} tok/s`
+                                    : "—"}
+                                </small>
+                              </>
                               : "一次性翻译并导出"}
                           </button>
                           {oneShotTranslationProgress && (
