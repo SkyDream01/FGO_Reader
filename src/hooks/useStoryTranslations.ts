@@ -29,6 +29,7 @@ interface UseStoryTranslationsOptions {
   settings: TranslationSettings;
   manualActive: boolean;
   manualTranslations: Record<string, CachedTranslation>;
+  paused: boolean;
 }
 
 interface CurrentTranslationError {
@@ -93,6 +94,7 @@ export function useStoryTranslations({
   settings,
   manualActive,
   manualTranslations,
+  paused,
 }: UseStoryTranslationsOptions) {
   const [serverConfig, setServerConfig] = useState<TranslationServerConfig | null>(null);
   const [serverConfigError, setServerConfigError] = useState("");
@@ -119,7 +121,8 @@ export function useStoryTranslations({
     [providerConfig, settings.provider],
   );
   const machineActive = Boolean(
-    !manualActive
+    !paused
+    && !manualActive
     && eligible
     && settings.mode === "translated"
     && settings.provider
@@ -173,6 +176,7 @@ export function useStoryTranslations({
     abortRequests,
     manualActive,
     namespace,
+    paused,
     requestConfigSignature,
     scriptId,
     settings.mode,
@@ -415,6 +419,7 @@ export function useStoryTranslations({
     currentTranslated,
     currentPending,
     currentError,
+    abortPending: abortRequests,
     frameTranslated,
     translatedSpeaker,
     translatedText,

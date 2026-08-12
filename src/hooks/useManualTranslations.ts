@@ -9,6 +9,7 @@ import {
   translationSourceSignature,
   type ManualTranslationRecord,
 } from "../lib/manualTranslations";
+import type { CachedTranslation } from "../lib/translation";
 import type { StoryFrame } from "../types";
 
 interface UseManualTranslationsOptions {
@@ -82,9 +83,11 @@ export function useManualTranslations({
     setStorageError("");
   }, [loadSignature, scriptId]);
 
-  const exportTemplate = useCallback(() => serializeTranslationTemplate(
+  const exportTemplate = useCallback((
+    existingTranslations?: Record<string, CachedTranslation>,
+  ) => serializeTranslationTemplate(
     { scriptId, title, masterName, frames },
-    inspection.status === "ready" ? inspection.translations : {},
+    existingTranslations ?? (inspection.status === "ready" ? inspection.translations : {}),
   ), [frames, inspection.status, inspection.translations, masterName, scriptId, title]);
 
   return {

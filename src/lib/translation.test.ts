@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   chunkTranslationUnits,
   createTranslationFrameLookahead,
@@ -6,6 +6,7 @@ import {
   providerConfigFromSettings,
   providerIsReady,
   stableHash,
+  translateTranslationUnits,
   translationForUnit,
   translationNamespace,
   translationUnitSourceHash,
@@ -24,6 +25,10 @@ const settings: TranslationSettings = {
     allowNoAuth: true,
   },
 };
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe("translation units", () => {
   it("keeps StoryFrame original text separate from speaker, dialogue and choice units", () => {
@@ -203,6 +208,53 @@ describe("translation batching and readiness", () => {
     const chunks = chunkTranslationUnits(units);
     expect(chunks.map((chunk) => chunk.length)).toEqual([20, 1]);
     expect(chunks.flat().map((unit) => unit.id)).toEqual(units.map((unit) => unit.id));
+  });
+
+  it("translates a complete section in batches and reuses existing translations", async () => {
+    const units = Array.from({ length: 21 }, (_, index) => ({
+      id: `unit-${index}`,
+      kind: "dialogue" as const,
+      text: `文 ${index}`,
+    }));
+    const existing = {
+      [units[0].id]: {
+        sourceHash: translationUnitSourceHash(units[0]),
+        translatedText: "已有译文",
+      },
+    };
+    const requests: Array<{ items: typeof units }> = [];
+    vi.stubGlobal("fetch", vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const payload = JSON.parse(String(init?.body)) as {
+        items: typeof units;
+      };
+      requests.push(payload);
+      return {
+        ok: true,
+        json: async () => ({
+          provider: "bing",
+          configurationId: "test-config",
+          translations: payload.items.map((item) => ({
+            id: item.id,
+            translatedText: `译：${item.text}`,
+          })),
+        }),
+      } as Response;
+    }));
+
+    const progress: Array<{ completed: number; total: number; translatedCount: number }> = [];
+    const result = await translateTranslationUnits({
+      provider: "bing",
+      scriptId: "script",
+      units,
+      existingTranslations: existing,
+      onProgress: (value) => progress.push(value),
+    });
+
+    expect(requests.map((request) => request.items.length)).toEqual([20]);
+    expect(result.configurationId).toBe("test-config");
+    expect(result.translations[units[0].id].translatedText).toBe("已有译文");
+    expect(Object.keys(result.translations)).toHaveLength(21);
+    expect(progress.at(-1)).toEqual({ completed: 21, total: 21, translatedCount: 21 });
   });
 
   it("recognizes a manual local OpenAI-compatible configuration", () => {

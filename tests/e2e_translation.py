@@ -221,6 +221,14 @@ with sync_playwright() as playwright:
     assert "今日もよろしくお願いします。" in exported_sources
     assert "もう少し休みます。" in exported_sources
 
+    with page.expect_download() as translated_download_info:
+        manual_section.get_by_role("button", name="一次性翻译并导出").click()
+    translated_template = json.loads(Path(translated_download_info.value.path()).read_text(encoding="utf-8"))
+    assert translated_template["scriptId"] == "1000000099"
+    assert all(entry["translatedText"] for entry in translated_template["entries"])
+    one_shot_request_count = len(translation_requests)
+    assert one_shot_request_count > 0
+
     # Keep one choice blank to verify that manual mode falls back to Japanese
     # instead of asking the configured Bing provider to fill the gap.
     for entry in template["entries"]:
@@ -246,7 +254,7 @@ with sync_playwright() as playwright:
     page.keyboard.press("Escape")
     page.get_by_text("前辈，早上好。", exact=True).wait_for(timeout=5000)
     assert page.locator(".speaker-plate strong").text_content() == "玛修"
-    assert len(translation_requests) == 0
+    assert len(translation_requests) == one_shot_request_count
 
     page.keyboard.press("t")
     page.get_by_text("先輩、おはようございます。", exact=True).wait_for(timeout=5000)

@@ -74,6 +74,17 @@ export interface TranslationResponse {
   }>;
 }
 
+export interface FullTranslationProgress {
+  completed: number;
+  total: number;
+  translatedCount: number;
+}
+
+export interface FullTranslationResult {
+  translations: Record<string, CachedTranslation>;
+  configurationId?: string;
+}
+
 export class TranslationRequestError extends Error {
   code: string;
   provider?: TranslationProvider;
@@ -85,6 +96,28 @@ export class TranslationRequestError extends Error {
     this.code = code;
     this.provider = provider;
     this.retryable = retryable;
+  }
+}
+
+export class TranslationBatchError extends TranslationRequestError {
+  partialTranslations: Record<string, CachedTranslation>;
+  completed: number;
+  total: number;
+
+  constructor(
+    detail: string,
+    code: string,
+    retryable: boolean,
+    provider: TranslationProvider,
+    partialTranslations: Record<string, CachedTranslation>,
+    completed: number,
+    total: number,
+  ) {
+    super(detail, code, retryable, provider);
+    this.name = "TranslationBatchError";
+    this.partialTranslations = partialTranslations;
+    this.completed = completed;
+    this.total = total;
   }
 }
 
@@ -387,6 +420,160 @@ export function chunkTranslationUnits(units: TranslationUnit[]) {
   }
   if (current.length) chunks.push(current);
   return chunks;
+}
+
+function waitForTranslationRetry(signal?: AbortSignal) {
+  return new Promise<void>((resolve) => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      if (timer !== undefined) clearTimeout(timer);
+      signal?.removeEventListener("abort", finish);
+      resolve();
+    };
+    timer = setTimeout(finish, 1_000);
+    signal?.addEventListener("abort", finish, { once: true });
+    if (signal?.aborted) finish();
+  });
+}
+
+/**
+ * Translates an entire script in provider-sized batches for manual-template
+ * export. The caller can persist each successful batch through onBatch, so a
+ * later retry does not have to discard work completed before a failure.
+ */
+export async function translateTranslationUnits({
+  provider,
+  scriptId,
+  providerConfig,
+  units,
+  existingTranslations = {},
+  signal,
+  onProgress,
+  onBatch,
+}: {
+  provider: TranslationProvider;
+  scriptId: string;
+  providerConfig?: object;
+  units: TranslationUnit[];
+  existingTranslations?: Record<string, CachedTranslation>;
+  signal?: AbortSignal;
+  onProgress?: (progress: FullTranslationProgress) => void;
+  onBatch?: (
+    translations: Record<string, CachedTranslation>,
+    configurationId?: string,
+  ) => void;
+}): Promise<FullTranslationResult> {
+  const translations: Record<string, CachedTranslation> = {};
+  const missingUnits = units.filter((unit) => {
+    const existing = translationForUnit(existingTranslations, unit);
+    if (!existing) return true;
+    translations[unit.id] = {
+      sourceHash: translationUnitSourceHash(unit),
+      translatedText: existing,
+    };
+    return false;
+  });
+  const chunks = chunkTranslationUnits(missingUnits);
+  let completed = Object.keys(translations).length;
+  let configurationId: string | undefined;
+  onProgress?.({
+    completed: Object.keys(translations).length,
+    total: units.length,
+    translatedCount: Object.keys(translations).length,
+  });
+
+  try {
+    for (const chunk of chunks) {
+      if (signal?.aborted) throw new DOMException("Translation cancelled", "AbortError");
+      let response: TranslationResponse | null = null;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        try {
+          response = await requestTranslations({
+            provider,
+            scriptId,
+            providerConfig,
+            items: chunk,
+            signal,
+          });
+          break;
+        } catch (error) {
+          const retryable = error instanceof TranslationRequestError && error.retryable;
+          if (attempt === 0 && retryable && !signal?.aborted) {
+            await waitForTranslationRetry(signal);
+            continue;
+          }
+          throw error;
+        }
+      }
+
+      if (!response || signal?.aborted) {
+        throw new DOMException("Translation cancelled", "AbortError");
+      }
+
+      const sourceById = new Map(chunk.map((unit) => [unit.id, unit]));
+      const batchTranslations: Record<string, CachedTranslation> = {};
+      for (const item of response.translations) {
+        const unit = sourceById.get(item.id);
+        const translatedText = typeof item.translatedText === "string"
+          ? item.translatedText.replace(/\r\n?/g, "\n").trim()
+          : "";
+        if (!unit || !translatedText) continue;
+        batchTranslations[unit.id] = {
+          sourceHash: translationUnitSourceHash(unit),
+          translatedText,
+        };
+      }
+
+      if (Object.keys(batchTranslations).length !== chunk.length) {
+        throw new TranslationRequestError(
+          "翻译后端未返回完整结果，请重试",
+          "incomplete_translation",
+          true,
+          provider,
+        );
+      }
+
+      Object.assign(translations, batchTranslations);
+      configurationId = response.configurationId || configurationId;
+      completed += chunk.length;
+      onBatch?.(batchTranslations, configurationId);
+      onProgress?.({
+        completed,
+        total: units.length,
+        translatedCount: Object.keys(translations).length,
+      });
+    }
+
+    if (Object.keys(translations).length !== units.length) {
+      throw new TranslationRequestError(
+        "翻译后端未返回完整结果，请重试",
+        "incomplete_translation",
+        true,
+        provider,
+      );
+    }
+  } catch (error) {
+    if (signal?.aborted || (error instanceof DOMException && error.name === "AbortError")) {
+      throw error;
+    }
+    const translatedError = error instanceof TranslationRequestError
+      ? error
+      : new TranslationRequestError("翻译服务暂时不可用", "provider_unavailable", true, provider);
+    throw new TranslationBatchError(
+      translatedError.message,
+      translatedError.code,
+      translatedError.retryable,
+      provider,
+      { ...translations },
+      Object.keys(translations).length,
+      units.length,
+    );
+  }
+
+  return { translations, configurationId };
 }
 
 function translationFrameBatchKey(frames: StoryFrame[]) {

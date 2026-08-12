@@ -75,15 +75,22 @@ import type {
   PreparedStory,
 } from "../lib/storyPreparation";
 import {
+  collectScriptTranslationUnits,
   MANUAL_TRANSLATION_MAX_BYTES,
   ManualTranslationError,
 } from "../lib/manualTranslations";
 import {
   clearPersistentTranslationCaches,
   deleteLocalOpenAiConfig,
+  loadPersistentTranslations,
   loadTranslationSettings,
+  providerConfigFromSettings,
   saveLocalOpenAiConfig,
+  savePersistentTranslations,
   saveTranslationSettings,
+  translateTranslationUnits,
+  TranslationBatchError,
+  type CachedTranslation,
   type TranslationSettings,
 } from "../lib/translation";
 import {
@@ -409,6 +416,11 @@ export function ReaderView({
   const [translationConfigError, setTranslationConfigError] = useState("");
   const [manualTranslationBusy, setManualTranslationBusy] = useState(false);
   const [manualTranslationError, setManualTranslationError] = useState("");
+  const [oneShotTranslationProgress, setOneShotTranslationProgress] = useState<{
+    completed: number;
+    total: number;
+    translatedCount: number;
+  } | null>(null);
   const [readMax, setReadMax] = useState(() => {
     const value = localStorage.getItem(readProgressStorageKey(story.scriptId));
     return value === null ? -1 : Number(value);
@@ -416,6 +428,7 @@ export function ReaderView({
   const toastTimer = useRef<number | null>(null);
   const dialogueTransitionTimer = useRef<number | null>(null);
   const manualTranslationInputRef = useRef<HTMLInputElement>(null);
+  const oneShotTranslationControllerRef = useRef<AbortController | null>(null);
   const revealContext = useRef({ frameId: "", mode: "source", translated: false });
   const revealImmediatelyOnNavigation = useRef(false);
   const translationVisit = useRef({
@@ -442,6 +455,7 @@ export function ReaderView({
     settings: translationSettings,
     manualActive: manualTranslation.active,
     manualTranslations: manualTranslation.translations,
+    paused: manualTranslationBusy,
   });
   const translatedMode = japaneseStoryLoaded && translationSettings.mode === "translated";
   const translationVisitKey = [
@@ -569,6 +583,107 @@ export function ReaderView({
       setManualTranslationError(error instanceof Error ? error.message : "无法导出翻译母本");
     }
   }, [baseFrames.length, japaneseStoryLoaded, manualTranslation, showToast, story.scriptId]);
+
+  const translateAndExportManualTranslation = useCallback(async () => {
+    if (!japaneseStoryLoaded || !baseFrames.length || !manualTranslation.resolved) return;
+    if (!remoteTranslationEligible) {
+      setManualTranslationError("当前脚本未允许使用在线翻译，无法执行一次性翻译");
+      return;
+    }
+    const provider = translationSettings.provider;
+    if (!provider || !translation.providerReady) {
+      setManualTranslationError("请先选择并配置翻译后端，再执行一次性翻译");
+      return;
+    }
+
+    const units = collectScriptTranslationUnits(baseFrames);
+    if (!units.length) {
+      setManualTranslationError("当前脚本没有可翻译的文本");
+      return;
+    }
+
+    translation.abortPending();
+    const controller = new AbortController();
+    oneShotTranslationControllerRef.current = controller;
+    setManualTranslationBusy(true);
+    setManualTranslationError("");
+    setOneShotTranslationProgress({
+      completed: 0,
+      total: units.length,
+      translatedCount: 0,
+    });
+
+    try {
+      const cachedTranslations = loadPersistentTranslations(
+        provider,
+        translation.namespace,
+        story.scriptId,
+      );
+      const machineTranslations: Record<string, CachedTranslation> = {
+        ...cachedTranslations,
+      };
+      const result = await translateTranslationUnits({
+        provider,
+        scriptId: story.scriptId,
+        providerConfig: providerConfigFromSettings(translationSettings),
+        units,
+        existingTranslations: {
+          ...cachedTranslations,
+          ...manualTranslation.translations,
+        },
+        signal: controller.signal,
+        onProgress: setOneShotTranslationProgress,
+        onBatch: (batch, configurationId) => {
+          Object.assign(machineTranslations, batch);
+          savePersistentTranslations(
+            provider,
+            translation.namespace,
+            story.scriptId,
+            machineTranslations,
+            configurationId,
+          );
+        },
+      });
+      const safeScriptId = story.scriptId.replace(/[^A-Za-z0-9._-]+/g, "_");
+      await exportTextFile(
+        `fgo-translation-${safeScriptId}-translated.json`,
+        manualTranslation.exportTemplate(result.translations),
+        "application/json;charset=utf-8",
+      );
+      showToast(`已完成 ${units.length} 条翻译并导出人工翻译文件`);
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        setManualTranslationError("一次性翻译已取消");
+      } else if (error instanceof TranslationBatchError) {
+        setManualTranslationError(
+          `一次性翻译已完成 ${error.completed}/${error.total} 条，但${error.message}；未导出文件。`,
+        );
+      } else {
+        setManualTranslationError(error instanceof Error ? error.message : "无法完成一次性翻译并导出");
+      }
+    } finally {
+      if (oneShotTranslationControllerRef.current === controller) {
+        oneShotTranslationControllerRef.current = null;
+      }
+      setManualTranslationBusy(false);
+      setOneShotTranslationProgress(null);
+    }
+  }, [
+    baseFrames,
+    japaneseStoryLoaded,
+    manualTranslation,
+    remoteTranslationEligible,
+    showToast,
+    story.scriptId,
+    translation.namespace,
+    translation.abortPending,
+    translation.providerReady,
+    translationSettings,
+  ]);
+
+  const cancelOneShotTranslation = useCallback(() => {
+    oneShotTranslationControllerRef.current?.abort();
+  }, []);
 
   const beginManualTranslationImport = useCallback(() => {
     setManualTranslationError("");
@@ -1201,6 +1316,7 @@ export function ReaderView({
     if (dialogueTransitionTimer.current !== null) {
       window.clearTimeout(dialogueTransitionTimer.current);
     }
+    oneShotTranslationControllerRef.current?.abort();
   }, []);
 
   const logEntries = useMemo(
@@ -1569,6 +1685,34 @@ export function ReaderView({
                       >
                         <Download size={15} /> 导出翻译母本
                       </button>
+                      {remoteTranslationEligible && (
+                        <>
+                          <button
+                            type="button"
+                            className="primary"
+                            onClick={() => void translateAndExportManualTranslation()}
+                            disabled={
+                              manualTranslationBusy
+                              || !manualTranslation.resolved
+                              || !translationSettings.provider
+                              || !translation.providerReady
+                            }
+                            title="调用当前翻译后端，翻译本节全部文本后导出为人工翻译 JSON"
+                          >
+                            {oneShotTranslationProgress
+                              ? <LoaderCircle className="spin" size={15} />
+                              : <Languages size={15} />}
+                            {oneShotTranslationProgress
+                              ? `翻译中 ${oneShotTranslationProgress.completed}/${oneShotTranslationProgress.total}`
+                              : "一次性翻译并导出"}
+                          </button>
+                          {oneShotTranslationProgress && (
+                            <button type="button" onClick={cancelOneShotTranslation}>
+                              <X size={15} /> 取消翻译
+                            </button>
+                          )}
+                        </>
+                      )}
                       <button
                         type="button"
                         className="primary"

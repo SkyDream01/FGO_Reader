@@ -444,7 +444,7 @@ export async function prepareStory(
         if (signal?.aborted) throw abortError();
         if (reason instanceof StoryPreparationError) throw reason;
         parsed = parseFgoScript(offlineDemoScript, "offline-demo", {
-          region: "CN",
+          region: "JP",
           masterName,
         });
         offlineFallback = true;
