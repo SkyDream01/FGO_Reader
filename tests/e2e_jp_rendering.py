@@ -26,27 +26,47 @@ with sync_playwright() as playwright:
     page.evaluate(
         "localStorage.setItem('fgo-reader-settings', JSON.stringify({reduceMotion: true}))"
     )
-    page.evaluate("localStorage.setItem('fgo-reader-progress:0500010010', '15')")
     direct_input = page.locator(".direct-script input")
     direct_input.fill("0500010010")
     direct_input.press("Enter")
 
     page.locator(".reader-loading").wait_for(state="hidden", timeout=60000)
     page.locator(".dialogue-box").wait_for(timeout=15000)
-    sprite = page.locator(".character-sprite img")
+    sprite_container = page.locator(".character-sprite")
+    sprite = sprite_container.locator("img, canvas")
+    for _ in range(80):
+        speaker = page.locator(".speaker-plate strong")
+        if sprite_container.count() == 1 and speaker.count() == 1 and speaker.text_content() == "マシュ":
+            break
+        choice = page.locator(".choice-menu button").first
+        if choice.count() == 1 and choice.is_visible():
+            choice.click()
+        else:
+            page.keyboard.press("Space")
+        page.wait_for_timeout(30)
     sprite.wait_for(timeout=30000)
     page.wait_for_function(
-        "document.querySelector('.character-sprite img')?.complete && "
-        "document.querySelector('.character-sprite img')?.naturalWidth > 0",
+        """(() => {
+          const figure = document.querySelector('.character-sprite img, .character-sprite canvas');
+          return figure instanceof HTMLCanvasElement
+            ? figure.classList.contains('ready')
+            : Boolean(figure?.complete && figure.naturalWidth > 0);
+        })()""",
         timeout=30000,
     )
+    page.wait_for_timeout(50)
 
     assert page.locator(".speaker-plate strong").text_content() == "マシュ"
-    assert page.locator(".character-sprite").count() == 1
-    assert page.locator(".character-sprite").evaluate(
-        "element => element.classList.contains('wide-atlas')"
-    )
-    assert sprite.evaluate("image => getComputedStyle(image).objectFit") == "cover"
+    assert sprite_container.count() == 1
+    stage_box = page.locator(".reader-stage").bounding_box()
+    sprite_box = sprite_container.bounding_box()
+    assert stage_box is not None and sprite_box is not None
+    expected_size = stage_box["height"] * 1024 / 576 * 0.9
+    assert abs(sprite_box["width"] - expected_size) < 0.5
+    assert abs(sprite_box["height"] - expected_size) < 0.5
+    expected_top = stage_box["height"] - expected_size * 0.75
+    assert abs(sprite_box["y"] - expected_top) < 0.5
+    assert sprite.evaluate("element => getComputedStyle(element).objectFit") == "contain"
 
     page.screenshot(path=str(SCREENSHOTS / "jp-prologue-fixed.png"), full_page=True)
     assert not page_errors, f"Page errors: {page_errors}"

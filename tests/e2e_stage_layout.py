@@ -34,11 +34,31 @@ with sync_playwright() as playwright:
         "document.querySelector('.scene-image')?.naturalWidth > 0",
         timeout=30000,
     )
+    page.wait_for_timeout(50)
 
     stage_box = page.locator(".reader-stage").bounding_box()
     assert stage_box is not None
     assert stage_box["x"] == 0 and stage_box["y"] == 0
     assert stage_box["width"] == 2048 and stage_box["height"] == 1114
-    assert scene.evaluate("image => getComputedStyle(image).objectFit") == "contain"
+    scene_metrics = scene.evaluate(
+        """image => {
+          const style = getComputedStyle(image);
+          const box = image.getBoundingClientRect();
+          return {
+            objectFit: style.objectFit,
+            width: box.width,
+            height: box.height,
+            left: box.left,
+            top: box.top,
+          };
+        }"""
+    )
+    expected_width = max(stage_box["width"], stage_box["height"] * 1024 / 576)
+    expected_height = expected_width * 626 / 1024
+    assert scene_metrics["objectFit"] == "fill"
+    assert abs(scene_metrics["width"] - expected_width) < 0.5
+    assert abs(scene_metrics["height"] - expected_height) < 0.5
+    assert abs(scene_metrics["left"] - (stage_box["width"] - expected_width) / 2) < 0.5
+    assert abs(scene_metrics["top"] - (stage_box["height"] - expected_height) / 2) < 0.5
     assert not page_errors, f"Page errors: {page_errors}"
     browser.close()

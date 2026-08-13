@@ -1747,6 +1747,9 @@ select:focus-visible {
 /* Story reader */
 
 .reader-shell {
+  --fgo-stage-width: 1024;
+  --fgo-stage-height: 576;
+  --fgo-figure-scale: 0.9;
   position: fixed;
   inset: 0;
   display: grid;
@@ -1839,11 +1842,16 @@ html[data-runtime="android"] .custom-library-backdrop {
 .scene-image {
   position: absolute;
   z-index: 2;
-  width: 100%;
-  height: 100%;
-  inset: 0;
-  /* Atlas backgrounds use a 1024x626 composition; keep the full frame visible. */
-  object-fit: contain;
+  width: max(100%, calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height)));
+  width: max(100%, calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height)));
+  height: auto;
+  aspect-ratio: 1024 / 626;
+  left: 50%;
+  top: 50%;
+  /* FGO composes 1024x626 backgrounds on a 1024x576 stage. Preserve the
+     game's 1:1 stage scale and crop the 25px overscan at the top and bottom. */
+  object-fit: fill;
+  transform: translate(-50%, -50%);
   animation: scene-appear 420ms ease both;
 }
 
@@ -1856,8 +1864,8 @@ html[data-runtime="android"] .custom-library-backdrop {
 }
 
 @keyframes scene-appear {
-  from { opacity: 0; transform: scale(1.015); }
-  to { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translate(-50%, -50%) scale(1.015); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
 @keyframes scene-wipe {
@@ -1926,9 +1934,14 @@ html[data-runtime="android"] .custom-library-backdrop {
 
 .character-sprite {
   position: absolute;
-  width: 47%;
-  height: 98%;
-  bottom: -2.5%;
+  /* FGO figures use a 1024px square canvas. The visible 768px body region is
+     aligned to the bottom of the 576px stage, leaving 192px above the frame. */
+  width: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
+  width: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
+  height: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
+  height: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
+  bottom: calc(-25vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
+  bottom: calc(-25dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   left: 50%;
   opacity: 0;
   transform: translateX(-50%) translateY(15px);
@@ -3883,7 +3896,8 @@ html[data-runtime="android"] .custom-library-backdrop {
   }
 
   .character-sprite {
-    width: 56%;
+    width: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
+    width: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   }
 
   .custom-library-backdrop {
@@ -4340,7 +4354,10 @@ html[data-runtime="android"] .reader-stage {
   html[data-runtime="android"] .dialogue-box { padding: clamp(26px, 6.5dvh, 38px) 4% clamp(10px, 2.4dvh, 18px); }
   html[data-runtime="android"] .dialogue-text { font-size: clamp(12px, 1.65vw, 19px); line-height: 1.48; }
   html[data-runtime="android"] .speaker-plate { min-width: 31%; }
-  html[data-runtime="android"] .character-sprite { width: min(52%, 620px); }
+  html[data-runtime="android"] .character-sprite {
+    width: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
+    width: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
+  }
   html[data-runtime="android"] .choice-menu { width: min(76%, 720px); bottom: 35%; }
   html[data-runtime="android"] .translation-note { bottom: 34%; }
   html[data-runtime="android"] .bgm-chip {
