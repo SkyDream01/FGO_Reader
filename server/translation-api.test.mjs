@@ -54,6 +54,7 @@ describe("translation provider configuration", () => {
         baseUrl: "http://127.0.0.1:11434/v1",
         model: "local-model",
         allowNoAuth: true,
+        thinking: { type: "enabled" },
       },
     );
     expect(config).toMatchObject({
@@ -61,9 +62,46 @@ describe("translation provider configuration", () => {
       baseUrl: "http://127.0.0.1:11434/v1",
       model: "local-model",
       allowNoAuth: true,
+      thinking: { type: "enabled" },
       apiKey: undefined,
     });
     expect(config.configurationId).not.toContain("server-secret");
+  });
+
+  it("accepts the five reasoning effort levels and rejects unknown values", () => {
+    for (const reasoningEffort of ["low", "medium", "high", "xhigh", "max"]) {
+      expect(resolveProviderConfig(
+        "openai",
+        {},
+        {
+          baseUrl: "http://127.0.0.1:11434/v1",
+          model: "local-model",
+          allowNoAuth: true,
+          thinking: { type: "enabled" },
+          reasoningEffort,
+        },
+      ).reasoningEffort).toBe(reasoningEffort);
+    }
+    expect(() => resolveProviderConfig(
+      "openai",
+      {},
+      {
+        baseUrl: "http://127.0.0.1:11434/v1",
+        model: "local-model",
+        allowNoAuth: true,
+        reasoningEffort: "unsupported",
+      },
+    )).toThrow(/思考强度/);
+    expect(() => resolveProviderConfig(
+      "openai",
+      {},
+      {
+        baseUrl: "http://127.0.0.1:11434/v1",
+        model: "local-model",
+        allowNoAuth: true,
+        thinking: { type: "unsupported" },
+      },
+    )).toThrow(/thinking.type/);
   });
 });
 
@@ -96,6 +134,8 @@ describe("provider adapters", () => {
       const request = JSON.parse(init.body);
       expect(request.model).toBe("local-model");
       expect(request.temperature).toBe(0);
+      expect(request.thinking).toEqual({ type: "enabled" });
+      expect(request.reasoning_effort).toBe("xhigh");
       expect(request.messages[1].content).toContain("架空試験文");
       expect(init.headers.authorization).toBeUndefined();
       return new Response(JSON.stringify({
@@ -112,6 +152,8 @@ describe("provider adapters", () => {
         baseUrl: "http://127.0.0.1:11434/v1",
         model: "local-model",
         allowNoAuth: true,
+        thinking: { type: "enabled" },
+        reasoningEffort: "xhigh",
         configurationId: "test",
       },
       [{ id: "speaker:1", kind: "speaker", text: "架空試験文" }],
@@ -135,6 +177,8 @@ describe("provider adapters", () => {
     const fetchImpl = vi.fn(async (_url, init) => {
       const request = JSON.parse(init.body);
       expect(request.stream).toBe(true);
+      expect(request.thinking).toEqual({ type: "disabled" });
+      expect(request).not.toHaveProperty("reasoning_effort");
       return new Response(streamBody, {
         status: 200,
         headers: { "content-type": "text/event-stream" },
@@ -155,6 +199,7 @@ describe("provider adapters", () => {
         baseUrl: "http://127.0.0.1:11434/v1",
         model: "local-model",
         allowNoAuth: true,
+        thinking: { type: "disabled" },
       },
       items: [{ id: "dialogue:1", kind: "dialogue", text: "架空試験文" }],
     }, undefined, (text) => output.push(text));
@@ -279,6 +324,8 @@ describe("translation HTTP API", () => {
       "OPENAI_COMPAT_API_KEY=old-test-key",
       "OPENAI_COMPAT_MODEL=old-model",
       "OPENAI_COMPAT_ALLOW_NO_AUTH=false",
+      "OPENAI_COMPAT_THINKING=enabled",
+      "OPENAI_COMPAT_REASONING_EFFORT=high",
       "",
     ].join("\n"));
     const env = {
@@ -286,6 +333,8 @@ describe("translation HTTP API", () => {
       OPENAI_COMPAT_API_KEY: "old-test-key",
       OPENAI_COMPAT_MODEL: "old-model",
       OPENAI_COMPAT_ALLOW_NO_AUTH: "false",
+      OPENAI_COMPAT_THINKING: "enabled",
+      OPENAI_COMPAT_REASONING_EFFORT: "high",
     };
     const app = createTranslationApp({ env, localEnvPath });
     const origin = await serve(app);
@@ -297,6 +346,8 @@ describe("translation HTTP API", () => {
       fileName: ".env.local",
       baseUrl: "https://old.example/v1",
       model: "old-model",
+      thinking: "enabled",
+      reasoningEffort: "high",
       apiKeyConfigured: true,
     });
 
@@ -309,6 +360,8 @@ describe("translation HTTP API", () => {
         apiKey: "replacement-test-key",
         allowNoAuth: false,
         clearApiKey: false,
+        thinking: "disabled",
+        reasoningEffort: "xhigh",
       }),
     });
     const saveText = await saveResponse.text();
@@ -317,6 +370,8 @@ describe("translation HTTP API", () => {
     expect(JSON.parse(saveText).localEnv.openai).toMatchObject({
       baseUrl: "http://127.0.0.1:11434/v1",
       model: "qwen-test",
+      thinking: "disabled",
+      reasoningEffort: "xhigh",
       apiKeyConfigured: true,
     });
 
@@ -327,7 +382,11 @@ describe("translation HTTP API", () => {
     expect(savedEnv.OPENAI_COMPAT_BASE_URL).toBe("http://127.0.0.1:11434/v1");
     expect(savedEnv.OPENAI_COMPAT_API_KEY).toBe("replacement-test-key");
     expect(savedEnv.OPENAI_COMPAT_MODEL).toBe("qwen-test");
+    expect(savedEnv.OPENAI_COMPAT_THINKING).toBe("disabled");
+    expect(savedEnv.OPENAI_COMPAT_REASONING_EFFORT).toBe("xhigh");
     expect(env.OPENAI_COMPAT_MODEL).toBe("qwen-test");
+    expect(env.OPENAI_COMPAT_THINKING).toBe("disabled");
+    expect(env.OPENAI_COMPAT_REASONING_EFFORT).toBe("xhigh");
 
     const keepResponse = await fetch(`${origin}/config/openai`, {
       method: "PUT",
@@ -338,6 +397,8 @@ describe("translation HTTP API", () => {
         apiKey: "",
         allowNoAuth: false,
         clearApiKey: false,
+        thinking: "enabled",
+        reasoningEffort: "low",
       }),
     });
     expect(keepResponse.status).toBe(200);
@@ -352,6 +413,8 @@ describe("translation HTTP API", () => {
         apiKey: "",
         allowNoAuth: false,
         clearApiKey: true,
+        thinking: "enabled",
+        reasoningEffort: "low",
       }),
     });
     expect(clearKeyResponse.status).toBe(200);
@@ -366,6 +429,8 @@ describe("translation HTTP API", () => {
     expect(clearedEnv.OPENAI_COMPAT_API_KEY).toBe("");
     expect(clearedEnv.OPENAI_COMPAT_MODEL).toBe("");
     expect(clearedEnv.OPENAI_COMPAT_ALLOW_NO_AUTH).toBe("false");
+    expect(clearedEnv.OPENAI_COMPAT_THINKING).toBe("disabled");
+    expect(clearedEnv.OPENAI_COMPAT_REASONING_EFFORT).toBe("medium");
   });
 
   it("rejects cross-site attempts to change local environment configuration", async () => {

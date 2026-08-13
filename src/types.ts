@@ -169,7 +169,6 @@ export interface ParsedScript {
 
 export interface ReaderSettings {
   textSpeed: number;
-  autoDelay: number;
   bgmVolume: number;
   skipUnread: boolean;
   reduceMotion: boolean;

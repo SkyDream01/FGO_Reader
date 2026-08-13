@@ -10,6 +10,8 @@ import { SCRIPT_PARSER_VERSION } from "./scriptParserVersion";
 export type TranslationProvider = "deepl" | "openai" | "bing";
 export type TranslationMode = "source" | "translated";
 export type TranslationKind = "speaker" | "dialogue" | "choice";
+export type ThinkingType = "enabled" | "disabled";
+export type ThinkingLevel = "low" | "medium" | "high" | "xhigh" | "max";
 
 export interface TranslationSettings {
   mode: TranslationMode;
@@ -23,6 +25,8 @@ export interface TranslationSettings {
     apiKey: string;
     model: string;
     allowNoAuth: boolean;
+    thinkingEnabled: boolean;
+    thinkingLevel: ThinkingLevel;
   };
 }
 
@@ -52,6 +56,8 @@ export interface LocalOpenAiConfig {
   baseUrl: string;
   model: string;
   allowNoAuth: boolean;
+  thinking: ThinkingType;
+  reasoningEffort: ThinkingLevel;
   apiKeyConfigured: boolean;
 }
 
@@ -123,6 +129,8 @@ export class TranslationBatchError extends TranslationRequestError {
 }
 
 const SETTINGS_KEY = "fgo-reader-translation-settings:v1";
+const CACHE_STORAGE_PREFIX = "fgo-reader-translation-cache:";
+const CACHE_INDEX_PREFIX = "fgo-reader-translation-cache-index:";
 const CACHE_INDEX_KEY = `fgo-reader-translation-cache-index:v${SCRIPT_PARSER_VERSION}`;
 const CACHE_PREFIX = `fgo-reader-translation-cache:v${SCRIPT_PARSER_VERSION}:`;
 const CACHE_ENTRY_LIMIT = 12;
@@ -141,6 +149,8 @@ export const defaultTranslationSettings: TranslationSettings = {
     apiKey: "",
     model: "",
     allowNoAuth: false,
+    thinkingEnabled: false,
+    thinkingLevel: "medium",
   },
 };
 
@@ -154,6 +164,14 @@ function asString(value: unknown) {
 
 function isProvider(value: unknown): value is TranslationProvider {
   return value === "deepl" || value === "openai" || value === "bing";
+}
+
+function isThinkingLevel(value: unknown): value is ThinkingLevel {
+  return value === "low"
+    || value === "medium"
+    || value === "high"
+    || value === "xhigh"
+    || value === "max";
 }
 
 export function loadTranslationSettings(): TranslationSettings {
@@ -173,6 +191,10 @@ export function loadTranslationSettings(): TranslationSettings {
         apiKey: asString(parsed.openai?.apiKey),
         model: asString(parsed.openai?.model),
         allowNoAuth: parsed.openai?.allowNoAuth === true,
+        thinkingEnabled: parsed.openai?.thinkingEnabled === true,
+        thinkingLevel: isThinkingLevel(parsed.openai?.thinkingLevel)
+          ? parsed.openai.thinkingLevel
+          : "medium",
       },
     };
   } catch {
@@ -193,18 +215,23 @@ export function providerConfigFromSettings(settings: TranslationSettings) {
     };
   }
   if (settings.provider === "openai") {
-    const hasLocalOverride = Boolean(
+    const hasCredentialOverride = Boolean(
       settings.openai.baseUrl.trim()
       || settings.openai.apiKey.trim()
       || settings.openai.model.trim()
       || settings.openai.allowNoAuth,
     );
-    if (!hasLocalOverride) return undefined;
     return {
       ...(settings.openai.baseUrl.trim() ? { baseUrl: settings.openai.baseUrl.trim() } : {}),
       ...(settings.openai.apiKey.trim() ? { apiKey: settings.openai.apiKey.trim() } : {}),
       ...(settings.openai.model.trim() ? { model: settings.openai.model.trim() } : {}),
-      allowNoAuth: settings.openai.allowNoAuth,
+      ...(hasCredentialOverride ? { allowNoAuth: settings.openai.allowNoAuth } : {}),
+      thinking: {
+        type: settings.openai.thinkingEnabled ? "enabled" : "disabled",
+      } satisfies { type: ThinkingType },
+      ...(settings.openai.thinkingEnabled
+        ? { reasoningEffort: settings.openai.thinkingLevel }
+        : {}),
     };
   }
   return undefined;
@@ -305,17 +332,20 @@ export function translationNamespace(
         qualityVersion,
       }))}`;
     }
-  } else if (
-    settings.openai.baseUrl.trim()
-    || settings.openai.apiKey.trim()
-    || settings.openai.model.trim()
-    || settings.openai.allowNoAuth
-  ) {
+  } else {
+    const hasCredentialOverride = Boolean(
+      settings.openai.baseUrl.trim()
+      || settings.openai.apiKey.trim()
+      || settings.openai.model.trim()
+      || settings.openai.allowNoAuth,
+    );
     return `client-${stableHash(JSON.stringify({
       provider: "openai",
       baseUrl: settings.openai.baseUrl.trim(),
       model: settings.openai.model.trim(),
       allowNoAuth: settings.openai.allowNoAuth,
+      ...(hasCredentialOverride ? {} : { serverConfigurationId: providerInfo?.configurationId ?? null }),
+      thinking: settings.openai.thinkingEnabled ? "enabled" : "disabled",
       qualityVersion,
     }))}`;
   }
@@ -414,8 +444,14 @@ export function savePersistentTranslations(
 
 export function clearPersistentTranslationCaches() {
   if (!hasLocalStorage()) return;
-  for (const entry of loadCacheIndex()) localStorage.removeItem(entry.key);
-  localStorage.removeItem(CACHE_INDEX_KEY);
+  const keys = new Set(loadCacheIndex().map((entry) => entry.key));
+  for (let index = 0; index < localStorage.length; index += 1) {
+    const key = localStorage.key(index);
+    if (key && (key.startsWith(CACHE_STORAGE_PREFIX) || key.startsWith(CACHE_INDEX_PREFIX))) {
+      keys.add(key);
+    }
+  }
+  for (const key of keys) localStorage.removeItem(key);
 }
 
 export function chunkTranslationUnits(units: TranslationUnit[]) {
@@ -806,6 +842,8 @@ export async function saveLocalOpenAiConfig(input: {
   apiKey: string;
   allowNoAuth: boolean;
   clearApiKey: boolean;
+  thinking: ThinkingType;
+  reasoningEffort: ThinkingLevel;
 }) {
   if (isAndroidNative()) return getNativeTranslationConfig();
   const response = await fetch("/translation-api/config/openai", {

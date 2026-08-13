@@ -2954,14 +2954,16 @@ html[data-runtime="android"] .custom-library-backdrop {
   padding: 10px 3px;
 }
 
-.settings-list > label {
+.settings-list > label,
+.settings-list > .settings-info {
   position: relative;
   display: block;
   padding: 13px 0;
   border-bottom: 1px solid rgba(117, 216, 211, 0.09);
 }
 
-.settings-list label > span {
+.settings-list label > span,
+.settings-list .settings-info > span {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -2969,15 +2971,24 @@ html[data-runtime="android"] .custom-library-backdrop {
   margin-bottom: 10px;
 }
 
-.settings-list label strong {
+.settings-list label strong,
+.settings-list .settings-info strong {
   color: #d7e2e4;
   font-size: clamp(11px, 0.86vw, 14px);
   font-weight: 500;
 }
 
-.settings-list label small {
+.settings-list label small,
+.settings-list .settings-info small {
   color: #607781;
   font-size: clamp(7px, 0.54vw, 9px);
+}
+
+.settings-list .settings-info p {
+  margin: 0;
+  color: #71878c;
+  font-size: clamp(9px, 0.64vw, 11px);
+  line-height: 1.55;
 }
 
 .settings-list input[type="range"] {
@@ -3024,9 +3035,19 @@ html[data-runtime="android"] .custom-library-backdrop {
   background-size: 5px 5px, 5px 5px;
 }
 
-.text-setting > input:disabled {
+.text-setting > input:disabled,
+.text-setting > select:disabled {
   cursor: not-allowed;
   opacity: 0.42;
+}
+
+.translation-provider-fields > .thinking-setting {
+  border-bottom-color: rgba(198, 168, 101, 0.18);
+}
+
+.translation-provider-fields > .thinking-setting strong,
+.translation-provider-fields > .thinking-level-setting strong {
+  color: #e0d2ae;
 }
 
 .settings-list .switch-setting {
@@ -3356,6 +3377,17 @@ html[data-runtime="android"] .custom-library-backdrop {
   border-color: rgba(117, 216, 211, 0.42);
   color: #e9ffff;
   background: rgba(29, 85, 91, 0.62);
+}
+
+.translation-settings-actions button.danger {
+  border-color: rgba(215, 116, 101, 0.34);
+  color: #dca49b;
+}
+
+.translation-settings-actions button.danger:hover:not(:disabled) {
+  border-color: rgba(239, 139, 115, 0.68);
+  color: #ffd8d0;
+  background: rgba(76, 28, 29, 0.38);
 }
 
 .translation-settings-actions button:disabled {

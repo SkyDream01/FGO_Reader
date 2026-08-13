@@ -6,9 +6,13 @@ const OPENAI_ENV_KEYS = [
   "OPENAI_COMPAT_API_KEY",
   "OPENAI_COMPAT_MODEL",
   "OPENAI_COMPAT_ALLOW_NO_AUTH",
+  "OPENAI_COMPAT_THINKING",
+  "OPENAI_COMPAT_REASONING_EFFORT",
 ];
 
 const MANAGED_ENV_HEADING = "# OpenAI-compatible Chat Completions（由网页设置管理）";
+const THINKING_TYPES = new Set(["enabled", "disabled"]);
+const REASONING_EFFORTS = new Set(["low", "medium", "high", "xhigh", "max"]);
 
 function nonEmpty(value) {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
@@ -16,6 +20,16 @@ function nonEmpty(value) {
 
 function readBoolean(value) {
   return String(value).trim().toLowerCase() === "true";
+}
+
+function readThinkingType(value) {
+  const normalized = nonEmpty(value);
+  return THINKING_TYPES.has(normalized) ? normalized : "disabled";
+}
+
+function readReasoningEffort(value) {
+  const normalized = nonEmpty(value);
+  return REASONING_EFFORTS.has(normalized) ? normalized : "medium";
 }
 
 function serializeEnvValue(value) {
@@ -77,6 +91,8 @@ export function publicLocalOpenAiConfig(env, editable = false) {
     baseUrl: nonEmpty(env.OPENAI_COMPAT_BASE_URL) ?? "",
     model: nonEmpty(env.OPENAI_COMPAT_MODEL) ?? "",
     allowNoAuth: readBoolean(env.OPENAI_COMPAT_ALLOW_NO_AUTH),
+    thinking: readThinkingType(env.OPENAI_COMPAT_THINKING),
+    reasoningEffort: readReasoningEffort(env.OPENAI_COMPAT_REASONING_EFFORT),
     apiKeyConfigured: Boolean(nonEmpty(env.OPENAI_COMPAT_API_KEY)),
   };
 }
@@ -99,6 +115,8 @@ export async function clearLocalOpenAiConfig({ env, envFilePath }) {
       OPENAI_COMPAT_API_KEY: "",
       OPENAI_COMPAT_MODEL: "",
       OPENAI_COMPAT_ALLOW_NO_AUTH: "false",
+      OPENAI_COMPAT_THINKING: "disabled",
+      OPENAI_COMPAT_REASONING_EFFORT: "medium",
     },
   });
 }

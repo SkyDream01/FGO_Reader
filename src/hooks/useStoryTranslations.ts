@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   chunkTranslationUnits,
+  clearPersistentTranslationCaches,
   collectTranslationUnits,
   createTranslationFrameLookahead,
   fetchTranslationServerConfig,
@@ -179,6 +180,18 @@ export function useStoryTranslations({
     setPendingIds(new Set());
     setActiveBatchCount(0);
   }, []);
+
+  const clearCache = useCallback(() => {
+    generationRef.current += 1;
+    abortRequests();
+    clearPersistentTranslationCaches();
+    translationsRef.current = {};
+    setTranslations({});
+    setCurrentError(null);
+    setSchedulerPaused(false);
+    setPreparationFailed(false);
+    setRetryNonce((value) => value + 1);
+  }, [abortRequests]);
 
   useEffect(() => {
     generationRef.current += 1;
@@ -429,6 +442,7 @@ export function useStoryTranslations({
     serverConfig,
     serverConfigError,
     refreshServerConfig,
+    clearCache,
     providerReady: ready,
     namespace,
     preparing,

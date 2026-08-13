@@ -78,10 +78,13 @@ npm start
 - DeepL：`DEEPL_AUTH_KEY`，可选 `DEEPL_SERVER_URL`
 - OpenAI 兼容：`OPENAI_COMPAT_BASE_URL`、`OPENAI_COMPAT_MODEL`、可选 `OPENAI_COMPAT_API_KEY`
 - 本机免鉴权兼容服务：设置 `OPENAI_COMPAT_ALLOW_NO_AUTH=true`
+- 思考模式：`OPENAI_COMPAT_THINKING=enabled|disabled`、`OPENAI_COMPAT_REASONING_EFFORT=low|medium|high|xhigh|max`
+
+选择 OpenAI 兼容后，可在“阅读设置”中启用思考并选择强度：低 `low`、中 `medium`、高 `high`、极高 `xhigh`、最高 `max`。思考开关通过 `thinking: { type: "enabled" | "disabled" }` 发送；开启时强度通过 `reasoning_effort` 发送。不同强度共用同一翻译缓存，具体档位是否可用取决于兼容接口和模型。
 
 OpenAI 兼容地址只允许 HTTPS，或 `localhost` / `127.0.0.1` / `::1` 的 HTTP。项目不会读取或使用 `OPENAI_API_KEY`，兼容接口应使用独立的 `OPENAI_COMPAT_API_KEY`。
 
-在源码服务器或 Windows 便携版中选择“OpenAI 兼容”后，设置页会编辑对应数据目录的 `.env.local`。Base URL、模型和兼容密钥保存后立即生效，无需重启；已有密钥只会显示“已配置”状态，不会从服务端回传到浏览器。写接口仅接受上述 OpenAI 兼容变量，并只允许通过当前本机阅读器页面调用，文件中的端口和其他环境变量会保留。Android 版没有本地 Node 服务，配置保存在应用 WebView 本地存储中。
+在源码服务器或 Windows 便携版中选择“OpenAI 兼容”后，设置页会编辑对应数据目录的 `.env.local`。Base URL、模型、思考开关、思考强度和兼容密钥保存后立即生效，无需重启；已有密钥只会显示“已配置”状态，不会从服务端回传到浏览器。写接口仅接受上述 OpenAI 兼容变量，并只允许通过当前本机阅读器页面调用，文件中的端口和其他环境变量会保留。Android 版没有本地 Node 服务，配置保存在应用 WebView 本地存储中。
 
 DeepL 页面配置仍按当前功能约定明文保存在浏览器 localStorage，仅建议在自己的本机浏览器中使用，并可随时通过“清除本地凭据”删除。Bing / Edge 使用免密的非官方临时令牌链路，没有 SLA，可能因限流或上游策略变化而失效。
 

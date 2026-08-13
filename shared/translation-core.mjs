@@ -13,6 +13,8 @@ const TOTAL_TEXT_LIMIT = 10_000;
 const DEFAULT_TIMEOUT_MS = 15_000;
 const PROVIDERS = new Set(["deepl", "openai", "bing"]);
 const KINDS = new Set(["speaker", "dialogue", "choice"]);
+const THINKING_TYPES = new Set(["enabled", "disabled"]);
+const REASONING_EFFORTS = new Set(["low", "medium", "high", "xhigh", "max"]);
 
 export { TRANSLATION_QUALITY_VERSION };
 
@@ -155,6 +157,39 @@ function resolveOpenAiConfig(env, override = {}) {
   const apiKey = allowNoAuth
     ? undefined
     : nonEmpty(override.apiKey) ?? nonEmpty(env.OPENAI_COMPAT_API_KEY);
+  const configuredReasoningEffort = override.reasoningEffort === undefined
+    ? nonEmpty(env.OPENAI_COMPAT_REASONING_EFFORT)
+    : nonEmpty(override.reasoningEffort);
+  const thinkingType = override.thinking === undefined
+    ? nonEmpty(env.OPENAI_COMPAT_THINKING)
+      ?? (configuredReasoningEffort === undefined ? "disabled" : "enabled")
+    : override.thinking
+      && typeof override.thinking === "object"
+      && !Array.isArray(override.thinking)
+      ? override.thinking.type
+      : undefined;
+  if (!THINKING_TYPES.has(thinkingType)) {
+    throw new TranslationError(
+      400,
+      "invalid_provider_config",
+      "思考模式必须使用 thinking.type=enabled 或 disabled",
+    );
+  }
+  const requestedReasoningEffort = configuredReasoningEffort;
+
+  if (
+    override.reasoningEffort !== undefined
+    && !REASONING_EFFORTS.has(requestedReasoningEffort)
+  ) {
+    throw new TranslationError(
+      400,
+      "invalid_provider_config",
+      "思考强度仅支持 low、medium、high、xhigh 或 max",
+    );
+  }
+  const reasoningEffort = thinkingType === "enabled"
+    ? requestedReasoningEffort
+    : undefined;
 
   if (!baseUrlValue || !model || (!allowNoAuth && !apiKey)) {
     throw new TranslationError(
@@ -170,11 +205,15 @@ function resolveOpenAiConfig(env, override = {}) {
     apiKey,
     model,
     allowNoAuth,
+    thinking: { type: thinkingType },
+    ...(reasoningEffort ? { reasoningEffort } : {}),
     configurationId: configurationHash({
       provider: "openai",
       baseUrl,
       model,
       allowNoAuth,
+      thinking: { type: thinkingType },
+      ...(reasoningEffort ? { reasoningEffort } : {}),
       qualityVersion: TRANSLATION_QUALITY_VERSION,
     }),
   };
@@ -459,6 +498,12 @@ async function translateWithOpenAi(config, items, context) {
         model: config.model,
         stream: Boolean(context.onOutputText),
         temperature: 0,
+        thinking: config.thinking ?? {
+          type: config.reasoningEffort ? "enabled" : "disabled",
+        },
+        ...(config.reasoningEffort
+          ? { reasoning_effort: config.reasoningEffort }
+          : {}),
         messages: [
           {
             role: "system",

@@ -55,6 +55,10 @@ import {
   clearChoiceTrail,
 } from "../lib/choiceTrail";
 import {
+  autoPlaybackDelayMs,
+  choiceAutoPlaybackCharacterCount,
+} from "../lib/autoPlayback";
+import {
   resolveCharacterBaselineTop,
   resolveCharacterBodyHeight,
   resolveCharacterFaceRegion,
@@ -81,7 +85,6 @@ import {
   ManualTranslationError,
 } from "../lib/manualTranslations";
 import {
-  clearPersistentTranslationCaches,
   deleteLocalOpenAiConfig,
   loadPersistentTranslations,
   loadTranslationSettings,
@@ -93,6 +96,7 @@ import {
   TranslationBatchError,
   type CachedTranslation,
   type FullTranslationProgress,
+  type ThinkingLevel,
   type TranslationSettings,
 } from "../lib/translation";
 import {
@@ -123,12 +127,19 @@ type Panel = "none" | "log" | "settings" | "shortcuts";
 
 const defaultSettings: ReaderSettings = {
   textSpeed: 28,
-  autoDelay: 1500,
   bgmVolume: 0.62,
   skipUnread: false,
   reduceMotion: false,
   masterName: "御主",
 };
+
+const thinkingLevelOptions: Array<{ value: ThinkingLevel; label: string }> = [
+  { value: "low", label: "低 · low" },
+  { value: "medium", label: "中 · medium" },
+  { value: "high", label: "高 · high" },
+  { value: "xhigh", label: "极高 · xhigh" },
+  { value: "max", label: "最高 · max" },
+];
 
 function loadSettings(): ReaderSettings {
   try {
@@ -744,10 +755,13 @@ export function ReaderView({
       ? {
           ...translationSettings,
           openai: {
+            ...translationSettings.openai,
             baseUrl: localOpenAiConfig.baseUrl,
             apiKey: "",
             model: localOpenAiConfig.model,
             allowNoAuth: localOpenAiConfig.allowNoAuth,
+            thinkingEnabled: localOpenAiConfig.thinking === "enabled",
+            thinkingLevel: localOpenAiConfig.reasoningEffort,
           },
         }
       : translationSettings);
@@ -805,10 +819,19 @@ export function ReaderView({
           apiKey: translationDraft.openai.apiKey,
           allowNoAuth: translationDraft.openai.allowNoAuth,
           clearApiKey: clearOpenAiApiKey,
+          thinking: translationDraft.openai.thinkingEnabled ? "enabled" : "disabled",
+          reasoningEffort: translationDraft.openai.thinkingLevel,
         });
         const saved: TranslationSettings = {
           ...translationDraft,
-          openai: { baseUrl: "", apiKey: "", model: "", allowNoAuth: false },
+          openai: {
+            baseUrl: "",
+            apiKey: "",
+            model: "",
+            allowNoAuth: false,
+            thinkingEnabled: translationDraft.openai.thinkingEnabled,
+            thinkingLevel: translationDraft.openai.thinkingLevel,
+          },
         };
         persistTranslationSettings(saved);
         setTranslationDraft((value) => ({
@@ -848,17 +871,23 @@ export function ReaderView({
       const cleared: TranslationSettings = {
         ...translationDraft,
         deepl: { authKey: "", serverUrl: "" },
-        openai: { baseUrl: "", apiKey: "", model: "", allowNoAuth: false },
+        openai: {
+          baseUrl: "",
+          apiKey: "",
+          model: "",
+          allowNoAuth: false,
+          thinkingEnabled: false,
+          thinkingLevel: "medium",
+        },
       };
       setTranslationDraft(cleared);
       persistTranslationSettings(cleared);
       setOpenAiDraftDirty(false);
       setClearOpenAiApiKey(false);
-      clearPersistentTranslationCaches();
       await translation.refreshServerConfig();
       showToast(translationDraft.provider === "openai" && localOpenAiConfig?.editable
-        ? "已清除 .env.local 大模型配置和翻译缓存"
-        : "已清除本地翻译凭据和缓存");
+        ? "已清除 .env.local 大模型配置"
+        : "已清除本地翻译凭据");
     } catch (error) {
       setTranslationConfigError(error instanceof Error ? error.message : "无法清除翻译配置");
     } finally {
@@ -872,6 +901,13 @@ export function ReaderView({
     translationDraft,
   ]);
 
+  const clearTranslationCache = useCallback(() => {
+    if (!window.confirm("清除所有本机机器翻译缓存？之后再次阅读可能会重新请求翻译服务；人工译文不会受到影响。")) return;
+    setTranslationConfigError("");
+    translation.clearCache();
+    showToast("已清除翻译缓存，正在重新翻译");
+  }, [showToast, translation.clearCache]);
+
   useEffect(() => {
     if (
       panel !== "settings"
@@ -882,10 +918,13 @@ export function ReaderView({
     setTranslationDraft((value) => ({
       ...value,
       openai: {
+        ...value.openai,
         baseUrl: localOpenAiConfig.baseUrl,
         apiKey: "",
         model: localOpenAiConfig.model,
         allowNoAuth: localOpenAiConfig.allowNoAuth,
+        thinkingEnabled: localOpenAiConfig.thinking === "enabled",
+        thinkingLevel: localOpenAiConfig.reasoningEffort,
       },
     }));
   }, [localOpenAiConfig, openAiDraftDirty, panel, translationDraft.provider]);
@@ -956,7 +995,6 @@ export function ReaderView({
       translated: currentDisplayTranslated,
     };
     if (currentFrame.type === "choice") {
-      setAutoMode(false);
       setSkipMode(false);
     }
   }, [
@@ -1069,7 +1107,7 @@ export function ReaderView({
   ]);
 
   const resolveChoice = useCallback(
-    (choiceIndex: number) => {
+    (choiceIndex: number, continueAutoPlay = false) => {
       if (
         !currentFrame
         || currentFrame.type !== "choice"
@@ -1079,8 +1117,10 @@ export function ReaderView({
       const option = currentFrame.options[choiceIndex];
       if (!option) return;
       setAudioUnlocked(true);
-      setAutoMode(false);
-      setSkipMode(false);
+      if (!continueAutoPlay) {
+        setAutoMode(false);
+        setSkipMode(false);
+      }
       markCurrentRead();
 
       const resolved: ChoiceFrame = { ...currentFrame, selected: choiceIndex };
@@ -1099,6 +1139,7 @@ export function ReaderView({
         setFrameIndex((index) => index + 1);
       } else {
         setCompleted(true);
+        setAutoMode(false);
       }
     },
     [currentFrame, frameIndex, frames.length, markCurrentRead, translation.preparing],
@@ -1114,17 +1155,24 @@ export function ReaderView({
       || !currentFrame
       || translation.preparing
     ) return;
-    if (currentFrame.type === "choice") return;
-    const timer = window.setTimeout(advance, settings.autoDelay + Math.min(900, displayText.length * 7));
+    if (currentFrame.type === "animation") return;
+    const characterCount = currentFrame.type === "choice"
+      ? choiceAutoPlaybackCharacterCount(currentFrame.options)
+      : textCharacters.length;
+    const timer = window.setTimeout(() => {
+      if (currentFrame.type === "choice" && currentFrame.selected === undefined) {
+        resolveChoice(0, true);
+      } else advance();
+    }, autoPlaybackDelayMs(characterCount));
     return () => window.clearTimeout(timer);
   }, [
     advance,
     autoMode,
     currentFrame,
-    displayText.length,
     panel,
-    settings.autoDelay,
+    resolveChoice,
     textComplete,
+    textCharacters.length,
     translation.preparing,
     uiHidden,
     windowFocused,
@@ -1612,10 +1660,10 @@ export function ReaderView({
                 <span><strong>文字速度</strong><small>{settings.textSpeed} ms / 字</small></span>
                 <input type="range" min="10" max="70" step="2" value={settings.textSpeed} onChange={(event) => setSettings((value) => ({ ...value, textSpeed: Number(event.target.value) }))} />
               </label>
-              <label>
-                <span><strong>自动播放间隔</strong><small>{(settings.autoDelay / 1000).toFixed(1)} 秒</small></span>
-                <input type="range" min="500" max="4000" step="100" value={settings.autoDelay} onChange={(event) => setSettings((value) => ({ ...value, autoDelay: Number(event.target.value) }))} />
-              </label>
+              <div className="settings-info">
+                <span><strong>自动播放间隔</strong><small>按当前字数动态计算</small></span>
+                <p>普通文本：（0.2 × 字数 + 0.5）秒<br />分支：所有选项字数总和 × 0.2 + 0.5 秒<br />演出动画：使用脚本定义时长</p>
+              </div>
               <label>
                 <span><strong>BGM 音量</strong><small>{Math.round(settings.bgmVolume * 100)}%</small></span>
                 <input type="range" min="0" max="1" step="0.02" value={settings.bgmVolume} onChange={(event) => { setAudioUnlocked(true); setSettings((value) => ({ ...value, bgmVolume: Number(event.target.value) })); }} />
@@ -1887,6 +1935,52 @@ export function ReaderView({
                         }}
                       />
                     </label>
+                    <label className="switch-setting compact-switch thinking-setting">
+                      <span>
+                        <strong>启用思考</strong>
+                        <small>向兼容接口发送 thinking.type 参数</small>
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={translationDraft.openai.thinkingEnabled}
+                        onChange={(event) => {
+                          setOpenAiDraftDirty(true);
+                          setTranslationDraft((value) => ({
+                            ...value,
+                            openai: { ...value.openai, thinkingEnabled: event.target.checked },
+                          }));
+                        }}
+                      />
+                      <i />
+                    </label>
+                    <label className="text-setting thinking-level-setting">
+                      <span>
+                        <strong>思考强度</strong>
+                        <small>
+                          {translationDraft.openai.thinkingEnabled
+                            ? `当前 ${translationDraft.openai.thinkingLevel}`
+                            : "关闭时使用 disabled"}
+                        </small>
+                      </span>
+                      <select
+                        disabled={!translationDraft.openai.thinkingEnabled}
+                        value={translationDraft.openai.thinkingLevel}
+                        onChange={(event) => {
+                          setOpenAiDraftDirty(true);
+                          setTranslationDraft((value) => ({
+                            ...value,
+                            openai: {
+                              ...value.openai,
+                              thinkingLevel: event.target.value as ThinkingLevel,
+                            },
+                          }));
+                        }}
+                      >
+                        {thinkingLevelOptions.map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
+                    </label>
                     <label className="switch-setting compact-switch">
                       <span><strong>接口无需鉴权</strong><small>仅用于本机自建兼容服务</small></span>
                       <input
@@ -1948,8 +2042,8 @@ export function ReaderView({
 
                 <p className="translation-storage-warning">
                   {translationDraft.provider === "openai" && localOpenAiConfig?.editable
-                    ? "Base URL、模型和密钥写入项目根目录 .env.local；已保存密钥只返回配置状态，不返回明文。"
-                    : "页面配置会按你的选择明文保存在 localStorage；仅建议在自己的本机浏览器中使用。"}
+                    ? "Base URL、模型、思考设置和密钥写入项目根目录 .env.local；已保存密钥只返回配置状态，不返回明文。机器翻译缓存可单独清除，人工译文不会受到影响。"
+                    : "页面配置会按你的选择明文保存在 localStorage；仅建议在自己的本机浏览器中使用。机器翻译缓存可单独清除，人工译文不会受到影响。"}
                 </p>
                 <div className="translation-settings-actions">
                   <button className="primary" onClick={applyTranslationDraft} disabled={translationConfigSaving}>
@@ -1959,6 +2053,13 @@ export function ReaderView({
                   <button onClick={clearLocalTranslationOverrides} disabled={translationConfigSaving}>
                     <Trash2 size={15} />
                     {translationDraft.provider === "openai" && localOpenAiConfig?.editable ? "清除 .env.local 配置" : "清除本地凭据"}
+                  </button>
+                  <button
+                    className="danger"
+                    onClick={clearTranslationCache}
+                    disabled={translationConfigSaving || manualTranslationBusy}
+                  >
+                    <Trash2 size={15} /> 清除翻译缓存
                   </button>
                 </div>
               </section>

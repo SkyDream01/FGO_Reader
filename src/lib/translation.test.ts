@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   chunkTranslationUnits,
+  clearPersistentTranslationCaches,
   collectTranslationUnits,
   createTranslationFrameLookahead,
   frameTranslationUnits,
@@ -14,6 +15,7 @@ import {
   translationUnitSourceHash,
   type TranslationSettings,
 } from "./translation";
+import { SCRIPT_PARSER_VERSION } from "./scriptParserVersion";
 import type { StoryFrame } from "../types";
 
 const settings: TranslationSettings = {
@@ -25,8 +27,38 @@ const settings: TranslationSettings = {
     apiKey: "",
     model: "local-model",
     allowNoAuth: true,
+    thinkingEnabled: false,
+    thinkingLevel: "medium",
   },
 };
+
+class MemoryStorage {
+  private values = new Map<string, string>();
+
+  get length() {
+    return this.values.size;
+  }
+
+  getItem(key: string) {
+    return this.values.get(key) ?? null;
+  }
+
+  setItem(key: string, value: string) {
+    this.values.set(key, value);
+  }
+
+  removeItem(key: string) {
+    this.values.delete(key);
+  }
+
+  key(index: number) {
+    return [...this.values.keys()][index] ?? null;
+  }
+
+  keys() {
+    return [...this.values.keys()];
+  }
+}
 
 afterEach(() => {
   vi.useRealTimers();
@@ -441,11 +473,61 @@ describe("translation batching and readiness", () => {
     }, null)).toBe(false);
   });
 
-  it("leaves an empty page override undefined so server environment values can apply", () => {
+  it("keeps server credentials usable while explicitly disabling thinking", () => {
     expect(providerConfigFromSettings({
       ...settings,
-      openai: { baseUrl: "", apiKey: "", model: "", allowNoAuth: false },
-    })).toBeUndefined();
+      openai: {
+        baseUrl: "",
+        apiKey: "",
+        model: "",
+        allowNoAuth: false,
+        thinkingEnabled: false,
+        thinkingLevel: "medium",
+      },
+    })).toEqual({ thinking: { type: "disabled" } });
+  });
+
+  it("sends the selected reasoning effort only when thinking is enabled", () => {
+    expect(providerConfigFromSettings({
+      ...settings,
+      openai: { ...settings.openai, thinkingEnabled: true, thinkingLevel: "xhigh" },
+    })).toMatchObject({
+      thinking: { type: "enabled" },
+      reasoningEffort: "xhigh",
+    });
+    expect(providerConfigFromSettings({
+      ...settings,
+      openai: { ...settings.openai, thinkingEnabled: false, thinkingLevel: "max" },
+    })).toMatchObject({ thinking: { type: "disabled" } });
+    expect(providerConfigFromSettings({
+      ...settings,
+      openai: { ...settings.openai, thinkingEnabled: false, thinkingLevel: "max" },
+    })).not.toHaveProperty("reasoningEffort");
+
+    expect(providerConfigFromSettings({
+      ...settings,
+      openai: {
+        baseUrl: "",
+        apiKey: "",
+        model: "",
+        allowNoAuth: false,
+        thinkingEnabled: true,
+        thinkingLevel: "high",
+      },
+    })).toEqual({
+      thinking: { type: "enabled" },
+      reasoningEffort: "high",
+    });
+  });
+
+  it("reuses one translation cache across thinking strengths", () => {
+    expect(translationNamespace({
+      ...settings,
+      openai: { ...settings.openai, thinkingEnabled: true, thinkingLevel: "low" },
+    }, null)).toBe(translationNamespace({
+      ...settings,
+      openai: { ...settings.openai, thinkingEnabled: true, thinkingLevel: "max" },
+    }, null));
   });
 
   it("produces stable non-secret cache identifiers", () => {
@@ -458,5 +540,19 @@ describe("translation batching and readiness", () => {
       .not.toBe(translationNamespace(settings, null, "quality-v2"));
     expect(translationNamespace(settings, null, "quality-v1"))
       .toBe(translationNamespace(settings, null, "quality-v1"));
+  });
+
+  it("clears all persistent translation cache versions and leaves unrelated storage intact", () => {
+    const storage = new MemoryStorage();
+    storage.setItem("fgo-reader-translation-settings:v1", "keep");
+    storage.setItem(`fgo-reader-translation-cache:v${SCRIPT_PARSER_VERSION}:orphan`, "current");
+    storage.setItem(`fgo-reader-translation-cache-index:v${SCRIPT_PARSER_VERSION}`, "[]");
+    storage.setItem("fgo-reader-translation-cache:v4:legacy", "legacy");
+    storage.setItem("fgo-reader-translation-cache-index:v4", "[]");
+    vi.stubGlobal("localStorage", storage);
+
+    clearPersistentTranslationCaches();
+
+    expect(storage.keys()).toEqual(["fgo-reader-translation-settings:v1"]);
   });
 });

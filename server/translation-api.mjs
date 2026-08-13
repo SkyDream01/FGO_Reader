@@ -32,6 +32,9 @@ function countCharacters(value) {
   return Array.from(value).length;
 }
 
+const THINKING_TYPES = new Set(["enabled", "disabled"]);
+const REASONING_EFFORTS = new Set(["low", "medium", "high", "xhigh", "max"]);
+
 function normalizeProviderUrl(value, label) {
   const normalized = value.replace(/\/+$/, "");
   if (!isAllowedProviderUrl(normalized)) {
@@ -59,6 +62,14 @@ function validateLocalOpenAiConfig(body, env) {
   }
   if (typeof body.allowNoAuth !== "boolean") {
     throw new TranslationError(400, "invalid_provider_config", "免鉴权开关格式无效");
+  }
+  const thinking = body.thinking ?? "disabled";
+  if (!THINKING_TYPES.has(thinking)) {
+    throw new TranslationError(400, "invalid_provider_config", "思考模式必须为 enabled 或 disabled");
+  }
+  const reasoningEffort = body.reasoningEffort ?? "medium";
+  if (!REASONING_EFFORTS.has(reasoningEffort)) {
+    throw new TranslationError(400, "invalid_provider_config", "思考强度格式无效");
   }
   if (body.apiKey !== undefined && typeof body.apiKey !== "string") {
     throw new TranslationError(400, "invalid_provider_config", "API 密钥格式无效");
@@ -95,6 +106,8 @@ function validateLocalOpenAiConfig(body, env) {
     OPENAI_COMPAT_API_KEY: apiKey,
     OPENAI_COMPAT_MODEL: model,
     OPENAI_COMPAT_ALLOW_NO_AUTH: String(body.allowNoAuth),
+    OPENAI_COMPAT_THINKING: thinking,
+    OPENAI_COMPAT_REASONING_EFFORT: reasoningEffort,
   };
 }
 
