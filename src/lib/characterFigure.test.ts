@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { CharacterFigureMetadata } from "../data/atlas";
 import {
   resolveCharacterBaselineTop,
+  resolveCharacterCanvasSize,
   resolveCharacterBodyHeight,
   resolveCharacterFaceRegion,
 } from "./characterFigure";
@@ -16,6 +17,11 @@ const metadata: CharacterFigureMetadata = {
 };
 
 describe("resolveCharacterFaceRegion", () => {
+  it("keeps wide Atlas canvases intact", () => {
+    expect(resolveCharacterCanvasSize(1024, 1024)).toBe(1024);
+    expect(resolveCharacterCanvasSize(2048, 1024)).toBe(2048);
+  });
+
   it("uses the merged image's body baseline instead of a fixed viewport cut", () => {
     const standardBodyHeight = resolveCharacterBodyHeight(1024, metadata);
     const tallBodyHeight = resolveCharacterBodyHeight(1200, {

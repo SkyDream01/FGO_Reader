@@ -23,6 +23,9 @@ function dialogue(
           face: 0,
           visible: true,
           position: "center",
+          x: 0,
+          y: 0,
+          scale: 1,
           silhouette: false,
           active: false,
         }]

@@ -1749,6 +1749,8 @@ select:focus-visible {
 .reader-shell {
   --fgo-stage-width: 1024;
   --fgo-stage-height: 576;
+  /* Keep the default figure size used by the reader. Script-authored
+     charaScale values are additional multipliers on this baseline. */
   --fgo-figure-scale: 0.9;
   position: fixed;
   inset: 0;
@@ -1934,24 +1936,22 @@ html[data-runtime="android"] .custom-library-backdrop {
 
 .character-sprite {
   position: absolute;
-  /* FGO figures use a 1024px square canvas. The visible 768px body region is
-     aligned to the bottom of the 576px stage, leaving 192px above the frame. */
+  /* FGO figures use a square canvas. The visible 75% body region is aligned
+     to the bottom of the 576px stage, leaving the atlas padding above it. */
   width: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   width: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   height: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   height: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   bottom: calc(-25vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   bottom: calc(-25dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
-  left: 50%;
+  left: calc(50% + var(--character-x, 0dvh));
   opacity: 0;
-  transform: translateX(-50%) translateY(15px);
+  transform: translateX(-50%) translateY(var(--character-y, 0dvh)) scale(var(--character-scale, 1));
+  transform-origin: 50% 75%;
   animation: character-enter 220ms ease forwards;
   transition: filter 180ms ease, opacity 180ms ease, transform 180ms ease;
   filter: brightness(0.72) saturate(0.72);
 }
-
-.character-sprite[data-position="left"] { left: 27%; }
-.character-sprite[data-position="right"] { left: 73%; }
 
 .character-sprite img,
 .character-sprite canvas {
@@ -1993,7 +1993,14 @@ html[data-runtime="android"] .custom-library-backdrop {
 }
 
 @keyframes character-enter {
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(calc(var(--character-y, 0dvh) + 15px)) scale(var(--character-scale, 1));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(var(--character-y, 0dvh)) scale(var(--character-scale, 1));
+  }
 }
 
 .character-fallback {

@@ -44,6 +44,24 @@ describe("cleanScriptText", () => {
       "right",
     ]);
   });
+
+  it("preserves authored character coordinates and scale", () => {
+    const script = `
+[charaSet A 1098366400 1 大型角色]
+[charaScale A 2.0]
+[charaFadein A 0.1 -150,470]
+[charaMoveEase A -150,90 1.0 easeOutSine]
+＠A：大型角色
+坐标和缩放测试[k]
+`;
+    const parsed = parseFgoScript(script, "character-transform-demo");
+    expect(parsed.frames[0].characters[0]).toMatchObject({
+      x: -150,
+      y: 90,
+      scale: 2,
+      position: "left",
+    });
+  });
 });
 
 describe("parseFgoScript", () => {

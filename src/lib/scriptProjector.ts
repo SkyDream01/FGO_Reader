@@ -24,6 +24,9 @@ interface CharacterDefinition {
   visible: boolean;
   onStage: boolean;
   position: CharacterPosition;
+  x: number;
+  y: number;
+  scale: number;
   layer: "main" | "sub";
   depth: number | null;
   effectOnly: boolean;
@@ -35,6 +38,8 @@ interface SceneLayerDefinition {
   visible: boolean;
   onStage: boolean;
   position: CharacterPosition;
+  x: number;
+  y: number;
   layer: "main" | "sub";
   depth: number | null;
 }
@@ -128,22 +133,28 @@ function isEffectOnlyCharacter(id: string, name: string) {
 function placementFromToken(token?: string): {
   position: CharacterPosition;
   onStage: boolean;
+  x: number;
+  y: number;
 } {
   let x = 0;
+  let y = 0;
   if (token?.includes(",")) {
-    x = Number.parseFloat(token.split(",", 1)[0]);
+    const [rawX, rawY] = token.split(",", 2);
+    x = Number.parseFloat(rawX);
+    y = Number.parseFloat(rawY);
   } else {
     const index = Number.parseInt(token ?? "1", 10);
     x = POSITION_X[index] ?? index;
   }
   if (!Number.isFinite(x)) x = 0;
+  if (!Number.isFinite(y)) y = 0;
 
   if (Math.abs(x) >= OFF_STAGE_X) {
-    return { position: x < 0 ? "left" : "right", onStage: false };
+    return { position: x < 0 ? "left" : "right", onStage: false, x, y };
   }
-  if (x < -96) return { position: "left", onStage: true };
-  if (x > 96) return { position: "right", onStage: true };
-  return { position: "center", onStage: true };
+  if (x < -96) return { position: "left", onStage: true, x, y };
+  if (x > 96) return { position: "right", onStage: true, x, y };
+  return { position: "center", onStage: true, x, y };
 }
 
 function normalizeRenderedText(value: string, masterName: string) {
@@ -290,6 +301,9 @@ function snapshotCharacters(
       face: character.face,
       visible: character.visible,
       position: character.position,
+      x: character.x,
+      y: character.y,
+      scale: character.scale,
       silhouette: character.silhouette,
       active: activeSlots.has(character.slot),
     }));
@@ -303,6 +317,9 @@ function animationSnapshotKey(state: ProjectionState) {
       id: character.id,
       face: character.face,
       position: character.position,
+      x: character.x,
+      y: character.y,
+      scale: character.scale,
       silhouette: character.silhouette,
     })),
   });
@@ -455,6 +472,8 @@ function applyPlacement(
   const placement = placementFromToken(token);
   target.position = placement.position;
   target.onStage = placement.onStage;
+  target.x = placement.x;
+  target.y = placement.y;
   if (visible !== undefined) target.visible = visible;
 }
 
@@ -486,6 +505,8 @@ function applyCommand(
       visible: false,
       onStage: true,
       position: "center",
+      x: 0,
+      y: 0,
       layer: "main",
       depth: null,
     });
@@ -536,6 +557,9 @@ function applyCommand(
       visible: false,
       onStage: true,
       position: "center",
+      x: 0,
+      y: 0,
+      scale: 1,
       layer: "main",
       depth: null,
       effectOnly: isEffectOnlyCharacter(id, characterName),
@@ -559,6 +583,9 @@ function applyCommand(
       visible: current?.visible ?? false,
       onStage: current?.onStage ?? true,
       position: current?.position ?? "center",
+      x: current?.x ?? 0,
+      y: current?.y ?? 0,
+      scale: current?.scale ?? 1,
       layer: current?.layer ?? "main",
       depth: current?.depth ?? null,
       effectOnly: isEffectOnlyCharacter(id, characterName),
@@ -592,6 +619,17 @@ function applyCommand(
       state.talkSlot = null;
     } else {
       state.talkSlot = args[0];
+    }
+    return;
+  }
+
+  if (name === "charascale" || name.startsWith("charamovescale")) {
+    if (!requireArgs(command, 2, context)) return;
+    const character = state.characters.get(args[0]);
+    const scale = Number.parseFloat(args[1]);
+    if (character && Number.isFinite(scale) && scale > 0) character.scale = scale;
+    else if (!Number.isFinite(scale) || scale <= 0) {
+      addDiagnostic(context, command, "invalid_character_scale", "角色缩放倍率无效");
     }
     return;
   }
@@ -805,6 +843,9 @@ function characterEquals(
     && left.visible === right.visible
     && left.onStage === right.onStage
     && left.position === right.position
+    && left.x === right.x
+    && left.y === right.y
+    && left.scale === right.scale
     && left.layer === right.layer
     && left.depth === right.depth
     && left.effectOnly === right.effectOnly
@@ -820,6 +861,8 @@ function sceneLayerEquals(
     && left.visible === right.visible
     && left.onStage === right.onStage
     && left.position === right.position
+    && left.x === right.x
+    && left.y === right.y
     && left.layer === right.layer
     && left.depth === right.depth;
 }

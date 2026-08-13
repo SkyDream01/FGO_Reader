@@ -12,6 +12,15 @@ export interface CharacterFaceRegion {
   height: number;
 }
 
+/**
+ * Atlas occasionally stores a story figure on a canvas wider than the
+ * standard 1024px stage canvas. Keep the complete source canvas so the
+ * renderer can scale it down instead of cropping its sides.
+ */
+export function resolveCharacterCanvasSize(figureWidth: number, figureHeight: number) {
+  return Math.max(FACE_PAGE_SIZE, figureWidth, figureHeight);
+}
+
 export function resolveCharacterBodyHeight(
   figureHeight: number,
   metadata: CharacterFigureMetadata | null,

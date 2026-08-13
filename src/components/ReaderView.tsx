@@ -60,6 +60,7 @@ import {
 } from "../lib/autoPlayback";
 import {
   resolveCharacterBaselineTop,
+  resolveCharacterCanvasSize,
   resolveCharacterBodyHeight,
   resolveCharacterFaceRegion,
 } from "../lib/characterFigure";
@@ -151,6 +152,17 @@ function loadSettings(): ReaderSettings {
 }
 
 const FIGURE_CANVAS_SIZE = 1024;
+const FIGURE_STAGE_HEIGHT = 576;
+
+const defaultCharacterX: Record<CharacterState["position"], number> = {
+  left: -256,
+  center: 0,
+  right: 256,
+};
+
+function stageCoordinateToViewport(value: number) {
+  return `${value * (100 / FIGURE_STAGE_HEIGHT)}dvh`;
+}
 
 function loadBrowserImage(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -195,7 +207,7 @@ function AtlasCharacterFigure({
         if (cancelled) return;
         setResources({
           merged,
-          figureWidth: texture?.naturalWidth || FIGURE_CANVAS_SIZE,
+          figureWidth: texture?.naturalWidth || merged.naturalWidth || FIGURE_CANVAS_SIZE,
           figureHeight: texture?.naturalHeight || FIGURE_CANVAS_SIZE,
           metadata,
         });
@@ -219,9 +231,14 @@ function AtlasCharacterFigure({
     }
 
     const { merged, figureWidth, figureHeight, metadata } = resources;
-    const figureLeft = (FIGURE_CANVAS_SIZE - figureWidth) / 2 + (metadata?.offsetX ?? 0);
+    const canvasSize = resolveCharacterCanvasSize(figureWidth, figureHeight);
+    const canvasScale = canvasSize / FIGURE_CANVAS_SIZE;
+    const figureLeft = (canvasSize - figureWidth) / 2 + (metadata?.offsetX ?? 0);
     const bodyHeight = resolveCharacterBodyHeight(figureHeight, metadata);
-    const figureTop = resolveCharacterBaselineTop(bodyHeight);
+    const figureTop = resolveCharacterBaselineTop(
+      bodyHeight,
+      FIGURE_CANVAS_SIZE * canvasScale * 0.75,
+    );
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = "high";
@@ -260,11 +277,15 @@ function AtlasCharacterFigure({
     setReady(true);
   }, [character.face, resources]);
 
+  const canvasSize = resources
+    ? resolveCharacterCanvasSize(resources.figureWidth, resources.figureHeight)
+    : FIGURE_CANVAS_SIZE;
+
   return (
     <canvas
       ref={canvasRef}
-      width={FIGURE_CANVAS_SIZE}
-      height={FIGURE_CANVAS_SIZE}
+      width={canvasSize}
+      height={canvasSize}
       className={ready ? "ready" : ""}
       aria-label={character.name}
     />
@@ -283,6 +304,18 @@ function CharacterSprite({
   const [failed, setFailed] = useState(false);
   const [wideAtlas, setWideAtlas] = useState(false);
   const fallbackUrl = characterUrl(region, character.id);
+  const characterX = Number.isFinite(character.x)
+    ? character.x
+    : defaultCharacterX[character.position];
+  const characterY = Number.isFinite(character.y) ? character.y : 0;
+  const characterScale = Number.isFinite(character.scale) && character.scale > 0
+    ? character.scale
+    : 1;
+  const characterStyle = {
+    "--character-x": stageCoordinateToViewport(characterX),
+    "--character-y": stageCoordinateToViewport(characterY),
+    "--character-scale": String(characterScale),
+  } as CSSProperties;
   const {
     url,
     usingLocalAsset,
@@ -303,6 +336,7 @@ function CharacterSprite({
       className={`character-sprite ${character.active ? "active" : "inactive"} ${character.silhouette ? "silhouette" : ""} ${usingLocalAsset && wideAtlas ? "wide-atlas" : ""}`}
       data-position={character.position}
       data-slot={character.slot}
+      style={characterStyle}
     >
       {!failed && url && usingLocalAsset ? (
         <img

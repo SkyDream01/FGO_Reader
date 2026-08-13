@@ -80,6 +80,12 @@ export interface CharacterState {
   face: number;
   visible: boolean;
   position: CharacterPosition;
+  /** Script-space X offset from the center of the 1024px stage. */
+  x: number;
+  /** Script-space Y offset; positive values move the figure down. */
+  y: number;
+  /** Script-authored scale multiplier. */
+  scale: number;
   silhouette: boolean;
   active: boolean;
 }
