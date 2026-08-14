@@ -60,16 +60,28 @@ import {
 } from "../lib/autoPlayback";
 import {
   resolveCharacterBaselineTop,
+  resolveCharacterAlphaContentRect,
+  resolveCharacterCenterCorrection,
   resolveCharacterCanvasSize,
   resolveCharacterBodyHeight,
   resolveCharacterFaceRegion,
+  type CharacterCenterCorrection,
 } from "../lib/characterFigure";
-import { stageCoordinateToViewport } from "../lib/stageCoordinates";
+import {
+  STAGE_CALIBRATION_RATIOS,
+  stageRatioToViewport,
+  stageCoordinateToViewport,
+} from "../lib/stageCoordinates";
 import {
   clearLastObservation,
   createLastObservation,
   saveLastObservation,
 } from "../lib/lastObservation";
+import {
+  COORDINATE_DEBUG_ENABLED,
+  DEBUG_COORDINATE_OFFSETS,
+  type CoordinateDebugSettings,
+} from "../lib/coordinateDebug";
 import {
   BOOKMARK_STORAGE_KEY,
   choiceTrailStorageKey,
@@ -159,6 +171,8 @@ const defaultCharacterX: Record<CharacterState["position"], number> = {
   right: 256,
 };
 
+const ZERO_CHARACTER_CENTER_CORRECTION: CharacterCenterCorrection = { x: 0, y: 0 };
+
 function loadBrowserImage(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
@@ -168,16 +182,77 @@ function loadBrowserImage(url: string) {
   });
 }
 
+function resolveImageCharacterCenterCorrection(
+  image: HTMLImageElement,
+  fit: "contain" | "cover",
+) {
+  const width = image.naturalWidth;
+  const height = image.naturalHeight;
+  if (width <= 0 || height <= 0) return ZERO_CHARACTER_CENTER_CORRECTION;
+
+  const stageSize = FIGURE_CANVAS_SIZE;
+  const scale = fit === "cover"
+    ? Math.max(stageSize / width, stageSize / height)
+    : Math.min(stageSize / width, stageSize / height);
+  const renderedWidth = width * scale;
+  const renderedHeight = height * scale;
+  const fallback = resolveCharacterCenterCorrection({
+    left: (stageSize - renderedWidth) / 2,
+    top: stageSize - renderedHeight,
+    width: renderedWidth,
+    height: resolveCharacterBodyHeight(height, null) * scale,
+  }, stageSize);
+
+  try {
+    const scanCanvas = document.createElement("canvas");
+    scanCanvas.width = stageSize;
+    scanCanvas.height = stageSize;
+    const context = scanCanvas.getContext("2d");
+    if (!context) return fallback;
+
+    context.save();
+    context.beginPath();
+    context.rect(0, 0, stageSize, stageSize * 0.75);
+    context.clip();
+    context.drawImage(
+      image,
+      0,
+      0,
+      width,
+      height,
+      (stageSize - renderedWidth) / 2,
+      stageSize - renderedHeight,
+      renderedWidth,
+      renderedHeight,
+    );
+    context.restore();
+
+    const visibleContent = resolveCharacterAlphaContentRect(
+      context.getImageData(0, 0, stageSize, stageSize).data,
+      stageSize,
+      stageSize,
+    );
+    return visibleContent
+      ? resolveCharacterCenterCorrection(visibleContent, stageSize)
+      : fallback;
+  } catch {
+    // A cross-origin image without CORS headers can be drawn but not inspected.
+    return fallback;
+  }
+}
+
 function AtlasCharacterFigure({
   character,
   region,
   mergedUrl,
   onError,
+  onVisibleCenterCorrection,
 }: {
   character: CharacterState;
   region: StoryLaunch["region"];
   mergedUrl: string;
   onError: () => void;
+  onVisibleCenterCorrection: (correction: CharacterCenterCorrection) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [resources, setResources] = useState<{
@@ -269,8 +344,28 @@ function AtlasCharacterFigure({
         );
       }
     }
+    const fallbackCenterCorrection = resolveCharacterCenterCorrection({
+      left: figureLeft,
+      top: figureTop,
+      width: figureWidth,
+      height: bodyHeight,
+    }, canvasSize);
+    let centerCorrection = fallbackCenterCorrection;
+    try {
+      const visibleContent = resolveCharacterAlphaContentRect(
+        context.getImageData(0, 0, canvasSize, canvasSize).data,
+        canvasSize,
+        canvasSize,
+      );
+      if (visibleContent) {
+        centerCorrection = resolveCharacterCenterCorrection(visibleContent, canvasSize);
+      }
+    } catch {
+      // Keep the geometric correction if the remote Atlas image taints canvas.
+    }
+    onVisibleCenterCorrection(centerCorrection);
     setReady(true);
-  }, [character.face, resources]);
+  }, [character.face, onError, onVisibleCenterCorrection, resources]);
 
   const canvasSize = resources
     ? resolveCharacterCanvasSize(resources.figureWidth, resources.figureHeight)
@@ -291,13 +386,22 @@ function CharacterSprite({
   character,
   region,
   customPackage,
+  characterCalibrationOffset,
+  characterDebugOffset,
+  showCharacterOrigin,
 }: {
   character: CharacterState;
   region: StoryLaunch["region"];
   customPackage: PreparedCustomPackage | null;
+  characterCalibrationOffset: { x: number; y: number };
+  characterDebugOffset: { x: number; y: number };
+  showCharacterOrigin: boolean;
 }) {
   const [failed, setFailed] = useState(false);
   const [wideAtlas, setWideAtlas] = useState(false);
+  const [characterCenterCorrection, setCharacterCenterCorrection] = useState<CharacterCenterCorrection>(
+    ZERO_CHARACTER_CENTER_CORRECTION,
+  );
   const fallbackUrl = characterUrl(region, character.id);
   const characterX = Number.isFinite(character.x)
     ? character.x
@@ -309,7 +413,61 @@ function CharacterSprite({
   const characterStyle = {
     "--character-x": stageCoordinateToViewport(characterX, "x"),
     "--character-y": stageCoordinateToViewport(characterY, "y"),
+    "--character-calibration-x": stageRatioToViewport(
+      characterCalibrationOffset.x,
+      "x",
+      "character",
+    ),
+    "--character-calibration-y": stageRatioToViewport(
+      characterCalibrationOffset.y,
+      "y",
+      "character",
+    ),
+    "--character-debug-x": stageRatioToViewport(
+      characterDebugOffset.x,
+      "x",
+      "character",
+    ),
+    "--character-debug-y": stageRatioToViewport(
+      characterDebugOffset.y,
+      "y",
+      "character",
+    ),
+    "--character-visual-correction-x": stageRatioToViewport(
+      characterCenterCorrection.x * characterScale,
+      "x",
+      "character",
+    ),
+    "--character-visual-correction-y": stageRatioToViewport(
+      characterCenterCorrection.y * characterScale,
+      "y",
+      "character",
+    ),
     "--character-scale": String(characterScale),
+  } as CSSProperties;
+  const characterOriginStyle = {
+    "--character-x": stageCoordinateToViewport(characterX, "x"),
+    "--character-y": stageCoordinateToViewport(characterY, "y"),
+    "--character-calibration-x": stageRatioToViewport(
+      characterCalibrationOffset.x,
+      "x",
+      "character",
+    ),
+    "--character-calibration-y": stageRatioToViewport(
+      characterCalibrationOffset.y,
+      "y",
+      "character",
+    ),
+    "--character-debug-x": stageRatioToViewport(
+      characterDebugOffset.x,
+      "x",
+      "character",
+    ),
+    "--character-debug-y": stageRatioToViewport(
+      characterDebugOffset.y,
+      "y",
+      "character",
+    ),
   } as CSSProperties;
   const {
     url,
@@ -324,46 +482,73 @@ function CharacterSprite({
 
   useEffect(() => {
     setFailed(false);
+    setWideAtlas(false);
+    setCharacterCenterCorrection(ZERO_CHARACTER_CENTER_CORRECTION);
   }, [url]);
 
+  const handleVisibleCenterCorrection = useCallback(
+    (correction: CharacterCenterCorrection) => {
+      setCharacterCenterCorrection(correction);
+    },
+    [],
+  );
+  const handleAtlasError = useCallback(() => setFailed(true), []);
+
   return (
-    <div
-      className={`character-sprite ${character.active ? "active" : "inactive"} ${character.silhouette ? "silhouette" : ""} ${usingLocalAsset && wideAtlas ? "wide-atlas" : ""}`}
-      data-position={character.position}
-      data-slot={character.slot}
-      style={characterStyle}
-    >
-      {!failed && url && usingLocalAsset ? (
-        <img
-          src={url}
-          alt={character.name}
-          onLoad={(event) => {
-            const image = event.currentTarget;
-            setWideAtlas(image.naturalWidth / image.naturalHeight > 1.25);
-          }}
-          onError={() => {
-            if (usingLocalAsset) {
-              useFallback();
-              return;
-            }
-            setFailed(true);
-          }}
-          draggable={false}
-        />
-      ) : !failed && url ? (
-        <AtlasCharacterFigure
+    <>
+      <div
+        className={`character-sprite ${character.active ? "active" : "inactive"} ${character.silhouette ? "silhouette" : ""} ${usingLocalAsset && wideAtlas ? "wide-atlas" : ""}`}
+        data-position={character.position}
+        data-slot={character.slot}
+        style={characterStyle}
+      >
+        {!failed && url && usingLocalAsset ? (
+          <img
+            src={url}
+            alt={character.name}
+            onLoad={(event) => {
+              const image = event.currentTarget;
+              const wide = image.naturalWidth / image.naturalHeight > 1.25;
+              setWideAtlas(wide);
+              setCharacterCenterCorrection(
+                resolveImageCharacterCenterCorrection(image, wide ? "cover" : "contain"),
+              );
+            }}
+            onError={() => {
+              if (usingLocalAsset) {
+                useFallback();
+                return;
+              }
+              setFailed(true);
+            }}
+            draggable={false}
+          />
+        ) : !failed && url ? (
+          <AtlasCharacterFigure
           character={character}
           region={region}
           mergedUrl={url}
-          onError={() => setFailed(true)}
+          onError={handleAtlasError}
+          onVisibleCenterCorrection={handleVisibleCenterCorrection}
         />
-      ) : failed ? (
-        <div className="character-fallback" aria-label={`${character.name} 立绘不可用`}>
-          <span>{character.name.slice(0, 1)}</span>
-          <small>{character.name}</small>
-        </div>
-      ) : null}
-    </div>
+        ) : failed ? (
+          <div className="character-fallback" aria-label={`${character.name} 立绘不可用`}>
+            <span>{character.name.slice(0, 1)}</span>
+            <small>{character.name}</small>
+          </div>
+        ) : null}
+      </div>
+      {showCharacterOrigin && (
+        <span
+          className="coordinate-origin-debug character-origin-debug"
+          style={characterOriginStyle}
+          aria-hidden="true"
+        >
+          <i />
+          <small>角色 0,0</small>
+        </span>
+      )}
+    </>
   );
 }
 
@@ -414,6 +599,43 @@ const shortcutRows = [
   ["Esc", "关闭当前面板"],
 ];
 
+type CoordinateDebugInputValues = {
+  screenOrigin: { x: string; y: string };
+  characterOrigin: { x: string; y: string };
+};
+
+function coordinateDebugInputValuesFrom(settings: CoordinateDebugSettings): CoordinateDebugInputValues {
+  return {
+    screenOrigin: {
+      x: String(settings.screenOrigin.x),
+      y: String(settings.screenOrigin.y),
+    },
+    characterOrigin: {
+      x: String(settings.characterOrigin.x),
+      y: String(settings.characterOrigin.y),
+    },
+  };
+}
+
+const DISABLED_COORDINATE_DEBUG_SETTINGS: CoordinateDebugSettings = {
+  screenOrigin: { x: 0, y: 0 },
+  characterOrigin: { x: 0, y: 0 },
+  showScreenOrigin: false,
+  showCharacterOrigin: false,
+};
+
+function initialCoordinateDebugSettings(): CoordinateDebugSettings {
+  const defaults = COORDINATE_DEBUG_ENABLED
+    ? DEBUG_COORDINATE_OFFSETS
+    : DISABLED_COORDINATE_DEBUG_SETTINGS;
+  return {
+    screenOrigin: { ...defaults.screenOrigin },
+    characterOrigin: { ...defaults.characterOrigin },
+    showScreenOrigin: defaults.showScreenOrigin,
+    showCharacterOrigin: defaults.showCharacterOrigin,
+  };
+}
+
 export function ReaderView({
   story,
   prepared,
@@ -422,6 +644,14 @@ export function ReaderView({
   onExit,
 }: ReaderViewProps) {
   const [settings, setSettings] = useState<ReaderSettings>(loadSettings);
+  // DEBUG ONLY: this is intentionally session-local so calibration changes
+  // take effect immediately without becoming a persisted reader preference.
+  const [coordinateDebugOffsets, setCoordinateDebugOffsets] = useState<CoordinateDebugSettings>(
+    initialCoordinateDebugSettings,
+  );
+  const [coordinateDebugInputValues, setCoordinateDebugInputValues] = useState(
+    () => coordinateDebugInputValuesFrom(initialCoordinateDebugSettings()),
+  );
   const [translationSettings, setTranslationSettings] = useState<TranslationSettings>(loadTranslationSettings);
   const [translationDraft, setTranslationDraft] = useState<TranslationSettings>(loadTranslationSettings);
   const [frames, setFrames] = useState<StoryFrame[]>(prepared.frames);
@@ -1409,6 +1639,66 @@ export function ReaderView({
     "--stage-background": currentBackground ? `url("${currentBackground}")` : "none",
     "--story-progress": `${progress}%`,
   } as CSSProperties;
+  const activeCoordinateDebugSettings = COORDINATE_DEBUG_ENABLED
+    ? coordinateDebugOffsets
+    : DISABLED_COORDINATE_DEBUG_SETTINGS;
+  // Keep production calibration separate from the opt-in debug adjustments.
+  // The calibration values remain active in every build and mode.
+  const screenCalibrationOffset = STAGE_CALIBRATION_RATIOS.screen;
+  const screenDebugOffset = activeCoordinateDebugSettings.screenOrigin;
+  const characterCalibrationOffset = STAGE_CALIBRATION_RATIOS.character;
+  const characterDebugOffset = activeCoordinateDebugSettings.characterOrigin;
+  const characterLayerStyle = {
+    "--screen-calibration-x": stageRatioToViewport(
+      screenCalibrationOffset.x,
+      "x",
+      "screen",
+    ),
+    "--screen-calibration-y": stageRatioToViewport(
+      screenCalibrationOffset.y,
+      "y",
+      "screen",
+    ),
+    "--screen-debug-x": stageRatioToViewport(
+      screenDebugOffset.x,
+      "x",
+      "screen",
+    ),
+    "--screen-debug-y": stageRatioToViewport(
+      screenDebugOffset.y,
+      "y",
+      "screen",
+    ),
+  } as CSSProperties;
+
+  const updateCoordinateDebugOffset = (
+    group: "screenOrigin" | "characterOrigin",
+    axis: "x" | "y",
+    rawValue: string,
+  ) => {
+    setCoordinateDebugInputValues((current) => ({
+      ...current,
+      [group]: { ...current[group], [axis]: rawValue },
+    }));
+    if (!rawValue.trim() || rawValue.trim() === "-") return;
+    const value = Number(rawValue);
+    if (!Number.isFinite(value) || value < -1 || value > 1) return;
+    setCoordinateDebugOffsets((current) => ({
+      ...current,
+      [group]: { ...current[group], [axis]: value },
+    }));
+  };
+
+  const resetCoordinateDebugOffsets = () => {
+    const defaults: CoordinateDebugSettings = {
+      screenOrigin: { ...DEBUG_COORDINATE_OFFSETS.screenOrigin },
+      characterOrigin: { ...DEBUG_COORDINATE_OFFSETS.characterOrigin },
+      showScreenOrigin: DEBUG_COORDINATE_OFFSETS.showScreenOrigin,
+      showCharacterOrigin: DEBUG_COORDINATE_OFFSETS.showCharacterOrigin,
+    };
+    setCoordinateDebugOffsets(defaults);
+    setCoordinateDebugInputValues(coordinateDebugInputValuesFrom(defaults));
+  };
 
   const stageClick = (event: MouseEvent<HTMLDivElement>) => {
     if ((event.target as HTMLElement).closest("button, input, select, .reader-panel")) return;
@@ -1453,13 +1743,22 @@ export function ReaderView({
           <div className="scene-scanlines" />
         </div>
 
-        <div className="character-layer" aria-live="off">
+        <div className="character-layer" style={characterLayerStyle} aria-live="off">
+          {COORDINATE_DEBUG_ENABLED && activeCoordinateDebugSettings.showScreenOrigin && (
+            <span className="coordinate-origin-debug screen-origin-debug" aria-hidden="true">
+              <i />
+              <small>画面 0,0</small>
+            </span>
+          )}
           {currentFrame?.characters.map((character) => (
             <CharacterSprite
               key={`${character.slot}-${character.id}`}
               character={character}
               region={story.region}
               customPackage={customPackage}
+              characterCalibrationOffset={characterCalibrationOffset}
+              characterDebugOffset={characterDebugOffset}
+              showCharacterOrigin={COORDINATE_DEBUG_ENABLED && activeCoordinateDebugSettings.showCharacterOrigin}
             />
           ))}
         </div>
@@ -1711,6 +2010,82 @@ export function ReaderView({
                 <input type="checkbox" checked={settings.reduceMotion} onChange={(event) => setSettings((value) => ({ ...value, reduceMotion: event.target.checked }))} />
                 <i />
               </label>
+
+              {/* DEBUG ONLY: remove this section with coordinateDebug.ts after calibration. */}
+              {COORDINATE_DEBUG_ENABLED && (
+                <section className="coordinate-debug-section" aria-label="坐标调试">
+                  <div className="coordinate-debug-heading">
+                    <span><Gauge size={17} /><strong>坐标调试</strong></span>
+                    <small>BASE · 画面 Y -0.25 / 角色 Y 0.1</small>
+                  </div>
+                  <div className="coordinate-debug-grid">
+                    <label className="coordinate-debug-field">
+                      <span><strong>画面原点 X</strong><small>比例，1 = 100%</small></span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={coordinateDebugInputValues.screenOrigin.x}
+                        onChange={(event) => updateCoordinateDebugOffset("screenOrigin", "x", event.target.value)}
+                      />
+                    </label>
+                    <label className="coordinate-debug-field">
+                      <span><strong>画面原点 Y</strong><small>比例，1 = 100%</small></span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={coordinateDebugInputValues.screenOrigin.y}
+                        onChange={(event) => updateCoordinateDebugOffset("screenOrigin", "y", event.target.value)}
+                      />
+                    </label>
+                    <label className="coordinate-debug-field">
+                      <span><strong>角色原点 X</strong><small>比例，1 = 100%</small></span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={coordinateDebugInputValues.characterOrigin.x}
+                        onChange={(event) => updateCoordinateDebugOffset("characterOrigin", "x", event.target.value)}
+                      />
+                    </label>
+                    <label className="coordinate-debug-field">
+                      <span><strong>角色原点 Y</strong><small>比例，1 = 100%</small></span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={coordinateDebugInputValues.characterOrigin.y}
+                        onChange={(event) => updateCoordinateDebugOffset("characterOrigin", "y", event.target.value)}
+                      />
+                    </label>
+                  </div>
+                  <label className="coordinate-debug-switch switch-setting">
+                    <span><strong>显示画面 0,0 点</strong><small>显示全局最终合成原点</small></span>
+                    <input
+                      type="checkbox"
+                      checked={coordinateDebugOffsets.showScreenOrigin}
+                      onChange={(event) => setCoordinateDebugOffsets((value) => ({
+                        ...value,
+                        showScreenOrigin: event.target.checked,
+                      }))}
+                    />
+                    <i />
+                  </label>
+                  <label className="coordinate-debug-switch switch-setting">
+                    <span><strong>显示角色 0,0 点</strong><small>显示每个角色最终合成锚点</small></span>
+                    <input
+                      type="checkbox"
+                      checked={coordinateDebugOffsets.showCharacterOrigin}
+                      onChange={(event) => setCoordinateDebugOffsets((value) => ({
+                        ...value,
+                        showCharacterOrigin: event.target.checked,
+                      }))}
+                    />
+                    <i />
+                  </label>
+                  <p className="coordinate-debug-note">正式校准已直接作用于程序；此处为额外临时偏移。比例值 1 = 100%，负值表示反向；修改仅当前阅读会话有效。</p>
+                  <button type="button" className="coordinate-debug-reset" onClick={resetCoordinateDebugOffsets}>
+                    <RotateCcw size={14} /> 重置调试偏移
+                  </button>
+                </section>
+              )}
 
               <section className="translation-settings-section">
                 <div className="translation-settings-heading">

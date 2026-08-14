@@ -1932,11 +1932,18 @@ html[data-runtime="android"] .custom-library-backdrop {
 .character-layer {
   z-index: 3;
   pointer-events: none;
+  /* Production screen calibration is always active; debug adjustment is
+     opt-in and remains zero when coordinate debugging is disabled. */
+  transform: translate(
+    calc(var(--screen-calibration-x, 0vw) + var(--screen-debug-x, 0vw)),
+    calc(var(--screen-calibration-y, 0dvh) + var(--screen-debug-y, 0dvh))
+  );
 }
 
 .character-sprite {
   position: absolute;
-  /* Place the final composite's (0, 0) anchor at the center of the stage. */
+  /* Place the authored character coordinate at the stage center, then add
+     production calibration, optional debug adjustment, and visual correction. */
   width: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   width: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   height: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
@@ -1945,8 +1952,8 @@ html[data-runtime="android"] .custom-library-backdrop {
   top: 50%;
   opacity: 0;
   transform: translate(
-    calc(-50% + var(--character-x, 0dvh)),
-    calc(-50% + var(--character-y, 0dvh))
+    calc(-50% + var(--character-x, 0vw) + var(--character-calibration-x, 0vw) + var(--character-debug-x, 0vw) + var(--character-visual-correction-x, 0vw)),
+    calc(-50% + var(--character-y, 0dvh) + var(--character-calibration-y, 0dvh) + var(--character-debug-y, 0dvh) + var(--character-visual-correction-y, 0dvh))
   ) scale(var(--character-scale, 1));
   transform-origin: 50% 50%;
   animation: character-enter 220ms ease forwards;
@@ -1993,19 +2000,104 @@ html[data-runtime="android"] .custom-library-backdrop {
   filter: brightness(0) opacity(0.86) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.6));
 }
 
+/* DEBUG ONLY: marks logical (0, 0) points for the final composition. */
+.coordinate-origin-debug {
+  position: absolute;
+  z-index: 8;
+  display: block;
+  width: 28px;
+  height: 28px;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.coordinate-origin-debug::before,
+.coordinate-origin-debug::after {
+  position: absolute;
+  content: "";
+  background: var(--coordinate-origin-color);
+  box-shadow: 0 0 5px var(--coordinate-origin-glow);
+}
+
+.coordinate-origin-debug::before {
+  width: 1px;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.coordinate-origin-debug::after {
+  width: 100%;
+  height: 1px;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.coordinate-origin-debug > i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  left: 50%;
+  top: 50%;
+  border: 1px solid var(--coordinate-origin-highlight);
+  border-radius: 50%;
+  background: var(--coordinate-origin-fill);
+  box-shadow: 0 0 8px var(--coordinate-origin-glow);
+  transform: translate(-50%, -50%);
+}
+
+.coordinate-origin-debug > small {
+  position: absolute;
+  left: calc(100% + 4px);
+  top: -2px;
+  padding: 2px 4px;
+  color: var(--coordinate-origin-label);
+  background: rgba(20, 13, 3, 0.78);
+  font-family: "Bahnschrift", monospace;
+  font-size: 8px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.screen-origin-debug {
+  --coordinate-origin-color: #63e1dc;
+  --coordinate-origin-glow: rgba(99, 225, 220, 0.92);
+  --coordinate-origin-highlight: #e6ffff;
+  --coordinate-origin-fill: rgba(71, 220, 214, 0.58);
+  --coordinate-origin-label: #c9fffb;
+}
+
+.character-origin-debug {
+  --coordinate-origin-color: #ffcf70;
+  --coordinate-origin-glow: rgba(255, 207, 112, 0.9);
+  --coordinate-origin-highlight: #fff2c9;
+  --coordinate-origin-fill: rgba(255, 176, 71, 0.58);
+  --coordinate-origin-label: #ffe5a4;
+  left: 50%;
+  top: 50%;
+  transform: translate(
+    calc(-50% + var(--character-x, 0vw) + var(--character-calibration-x, 0vw) + var(--character-debug-x, 0vw)),
+    calc(-50% + var(--character-y, 0dvh) + var(--character-calibration-y, 0dvh) + var(--character-debug-y, 0dvh))
+  );
+}
+
 @keyframes character-enter {
   from {
     opacity: 0;
     transform: translate(
-      calc(-50% + var(--character-x, 0dvh)),
-      calc(-50% + var(--character-y, 0dvh) + 15px)
+      calc(-50% + var(--character-x, 0vw) + var(--character-calibration-x, 0vw) + var(--character-debug-x, 0vw) + var(--character-visual-correction-x, 0vw)),
+      calc(-50% + var(--character-y, 0dvh) + var(--character-calibration-y, 0dvh) + var(--character-debug-y, 0dvh) + var(--character-visual-correction-y, 0dvh) + 15px)
     ) scale(var(--character-scale, 1));
   }
   to {
     opacity: 1;
     transform: translate(
-      calc(-50% + var(--character-x, 0dvh)),
-      calc(-50% + var(--character-y, 0dvh))
+      calc(-50% + var(--character-x, 0vw) + var(--character-calibration-x, 0vw) + var(--character-debug-x, 0vw) + var(--character-visual-correction-x, 0vw)),
+      calc(-50% + var(--character-y, 0dvh) + var(--character-calibration-y, 0dvh) + var(--character-debug-y, 0dvh) + var(--character-visual-correction-y, 0dvh))
     ) scale(var(--character-scale, 1));
   }
 }
@@ -3102,6 +3194,104 @@ html[data-runtime="android"] .custom-library-backdrop {
 .switch-setting input {
   position: absolute;
   opacity: 0;
+}
+
+/* DEBUG ONLY: remove this block with the coordinate debug section in ReaderView. */
+.coordinate-debug-section {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(198, 168, 101, 0.28);
+  background: rgba(47, 37, 18, 0.28);
+}
+
+.coordinate-debug-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(198, 168, 101, 0.18);
+}
+
+.coordinate-debug-heading > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #f0d9a5;
+}
+
+.coordinate-debug-heading small,
+.coordinate-debug-field small {
+  color: #aa9569;
+  font-family: "Bahnschrift", monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.coordinate-debug-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.coordinate-debug-field {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+}
+
+.coordinate-debug-field > span {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.coordinate-debug-field strong {
+  color: #e6d7b2;
+  font-size: clamp(10px, 0.78vw, 13px);
+  font-weight: 500;
+}
+
+.coordinate-debug-field input {
+  width: 100%;
+  height: 32px;
+  padding: 0 9px;
+  border: 1px solid rgba(198, 168, 101, 0.3);
+  color: #f1e5c5;
+  background: rgba(12, 17, 19, 0.7);
+}
+
+.coordinate-debug-field input:focus {
+  outline: 1px solid rgba(230, 196, 115, 0.72);
+  border-color: rgba(230, 196, 115, 0.72);
+}
+
+.coordinate-debug-note {
+  margin: 11px 0 0;
+  color: #a28d67;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.coordinate-debug-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 31px;
+  margin-top: 10px;
+  padding: 0 10px;
+  border: 1px solid rgba(198, 168, 101, 0.3);
+  color: #dfc890;
+  background: rgba(47, 37, 18, 0.48);
+}
+
+.coordinate-debug-reset:hover {
+  border-color: rgba(230, 196, 115, 0.68);
+  color: #fff1c9;
+  background: rgba(83, 63, 27, 0.58);
 }
 
 .translation-settings-section {

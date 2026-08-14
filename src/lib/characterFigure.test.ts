@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import type { CharacterFigureMetadata } from "../data/atlas";
 import {
   resolveCharacterBaselineTop,
+  resolveCharacterAlphaContentRect,
+  resolveCharacterCenterCorrection,
   resolveCharacterCanvasSize,
   resolveCharacterBodyHeight,
   resolveCharacterFaceRegion,
@@ -16,7 +18,51 @@ const metadata: CharacterFigureMetadata = {
   extendData: {},
 };
 
-describe("resolveCharacterFaceRegion", () => {
+describe("character figure helpers", () => {
+  it("finds visible content while ignoring transparent pixels", () => {
+    const data = new Uint8ClampedArray(4 * 4 * 4);
+    const setPixel = (x: number, y: number, alpha: number) => {
+      data[(y * 4 + x) * 4 + 3] = alpha;
+    };
+    data[0] = 255;
+    data[1] = 64;
+    data[2] = 32;
+    setPixel(0, 0, 0);
+    setPixel(1, 1, 0);
+    setPixel(2, 1, 128);
+    setPixel(3, 3, 255);
+
+    expect(resolveCharacterAlphaContentRect(data, 4, 4)).toEqual({
+      left: 2,
+      top: 1,
+      width: 2,
+      height: 3,
+    });
+    expect(resolveCharacterAlphaContentRect(data, 4, 4, 200)).toEqual({
+      left: 3,
+      top: 3,
+      width: 1,
+      height: 1,
+    });
+  });
+
+  it("returns no content when every pixel is transparent", () => {
+    const data = new Uint8ClampedArray(2 * 3 * 4);
+    expect(resolveCharacterAlphaContentRect(data, 2, 3)).toBeNull();
+  });
+
+  it("calculates the center from a proportional content rectangle", () => {
+    expect(resolveCharacterCenterCorrection({
+      left: 1,
+      top: 2,
+      width: 4,
+      height: 4,
+    }, 8)).toEqual({
+      x: 0.125,
+      y: 0,
+    });
+  });
+
   it("keeps wide Atlas canvases intact", () => {
     expect(resolveCharacterCanvasSize(1024, 1024)).toBe(1024);
     expect(resolveCharacterCanvasSize(2048, 1024)).toBe(2048);

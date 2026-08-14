@@ -481,13 +481,8 @@ function applyFadein(
   target: CharacterDefinition | SceneLayerDefinition,
   token?: string,
 ) {
-  // `1` is the game's keep-current-position marker for charaFadein. Do not
-  // run it through placementFromToken: a character may have moved since its
-  // previous entrance, and that post-move coordinate is the one to reuse.
-  if (token === undefined || token === "1") {
-    target.visible = true;
-    return;
-  }
+  // Both an omitted position and the explicit `1` token resolve to the
+  // center of the stage, (0, 0). Coordinate tokens remain explicit.
   applyPlacement(target, token, true);
 }
 

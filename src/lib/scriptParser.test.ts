@@ -63,7 +63,7 @@ describe("cleanScriptText", () => {
     });
   });
 
-  it("reuses a character's post-move position when charaFadein uses 1", () => {
+  it("places a character at 0,0 when charaFadein uses position 1", () => {
     const script = `
 [charaSet A 1098366400 1 可移动角色]
 [charaFadein A 0.1 -150,470]
@@ -71,14 +71,35 @@ describe("cleanScriptText", () => {
 [charaFadeout A 0.1]
 [charaFadein A 0.1 1]
 ＠A：可移动角色
-复用移动后的位置。[k]
+回到中心位置。[k]
 `;
-    const parsed = parseFgoScript(script, "fadein-current-position");
+    const parsed = parseFgoScript(script, "fadein-center-position");
     const frame = parsed.frames.at(-1);
 
     expect(frame?.characters[0]).toMatchObject({
-      x: 80,
-      y: -60,
+      x: 0,
+      y: 0,
+      position: "center",
+      visible: true,
+    });
+  });
+
+  it("places a character at 0,0 when charaFadein omits a position", () => {
+    const script = `
+[charaSet A 1098366400 1 可移动角色]
+[charaFadein A 0.1 -150,470]
+[charaMove A 80,-60 0.5]
+[charaFadeout A 0.1]
+[charaFadein A 0.1]
+＠A：可移动角色
+省略坐标时回到中心位置。[k]
+`;
+    const parsed = parseFgoScript(script, "fadein-omitted-position");
+    const frame = parsed.frames.at(-1);
+
+    expect(frame?.characters[0]).toMatchObject({
+      x: 0,
+      y: 0,
       position: "center",
       visible: true,
     });

@@ -41,6 +41,15 @@ npm install
 npm run dev
 ```
 
+坐标偏移调试功能默认关闭并隐藏。需要调试坐标时，在启动或构建前设置 `VITE_COORDINATE_DEBUG=true`；该开关只控制临时偏移输入和原点标记，正式校准仍始终生效：
+
+```powershell
+$env:VITE_COORDINATE_DEBUG = "true"
+npm run dev
+```
+
+关闭调试或恢复默认行为时删除该环境变量，或设置为 `false`。使用 `npm run build` / `start.cmd` 时也要在构建前设置它。
+
 构建并以本地生产服务器运行：
 
 ```bash
