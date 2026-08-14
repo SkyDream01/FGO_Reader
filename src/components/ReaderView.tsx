@@ -64,6 +64,7 @@ import {
   resolveCharacterBodyHeight,
   resolveCharacterFaceRegion,
 } from "../lib/characterFigure";
+import { stageCoordinateToViewport } from "../lib/stageCoordinates";
 import {
   clearLastObservation,
   createLastObservation,
@@ -152,17 +153,11 @@ function loadSettings(): ReaderSettings {
 }
 
 const FIGURE_CANVAS_SIZE = 1024;
-const FIGURE_STAGE_HEIGHT = 576;
-
 const defaultCharacterX: Record<CharacterState["position"], number> = {
   left: -256,
   center: 0,
   right: 256,
 };
-
-function stageCoordinateToViewport(value: number) {
-  return `${value * (100 / FIGURE_STAGE_HEIGHT)}dvh`;
-}
 
 function loadBrowserImage(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -312,8 +307,8 @@ function CharacterSprite({
     ? character.scale
     : 1;
   const characterStyle = {
-    "--character-x": stageCoordinateToViewport(characterX),
-    "--character-y": stageCoordinateToViewport(characterY),
+    "--character-x": stageCoordinateToViewport(characterX, "x"),
+    "--character-y": stageCoordinateToViewport(characterY, "y"),
     "--character-scale": String(characterScale),
   } as CSSProperties;
   const {

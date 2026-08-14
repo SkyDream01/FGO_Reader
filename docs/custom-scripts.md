@@ -144,7 +144,8 @@ ZIP 内路径必须相对于包根目录，并使用正斜杠 <code>/</code>，�
 | <code>[scene ID]</code> | 切换背景 ID。 |
 | <code>[bgm ID ...]</code>、<code>[bgmStop]</code> | 播放或停止 BGM。 |
 | <code>[charaSet 槽位 角色ID 表情ID 名称]</code> | 定义角色槽位和角色 ID。 |
-| <code>[charaPut 槽位 位置]</code>、<code>[charaFadein 槽位 时长 位置]</code> | 显示角色；位置 <code>0</code>、<code>1</code>、<code>2</code> 分别常用于左、中、右。 |
+| <code>[charaPut 槽位 位置]</code> | 显示角色；位置 <code>0</code>、<code>1</code>、<code>2</code> 分别常用于左、中、右。 |
+| <code>[charaFadein 槽位 时长 X,Y]</code>、<code>[charaFadein 槽位 时长 1]</code> | 淡入角色；传入坐标时使用指定位置，传入 <code>1</code> 或省略坐标时复用角色最后位置，包括移动后的坐标。 |
 | <code>[charaTalk 槽位]</code>、<code>[charaFadeout 槽位]</code>、<code>[charaClearAll]</code> | 标记发言角色、隐藏角色或清空角色。 |
 | <code>[fadein]</code>、<code>[fadeout]</code>、<code>[wipein]</code>、<code>[wipeout]</code> | 使用基础转场。 |
 

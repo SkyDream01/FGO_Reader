@@ -477,6 +477,20 @@ function applyPlacement(
   if (visible !== undefined) target.visible = visible;
 }
 
+function applyFadein(
+  target: CharacterDefinition | SceneLayerDefinition,
+  token?: string,
+) {
+  // `1` is the game's keep-current-position marker for charaFadein. Do not
+  // run it through placementFromToken: a character may have moved since its
+  // previous entrance, and that post-move coordinate is the one to reuse.
+  if (token === undefined || token === "1") {
+    target.visible = true;
+    return;
+  }
+  applyPlacement(target, token, true);
+}
+
 function getStageSlot(state: ProjectionState, slot: string) {
   return state.characters.get(slot) ?? state.sceneLayers.get(slot);
 }
@@ -652,7 +666,10 @@ function applyCommand(
   if (name.startsWith("charafadein")) {
     if (!requireArgs(command, 1, context)) return;
     const target = getStageSlot(state, args[0]);
-    if (target) applyPlacement(target, args[2], true);
+    if (target) {
+      if (name === "charafadein") applyFadein(target, args[2]);
+      else applyPlacement(target, args[2], true);
+    }
     return;
   }
 

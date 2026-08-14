@@ -1936,18 +1936,19 @@ html[data-runtime="android"] .custom-library-backdrop {
 
 .character-sprite {
   position: absolute;
-  /* FGO figures use a square canvas. The visible 75% body region is aligned
-     to the bottom of the 576px stage, leaving the atlas padding above it. */
+  /* Place the final composite's (0, 0) anchor at the center of the stage. */
   width: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   width: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   height: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
   height: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
-  bottom: calc(-25vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
-  bottom: calc(-25dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
-  left: calc(50% + var(--character-x, 0dvh));
+  left: 50%;
+  top: 50%;
   opacity: 0;
-  transform: translateX(-50%) translateY(var(--character-y, 0dvh)) scale(var(--character-scale, 1));
-  transform-origin: 50% 75%;
+  transform: translate(
+    calc(-50% + var(--character-x, 0dvh)),
+    calc(-50% + var(--character-y, 0dvh))
+  ) scale(var(--character-scale, 1));
+  transform-origin: 50% 50%;
   animation: character-enter 220ms ease forwards;
   transition: filter 180ms ease, opacity 180ms ease, transform 180ms ease;
   filter: brightness(0.72) saturate(0.72);
@@ -1995,11 +1996,17 @@ html[data-runtime="android"] .custom-library-backdrop {
 @keyframes character-enter {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(calc(var(--character-y, 0dvh) + 15px)) scale(var(--character-scale, 1));
+    transform: translate(
+      calc(-50% + var(--character-x, 0dvh)),
+      calc(-50% + var(--character-y, 0dvh) + 15px)
+    ) scale(var(--character-scale, 1));
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(var(--character-y, 0dvh)) scale(var(--character-scale, 1));
+    transform: translate(
+      calc(-50% + var(--character-x, 0dvh)),
+      calc(-50% + var(--character-y, 0dvh))
+    ) scale(var(--character-scale, 1));
   }
 }
 

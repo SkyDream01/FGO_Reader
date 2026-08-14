@@ -62,6 +62,27 @@ describe("cleanScriptText", () => {
       position: "left",
     });
   });
+
+  it("reuses a character's post-move position when charaFadein uses 1", () => {
+    const script = `
+[charaSet A 1098366400 1 可移动角色]
+[charaFadein A 0.1 -150,470]
+[charaMove A 80,-60 0.5]
+[charaFadeout A 0.1]
+[charaFadein A 0.1 1]
+＠A：可移动角色
+复用移动后的位置。[k]
+`;
+    const parsed = parseFgoScript(script, "fadein-current-position");
+    const frame = parsed.frames.at(-1);
+
+    expect(frame?.characters[0]).toMatchObject({
+      x: 80,
+      y: -60,
+      position: "center",
+      visible: true,
+    });
+  });
 });
 
 describe("parseFgoScript", () => {
