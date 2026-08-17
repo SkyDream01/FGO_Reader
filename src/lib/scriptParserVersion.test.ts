@@ -5,6 +5,7 @@ import {
   SCRIPT_PARSER_VERSION,
   choiceTrailStorageKey,
   consumeParserUpgradeNotice,
+  loadStoredFrameIndex,
   progressStorageKey,
   readProgressStorageKey,
 } from "./scriptParserVersion";
@@ -60,5 +61,23 @@ describe("script parser persistence version", () => {
     const previousVersionBookmark = new MemoryStorage();
     previousVersionBookmark.setItem("fgo-reader-bookmark:v4", "{}");
     expect(consumeParserUpgradeNotice(previousVersionBookmark)).toBe(true);
+  });
+
+  it("uses a fallback for corrupt or unavailable persisted frame positions", () => {
+    const storage = new MemoryStorage();
+    const key = progressStorageKey("script");
+    storage.setItem(key, "17");
+    expect(loadStoredFrameIndex(key, 0, storage)).toBe(17);
+
+    for (const value of ["", "-1", "2.5", "NaN", "Infinity", "9007199254740992"]) {
+      storage.setItem(key, value);
+      expect(loadStoredFrameIndex(key, -1, storage)).toBe(-1);
+    }
+
+    expect(loadStoredFrameIndex(key, -1, {
+      getItem: () => {
+        throw new Error("storage unavailable");
+      },
+    })).toBe(-1);
   });
 });

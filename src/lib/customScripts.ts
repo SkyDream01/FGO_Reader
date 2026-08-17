@@ -19,10 +19,11 @@ const MAX_CHARACTER_SLOTS = 64;
 
 const PACKAGE_ID_PATTERN = /^custom-v1-[0-9a-f]{24}$/;
 const PACKAGE_DB_NAME = "fgo-reader-custom-scripts";
-const PACKAGE_DB_VERSION = 2;
+const PACKAGE_DB_VERSION = 3;
 const PACKAGE_STORE = "packages";
 const SCRIPT_STORE = "scripts";
 const ASSET_STORE = "assets";
+const ASSET_PACKAGE_INDEX = "byPackageId";
 
 const REGIONS = new Set<Region>(["CN", "JP", "NA", "TW", "KR"]);
 const IMAGE_EXTENSIONS = new Set(["png", "jpeg", "jpg", "webp"]);
@@ -726,6 +727,10 @@ function openPackageDatabase() {
       if (!database.objectStoreNames.contains(ASSET_STORE)) {
         database.createObjectStore(ASSET_STORE, { keyPath: ["packageId", "path"] });
       }
+      const assets = transaction.objectStore(ASSET_STORE);
+      if (!assets.indexNames.contains(ASSET_PACKAGE_INDEX)) {
+        assets.createIndex(ASSET_PACKAGE_INDEX, "packageId", { unique: false });
+      }
 
       // Version 1 stored full script bodies alongside list metadata. Move them
       // to their own store so refreshing the library never reads every source.
@@ -786,7 +791,7 @@ function recordFromSummary(
 
 function deletePackageAssets(store: IDBObjectStore, packageId: string) {
   return new Promise<void>((resolve, reject) => {
-    const request = store.openCursor();
+    const request = store.index(ASSET_PACKAGE_INDEX).openCursor(IDBKeyRange.only(packageId));
     request.onerror = () => reject(request.error ?? new Error("Could not enumerate package assets"));
     request.onsuccess = () => {
       const cursor = request.result;
@@ -794,8 +799,7 @@ function deletePackageAssets(store: IDBObjectStore, packageId: string) {
         resolve();
         return;
       }
-      const value = cursor.value as StoredAsset;
-      if (value.packageId === packageId) cursor.delete();
+      cursor.delete();
       cursor.continue();
     };
   });

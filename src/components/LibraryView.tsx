@@ -51,6 +51,7 @@ import {
   legacyChoiceTrailStorageKey,
   legacyProgressStorageKey,
   legacyReadProgressStorageKey,
+  loadStoredFrameIndex,
   progressStorageKey,
   readProgressStorageKey,
 } from "../lib/scriptParserVersion";
@@ -118,8 +119,7 @@ function formatBytes(value: number) {
 }
 
 function customPackageProgress(scriptId: string) {
-  const value = Number(localStorage.getItem(progressStorageKey(scriptId)));
-  return Number.isInteger(value) && value > 0 ? value : 0;
+  return loadStoredFrameIndex(progressStorageKey(scriptId));
 }
 
 function storedLaunchMatches(key: string, scriptUrl: string) {
@@ -306,10 +306,7 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
     scripts.find((script) => script.scriptId === selectedScriptId) ?? null;
   const selectedProgress = useMemo(() => {
     if (!selectedScript) return 0;
-    const value = Number(
-      localStorage.getItem(progressStorageKey(selectedScript.scriptId)),
-    );
-    return Number.isInteger(value) && value > 0 ? value : 0;
+    return loadStoredFrameIndex(progressStorageKey(selectedScript.scriptId));
   }, [selectedScript]);
   const scriptCount = allQuests.reduce(
     (total, quest) => total + getScripts(quest).length,

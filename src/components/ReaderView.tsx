@@ -85,6 +85,7 @@ import {
 import {
   BOOKMARK_STORAGE_KEY,
   choiceTrailStorageKey,
+  loadStoredFrameIndex,
   progressStorageKey,
   readProgressStorageKey,
 } from "../lib/scriptParserVersion";
@@ -777,8 +778,7 @@ export function ReaderView({
   const [manualTranslationError, setManualTranslationError] = useState("");
   const [oneShotTranslationProgress, setOneShotTranslationProgress] = useState<FullTranslationProgress | null>(null);
   const [readMax, setReadMax] = useState(() => {
-    const value = localStorage.getItem(readProgressStorageKey(story.scriptId));
-    return value === null ? -1 : Number(value);
+    return loadStoredFrameIndex(readProgressStorageKey(story.scriptId), -1);
   });
   const toastTimer = useRef<number | null>(null);
   const dialogueTransitionTimer = useRef<number | null>(null);

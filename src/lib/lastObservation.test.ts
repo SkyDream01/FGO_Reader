@@ -56,6 +56,11 @@ describe("last observation", () => {
     });
   });
 
+  it("falls back to the first frame when given an invalid position", () => {
+    expect(createLastObservation(story, Number.NaN, 1234).frameIndex).toBe(0);
+    expect(createLastObservation(story, Infinity, 1234).frameIndex).toBe(0);
+  });
+
   it("ignores corrupt records and invalid queue metadata", () => {
     expect(parseLastObservation("not json")).toBeNull();
     expect(parseLastObservation(JSON.stringify({ scriptId: "100" }))).toBeNull();

@@ -37,13 +37,22 @@ export function useBgm({
 
   useEffect(() => {
     let cancelled = false;
+
+    // The catalog is only needed to find an Atlas-specific audio asset. Avoid
+    // fetching it for silent scenes and for BGM already supplied by a package.
+    if (!fileName || localUrl || localPending) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
     getBgmCatalog(region)
       .then((entries) => !cancelled && setCatalog(entries))
       .catch(() => !cancelled && setCatalog([]));
     return () => {
       cancelled = true;
     };
-  }, [region]);
+  }, [fileName, localPending, localUrl, region]);
 
   const catalogEntry = useMemo(
     () => catalog.find((entry) => entry.fileName === fileName),

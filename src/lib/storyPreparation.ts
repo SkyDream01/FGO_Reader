@@ -23,6 +23,7 @@ import {
 import { parseFgoScript } from "./scriptParser";
 import {
   choiceTrailStorageKey,
+  loadStoredFrameIndex,
   progressStorageKey,
 } from "./scriptParserVersion";
 import { retryAsync } from "./loadRetry";
@@ -473,9 +474,7 @@ export async function prepareStory(
 
     const restoredTrail = story.choiceTrail ?? loadStoredChoiceTrail(story.scriptId);
     const replayed = replayChoiceTrail(parsed.frames, restoredTrail);
-    const savedProgress = Number(
-      localStorage.getItem(progressStorageKey(story.scriptId)) || 0,
-    );
+    const savedProgress = loadStoredFrameIndex(progressStorageKey(story.scriptId));
     const startIndex = Math.max(
       0,
       Math.min(

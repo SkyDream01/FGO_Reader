@@ -1,5 +1,5 @@
 import { CircleAlert, LoaderCircle, X } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LibraryView } from "./components/LibraryView";
 import { ReaderView } from "./components/ReaderView";
 import {
@@ -57,6 +57,15 @@ export default function App() {
   const nextStory = activeStory
     ? getNextStoryLaunch(activeStory.launch)
     : null;
+
+  useEffect(() => () => {
+    requestIdRef.current += 1;
+    preparationRef.current?.controller.abort();
+    preparationRef.current = null;
+    const current = activeStoryRef.current;
+    activeStoryRef.current = null;
+    current?.prepared.dispose();
+  }, []);
 
   const cancelPreload = useCallback(() => {
     requestIdRef.current += 1;

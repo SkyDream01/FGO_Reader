@@ -19,6 +19,25 @@ export function choiceTrailStorageKey(scriptId: string) {
   return `fgo-reader-choice-trail:${VERSION_NAMESPACE}:${scriptId}`;
 }
 
+/**
+ * Reads a persisted frame position without letting corrupt browser storage
+ * turn playback state into NaN or Infinity.
+ */
+export function loadStoredFrameIndex(
+  key: string,
+  fallback = 0,
+  storage: Pick<Storage, "getItem"> = localStorage,
+) {
+  try {
+    const raw = storage.getItem(key);
+    if (raw === null || !raw.trim()) return fallback;
+    const value = Number(raw);
+    return Number.isSafeInteger(value) && value >= 0 ? value : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function legacyProgressStorageKey(scriptId: string) {
   return `fgo-reader-progress:${scriptId}`;
 }

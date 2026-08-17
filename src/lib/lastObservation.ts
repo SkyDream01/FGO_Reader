@@ -35,6 +35,10 @@ export function createLastObservation(
   frameIndex: number,
   updatedAt = Date.now(),
 ): LastObservation {
+  const truncatedFrameIndex = Math.trunc(frameIndex);
+  const safeFrameIndex = Number.isSafeInteger(truncatedFrameIndex)
+    ? Math.max(0, truncatedFrameIndex)
+    : 0;
   const choiceTrail = validateChoiceTrail(story.choiceTrail)
     ? normalizeChoiceTrail(story.choiceTrail)
     : undefined;
@@ -44,7 +48,7 @@ export function createLastObservation(
     scriptUrl: story.scriptUrl,
     title: story.title,
     ...(story.subtitle ? { subtitle: story.subtitle } : {}),
-    frameIndex: Math.max(0, Math.trunc(frameIndex)),
+    frameIndex: safeFrameIndex,
     updatedAt,
     region: story.region,
     ...(story.sequence ? { sequence: story.sequence } : {}),
