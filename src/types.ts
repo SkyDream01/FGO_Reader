@@ -88,10 +88,49 @@ export interface CharacterState {
   scale: number;
   silhouette: boolean;
   active: boolean;
+  rotation?: number;
+  shadow?: boolean;
 }
 
 export type FrameEffect = "none" | "shake" | "flash";
 export type FrameTransition = "none" | "fade" | "wipe";
+
+export interface StoryCameraState {
+  x: number;
+  y: number;
+  scale: number;
+  rotation: number;
+  filter: string | null;
+}
+
+/** A non-character visual layer authored by sceneSet/imageSet commands. */
+export interface StageLayerState {
+  slot: string;
+  id: string;
+  source: "background" | "image";
+  visible: boolean;
+  position: CharacterPosition;
+  x: number;
+  y: number;
+  scale: number;
+  layer: "main" | "sub";
+  depth: number | null;
+  active: boolean;
+}
+
+/** Presentation state that must travel with a frame for faithful replay. */
+export interface FramePresentation {
+  messageVisible: boolean;
+  /** Script `bgm` parameter 2, when present; null means use reader volume. */
+  bgmVolume: number | null;
+  camera: StoryCameraState;
+  blur: string | null;
+  screenEffect: string | null;
+  pictureFrame: string | null;
+  movie: string | null;
+  transitionColor: string | null;
+  stageLayers: StageLayerState[];
+}
 
 export interface DialogueFrame {
   id: string;
@@ -103,6 +142,7 @@ export interface DialogueFrame {
   characters: CharacterState[];
   effect: FrameEffect;
   transition: FrameTransition;
+  presentation?: FramePresentation;
 }
 
 export interface AnimationFrame {
@@ -117,6 +157,7 @@ export interface AnimationFrame {
   characters: CharacterState[];
   effect: FrameEffect;
   transition: FrameTransition;
+  presentation?: FramePresentation;
 }
 
 export interface ChoiceOption {
@@ -136,6 +177,7 @@ export interface ChoiceFrame {
   transition: FrameTransition;
   options: ChoiceOption[];
   selected?: number;
+  presentation?: FramePresentation;
 }
 
 export type StoryFrame = DialogueFrame | AnimationFrame | ChoiceFrame;

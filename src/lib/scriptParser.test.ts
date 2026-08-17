@@ -63,6 +63,74 @@ describe("cleanScriptText", () => {
     });
   });
 
+  it("projects documented camera, message, filter, and scene-layer commands into rendered frame state", () => {
+    const parsed = parseFgoScript([
+      "[scene 10000]",
+      "[sceneSet Q 142200 1]",
+      "[charaFadein Q 0.1 1]",
+      "[bgm BGM_EVENT_38 0.25 0.9]",
+      "[cameraMove 0.1 0,-30 1.2]",
+      "[cameraFilter gray]",
+      "[blur glass 0.5 2 10]",
+      "[pictureFrame cut063_cinema]",
+      "[messageOff]",
+      "＠旁白",
+      "演出状态测试。[k]",
+    ].join("\n"), "presentation-state");
+
+    expect(parsed.frames[0]).toMatchObject({
+      type: "dialogue",
+      presentation: {
+        messageVisible: true,
+        bgmVolume: 0.25,
+        camera: { x: 0, y: -30, scale: 1.2, filter: "gray" },
+        blur: "glass",
+        pictureFrame: "cut063_cinema",
+        stageLayers: [
+          expect.objectContaining({ slot: "Q", id: "142200", source: "background" }),
+        ],
+      },
+    });
+  });
+
+  it("reopens the message window for dialogue after a messageOff transition", () => {
+    const parsed = parseFgoScript([
+      "[scene 10000]",
+      "[messageOff]",
+      "[fadeout black 0.5]",
+      "[wait fade]",
+      "＠旁白",
+      "转场后的正文。",
+      "[k]",
+    ].join("\n"), "message-off-dialogue");
+
+    expect(parsed.frames).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        type: "animation",
+        presentation: expect.objectContaining({ messageVisible: false }),
+      }),
+      expect.objectContaining({
+        type: "dialogue",
+        text: "转场后的正文。",
+        presentation: expect.objectContaining({ messageVisible: true }),
+      }),
+    ]));
+  });
+
+  it("reads cameraMoveEase scale from the documented fourth parameter", () => {
+    const parsed = parseFgoScript([
+      "[cameraMoveEase 0,-30 1.0 easeOutQuad 1.2]",
+      "＠旁白",
+      "缓动镜头[k]",
+    ].join("\n"), "camera-ease");
+
+    expect(parsed.frames[0]).toMatchObject({
+      presentation: {
+        camera: { x: 0, y: -30, scale: 1.2 },
+      },
+    });
+  });
+
   it("places a character at 0,0 when charaFadein uses position 1", () => {
     const script = `
 [charaSet A 1098366400 1 可移动角色]
@@ -294,7 +362,7 @@ describe("parseFgoScript", () => {
 
     expect(parsed.frames[0]).toMatchObject({
       speaker: "伯爵",
-      text: "思うに——",
+      text: "思うに———",
     });
     expect(parsed.frames[0].characters).toEqual([
       expect.objectContaining({ id: "2000003", name: "伯爵", position: "center" }),
@@ -622,7 +690,7 @@ describe("parseFgoScript", () => {
       "source-id@v5:d:1:1:0",
       "source-id@v5:c:3:1:0",
     ]);
-    expect(parsed.frames[0]).toMatchObject({ text: "First——" });
+    expect(parsed.frames[0]).toMatchObject({ text: "First———" });
     const choice = parsed.frames[1];
     expect(choice.type).toBe("choice");
     if (choice.type === "choice") {
@@ -653,7 +721,7 @@ describe("parseFgoScript", () => {
     expect(choice.type).toBe("choice");
     if (choice.type === "choice") {
       expect(choice.options).toEqual([{
-        label: "——消えてしまった——",
+        label: "———消えてしまった———",
         frames: [],
       }]);
     }

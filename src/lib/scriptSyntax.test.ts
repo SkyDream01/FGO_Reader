@@ -100,6 +100,8 @@ describe("script syntax", () => {
       "fadeMove white 1.5 0.9",
       "captureRelease",
       "tRaidShortName 80593 1",
+      "subBlur #A lens 0.4 2 10 1.0 subBlur",
+      "subStretch on",
     ];
     const document = parseScriptDocument(
       documentedCommands.map((command) => `[${command}]`).join("\n"),
@@ -198,5 +200,24 @@ describe("script syntax", () => {
         speaker: expect.objectContaining({ rawName: "旁白" }),
       }),
     ]);
+  });
+
+  it("accepts headers beyond the legacy five-line window and keeps uppercase Q out of message boundaries", () => {
+    const document = parseScriptDocument([
+      ...Array.from({ length: 16 }, () => ""),
+      "＄93-00-03-01-1-0",
+      "＠N：旁白",
+      "前[Q]后[q]",
+    ].join("\n"));
+
+    expect(document.nodes).toHaveLength(1);
+    expect(document.nodes[0]).toMatchObject({
+      type: "dialogue",
+      body: [
+        expect.objectContaining({ type: "text", value: "前" }),
+        expect.objectContaining({ type: "command", name: "Q" }),
+        expect.objectContaining({ type: "text", value: "后" }),
+      ],
+    });
   });
 });

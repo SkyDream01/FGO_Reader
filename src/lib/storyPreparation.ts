@@ -25,6 +25,7 @@ import {
   choiceTrailStorageKey,
   progressStorageKey,
 } from "./scriptParserVersion";
+import { retryAsync } from "./loadRetry";
 import type {
   ChoiceTrail,
   ParsedScript,
@@ -143,6 +144,16 @@ export function collectStoryResources(frames: StoryFrame[]): StoryResources {
       if (frame.scene) backgrounds.add(frame.scene);
       if (frame.bgm) bgm.add(frame.bgm);
       for (const character of frame.characters) characters.add(character.id);
+      for (const layer of frame.presentation?.stageLayers ?? []) {
+        if (layer.source === "background") {
+          backgrounds.add(layer.id.replace(/^back/i, ""));
+        } else {
+          // imageSet resources use the same static Back bucket in the Atlas
+          // export.  Keeping them in the background preload set also makes
+          // local custom packages available before the first animation frame.
+          backgrounds.add(layer.id.replace(/^back/i, ""));
+        }
+      }
       if (frame.type === "choice") {
         for (const option of frame.options) visit(option.frames);
       }
@@ -194,38 +205,44 @@ function withResourceTimeout<T>(
 }
 
 function preloadImage(url: string, signal?: AbortSignal) {
-  return withResourceTimeout<void>((finish, fail) => {
-    const image = new Image();
-    image.decoding = "async";
-    image.onload = () => {
-      image.decode().catch(() => undefined).finally(() => finish());
-    };
-    image.onerror = () => fail(new Error(`图片资源读取失败：${url}`));
-    image.src = url;
-    return () => {
-      image.onload = null;
-      image.onerror = null;
-      if (!image.complete) image.src = "";
-    };
-  }, signal);
+  return retryAsync(
+    () => withResourceTimeout<void>((finish, fail) => {
+      const image = new Image();
+      image.decoding = "async";
+      image.onload = () => {
+        image.decode().catch(() => undefined).finally(() => finish());
+      };
+      image.onerror = () => fail(new Error(`图片资源读取失败：${url}`));
+      image.src = url;
+      return () => {
+        image.onload = null;
+        image.onerror = null;
+        if (!image.complete) image.src = "";
+      };
+    }, signal),
+    { signal },
+  );
 }
 
 function preloadAudio(url: string, signal?: AbortSignal) {
-  return withResourceTimeout<void>((finish, fail) => {
-    const audio = new Audio();
-    audio.preload = "auto";
-    audio.onloadeddata = () => finish();
-    audio.onerror = () => fail(new Error(`音频资源读取失败：${url}`));
-    audio.src = url;
-    audio.load();
-    return () => {
-      audio.onloadeddata = null;
-      audio.onerror = null;
-      audio.pause();
-      audio.removeAttribute("src");
+  return retryAsync(
+    () => withResourceTimeout<void>((finish, fail) => {
+      const audio = new Audio();
+      audio.preload = "auto";
+      audio.onloadeddata = () => finish();
+      audio.onerror = () => fail(new Error(`音频资源读取失败：${url}`));
+      audio.src = url;
       audio.load();
-    };
-  }, signal);
+      return () => {
+        audio.onloadeddata = null;
+        audio.onerror = null;
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
+      };
+    }, signal),
+    { signal },
+  );
 }
 
 function awaitResource<T>(promise: Promise<T>, signal?: AbortSignal) {

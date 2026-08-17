@@ -343,12 +343,21 @@ const PRESENTATION_COMMANDS = new Set([
   "messagechange",
   "messagespeedforcednormal",
   "movie",
-  "substretch",
   "talknameback",
   "traidshortname",
   "turnpageoff",
   "turnpageon",
   "usesimplemeshfigure",
+  // The sub-camera blur/stretch family is deliberately listed here instead
+  // of relying on the `blur`/`scroll` prefixes.  FGO command names are
+  // case-insensitive in the script corpus, but their prefixes are not always
+  // nested in the obvious way (for example `subBlur` does not start with
+  // `blur`).
+  "subblur",
+  "subbluroff",
+  "subblur2",
+  "subblur2off",
+  "substretch",
 ]);
 
 function classifyCommand(normalizedName: string): ScriptCommandKind {
@@ -613,7 +622,12 @@ function parseInlineText(
       nodes.push({ type: "newline", span: segment.span });
       continue;
     }
-    if (["k", "page", "q"].includes(normalized.split(/\s+/, 1)[0])) {
+    // `[q]` is a message boundary, while `[Q]` is used as a regular slot
+    // token in `spot[...]`.  Do not normalize this particular marker: the
+    // distinction is part of the documented DSL and changing it silently
+    // joins/splits dialogue in real scripts.
+    const markerName = normalized.split(/\s+/, 1)[0];
+    if (markerName === "k" || markerName === "page" || content === "q") {
       terminatesDialogue = true;
       parts[parts.length - 1].terminated = true;
       parts[parts.length - 1].endSpan = segment.span;
@@ -1267,10 +1281,14 @@ export function parseScriptDocument(
     content,
     line: index + 1,
   }));
-  // v1.3 observes the optional script identifier only within the first five lines.
-  // Preserve line numbers while removing it from the playable source.
-  for (let index = 0; index < Math.min(records.length, 5); index += 1) {
-    if (/^＄\d{2}-\d{2}-\d{2}-\d{2}-\d-\d\s*$/.test(records[index].content.trim())) {
+  // The optional identifier is metadata, not playable text.  It is normally
+  // near the beginning, but the current corpus contains a valid header on
+  // line 17, so a five-line lookahead loses the first command block in those
+  // files.  The engine does not validate the six numeric segments either;
+  // accepting any full-width-dollar header keeps custom and legacy scripts
+  // compatible while preserving source line numbers.
+  for (let index = 0; index < records.length; index += 1) {
+    if (records[index].content.trimStart().startsWith("＄")) {
       records[index] = { ...records[index], content: "" };
     }
   }

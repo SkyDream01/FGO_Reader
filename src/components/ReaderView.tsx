@@ -124,6 +124,7 @@ import type {
   CharacterState,
   ChoiceFrame,
   ChoiceTrail,
+  StageLayerState,
   ReaderSettings,
   StoryFrame,
   StoryLaunch,
@@ -172,6 +173,43 @@ const defaultCharacterX: Record<CharacterState["position"], number> = {
 };
 
 const ZERO_CHARACTER_CENTER_CORRECTION: CharacterCenterCorrection = { x: 0, y: 0 };
+
+const DEFAULT_CAMERA = {
+  x: 0,
+  y: 0,
+  scale: 1,
+  rotation: 0,
+  filter: null,
+} as const;
+
+function stageLayerAssetId(layer: StageLayerState) {
+  return layer.id.replace(/^back/i, "");
+}
+
+function cameraFilterCss(value: string | null | undefined) {
+  switch (value?.toLowerCase()) {
+    case "gray":
+      return "grayscale(1)";
+    case "darkred":
+      return "sepia(0.72) saturate(1.7) hue-rotate(300deg) brightness(0.72)";
+    case "inversion":
+      return "invert(1)";
+    case "normal":
+    case undefined:
+    case null:
+      return "none";
+    default:
+      return "none";
+  }
+}
+
+function visualEffectClass(value: string | null | undefined) {
+  const normalized = value?.toLowerCase() ?? "";
+  if (normalized.includes("sepia")) return "sepia";
+  if (normalized.includes("rubble") || normalized.includes("noise")) return "noise";
+  if (normalized.includes("security")) return "security";
+  return "";
+}
 
 function loadBrowserImage(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -382,6 +420,54 @@ function AtlasCharacterFigure({
   );
 }
 
+function StageLayerSprite({
+  layer,
+  region,
+  customPackage,
+}: {
+  layer: StageLayerState;
+  region: StoryLaunch["region"];
+  customPackage: PreparedCustomPackage | null;
+}) {
+  const [failed, setFailed] = useState(false);
+  const assetId = stageLayerAssetId(layer);
+  const fallbackUrl = backgroundUrl(region, assetId);
+  const {
+    url,
+    usingLocalAsset,
+    useFallback,
+  } = useCustomAssetUrl({
+    packageId: customPackage?.id,
+    assetPath: customPackage?.assets?.backgrounds?.[assetId] ?? customPackage?.assets?.backgrounds?.[layer.id],
+    preloadedUrl: customPackage?.assetUrls.backgrounds[assetId] ?? customPackage?.assetUrls.backgrounds[layer.id],
+    fallbackUrl,
+  });
+  useEffect(() => {
+    setFailed(false);
+  }, [url]);
+  const style = {
+    "--stage-layer-x": stageCoordinateToViewport(layer.x, "x"),
+    "--stage-layer-y": stageCoordinateToViewport(layer.y, "y"),
+    "--stage-layer-scale": String(layer.scale),
+    "--stage-layer-depth": String(layer.depth ?? 0),
+  } as CSSProperties;
+
+  return url && !failed ? (
+    <img
+      className={`stage-layer-sprite ${layer.layer === "sub" ? "sub" : "main"}`}
+      data-slot={layer.slot}
+      src={url}
+      alt=""
+      style={style}
+      onError={() => {
+        if (usingLocalAsset) useFallback();
+        else setFailed(true);
+      }}
+      draggable={false}
+    />
+  ) : null;
+}
+
 function CharacterSprite({
   character,
   region,
@@ -444,6 +530,7 @@ function CharacterSprite({
       "character",
     ),
     "--character-scale": String(characterScale),
+    "--character-rotation": `${character.rotation ?? 0}deg`,
   } as CSSProperties;
   const characterOriginStyle = {
     "--character-x": stageCoordinateToViewport(characterX, "x"),
@@ -497,7 +584,7 @@ function CharacterSprite({
   return (
     <>
       <div
-        className={`character-sprite ${character.active ? "active" : "inactive"} ${character.silhouette ? "silhouette" : ""} ${usingLocalAsset && wideAtlas ? "wide-atlas" : ""}`}
+        className={`character-sprite ${character.active ? "active" : "inactive"} ${character.silhouette ? "silhouette" : ""} ${character.shadow ? "with-shadow" : ""} ${usingLocalAsset && wideAtlas ? "wide-atlas" : ""}`}
         data-position={character.position}
         data-slot={character.slot}
         style={characterStyle}
@@ -822,7 +909,7 @@ export function ReaderView({
     localPending: loadingLocalBgm,
     unlocked: audioUnlocked,
     muted,
-    volume: settings.bgmVolume,
+    volume: currentFrame?.presentation?.bgmVolume ?? settings.bgmVolume,
   });
 
   const showToast = useCallback((message: string) => {
@@ -1410,11 +1497,15 @@ export function ReaderView({
       || !windowFocused
       || panel !== "none"
       || uiHidden
-      || !textComplete
       || !currentFrame
       || translation.preparing
     ) return;
-    if (currentFrame.type === "animation") return;
+    if (currentFrame.type === "animation") {
+      if (currentFrame.durationMs !== null) return;
+      const timer = window.setTimeout(advance, autoPlaybackDelayMs(0));
+      return () => window.clearTimeout(timer);
+    }
+    if (!textComplete) return;
     const characterCount = currentFrame.type === "choice"
       ? choiceAutoPlaybackCharacterCount(currentFrame.options)
       : textCharacters.length;
@@ -1639,6 +1730,19 @@ export function ReaderView({
     "--stage-background": currentBackground ? `url("${currentBackground}")` : "none",
     "--story-progress": `${progress}%`,
   } as CSSProperties;
+  const framePresentation = currentFrame?.presentation;
+  const camera = framePresentation?.camera ?? DEFAULT_CAMERA;
+  const effectClass = visualEffectClass(framePresentation?.screenEffect);
+  const worldStyle = {
+    "--camera-x": stageCoordinateToViewport(camera.x, "x"),
+    "--camera-y": stageCoordinateToViewport(camera.y, "y"),
+    "--camera-scale": String(camera.scale > 0 ? camera.scale : 1),
+    "--camera-rotation": `${camera.rotation}deg`,
+    "--camera-filter": cameraFilterCss(camera.filter),
+    "--world-blur": framePresentation?.blur ? "blur(2px)" : "none",
+    "--screen-effect-filter": effectClass === "sepia" ? "sepia(0.82) saturate(0.82)" : "none",
+  } as CSSProperties;
+  const messageVisible = framePresentation?.messageVisible ?? true;
   const activeCoordinateDebugSettings = COORDINATE_DEBUG_ENABLED
     ? coordinateDebugOffsets
     : DISABLED_COORDINATE_DEBUG_SETTINGS;
@@ -1718,50 +1822,87 @@ export function ReaderView({
     <div className={`reader-shell ${settings.reduceMotion ? "reduce-motion" : ""}`} style={stageStyle}>
       <div className="letterbox-background" aria-hidden="true" />
       <div
-        className={`reader-stage ${currentFrame?.effect ?? "none"} ${uiHidden ? "ui-hidden" : ""}`}
+        className={`reader-stage ${currentFrame?.effect ?? "none"} ${effectClass ? `screen-effect-${effectClass}` : ""} ${uiHidden ? "ui-hidden" : ""}`}
         onClick={stageClick}
       >
-        <div className="scene-layer">
-          {currentBackground && !backgroundFailed && (
-            <img
-              key={currentBackground}
-              className={`scene-image transition-${currentFrame?.transition ?? "none"}`}
-              src={currentBackground}
-              alt="剧情背景"
-              onError={() => {
-                if (usingLocalBackground) {
-                  useBackgroundFallback();
-                  return;
-                }
-                setBackgroundFailed(true);
-              }}
-              draggable={false}
-            />
+        <div className="world-layer" style={worldStyle}>
+          <div className="scene-layer">
+            {currentBackground && !backgroundFailed && (
+              <img
+                key={currentBackground}
+                className={`scene-image transition-${currentFrame?.transition ?? "none"}`}
+                src={currentBackground}
+                alt="剧情背景"
+                onError={() => {
+                  if (usingLocalBackground) {
+                    useBackgroundFallback();
+                    return;
+                  }
+                  setBackgroundFailed(true);
+                }}
+                draggable={false}
+              />
+            )}
+            <div className="scene-fallback" />
+            <div className="scene-vignette" />
+            <div className="scene-scanlines" />
+          </div>
+
+          <div className="stage-image-layer" aria-hidden="true">
+            {framePresentation?.stageLayers.map((layer) => (
+              <StageLayerSprite
+                key={`${layer.slot}-${layer.id}`}
+                layer={layer}
+                region={story.region}
+                customPackage={customPackage}
+              />
+            ))}
+          </div>
+
+          <div className="character-layer" style={characterLayerStyle} aria-live="off">
+            {COORDINATE_DEBUG_ENABLED && activeCoordinateDebugSettings.showScreenOrigin && (
+              <span className="coordinate-origin-debug screen-origin-debug" aria-hidden="true">
+                <i />
+                <small>画面 0,0</small>
+              </span>
+            )}
+            {currentFrame?.characters.map((character) => (
+              <CharacterSprite
+                key={`${character.slot}-${character.id}`}
+                character={character}
+                region={story.region}
+                customPackage={customPackage}
+                characterCalibrationOffset={characterCalibrationOffset}
+                characterDebugOffset={characterDebugOffset}
+                showCharacterOrigin={COORDINATE_DEBUG_ENABLED && activeCoordinateDebugSettings.showCharacterOrigin}
+              />
+            ))}
+          </div>
+
+          {framePresentation?.pictureFrame && (
+            <div className="picture-frame-overlay" data-frame={framePresentation.pictureFrame} aria-hidden="true" />
           )}
-          <div className="scene-fallback" />
-          <div className="scene-vignette" />
-          <div className="scene-scanlines" />
+          {framePresentation?.movie && (
+            <div className="movie-overlay" aria-hidden="true">
+              <span>FILM / {framePresentation.movie}</span>
+            </div>
+          )}
         </div>
 
-        <div className="character-layer" style={characterLayerStyle} aria-live="off">
-          {COORDINATE_DEBUG_ENABLED && activeCoordinateDebugSettings.showScreenOrigin && (
-            <span className="coordinate-origin-debug screen-origin-debug" aria-hidden="true">
-              <i />
-              <small>画面 0,0</small>
-            </span>
-          )}
-          {currentFrame?.characters.map((character) => (
-            <CharacterSprite
-              key={`${character.slot}-${character.id}`}
-              character={character}
-              region={story.region}
-              customPackage={customPackage}
-              characterCalibrationOffset={characterCalibrationOffset}
-              characterDebugOffset={characterDebugOffset}
-              showCharacterOrigin={COORDINATE_DEBUG_ENABLED && activeCoordinateDebugSettings.showCharacterOrigin}
-            />
-          ))}
-        </div>
+        {framePresentation?.transitionColor && currentFrame?.transition !== "none" && (
+          <div
+            key={`${currentFrame.id}-transition`}
+            className={`transition-overlay transition-${currentFrame.transition}`}
+            style={{ backgroundColor: framePresentation.transitionColor.startsWith("#")
+              ? framePresentation.transitionColor
+              : framePresentation.transitionColor === "black"
+                ? "#000"
+                : framePresentation.transitionColor === "white"
+                  ? "#fff"
+                  : `#${framePresentation.transitionColor}` }}
+            aria-hidden="true"
+          />
+        )}
 
         {!uiHidden && (
           <>
@@ -1832,7 +1973,7 @@ export function ReaderView({
               </div>
             )}
 
-            {currentFrame && currentFrame.type !== "animation" && (
+            {messageVisible && currentFrame && currentFrame.type !== "animation" && (
               <div
                 className={[
                   "dialogue-wrap",

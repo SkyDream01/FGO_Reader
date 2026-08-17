@@ -6,6 +6,7 @@ import type {
   StoryQuest,
   WarDetail,
 } from "../types";
+import { retryAsync } from "../lib/loadRetry";
 import { runtimeFetch } from "../platform/runtime";
 
 const EXPORT_ROOT = "https://api.atlasacademy.io/export";
@@ -28,19 +29,23 @@ export interface CharacterFigureMetadata {
 }
 
 async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const response = await runtimeFetch(url, { signal });
-  if (!response.ok) {
-    throw new Error(`请求失败 (${response.status})`);
-  }
-  return response.json() as Promise<T>;
+  return retryAsync(async () => {
+    const response = await runtimeFetch(url, { signal });
+    if (!response.ok) {
+      throw new Error(`请求失败 (${response.status})`);
+    }
+    return response.json() as Promise<T>;
+  }, { signal });
 }
 
 export function getBasicWars(region: Region): Promise<BasicWar[]> {
   if (!basicWarCache.has(region)) {
-    basicWarCache.set(
-      region,
-      fetchJson<BasicWar[]>(`${EXPORT_ROOT}/${region}/basic_war.json`),
-    );
+    const request = fetchJson<BasicWar[]>(`${EXPORT_ROOT}/${region}/basic_war.json`)
+      .catch((error) => {
+        basicWarCache.delete(region);
+        throw error;
+      });
+    basicWarCache.set(region, request);
   }
   return basicWarCache.get(region)!;
 }
@@ -55,10 +60,12 @@ export async function getWarDetail(
 
 export function getBgmCatalog(region: Region): Promise<BgmEntry[]> {
   if (!bgmCache.has(region)) {
-    bgmCache.set(
-      region,
-      fetchJson<BgmEntry[]>(`${EXPORT_ROOT}/${region}/nice_bgm.json`),
-    );
+    const request = fetchJson<BgmEntry[]>(`${EXPORT_ROOT}/${region}/nice_bgm.json`)
+      .catch((error) => {
+        bgmCache.delete(region);
+        throw error;
+      });
+    bgmCache.set(region, request);
   }
   return bgmCache.get(region)!;
 }
@@ -85,12 +92,14 @@ export async function getScriptText(
     return response.text();
   };
 
-  try {
-    return await readResponse(scriptUrl);
-  } catch (error) {
-    if (!region || !scriptId || scriptUrl.startsWith("/atlas-api/nice/")) throw error;
-    return readResponse(`/atlas-api/nice/${region}/script/${scriptId}`);
-  }
+  return retryAsync(async () => {
+    try {
+      return await readResponse(scriptUrl);
+    } catch (error) {
+      if (!region || !scriptId || scriptUrl.startsWith("/atlas-api/nice/")) throw error;
+      return readResponse(`/atlas-api/nice/${region}/script/${scriptId}`);
+    }
+  }, { signal });
 }
 
 export async function searchScripts(
