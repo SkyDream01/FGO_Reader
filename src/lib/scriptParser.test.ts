@@ -84,13 +84,48 @@ describe("cleanScriptText", () => {
         messageVisible: true,
         bgmVolume: 0.25,
         camera: { x: 0, y: -30, scale: 1.2, filter: "gray" },
-        blur: "glass",
+        blur: 0.5,
         pictureFrame: "cut063_cinema",
         stageLayers: [
           expect.objectContaining({ slot: "Q", id: "142200", source: "background" }),
         ],
       },
     });
+  });
+
+  it("projects blur intensities from global and sub-render blur commands", () => {
+    const parsed = parseFgoScript([
+      "[blur lens 1.1 2 10]",
+      "＠旁白",
+      "全局模糊。[k]",
+      "[subBlur #A glass 0.4 2 10 1.0 subBlur]",
+      "＠旁白",
+      "子渲染模糊。[k]",
+      "[subBlur2 #B motion 0 2 10 1.0 subBlur]",
+      "＠旁白",
+      "零强度模糊。[k]",
+    ].join("\n"), "blur-intensity");
+
+    expect(parsed.frames.map((frame) => frame.presentation?.blur)).toEqual([1.1, 0.4, 0]);
+  });
+
+  it("clears blur safely when its intensity is missing or invalid", () => {
+    const parsed = parseFgoScript([
+      "[blur lens 3 2 10]",
+      "＠旁白",
+      "有效模糊。[k]",
+      "[blur]",
+      "＠旁白",
+      "缺失参数。[k]",
+      "[subBlur #A lens invalid 2 10 1.0 subBlur]",
+      "＠旁白",
+      "无效参数。[k]",
+      "[subBlur2 #B glass -1 2 10 1.0 subBlur]",
+      "＠旁白",
+      "负数参数。[k]",
+    ].join("\n"), "invalid-blur-intensity");
+
+    expect(parsed.frames.map((frame) => frame.presentation?.blur)).toEqual([3, null, null, null]);
   });
 
   it("reopens the message window for dialogue after a messageOff transition", () => {

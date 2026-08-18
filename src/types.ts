@@ -124,7 +124,8 @@ export interface FramePresentation {
   /** Script `bgm` parameter 2, when present; null means use reader volume. */
   bgmVolume: number | null;
   camera: StoryCameraState;
-  blur: string | null;
+  /** Script blur strength in CSS pixels; null means no active valid blur. */
+  blur: number | null;
   screenEffect: string | null;
   pictureFrame: string | null;
   movie: string | null;

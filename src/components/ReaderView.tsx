@@ -58,6 +58,7 @@ import {
   autoPlaybackDelayMs,
   choiceAutoPlaybackCharacterCount,
 } from "../lib/autoPlayback";
+import { blurFilterCss } from "../lib/blurFilter";
 import {
   resolveCharacterBaselineTop,
   resolveCharacterAlphaContentRect,
@@ -1739,7 +1740,7 @@ export function ReaderView({
     "--camera-scale": String(camera.scale > 0 ? camera.scale : 1),
     "--camera-rotation": `${camera.rotation}deg`,
     "--camera-filter": cameraFilterCss(camera.filter),
-    "--world-blur": framePresentation?.blur ? "blur(2px)" : "none",
+    "--world-blur": blurFilterCss(framePresentation?.blur),
     "--screen-effect-filter": effectClass === "sepia" ? "sepia(0.82) saturate(0.82)" : "none",
   } as CSSProperties;
   const messageVisible = framePresentation?.messageVisible ?? true;

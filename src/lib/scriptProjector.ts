@@ -64,7 +64,7 @@ interface ProjectionState {
   camera: StoryCameraState;
   messageVisible: boolean;
   bgmVolume: number | null;
-  blur: string | null;
+  blur: number | null;
   screenEffect: string | null;
   pictureFrame: string | null;
   movie: string | null;
@@ -194,6 +194,16 @@ function parseCoordinateToken(token?: string) {
   const x = Number.parseFloat(rawX);
   const y = Number.parseFloat(rawY);
   return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
+}
+
+function parseBlurIntensity(args: readonly string[], typeIndex: number) {
+  // `blur` is `[blur type intensity ...]`, while `subBlur` and `subBlur2`
+  // include a layer before the type.
+  const token = args[typeIndex + 1]?.trim();
+  if (!token) return null;
+
+  const intensity = Number(token);
+  return Number.isFinite(intensity) && intensity >= 0 ? intensity : null;
 }
 
 function normalizeRenderedText(value: string, masterName: string) {
@@ -1163,7 +1173,7 @@ function applyCommand(
   }
 
   if (name === "blur" || name === "subblur" || name === "subblur2") {
-    state.blur = args[0] ?? null;
+    state.blur = parseBlurIntensity(args, name === "blur" ? 0 : 1);
     return;
   }
 
@@ -1321,7 +1331,7 @@ function mergeChoiceStates(
     }
     if (field === "messageVisible") result.messageVisible = first as boolean;
     else if (field === "bgmVolume") result.bgmVolume = first as number | null;
-    else if (field === "blur") result.blur = first as string | null;
+    else if (field === "blur") result.blur = first as number | null;
     else if (field === "screenEffect") result.screenEffect = first as string | null;
     else if (field === "pictureFrame") result.pictureFrame = first as string | null;
     else if (field === "movie") result.movie = first as string | null;
