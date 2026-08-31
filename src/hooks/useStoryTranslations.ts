@@ -2,15 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   chunkTranslationUnits,
   clearPersistentTranslationCaches,
-  collectTranslationUnits,
-  createTranslationFrameLookahead,
   fetchTranslationServerConfig,
-  frameTranslationUnits,
   loadPersistentTranslations,
   providerConfigFromSettings,
   providerIsReady,
   requestTranslations,
   savePersistentTranslations,
+  stepTranslationUnits,
   translationForUnit,
   translationNamespace,
   translationUnitSourceHash,
@@ -20,13 +18,13 @@ import {
   type TranslationServerConfig,
   type TranslationSettings,
   type TranslationUnit,
+  type TranslatableStep,
 } from "../lib/translation";
-import type { StoryFrame } from "../types";
 
 interface UseStoryTranslationsOptions {
   scriptId: string;
-  frames: StoryFrame[];
-  frameIndex: number;
+  /** Readable units in display order; index 0 is the current message/choice. */
+  steps: TranslatableStep[];
   eligible: boolean;
   settings: TranslationSettings;
   manualActive: boolean;
@@ -45,54 +43,63 @@ const MAX_CONCURRENT_BATCHES = 3;
 const BACKGROUND_BATCH_UNIT_LIMIT = 20;
 const RETRY_DELAY_MS = 1_000;
 
-function uniqueFrameUnits(frame: StoryFrame | null | undefined) {
-  return frame ? collectTranslationUnits([frame]) : [];
+function uniqueStepUnits(step: TranslatableStep | null | undefined) {
+  return step ? collectUniqueUnits([step]) : [];
 }
 
-function frameHasTranslations(
+function collectUniqueUnits(steps: TranslatableStep[]) {
+  const units = new Map<string, TranslationUnit>();
+  for (const step of steps) {
+    for (const unit of stepTranslationUnits(step)) {
+      const key = `${unit.id}:${translationUnitSourceHash(unit)}`;
+      if (!units.has(key)) units.set(key, unit);
+    }
+  }
+  return [...units.values()];
+}
+
+function stepHasTranslations(
   translations: Record<string, CachedTranslation>,
-  frame: StoryFrame,
+  step: TranslatableStep,
 ) {
-  return frameTranslationUnits(frame)
+  return stepTranslationUnits(step)
     .every((unit) => Boolean(translationForUnit(translations, unit)));
 }
 
-function translatedFrameStepCount(
+function translatedStepCount(
   translations: Record<string, CachedTranslation>,
-  steps: StoryFrame[][],
+  steps: TranslatableStep[],
 ) {
-  return steps.filter((step) => (
-    step.every((frame) => frameHasTranslations(translations, frame))
-  )).length;
+  return steps.filter((step) => stepHasTranslations(translations, step)).length;
 }
 
 function collectBackgroundBatch(
-  steps: StoryFrame[][],
+  steps: TranslatableStep[],
   translations: Record<string, CachedTranslation>,
   pendingIds: Set<string>,
   startIndex: number,
 ) {
-  const frames: StoryFrame[] = [];
+  const batch: TranslatableStep[] = [];
   let missingUnitCount = 0;
   let index = startIndex;
 
   while (index < steps.length) {
     const step = steps[index];
-    const stepUnits = collectTranslationUnits(step).filter((unit) => (
+    const stepUnits = stepTranslationUnits(step).filter((unit) => (
       !translationForUnit(translations, unit) && !pendingIds.has(unit.id)
     ));
     if (!stepUnits.length) {
       index += 1;
       continue;
     }
-    if (frames.length && missingUnitCount + stepUnits.length > BACKGROUND_BATCH_UNIT_LIMIT) break;
-    frames.push(...step);
+    if (batch.length && missingUnitCount + stepUnits.length > BACKGROUND_BATCH_UNIT_LIMIT) break;
+    batch.push(step);
     missingUnitCount += stepUnits.length;
     index += 1;
     if (missingUnitCount >= BACKGROUND_BATCH_UNIT_LIMIT) break;
   }
 
-  return { frames, nextIndex: index };
+  return { steps: batch, nextIndex: index };
 }
 
 function retryDelay(signal: AbortSignal) {
@@ -114,8 +121,7 @@ function retryDelay(signal: AbortSignal) {
 
 export function useStoryTranslations({
   scriptId,
-  frames,
-  frameIndex,
+  steps,
   eligible,
   settings,
   manualActive,
@@ -223,42 +229,38 @@ export function useStoryTranslations({
 
   useEffect(() => () => abortRequests(), [abortRequests]);
 
-  const frameLookahead = useMemo(
-    () => createTranslationFrameLookahead(frames, frameIndex),
-    [frameIndex, frames],
+  const currentStep = steps[0] ?? null;
+  const currentStepUnits = useMemo(
+    () => uniqueStepUnits(currentStep),
+    [currentStep],
   );
-  const currentFrame = frames[frameIndex] ?? null;
-  const currentFrameUnits = useMemo(
-    () => uniqueFrameUnits(currentFrame),
-    [currentFrame],
+  const aheadSteps = useMemo(() => steps.slice(1), [steps]);
+  const translatedMachineUnreadStepCount = useMemo(
+    () => translatedStepCount(translations, aheadSteps),
+    [aheadSteps, translations],
   );
-  const aheadFrameSteps = useMemo(() => frameLookahead.slice(1), [frameLookahead]);
-  const translatedMachineUnreadFrameCount = useMemo(
-    () => translatedFrameStepCount(translations, aheadFrameSteps),
-    [aheadFrameSteps, translations],
-  );
-  const unreadFrameRefillGoal = aheadFrameSteps.length;
+  const unreadStepRefillGoal = aheadSteps.length;
 
   const preparationComplete = Boolean(
-    currentFrame && frameHasTranslations(translations, currentFrame),
+    currentStep && stepHasTranslations(translations, currentStep),
   );
   const preparationReadyCount = preparationComplete ? 1 : 0;
-  const preparationTotal = machineActive && currentFrame ? 1 : 0;
+  const preparationTotal = machineActive && currentStep ? 1 : 0;
   const preparing = machineActive
-    && Boolean(currentFrame)
+    && Boolean(currentStep)
     && !schedulerPaused
     && !preparationFailed
     && !preparationComplete;
-  const preparationKey = machineActive && currentFrame
-    ? `${scriptId}:${frameIndex}:${currentFrame.id}`
+  const preparationKey = machineActive && currentStep
+    ? `${scriptId}:${currentStep.key}:${currentStepUnits.map((unit) => unit.id).join("|")}`
     : "";
 
-  const translateFrames = useCallback(async (
-    framesToTranslate: StoryFrame[],
+  const translateSteps = useCallback(async (
+    stepsToTranslate: TranslatableStep[],
     surfaceError: boolean,
   ): Promise<TranslationRunResult> => {
     if (!machineActive || !settings.provider) return "deferred";
-    const missing = collectTranslationUnits(framesToTranslate).filter((unit) => (
+    const missing = collectUniqueUnits(stepsToTranslate).filter((unit) => (
       !translationForUnit(translationsRef.current, unit) && !pendingRef.current.has(unit.id)
     ));
     if (!missing.length) return "success";
@@ -351,19 +353,19 @@ export function useStoryTranslations({
     if (
       !machineActive
       || schedulerPaused
-      || !currentFrameUnits.length
+      || !currentStepUnits.length
       || activeBatchCount >= MAX_CONCURRENT_BATCHES
     ) return;
-    if (currentFrame) void translateFrames([currentFrame], true);
+    if (currentStep) void translateSteps([currentStep], true);
   }, [
     activeBatchCount,
-    currentFrame,
-    currentFrameUnits,
+    currentStep,
+    currentStepUnits,
     machineActive,
     pendingIds,
     retryNonce,
     schedulerPaused,
-    translateFrames,
+    translateSteps,
     translations,
   ]);
 
@@ -372,71 +374,71 @@ export function useStoryTranslations({
       !machineActive
       || schedulerPaused
       || activeBatchCount >= MAX_CONCURRENT_BATCHES
-      || translatedMachineUnreadFrameCount >= unreadFrameRefillGoal
+      || translatedMachineUnreadStepCount >= unreadStepRefillGoal
     ) return;
 
     let nextStepIndex = 0;
-    while (controllersRef.current.size < MAX_CONCURRENT_BATCHES && nextStepIndex < aheadFrameSteps.length) {
+    while (controllersRef.current.size < MAX_CONCURRENT_BATCHES && nextStepIndex < aheadSteps.length) {
       const batch = collectBackgroundBatch(
-        aheadFrameSteps,
+        aheadSteps,
         translationsRef.current,
         pendingRef.current,
         nextStepIndex,
       );
-      if (!batch.frames.length) break;
-      void translateFrames(batch.frames, false);
+      if (!batch.steps.length) break;
+      void translateSteps(batch.steps, false);
       nextStepIndex = batch.nextIndex;
     }
   }, [
     activeBatchCount,
-    aheadFrameSteps,
+    aheadSteps,
     machineActive,
     pendingIds,
     retryNonce,
     schedulerPaused,
-    translateFrames,
-    translatedMachineUnreadFrameCount,
+    translateSteps,
+    translatedMachineUnreadStepCount,
     translations,
-    unreadFrameRefillGoal,
+    unreadStepRefillGoal,
   ]);
 
   const translatedUnit = useCallback((unit: TranslationUnit) => (
     translationForUnit(manualActive ? manualTranslations : translations, unit)
   ), [manualActive, manualTranslations, translations]);
 
-  const frameTranslated = useCallback((frame: StoryFrame) => (
-    frameTranslationUnits(frame).every((unit) => Boolean(translatedUnit(unit)))
+  const stepTranslated = useCallback((step: TranslatableStep) => (
+    stepTranslationUnits(step).every((unit) => Boolean(translatedUnit(unit)))
   ), [translatedUnit]);
 
-  const translatedUnreadFrameCount = useMemo(
-    () => translatedFrameStepCount(
+  const translatedUnreadStepCount = useMemo(
+    () => translatedStepCount(
       manualActive ? manualTranslations : translations,
-      aheadFrameSteps,
+      aheadSteps,
     ),
-    [aheadFrameSteps, manualActive, manualTranslations, translations],
+    [aheadSteps, manualActive, manualTranslations, translations],
   );
 
-  const translatedSpeaker = useCallback((frame: StoryFrame) => {
-    if (frame.type !== "dialogue") return undefined;
-    const unit = frameTranslationUnits(frame).find(({ kind }) => kind === "speaker");
+  const translatedSpeaker = useCallback((step: TranslatableStep) => {
+    if (step.kind !== "message") return undefined;
+    const unit = stepTranslationUnits(step).find(({ kind }) => kind === "speaker");
     return unit ? translatedUnit(unit) : undefined;
   }, [translatedUnit]);
 
-  const translatedText = useCallback((frame: StoryFrame) => {
-    if (frame.type !== "dialogue") return undefined;
-    const unit = frameTranslationUnits(frame).find(({ kind }) => kind === "dialogue");
+  const translatedText = useCallback((step: TranslatableStep) => {
+    if (step.kind !== "message") return undefined;
+    const unit = stepTranslationUnits(step).find(({ kind }) => kind === "dialogue");
     return unit ? translatedUnit(unit) : undefined;
   }, [translatedUnit]);
 
-  const translatedChoice = useCallback((frame: StoryFrame, optionIndex: number) => {
-    if (frame.type !== "choice") return undefined;
-    const unit = frameTranslationUnits(frame)[optionIndex];
+  const translatedChoice = useCallback((step: TranslatableStep, optionIndex: number) => {
+    if (step.kind !== "choice") return undefined;
+    const unit = stepTranslationUnits(step)[optionIndex];
     return unit ? translatedUnit(unit) : undefined;
   }, [translatedUnit]);
 
-  const currentTranslated = currentFrameUnits.length > 0
-    && currentFrameUnits.every((unit) => Boolean(translatedUnit(unit)));
-  const currentPending = !manualActive && currentFrameUnits.some((unit) => pendingIds.has(unit.id));
+  const currentTranslated = currentStepUnits.length > 0
+    && currentStepUnits.every((unit) => Boolean(translatedUnit(unit)));
+  const currentPending = !manualActive && currentStepUnits.some((unit) => pendingIds.has(unit.id));
 
   return {
     serverConfig,
@@ -449,13 +451,13 @@ export function useStoryTranslations({
     preparationKey,
     preparationReadyCount,
     preparationTotal,
-    translatedUnreadFrameCount,
-    translatedUnreadFrameTarget: TRANSLATION_AHEAD_FRAME_COUNT,
+    translatedUnreadStepCount,
+    translatedUnreadStepTarget: TRANSLATION_AHEAD_FRAME_COUNT,
     currentTranslated,
     currentPending,
     currentError,
     abortPending: abortRequests,
-    frameTranslated,
+    stepTranslated,
     translatedSpeaker,
     translatedText,
     translatedChoice,

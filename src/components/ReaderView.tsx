@@ -33,6 +33,7 @@ import {
 import {
   CSSProperties,
   ChangeEvent,
+  Fragment,
   MouseEvent,
   useCallback,
   useEffect,
@@ -50,10 +51,15 @@ import { useBgm } from "../hooks/useBgm";
 import { useCustomAssetUrl } from "../hooks/useCustomAssetUrl";
 import { useManualTranslations } from "../hooks/useManualTranslations";
 import { useStoryTranslations } from "../hooks/useStoryTranslations";
-import {
-  addChoiceDecision,
-  clearChoiceTrail,
-} from "../lib/choiceTrail";
+import { addChoiceDecision } from "../lib/choiceTrail";
+import { useExecutor } from "../adv/useExecutor";
+import { AudioChannels } from "../adv/audio";
+import type {
+  CharacterView,
+  StageLayerView,
+  StageSnapshot,
+} from "../adv/executor";
+import type { MessageLineView } from "../adv/message";
 import {
   autoPlaybackDelayMs,
   choiceAutoPlaybackCharacterCount,
@@ -110,10 +116,12 @@ import {
   saveTranslationSettings,
   translateTranslationUnits,
   TranslationBatchError,
+  TRANSLATION_AHEAD_FRAME_COUNT,
   type CachedTranslation,
   type FullTranslationProgress,
   type ThinkingLevel,
   type TranslationSettings,
+  type TranslatableStep,
 } from "../lib/translation";
 import {
   exportTextFile,
@@ -123,12 +131,8 @@ import {
 } from "../platform/runtime";
 import type {
   Bookmark as ReaderBookmark,
-  CharacterState,
-  ChoiceFrame,
   ChoiceTrail,
-  StageLayerState,
   ReaderSettings,
-  StoryFrame,
   StoryLaunch,
 } from "../types";
 
@@ -168,7 +172,7 @@ function loadSettings(): ReaderSettings {
 }
 
 const FIGURE_CANVAS_SIZE = 1024;
-const defaultCharacterX: Record<CharacterState["position"], number> = {
+const defaultCharacterX: Record<CharacterView["position"], number> = {
   left: -256,
   center: 0,
   right: 256,
@@ -184,7 +188,7 @@ const DEFAULT_CAMERA = {
   filter: null,
 } as const;
 
-function stageLayerAssetId(layer: StageLayerState) {
+function stageLayerAssetId(layer: StageLayerView) {
   return layer.id.replace(/^back/i, "");
 }
 
@@ -288,7 +292,7 @@ function AtlasCharacterFigure({
   onError,
   onVisibleCenterCorrection,
 }: {
-  character: CharacterState;
+  character: CharacterView;
   region: StoryLaunch["region"];
   mergedUrl: string;
   onError: () => void;
@@ -427,7 +431,7 @@ function StageLayerSprite({
   region,
   customPackage,
 }: {
-  layer: StageLayerState;
+  layer: StageLayerView;
   region: StoryLaunch["region"];
   customPackage: PreparedCustomPackage | null;
 }) {
@@ -478,7 +482,7 @@ function CharacterSprite({
   characterDebugOffset,
   showCharacterOrigin,
 }: {
-  character: CharacterState;
+  character: CharacterView;
   region: StoryLaunch["region"];
   customPackage: PreparedCustomPackage | null;
   characterCalibrationOffset: { x: number; y: number };
@@ -725,6 +729,32 @@ function initialCoordinateDebugSettings(): CoordinateDebugSettings {
   };
 }
 
+/** Converts plain translated text into the rich line model for display. */
+function plainTextToLines(text: string): MessageLineView[] {
+  return text.split("\n").map((line) => ({
+    spans: line ? [{ text: line, color: null, ruby: null }] : [],
+    align: "left" as const,
+  }));
+}
+
+/** Renders revealed message lines with color and ruby annotations. */
+function RichMessageLines({ lines }: { lines: MessageLineView[] }) {
+  return (
+    <>
+      {lines.map((line, lineIndex) => (
+        <Fragment key={lineIndex}>
+          {lineIndex > 0 && <br />}
+          {line.spans.map((span, spanIndex) => (
+            span.ruby
+              ? <ruby key={spanIndex} style={span.color ? { color: span.color } : undefined}>{span.text}<rt>{span.ruby}</rt></ruby>
+              : <span key={spanIndex} style={span.color ? { color: span.color } : undefined}>{span.text}</span>
+          ))}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
 export function ReaderView({
   story,
   prepared,
@@ -743,17 +773,8 @@ export function ReaderView({
   );
   const [translationSettings, setTranslationSettings] = useState<TranslationSettings>(loadTranslationSettings);
   const [translationDraft, setTranslationDraft] = useState<TranslationSettings>(loadTranslationSettings);
-  const [frames, setFrames] = useState<StoryFrame[]>(prepared.frames);
-  const baseFrames = prepared.baseFrames;
   const [choiceTrail, setChoiceTrail] = useState<ChoiceTrail>(prepared.choiceTrail);
   const customPackage = prepared.customPackage;
-  const [frameIndex, setFrameIndex] = useState(prepared.startIndex);
-  const [revealedCount, setRevealedCount] = useState(() => {
-    const initialFrame = prepared.frames[prepared.startIndex];
-    return settings.reduceMotion && initialFrame?.type === "dialogue"
-      ? Array.from(initialFrame.text).length
-      : 0;
-  });
   const loading = false;
   const loadNote = prepared.loadNote;
   const [panel, setPanel] = useState<Panel>("none");
@@ -765,7 +786,6 @@ export function ReaderView({
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [windowFocused, setWindowFocused] = useState(document.hasFocus());
   const [choiceFocus, setChoiceFocus] = useState(0);
-  const [completed, setCompleted] = useState(false);
   const [toast, setToast] = useState("");
   const [backgroundFailed, setBackgroundFailed] = useState(false);
   const japaneseStoryLoaded = prepared.japaneseStoryLoaded;
@@ -782,31 +802,62 @@ export function ReaderView({
     return loadStoredFrameIndex(readProgressStorageKey(story.scriptId), -1);
   });
   const toastTimer = useRef<number | null>(null);
-  const dialogueTransitionTimer = useRef<number | null>(null);
   const manualTranslationInputRef = useRef<HTMLInputElement>(null);
   const oneShotTranslationControllerRef = useRef<AbortController | null>(null);
-  const revealContext = useRef({ frameId: "", mode: "source", translated: false });
-  const revealImmediatelyOnNavigation = useRef(false);
-  const translationVisit = useRef({
-    key: "",
-    waitingForPreparation: false,
-    translated: false,
-  });
+  const mergedDecisionsRef = useRef(0);
 
-  const currentFrame = frames[frameIndex] ?? null;
-  const previousFrame = frames[frameIndex - 1] ?? null;
-  const [dialogueLeaving, setDialogueLeaving] = useState(false);
+  // ③ Executor-driven playback (docs/FGO_Story_Reader_Standard §1.1 / S-E).
+  const effectiveTextSpeed = settings.reduceMotion ? 2 : settings.textSpeed;
+  const { executor, snapshot, tap, selectChoice, goBack, jumpToMessage, replay } = useExecutor({
+    program: prepared.program,
+    masterName: loadedMasterName,
+    masterGender: "male",
+    startIndex: prepared.startIndex,
+    choiceTrail: prepared.choiceTrail,
+    textSpeedMs: effectiveTextSpeed,
+    // Reduce-motion compresses timed waits and transitions to near-instant,
+    // matching the old reader's reduceMotion pacing.
+    timeScale: settings.reduceMotion ? 60 : 1,
+    reduceMotion: settings.reduceMotion,
+  });
+  const phase = snapshot.phase;
+  const completed = phase === "ended";
+  const currentMessage = snapshot.message;
+  const currentChoice = snapshot.choice;
+
+  // Audio intents route through the S-A channel model (BGM keeps useBgm).
+  const audioChannels = useMemo(() => new AudioChannels(story.region, () => null), [story.region]);
+  useEffect(() => {
+    executor.onAudioIntent = (intent) => audioChannels.handle(intent);
+    return () => {
+      executor.onAudioIntent = null;
+    };
+  }, [executor, audioChannels]);
+  useEffect(() => {
+    audioChannels.setUnlocked(audioUnlocked);
+  }, [audioChannels, audioUnlocked]);
+  useEffect(() => {
+    audioChannels.setMuted(muted);
+  }, [audioChannels, muted]);
+  useEffect(() => () => audioChannels.dispose(), [audioChannels]);
+
   const manualTranslation = useManualTranslations({
     eligible: japaneseStoryLoaded,
     scriptId: story.scriptId,
     title: story.title,
     masterName: loadedMasterName,
-    frames: baseFrames,
+    steps: prepared.steps,
   });
+  // The readable-step lookahead (current + upcoming) feeds prefetching.
+  const translationSteps = useMemo<TranslatableStep[]>(
+    () => executor.currentTranslationSteps(TRANSLATION_AHEAD_FRAME_COUNT),
+    // snapshot.version marks executor progress changes (message/choice moves).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [executor, snapshot.version],
+  );
   const translation = useStoryTranslations({
     scriptId: story.scriptId,
-    frames,
-    frameIndex,
+    steps: translationSteps,
     eligible: remoteTranslationEligible && manualTranslation.resolved && !manualTranslation.active,
     settings: translationSettings,
     manualActive: manualTranslation.active,
@@ -814,34 +865,21 @@ export function ReaderView({
     paused: manualTranslationBusy,
   });
   const translatedMode = japaneseStoryLoaded && translationSettings.mode === "translated";
-  const translationVisitKey = [
-    translationSettings.mode,
-    frameIndex,
-    currentFrame?.id ?? "",
-    translation.preparationKey,
-  ].join(":");
-  if (translationVisit.current.key !== translationVisitKey) {
-    translationVisit.current = {
-      key: translationVisitKey,
-      waitingForPreparation: translatedMode && translation.preparing,
-      translated: translatedMode && !translation.preparing && translation.currentTranslated,
-    };
-  } else if (translationVisit.current.waitingForPreparation && !translation.preparing) {
-    translationVisit.current = {
-      ...translationVisit.current,
-      waitingForPreparation: false,
-      translated: translatedMode && translation.currentTranslated,
-    };
-  }
-  const currentDisplayTranslated = translatedMode && translationVisit.current.translated;
-  const displaySpeaker = currentFrame?.type === "dialogue" && currentDisplayTranslated
-    ? translation.translatedSpeaker(currentFrame) ?? currentFrame.speaker
-    : currentFrame?.type === "dialogue"
-      ? currentFrame.speaker
-      : "回应选择";
-  const displayText = currentFrame?.type === "dialogue" && currentDisplayTranslated
-    ? translation.translatedText(currentFrame) ?? currentFrame.text
-    : currentFrame?.text ?? "";
+  const currentStep = translationSteps[0] ?? null;
+  const currentDisplayTranslated = translatedMode
+    && currentStep?.kind === "message"
+    && Boolean(translation.currentTranslated);
+  const translatedTextValue = currentDisplayTranslated && currentStep
+    ? translation.translatedText(currentStep) ?? null
+    : null;
+  const translatedSpeakerValue = translatedMode && currentStep?.kind === "message"
+    ? translation.translatedSpeaker(currentStep) ?? null
+    : null;
+  const displaySpeaker = currentChoice
+    ? "回应选择"
+    : currentDisplayTranslated && translatedSpeakerValue
+      ? translatedSpeakerValue
+      : currentMessage?.speaker ?? "旁白";
   const selectedProviderInfo = translation.serverConfig?.providers.find(
     (provider) => provider.id === translationDraft.provider,
   );
@@ -866,51 +904,67 @@ export function ReaderView({
       translationSettings.provider,
     ],
   );
-  const textCharacters = useMemo(
-    () => Array.from(displayText),
-    [displayText],
-  );
-  const textComplete = currentFrame?.type === "choice" || revealedCount >= textCharacters.length;
-  const backgroundFallbackUrl = backgroundUrl(story.region, currentFrame?.scene ?? null);
+  // Display lines: the revealed rich-token slice for source text, or a
+  // proportionally revealed plain-text slice for translations.
+  const displayLines = useMemo(() => {
+    if (!currentMessage) return [];
+    if (translatedTextValue !== null) {
+      const chars = Array.from(translatedTextValue);
+      const visibleCount = currentMessage.complete
+        ? chars.length
+        : currentMessage.total > 0
+          ? Math.min(chars.length, Math.ceil((currentMessage.revealed / currentMessage.total) * chars.length))
+          : chars.length;
+      return plainTextToLines(chars.slice(0, visibleCount).join(""));
+    }
+    return currentMessage.lines;
+  }, [currentMessage, translatedTextValue]);
+  const textComplete = Boolean(currentChoice) || !currentMessage || currentMessage.complete;
+  const sceneId = snapshot.background.id;
+  const backgroundFallbackUrl = backgroundUrl(story.region, sceneId);
   const {
     url: currentBackground,
     usingLocalAsset: usingLocalBackground,
     useFallback: useBackgroundFallback,
   } = useCustomAssetUrl({
     packageId: customPackage?.id,
-    assetPath: currentFrame?.scene
-      ? customPackage?.assets?.backgrounds?.[currentFrame.scene]
+    assetPath: sceneId
+      ? customPackage?.assets?.backgrounds?.[sceneId]
       : undefined,
-    preloadedUrl: currentFrame?.scene
-      ? customPackage?.assetUrls.backgrounds[currentFrame.scene]
+    preloadedUrl: sceneId
+      ? customPackage?.assetUrls.backgrounds[sceneId]
       : undefined,
     fallbackUrl: backgroundFallbackUrl,
   });
+  const previousSceneId = snapshot.background.previousId;
+  const bgmName = snapshot.bgm?.name ?? null;
   const {
     url: localBgmUrl,
     usingLocalAsset: usingLocalBgm,
     loadingLocalAsset: loadingLocalBgm,
   } = useCustomAssetUrl({
     packageId: customPackage?.id,
-    assetPath: currentFrame?.bgm
-      ? customPackage?.assets?.bgm?.[currentFrame.bgm]
+    assetPath: bgmName
+      ? customPackage?.assets?.bgm?.[bgmName]
       : undefined,
-    preloadedUrl: currentFrame?.bgm
-      ? customPackage?.assetUrls.bgm[currentFrame.bgm]
+    preloadedUrl: bgmName
+      ? customPackage?.assetUrls.bgm[bgmName]
       : undefined,
     fallbackUrl: "",
   });
-  const progress = frames.length > 1 ? (frameIndex / (frames.length - 1)) * 100 : 0;
+  const progress = snapshot.messageTotal > 1
+    ? (snapshot.messageOrdinal / snapshot.messageTotal) * 100
+    : 0;
 
   const bgm = useBgm({
     region: story.region,
-    fileName: currentFrame?.bgm ?? null,
+    fileName: bgmName,
     localUrl: usingLocalBgm ? localBgmUrl : null,
-    localTitle: currentFrame?.bgm ?? undefined,
+    localTitle: bgmName ?? undefined,
     localPending: loadingLocalBgm,
     unlocked: audioUnlocked,
     muted,
-    volume: currentFrame?.presentation?.bgmVolume ?? settings.bgmVolume,
+    volume: snapshot.bgm?.volume ?? settings.bgmVolume,
   });
 
   const showToast = useCallback((message: string) => {
@@ -925,7 +979,7 @@ export function ReaderView({
   }, []);
 
   const exportManualTranslationTemplate = useCallback(async () => {
-    if (!japaneseStoryLoaded || !baseFrames.length) return;
+    if (!japaneseStoryLoaded || !prepared.steps.length) return;
     setManualTranslationError("");
     try {
       const safeScriptId = story.scriptId.replace(/[^A-Za-z0-9._-]+/g, "_");
@@ -938,10 +992,10 @@ export function ReaderView({
     } catch (error) {
       setManualTranslationError(error instanceof Error ? error.message : "无法导出翻译母本");
     }
-  }, [baseFrames.length, japaneseStoryLoaded, manualTranslation, showToast, story.scriptId]);
+  }, [japaneseStoryLoaded, manualTranslation, showToast, story.scriptId, prepared.steps.length]);
 
   const translateAndExportManualTranslation = useCallback(async () => {
-    if (!japaneseStoryLoaded || !baseFrames.length || !manualTranslation.resolved) return;
+    if (!japaneseStoryLoaded || !prepared.steps.length || !manualTranslation.resolved) return;
     if (!remoteTranslationEligible) {
       setManualTranslationError("当前脚本未允许使用在线翻译，无法执行一次性翻译");
       return;
@@ -952,8 +1006,8 @@ export function ReaderView({
       return;
     }
 
-    const units = collectScriptTranslationUnits(baseFrames);
-    const unitBatches = collectScriptTranslationUnitBatches(baseFrames);
+    const units = collectScriptTranslationUnits(prepared.steps);
+    const unitBatches = collectScriptTranslationUnitBatches(prepared.steps);
     if (!units.length) {
       setManualTranslationError("当前脚本没有可翻译的文本");
       return;
@@ -1027,9 +1081,9 @@ export function ReaderView({
       setOneShotTranslationProgress(null);
     }
   }, [
-    baseFrames,
     japaneseStoryLoaded,
     manualTranslation,
+    prepared.steps,
     remoteTranslationEligible,
     showToast,
     story.scriptId,
@@ -1285,9 +1339,11 @@ export function ReaderView({
   }, [readMax, story.scriptId]);
 
   useEffect(() => {
-    if (!frames.length) return;
-    localStorage.setItem(progressStorageKey(story.scriptId), String(frameIndex));
-  }, [frameIndex, frames.length, story.scriptId]);
+    // Persist the executor cursor (instruction index, docs §7) at every
+    // readable boundary — the resume unit for fast-forward replay.
+    if (phase === "idle") return;
+    localStorage.setItem(progressStorageKey(story.scriptId), String(snapshot.position));
+  }, [phase, snapshot.position, story.scriptId]);
 
   useEffect(() => {
     try {
@@ -1301,8 +1357,6 @@ export function ReaderView({
   }, [choiceTrail, story.scriptId]);
 
   useEffect(() => {
-    if (!frames.length) return;
-
     if (completed) {
       if (nextStory) {
         saveLastObservation(createLastObservation(nextStory, 0));
@@ -1313,184 +1367,69 @@ export function ReaderView({
     }
 
     saveLastObservation(
-      createLastObservation({ ...story, choiceTrail }, frameIndex),
+      createLastObservation({ ...story, choiceTrail }, snapshot.position),
     );
-  }, [choiceTrail, completed, frameIndex, frames.length, nextStory, story]);
+  }, [choiceTrail, completed, nextStory, snapshot.position, story]);
 
   useEffect(() => {
     setBackgroundFailed(false);
   }, [currentBackground]);
 
+  // Merge decisions the executor produced this run into the persisted trail.
   useEffect(() => {
-    setChoiceFocus(0);
-    if (!currentFrame) return;
-    const previous = revealContext.current;
-    const frameChanged = previous.frameId !== currentFrame.id;
-    const modeChanged = previous.mode !== translationSettings.mode;
-    const translationActivated = translatedMode && !previous.translated && currentDisplayTranslated;
-    const showImmediately = currentFrame.type === "choice"
-      || settings.reduceMotion
-      || revealImmediatelyOnNavigation.current
-      || modeChanged
-      || translationActivated
-      || (translatedMode && !currentDisplayTranslated);
-    setRevealedCount(showImmediately ? textCharacters.length : frameChanged ? 0 : textCharacters.length);
-    revealImmediatelyOnNavigation.current = false;
-    revealContext.current = {
-      frameId: currentFrame.id,
-      mode: translationSettings.mode,
-      translated: currentDisplayTranslated,
-    };
-    if (currentFrame.type === "choice") {
+    const decisions = executor.takeNewDecisions();
+    if (decisions.length <= mergedDecisionsRef.current) return;
+    setChoiceTrail((current) => {
+      let next = current;
+      for (let index = mergedDecisionsRef.current; index < decisions.length; index += 1) {
+        next = addChoiceDecision(next, decisions[index]);
+      }
+      return next;
+    });
+    mergedDecisionsRef.current = decisions.length;
+  }, [executor, snapshot.version]);
+
+  // Read-progress tracks completed messages; choices count once resolved.
+  useEffect(() => {
+    setReadMax((current) => Math.max(current, snapshot.messageOrdinal));
+  }, [snapshot.messageOrdinal]);
+
+  useEffect(() => {
+    if (phase === "choice") {
+      setChoiceFocus(0);
       setSkipMode(false);
     }
-  }, [
-    currentFrame?.id,
-    currentFrame,
-    currentDisplayTranslated,
-    settings.reduceMotion,
-    textCharacters.length,
-    translatedMode,
-    translationSettings.mode,
-  ]);
+  }, [phase, snapshot.choice?.key]);
 
-  useEffect(() => {
-    if (!currentFrame || currentFrame.type === "choice" || textComplete) return;
-    if (ctrlHeld || skipMode) return;
-    const previous = textCharacters[Math.max(0, revealedCount - 1)] ?? "";
-    const punctuationDelay = /[。！？!?]/.test(previous)
-      ? 125
-      : /[，、；,;]/.test(previous)
-        ? 55
-        : 0;
-    const timer = window.setTimeout(
-      () => setRevealedCount((count) => Math.min(textCharacters.length, count + 1)),
-      settings.textSpeed + punctuationDelay,
-    );
-    return () => window.clearTimeout(timer);
-  }, [ctrlHeld, currentFrame, revealedCount, settings.textSpeed, skipMode, textCharacters, textComplete]);
-
-  const markCurrentRead = useCallback(() => {
-    setReadMax((current) => Math.max(current, frameIndex));
-  }, [frameIndex]);
-
-  const goBack = useCallback(() => {
-    if (loading || (!completed && frameIndex <= 0)) return;
-    if (dialogueTransitionTimer.current !== null) {
-      window.clearTimeout(dialogueTransitionTimer.current);
-      dialogueTransitionTimer.current = null;
-    }
-    setDialogueLeaving(false);
-    setAutoMode(false);
-    setSkipMode(false);
-    setUiHidden(false);
-    if (completed) {
-      setCompleted(false);
-      return;
-    }
-    revealImmediatelyOnNavigation.current = true;
-    setFrameIndex((index) => Math.max(0, index - 1));
-  }, [completed, frameIndex, loading]);
-
-  const advance = useCallback(() => {
-    if (!currentFrame || loading || translation.preparing || dialogueLeaving) return;
+  const handleTap = useCallback(() => {
+    if (loading || translation.preparing) return;
     setAudioUnlocked(true);
     if (uiHidden) {
       setUiHidden(false);
       return;
     }
-    if (currentFrame.type === "choice") {
-      if (currentFrame.selected === undefined) return;
-      markCurrentRead();
-      if (frameIndex < frames.length - 1) setFrameIndex((index) => index + 1);
-      else setCompleted(true);
-      return;
-    }
-    if (!textComplete) {
-      setRevealedCount(textCharacters.length);
-      return;
-    }
-    markCurrentRead();
-    if (frameIndex < frames.length - 1) {
-      if (
-        currentFrame.type === "dialogue"
-        && frames[frameIndex + 1]?.type === "animation"
-        && !settings.reduceMotion
-      ) {
-        setDialogueLeaving(true);
-        dialogueTransitionTimer.current = window.setTimeout(() => {
-          dialogueTransitionTimer.current = null;
-          setFrameIndex((index) => index + 1);
-          setDialogueLeaving(false);
-        }, 180);
-        return;
-      }
-      setFrameIndex((index) => index + 1);
-    } else {
-      setCompleted(true);
+    if (phase === "choice") return;
+    tap();
+  }, [loading, phase, tap, translation.preparing, uiHidden]);
+
+  const resolveChoice = useCallback((choiceIndex: number, continueAutoPlay = false) => {
+    if (phase !== "choice" || translation.preparing) return;
+    setAudioUnlocked(true);
+    if (!continueAutoPlay) {
       setAutoMode(false);
       setSkipMode(false);
     }
-  }, [currentFrame, dialogueLeaving, frameIndex, frames, loading, markCurrentRead, settings.reduceMotion, textCharacters.length, textComplete, translation.preparing, uiHidden]);
+    selectChoice(choiceIndex);
+  }, [phase, selectChoice, translation.preparing]);
 
-  useEffect(() => {
-    if (
-      currentFrame?.type !== "animation"
-      || currentFrame.durationMs === null
-      || !windowFocused
-      || panel !== "none"
-      || translation.preparing
-    ) return;
-    const duration = settings.reduceMotion ? 1 : Math.max(80, currentFrame.durationMs);
-    const timer = window.setTimeout(advance, duration);
-    return () => window.clearTimeout(timer);
-  }, [
-    advance,
-    currentFrame,
-    panel,
-    settings.reduceMotion,
-    translation.preparing,
-    windowFocused,
-  ]);
+  const handleGoBack = useCallback(() => {
+    setAutoMode(false);
+    setSkipMode(false);
+    setUiHidden(false);
+    goBack();
+  }, [goBack]);
 
-  const resolveChoice = useCallback(
-    (choiceIndex: number, continueAutoPlay = false) => {
-      if (
-        !currentFrame
-        || currentFrame.type !== "choice"
-        || currentFrame.selected !== undefined
-        || translation.preparing
-      ) return;
-      const option = currentFrame.options[choiceIndex];
-      if (!option) return;
-      setAudioUnlocked(true);
-      if (!continueAutoPlay) {
-        setAutoMode(false);
-        setSkipMode(false);
-      }
-      markCurrentRead();
-
-      const resolved: ChoiceFrame = { ...currentFrame, selected: choiceIndex };
-      setFrames((currentFrames) => [
-        ...currentFrames.slice(0, frameIndex),
-        resolved,
-        ...option.frames,
-        ...currentFrames.slice(frameIndex + 1),
-      ]);
-      setChoiceTrail((currentTrail) => addChoiceDecision(currentTrail, {
-        choiceId: currentFrame.id,
-        optionIndex: choiceIndex,
-      }));
-
-      if (option.frames.length || frameIndex < frames.length - 1) {
-        setFrameIndex((index) => index + 1);
-      } else {
-        setCompleted(true);
-        setAutoMode(false);
-      }
-    },
-    [currentFrame, frameIndex, frames.length, markCurrentRead, translation.preparing],
-  );
+  const advance = handleTap;
 
   useEffect(() => {
     if (
@@ -1498,63 +1437,57 @@ export function ReaderView({
       || !windowFocused
       || panel !== "none"
       || uiHidden
-      || !currentFrame
+      || phase === "ended"
+      || phase === "wait"
       || translation.preparing
     ) return;
-    if (currentFrame.type === "animation") {
-      if (currentFrame.durationMs !== null) return;
-      const timer = window.setTimeout(advance, autoPlaybackDelayMs(0));
-      return () => window.clearTimeout(timer);
-    }
     if (!textComplete) return;
-    const characterCount = currentFrame.type === "choice"
-      ? choiceAutoPlaybackCharacterCount(currentFrame.options)
-      : textCharacters.length;
+    const characterCount = currentChoice
+      ? choiceAutoPlaybackCharacterCount(currentChoice.options)
+      : currentMessage?.total ?? 0;
     const timer = window.setTimeout(() => {
-      if (currentFrame.type === "choice" && currentFrame.selected === undefined) {
-        resolveChoice(0, true);
-      } else advance();
+      if (currentChoice) resolveChoice(0, true);
+      else tap();
     }, autoPlaybackDelayMs(characterCount));
     return () => window.clearTimeout(timer);
   }, [
-    advance,
     autoMode,
-    currentFrame,
+    currentChoice,
+    currentMessage?.total,
     panel,
+    phase,
     resolveChoice,
+    tap,
     textComplete,
-    textCharacters.length,
     translation.preparing,
     uiHidden,
     windowFocused,
   ]);
 
   useEffect(() => {
-    if (!skipMode || !currentFrame || panel !== "none") return;
-    if (currentFrame.type === "choice") {
+    if (!skipMode || panel !== "none" || phase === "ended") return;
+    if (phase === "choice") {
       setSkipMode(false);
       return;
     }
-    if (!settings.skipUnread && frameIndex > readMax) {
+    if (!settings.skipUnread && snapshot.messageOrdinal > readMax) {
       setSkipMode(false);
       showToast("已到达未读内容，跳读已暂停");
       return;
     }
     const timer = window.setInterval(() => {
-      if (!textComplete) setRevealedCount(textCharacters.length);
-      else advance();
+      tap();
     }, 95);
     return () => window.clearInterval(timer);
-  }, [advance, currentFrame, frameIndex, panel, readMax, settings.skipUnread, showToast, skipMode, textCharacters.length, textComplete]);
+  }, [panel, phase, readMax, settings.skipUnread, snapshot.messageOrdinal, showToast, skipMode, tap]);
 
   useEffect(() => {
-    if (!ctrlHeld || !currentFrame || panel !== "none" || currentFrame.type === "choice") return;
+    if (!ctrlHeld || panel !== "none" || phase === "choice" || phase === "ended") return;
     const timer = window.setInterval(() => {
-      if (!textComplete) setRevealedCount(textCharacters.length);
-      else advance();
+      tap();
     }, 80);
     return () => window.clearInterval(timer);
-  }, [advance, ctrlHeld, currentFrame, panel, textCharacters.length, textComplete]);
+  }, [ctrlHeld, panel, phase, tap]);
 
   const saveBookmark = useCallback(() => {
     const value: ReaderBookmark = {
@@ -1562,7 +1495,7 @@ export function ReaderView({
       scriptUrl: story.scriptUrl,
       title: story.title,
       subtitle: story.subtitle,
-      frameIndex,
+      frameIndex: snapshot.position,
       savedAt: Date.now(),
       region: story.region,
       sequence: story.sequence,
@@ -1571,7 +1504,7 @@ export function ReaderView({
     };
     localStorage.setItem(BOOKMARK_STORAGE_KEY, JSON.stringify(value));
     showToast("已保存当前位置");
-  }, [choiceTrail, frameIndex, showToast, story]);
+  }, [choiceTrail, snapshot.position, showToast, story]);
 
   const toggleFullscreen = useCallback(() => {
     void toggleApplicationFullscreen().catch(() => showToast("当前设备未允许全屏"));
@@ -1580,7 +1513,6 @@ export function ReaderView({
   useEffect(() => registerAndroidBackHandler(() => {
     if (panel !== "none" || completed) {
       setPanel("none");
-      setCompleted(false);
       return true;
     }
     void leaveApplicationFullscreen().catch(() => undefined);
@@ -1621,7 +1553,6 @@ export function ReaderView({
 
       if (event.key === "Escape") {
         setPanel("none");
-        setCompleted(false);
         return;
       }
 
@@ -1632,15 +1563,15 @@ export function ReaderView({
 
       if (panel !== "none") return;
 
-      if (currentFrame?.type === "choice") {
+      if (phase === "choice" && currentChoice) {
         if (event.key === "ArrowUp") {
           event.preventDefault();
-          setChoiceFocus((value) => (value - 1 + currentFrame.options.length) % currentFrame.options.length);
+          setChoiceFocus((value) => (value - 1 + currentChoice.options.length) % currentChoice.options.length);
           return;
         }
         if (event.key === "ArrowDown") {
           event.preventDefault();
-          setChoiceFocus((value) => (value + 1) % currentFrame.options.length);
+          setChoiceFocus((value) => (value + 1) % currentChoice.options.length);
           return;
         }
         if (/^[1-9]$/.test(event.key)) {
@@ -1649,8 +1580,7 @@ export function ReaderView({
         }
         if (event.key === "Enter" || event.code === "Space") {
           event.preventDefault();
-          if (currentFrame.selected !== undefined) advance();
-          else resolveChoice(choiceFocus);
+          resolveChoice(choiceFocus);
           return;
         }
       }
@@ -1658,7 +1588,7 @@ export function ReaderView({
       switch (event.code) {
         case "ArrowLeft":
           event.preventDefault();
-          goBack();
+          handleGoBack();
           break;
         case "Enter":
         case "Space":
@@ -1708,42 +1638,30 @@ export function ReaderView({
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
-  }, [advance, choiceFocus, currentFrame, goBack, panel, resolveChoice, saveBookmark, toggleFullscreen, toggleTranslation]);
+  }, [advance, choiceFocus, currentChoice, handleGoBack, panel, phase, resolveChoice, saveBookmark, toggleFullscreen, toggleTranslation]);
 
   useEffect(() => () => {
     if (toastTimer.current) window.clearTimeout(toastTimer.current);
-    if (dialogueTransitionTimer.current !== null) {
-      window.clearTimeout(dialogueTransitionTimer.current);
-    }
     oneShotTranslationControllerRef.current?.abort();
   }, []);
 
-  const logEntries = useMemo(
-    () =>
-      frames
-        .slice(0, frameIndex + 1)
-        .map((frame, index) => ({ frame, index }))
-        .filter(({ frame }) => frame.type === "dialogue"),
-    [frameIndex, frames],
-  );
+  const logEntries = snapshot.log;
 
   const stageStyle = {
     "--stage-background": currentBackground ? `url("${currentBackground}")` : "none",
     "--story-progress": `${progress}%`,
   } as CSSProperties;
-  const framePresentation = currentFrame?.presentation;
-  const camera = framePresentation?.camera ?? DEFAULT_CAMERA;
-  const effectClass = visualEffectClass(framePresentation?.screenEffect);
+  const camera = snapshot.camera;
+  const effectClass = visualEffectClass(snapshot.screenEffect);
   const worldStyle = {
     "--camera-x": stageCoordinateToViewport(camera.x, "x"),
     "--camera-y": stageCoordinateToViewport(camera.y, "y"),
     "--camera-scale": String(camera.scale > 0 ? camera.scale : 1),
     "--camera-rotation": `${camera.rotation}deg`,
     "--camera-filter": cameraFilterCss(camera.filter),
-    "--world-blur": blurFilterCss(framePresentation?.blur),
+    "--world-blur": blurFilterCss(snapshot.blur),
     "--screen-effect-filter": effectClass === "sepia" ? "sepia(0.82) saturate(0.82)" : "none",
   } as CSSProperties;
-  const messageVisible = framePresentation?.messageVisible ?? true;
   const activeCoordinateDebugSettings = COORDINATE_DEBUG_ENABLED
     ? coordinateDebugOffsets
     : DISABLED_COORDINATE_DEBUG_SETTINGS;
@@ -1810,28 +1728,70 @@ export function ReaderView({
     advance();
   };
 
-  const replay = () => {
-    setFrames(baseFrames);
-    setChoiceTrail(clearChoiceTrail());
-    setFrameIndex(0);
-    setCompleted(false);
+  const handleReplay = () => {
+    replay();
+    setChoiceTrail([]);
     setAutoMode(false);
     setSkipMode(false);
+    mergedDecisionsRef.current = 0;
   };
+
+  // One-shot CSS effects (shake/flash/wipe) replay by flipping a short-lived
+  // active flag whenever their seq counter advances.
+  const [shakeActive, setShakeActive] = useState(false);
+  const [flashActive, setFlashActive] = useState(false);
+  const [wipeActive, setWipeActive] = useState(false);
+  const lastShakeSeq = useRef(0);
+  const lastFlashSeq = useRef(0);
+  const lastWipeSeq = useRef(0);
+  useEffect(() => {
+    if (snapshot.shake.seq === lastShakeSeq.current) return;
+    lastShakeSeq.current = snapshot.shake.seq;
+    if (snapshot.shake.seq === 0 || settings.reduceMotion) return;
+    setShakeActive(true);
+    const timer = window.setTimeout(() => setShakeActive(false), 340);
+    return () => window.clearTimeout(timer);
+  }, [settings.reduceMotion, snapshot.shake.seq]);
+  useEffect(() => {
+    if (snapshot.flash.seq === lastFlashSeq.current) return;
+    lastFlashSeq.current = snapshot.flash.seq;
+    if (snapshot.flash.seq === 0 || settings.reduceMotion) return;
+    setFlashActive(true);
+    const timer = window.setTimeout(() => setFlashActive(false), 380);
+    return () => window.clearTimeout(timer);
+  }, [settings.reduceMotion, snapshot.flash.seq]);
+  useEffect(() => {
+    if (snapshot.wipe.seq === lastWipeSeq.current) return;
+    lastWipeSeq.current = snapshot.wipe.seq;
+    if (snapshot.wipe.seq === 0 || settings.reduceMotion) return;
+    setWipeActive(true);
+    const timer = window.setTimeout(() => setWipeActive(false), 560);
+    return () => window.clearTimeout(timer);
+  }, [settings.reduceMotion, snapshot.wipe.seq]);
 
   return (
     <div className={`reader-shell ${settings.reduceMotion ? "reduce-motion" : ""}`} style={stageStyle}>
       <div className="letterbox-background" aria-hidden="true" />
       <div
-        className={`reader-stage ${currentFrame?.effect ?? "none"} ${effectClass ? `screen-effect-${effectClass}` : ""} ${uiHidden ? "ui-hidden" : ""}`}
+        className={`reader-stage ${shakeActive ? "shake" : "none"} ${effectClass ? `screen-effect-${effectClass}` : ""} ${flashActive ? "flash" : ""} ${uiHidden ? "ui-hidden" : ""}`}
         onClick={stageClick}
       >
         <div className="world-layer" style={worldStyle}>
           <div className="scene-layer">
+            {previousSceneId && !backgroundFailed && snapshot.background.crossfade < 1 && (
+              <img
+                className="scene-image scene-image-previous"
+                style={{ opacity: 1 - snapshot.background.crossfade }}
+                src={backgroundUrl(story.region, previousSceneId)}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+              />
+            )}
             {currentBackground && !backgroundFailed && (
               <img
-                key={currentBackground}
-                className={`scene-image transition-${currentFrame?.transition ?? "none"}`}
+                key={`${currentBackground}-${snapshot.background.seq}`}
+                className={`scene-image transition-${snapshot.background.transition}`}
                 src={currentBackground}
                 alt="剧情背景"
                 onError={() => {
@@ -1850,7 +1810,7 @@ export function ReaderView({
           </div>
 
           <div className="stage-image-layer" aria-hidden="true">
-            {framePresentation?.stageLayers.map((layer) => (
+            {snapshot.stageLayers.map((layer) => (
               <StageLayerSprite
                 key={`${layer.slot}-${layer.id}`}
                 layer={layer}
@@ -1867,7 +1827,7 @@ export function ReaderView({
                 <small>画面 0,0</small>
               </span>
             )}
-            {currentFrame?.characters.map((character) => (
+            {snapshot.characters.map((character) => (
               <CharacterSprite
                 key={`${character.slot}-${character.id}`}
                 character={character}
@@ -1880,27 +1840,33 @@ export function ReaderView({
             ))}
           </div>
 
-          {framePresentation?.pictureFrame && (
-            <div className="picture-frame-overlay" data-frame={framePresentation.pictureFrame} aria-hidden="true" />
+          {snapshot.pictureFrame && (
+            <div className="picture-frame-overlay" data-frame={snapshot.pictureFrame} aria-hidden="true" />
           )}
-          {framePresentation?.movie && (
+          {snapshot.movie && (
             <div className="movie-overlay" aria-hidden="true">
-              <span>FILM / {framePresentation.movie}</span>
+              <span>FILM / {snapshot.movie}</span>
             </div>
           )}
         </div>
 
-        {framePresentation?.transitionColor && currentFrame?.transition !== "none" && (
+        {/* L3 transition meshes: the fade mesh is tween-driven state; wipe and
+            flash remain one-shot CSS overlays keyed by their seq counters. */}
+        {snapshot.fade.color && snapshot.fade.alpha > 0.005 && (
           <div
-            key={`${currentFrame.id}-transition`}
-            className={`transition-overlay transition-${currentFrame.transition}`}
-            style={{ backgroundColor: framePresentation.transitionColor.startsWith("#")
-              ? framePresentation.transitionColor
-              : framePresentation.transitionColor === "black"
-                ? "#000"
-                : framePresentation.transitionColor === "white"
-                  ? "#fff"
-                  : `#${framePresentation.transitionColor}` }}
+            className="transition-overlay"
+            style={{
+              opacity: snapshot.fade.alpha,
+              backgroundColor: snapshot.fade.color,
+            }}
+            aria-hidden="true"
+          />
+        )}
+        {wipeActive && snapshot.wipe.color && (
+          <div
+            key={`wipe-${snapshot.wipe.seq}`}
+            className="transition-overlay transition-wipe"
+            style={{ backgroundColor: snapshot.wipe.color }}
             aria-hidden="true"
           />
         )}
@@ -1920,8 +1886,8 @@ export function ReaderView({
                   label="后退"
                   shortcut="←"
                   icon={<ChevronLeft size={16} />}
-                  onClick={goBack}
-                  disabled={frameIndex === 0}
+                  onClick={handleGoBack}
+                  disabled={snapshot.boundaryCount < 2}
                 />
                 <ToggleButton label="记录" shortcut="L" icon={<MessageSquareText size={16} />} onClick={() => setPanel("log")} />
                 {japaneseStoryLoaded && (
@@ -1943,29 +1909,28 @@ export function ReaderView({
             </header>
 
             <div className="reader-side-status">
-              <span>{String(frameIndex + 1).padStart(3, "0")}</span>
+              <span>{String(Math.min(snapshot.messageOrdinal + (phase === "message" ? 0 : 1), Math.max(snapshot.messageTotal, 1))).padStart(3, "0")}</span>
               <i />
-              <small>{String(frames.length).padStart(3, "0")}</small>
+              <small>{String(Math.max(snapshot.messageTotal, 1)).padStart(3, "0")}</small>
             </div>
 
-            {currentFrame?.type === "choice" && (
+            {phase === "choice" && currentChoice && (
               <div className="choice-menu" onClick={(event) => event.stopPropagation()}>
                 <p>SELECT RESPONSE</p>
-                {currentFrame.options.map((option, optionIndex) => (
+                {currentChoice.options.map((option, optionIndex) => (
                   <button
                     key={`${option.label}-${optionIndex}`}
-                    className={`${choiceFocus === optionIndex ? "focused" : ""} ${currentFrame.selected === optionIndex ? "selected" : ""}`}
-                    disabled={currentFrame.selected !== undefined && currentFrame.selected !== optionIndex}
+                    className={`${choiceFocus === optionIndex ? "focused" : ""} ${currentChoice.selected === optionIndex ? "selected" : ""}`}
+                    disabled={currentChoice.selected !== null && currentChoice.selected !== optionIndex}
                     onMouseEnter={() => setChoiceFocus(optionIndex)}
-                    onClick={() => {
-                      if (currentFrame.selected !== undefined) advance();
-                      else resolveChoice(optionIndex);
-                    }}
+                    onClick={() => resolveChoice(optionIndex)}
                   >
                     <kbd>{optionIndex + 1}</kbd>
                     <span>
-                      {currentDisplayTranslated
-                        ? translation.translatedChoice(currentFrame, optionIndex) ?? option.label
+                      {/* Choice groups stay in one language: any missing
+                          option translation falls back to the source labels. */}
+                      {translatedMode && currentStep?.kind === "choice" && translation.stepTranslated(currentStep)
+                        ? translation.translatedChoice(currentStep, optionIndex) ?? option.label
                         : option.label}
                     </span>
                     <ChevronDown size={17} />
@@ -1974,33 +1939,29 @@ export function ReaderView({
               </div>
             )}
 
-            {messageVisible && currentFrame && currentFrame.type !== "animation" && (
+            {(phase === "message" || phase === "choice") && (
               <div
-                className={[
-                  "dialogue-wrap",
-                  previousFrame?.type === "animation" ? "from-animation" : "",
-                  dialogueLeaving ? "leaving-for-animation" : "",
-                ].filter(Boolean).join(" ")}
+                className="dialogue-wrap"
               >
                 <div className="dialogue-track" aria-hidden="true">
                   <span className="track-fill" />
                   {Array.from({ length: 13 }).map((_, nodeIndex) => <i key={nodeIndex} />)}
                 </div>
                 <div className="speaker-plate">
-                  <small>{currentFrame.type === "choice" ? "MASTER" : "SPEAKER"}</small>
+                  <small>{phase === "choice" ? "MASTER" : "SPEAKER"}</small>
                   <strong>{displaySpeaker}</strong>
                 </div>
                 <div className="dialogue-box">
                   <p className="dialogue-text">
-                    {currentFrame.type === "choice"
+                    {phase === "choice"
                       ? "请选择你的回应。"
-                      : textCharacters.slice(0, revealedCount).join("")}
+                      : <RichMessageLines lines={displayLines} />}
                   </p>
-                  {currentFrame.type !== "choice" && textComplete && !translation.preparing && (
+                  {phase === "message" && textComplete && !translation.preparing && (
                     <span className="advance-indicator" aria-label="继续"><ChevronDown size={20} /></span>
                   )}
                   <div className="dialogue-meta">
-                    <span>LOG {String(frameIndex + 1).padStart(3, "0")}</span>
+                    <span>LOG {String(Math.max(snapshot.messageOrdinal, 1)).padStart(3, "0")}</span>
                     {translatedMode && (
                       <span className="translation-state">
                         {manualTranslation.active
@@ -2012,7 +1973,7 @@ export function ReaderView({
                             : translation.currentPending
                           ? "TRANSLATING"
                           : currentDisplayTranslated
-                            ? `已译未读 ${translation.translatedUnreadFrameCount} 帧`
+                            ? `已译未读 ${translation.translatedUnreadStepCount} 句`
                             : "SOURCE FALLBACK"}
                       </span>
                     )}
@@ -2022,16 +1983,13 @@ export function ReaderView({
               </div>
             )}
 
-            {currentFrame?.type === "animation" && (
+            {phase === "wait" && (
               <button
-                className={`animation-advance ${currentFrame.durationMs !== null ? "timed" : ""}`}
+                className={`animation-advance ${snapshot.waitKind === "timer" ? "timed" : ""}`}
                 onClick={advance}
-                aria-label={currentFrame.durationMs !== null ? "跳过演出" : "继续演出"}
-                style={currentFrame.durationMs !== null
-                  ? { "--animation-duration": `${Math.max(80, currentFrame.durationMs)}ms` } as CSSProperties
-                  : undefined}
+                aria-label={snapshot.waitKind === "timer" ? "跳过演出" : "继续演出"}
               >
-                <span>{currentFrame.durationMs !== null ? "演出中" : "继续演出"}</span>
+                <span>{snapshot.waitKind === "timer" ? "演出中" : "继续演出"}</span>
                 <ChevronDown size={19} />
               </button>
             )}
@@ -2041,7 +1999,7 @@ export function ReaderView({
                 <LoaderCircle className="spin" size={16} />
                 <span>
                   正在翻译当前帧 {translation.preparationReadyCount}/{translation.preparationTotal}，
-                  完成后即可阅读；后台将持续预译后续 {translation.translatedUnreadFrameTarget} 帧。
+                  完成后即可阅读；后台将持续预译后续 {translation.translatedUnreadStepTarget} 句。
                 </span>
               </div>
             )}
@@ -2098,23 +2056,35 @@ export function ReaderView({
               </div>
             </div>
             <div className="log-list">
-              {logEntries.map(({ frame, index }) => frame.type === "dialogue" && (
-                <button key={`${frame.id}-${index}`} onClick={() => { setFrameIndex(index); setPanel("none"); }}>
-                  <span>{String(index + 1).padStart(3, "0")}</span>
-                  <div>
-                    <strong>
-                      {translatedMode && translation.frameTranslated(frame)
-                        ? translation.translatedSpeaker(frame) ?? frame.speaker
-                        : frame.speaker}
-                    </strong>
-                    <p>
-                      {translatedMode && translation.frameTranslated(frame)
-                        ? translation.translatedText(frame) ?? frame.text
-                        : frame.text}
-                    </p>
-                  </div>
-                </button>
-              ))}
+              {logEntries.map((entry, index) => {
+                const step: TranslatableStep = {
+                  key: entry.key,
+                  kind: "message",
+                  speaker: entry.speaker,
+                  text: entry.text,
+                };
+                const entryTranslated = translatedMode && translation.stepTranslated(step);
+                return (
+                  <button
+                    key={`${entry.key}-${index}`}
+                    onClick={() => { jumpToMessage(entry.key); setPanel("none"); }}
+                  >
+                    <span>{String(index + 1).padStart(3, "0")}</span>
+                    <div>
+                      <strong>
+                        {entryTranslated
+                          ? translation.translatedSpeaker(step) ?? entry.speaker
+                          : entry.speaker}
+                      </strong>
+                      <p>
+                        {entryTranslated
+                          ? translation.translatedText(step) ?? entry.text
+                          : entry.text}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -2639,8 +2609,8 @@ export function ReaderView({
                 : "当前播放队列已结束。你可以重新播放这段记录，或返回目录选择其他剧情。"}
             </p>
             <div>
-              <button onClick={goBack}><ChevronLeft size={17} /> 返回最后一句</button>
-              <button onClick={replay}><RotateCcw size={17} /> 重新播放</button>
+              <button onClick={handleGoBack}><ChevronLeft size={17} /> 返回最后一句</button>
+              <button onClick={handleReplay}><RotateCcw size={17} /> 重新播放</button>
               <button className={nextStory ? "" : "primary"} onClick={onExit}><ListMusic size={17} /> 返回目录</button>
               {nextStory && (
                 <button className="primary" onClick={onNext}>

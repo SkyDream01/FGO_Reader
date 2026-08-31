@@ -1,73 +1,59 @@
 import { describe, expect, it } from "vitest";
-import type { ChoiceFrame, DialogueFrame } from "../types";
-import { collectStoryResources } from "./storyPreparation";
-
-function dialogue(
-  id: string,
-  scene: string | null,
-  bgm: string | null,
-  characterId?: string,
-): DialogueFrame {
-  return {
-    id,
-    type: "dialogue",
-    speaker: "",
-    text: id,
-    scene,
-    bgm,
-    characters: characterId
-      ? [{
-          slot: id,
-          id: characterId,
-          name: characterId,
-          face: 0,
-          visible: true,
-          position: "center",
-          x: 0,
-          y: 0,
-          scale: 1,
-          silhouette: false,
-          active: false,
-        }]
-      : [],
-    effect: "none",
-    transition: "none",
-  };
-}
+import { compileFgoScript } from "./scriptParser";
+import { collectStorySteps } from "./storyPreparation";
 
 describe("story resource collection", () => {
   it("collects and deduplicates resources from every choice branch", () => {
-    const choice: ChoiceFrame = {
-      id: "choice",
-      type: "choice",
-      speaker: "CHOICE",
-      text: "",
-      scene: "shared",
-      bgm: "shared-bgm",
-      characters: [],
-      effect: "none",
-      transition: "none",
-      options: [
-        {
-          label: "left",
-          frames: [
-            dialogue("left", "left-scene", "left-bgm", "1001"),
-          ],
-        },
-        {
-          label: "right",
-          frames: [
-            dialogue("right", "right-scene", "right-bgm", "2002"),
-            dialogue("duplicate", "shared", "shared-bgm", "1001"),
-          ],
-        },
-      ],
-    };
+    const program = compileFgoScript([
+      "[charaSet A 1001 1 共通]",
+      "[scene shared]",
+      "[bgm shared-bgm 0.1]",
+      "＠共通",
+      "導入[k]",
+      "？1：left",
+      "[scene left-scene]",
+      "[charaSet B 1001 1 共通]",
+      "[bgm left-bgm 0.1]",
+      "＠共通",
+      "左[k]",
+      "？2：right",
+      "[scene right-scene]",
+      "[charaSet C 2002 1 共通]",
+      "[bgm right-bgm 0.1]",
+      "＠共通",
+      "右[k]",
+      "？！",
+    ].join("\n"), "branch-resources");
 
-    expect(collectStoryResources([choice])).toEqual({
-      backgrounds: ["shared", "left-scene", "right-scene"],
-      characters: ["1001", "2002"],
-      bgm: ["shared-bgm", "left-bgm", "right-bgm"],
-    });
+    expect(program.sceneIds).toEqual(["shared", "left-scene", "right-scene"]);
+    expect(program.characterIds).toEqual(["1001", "2002"]);
+    expect(program.bgmNames).toEqual(["shared-bgm", "left-bgm", "right-bgm"]);
+  });
+
+  it("builds the readable step catalog in program order across branches", () => {
+    const program = compileFgoScript([
+      "＠導入",
+      "始まり[k]",
+      "？1：一",
+      "＠一",
+      "一番[k]",
+      "？2：二",
+      "＠二",
+      "二番[k]",
+      "？！",
+      "＠共通",
+      "終わり[k]",
+    ].join("\n"), "step-catalog");
+    const steps = collectStorySteps(program);
+    // The catalog interleaves the choice step (empty text, its own kind)
+    // between the branch bodies in program order.
+    expect(steps.map((step) => [step.kind, step.text])).toEqual([
+      ["message", "始まり"],
+      ["choice", ""],
+      ["message", "一番"],
+      ["message", "二番"],
+      ["message", "終わり"],
+    ]);
+    expect(steps[0].speaker).toBe("導入");
   });
 });

@@ -1,15 +1,15 @@
-import type { ParsedScript, Region, ScriptDiagnostic } from "../types";
-import { projectScriptDocument, renderScriptText } from "./scriptProjector";
+import type { Region, ScriptDiagnostic } from "../types";
+import { compileInlineNodes, compileScriptDocument, renderTokensPlain } from "../adv/compiler";
+import type { ScriptProgram } from "../adv/instruction";
 import { SCRIPT_PARSER_VERSION } from "./scriptParserVersion";
 import { parseInlineScriptText, parseScriptDocument } from "./scriptSyntax";
 
 export interface ScriptParseLimits {
-  maxFrames?: number;
   maxChoiceOptions?: number;
   maxCharacterSlots?: number;
 }
 
-export interface ParseFgoScriptOptions {
+export interface CompileFgoScriptOptions {
   region?: Region;
   masterName?: string;
   masterGender?: "male" | "female";
@@ -17,15 +17,14 @@ export interface ParseFgoScriptOptions {
 }
 
 function normalizeOptions(
-  value: string | ParseFgoScriptOptions | undefined,
-): Required<Omit<ParseFgoScriptOptions, "limits">> & { limits: Required<ScriptParseLimits> } {
+  value: string | CompileFgoScriptOptions | undefined,
+): Required<Omit<CompileFgoScriptOptions, "limits">> & { limits: Required<ScriptParseLimits> } {
   const options = typeof value === "string" ? { masterName: value } : value ?? {};
   return {
     region: options.region ?? "JP",
     masterName: options.masterName ?? "御主",
     masterGender: options.masterGender ?? "male",
     limits: {
-      maxFrames: options.limits?.maxFrames ?? 10_000,
       maxChoiceOptions: options.limits?.maxChoiceOptions ?? 9,
       maxCharacterSlots: options.limits?.maxCharacterSlots ?? 64,
     },
@@ -53,41 +52,43 @@ function mergeDiagnostics(...groups: ScriptDiagnostic[][]) {
   return merged;
 }
 
+/** Renders an inline fragment for previews (search snippets, import notes). */
 export function cleanScriptText(
   value: string,
   masterName = "御主",
   masterGender: "male" | "female" = "male",
 ) {
   const parsed = parseInlineScriptText(value);
-  return renderScriptText(parsed.nodes, masterName, masterGender);
+  const { tokens } = compileInlineNodes(parsed.nodes, {
+    scriptId: "inline-preview",
+    masterName,
+    masterGender,
+  });
+  return renderTokensPlain(tokens);
 }
 
-export function parseFgoScript(
+/**
+ * ① Parser + ② Compiler (docs/FGO_Story_Reader_Standard.md §1.1).
+ * Returns the compiled program ready for the runtime executor.
+ */
+export function compileFgoScript(
   source: string,
   scriptId: string,
-  options?: string | ParseFgoScriptOptions,
-): ParsedScript {
+  options?: string | CompileFgoScriptOptions,
+): ScriptProgram {
   const normalized = normalizeOptions(options);
   const document = parseScriptDocument(source, {
     region: normalized.region,
     maxChoiceOptions: normalized.limits.maxChoiceOptions,
     maxCharacterSlots: normalized.limits.maxCharacterSlots,
   });
-  const projected = projectScriptDocument(document, scriptId, {
+  const program = compileScriptDocument(document, {
+    scriptId,
     masterName: normalized.masterName,
     masterGender: normalized.masterGender,
-    maxFrames: normalized.limits.maxFrames,
   });
-
-  return {
-    scriptId,
-    parserVersion: SCRIPT_PARSER_VERSION,
-    frames: projected.frames,
-    frameCount: projected.frameCount,
-    choiceCount: projected.choiceCount,
-    characterCount: projected.characterCount,
-    sceneCount: projected.sceneCount,
-    bgmCount: projected.bgmCount,
-    diagnostics: mergeDiagnostics(document.diagnostics, projected.diagnostics),
-  };
+  program.diagnostics = mergeDiagnostics(document.diagnostics, program.diagnostics);
+  return program;
 }
+
+export { SCRIPT_PARSER_VERSION };

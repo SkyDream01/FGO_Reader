@@ -9,15 +9,15 @@ import {
   translationSourceSignature,
   type ManualTranslationRecord,
 } from "../lib/manualTranslations";
-import type { CachedTranslation } from "../lib/translation";
-import type { StoryFrame } from "../types";
+import type { CachedTranslation, TranslatableStep } from "../lib/translation";
 
 interface UseManualTranslationsOptions {
   eligible: boolean;
   scriptId: string;
   title: string;
   masterName: string;
-  frames: StoryFrame[];
+  /** The script's full message catalog in program order. */
+  steps: TranslatableStep[];
 }
 
 export function useManualTranslations({
@@ -25,14 +25,14 @@ export function useManualTranslations({
   scriptId,
   title,
   masterName,
-  frames,
+  steps,
 }: UseManualTranslationsOptions) {
   const [record, setRecord] = useState<ManualTranslationRecord | null>(null);
   const [loadedSignature, setLoadedSignature] = useState("");
   const [storageError, setStorageError] = useState("");
   const sourceSignature = useMemo(
-    () => eligible && frames.length ? translationSourceSignature(frames) : "",
-    [eligible, frames],
+    () => eligible && steps.length ? translationSourceSignature(steps) : "",
+    [eligible, steps],
   );
   const loadSignature = eligible && sourceSignature
     ? `${scriptId}:${masterName}:${sourceSignature}`
@@ -62,19 +62,19 @@ export function useManualTranslations({
   }, [loadSignature, scriptId]);
 
   const inspection = useMemo(
-    () => inspectManualTranslationRecord(record, { scriptId, masterName, frames }),
-    [frames, masterName, record, scriptId],
+    () => inspectManualTranslationRecord(record, { scriptId, masterName, steps }),
+    [steps, masterName, record, scriptId],
   );
   const resolved = !loadSignature || loadedSignature === loadSignature;
 
   const importTemplate = useCallback(async (raw: string) => {
-    const next = parseTranslationTemplate(raw, { scriptId, title, masterName, frames });
+    const next = parseTranslationTemplate(raw, { scriptId, title, masterName, steps });
     const saved = await saveManualTranslation(next);
     setRecord(saved);
     setLoadedSignature(loadSignature);
     setStorageError("");
-    return inspectManualTranslationRecord(saved, { scriptId, masterName, frames });
-  }, [frames, loadSignature, masterName, scriptId, title]);
+    return inspectManualTranslationRecord(saved, { scriptId, masterName, steps });
+  }, [steps, loadSignature, masterName, scriptId, title]);
 
   const remove = useCallback(async () => {
     await deleteManualTranslation(scriptId);
@@ -86,9 +86,9 @@ export function useManualTranslations({
   const exportTemplate = useCallback((
     existingTranslations?: Record<string, CachedTranslation>,
   ) => serializeTranslationTemplate(
-    { scriptId, title, masterName, frames },
+    { scriptId, title, masterName, steps },
     existingTranslations ?? (inspection.status === "ready" ? inspection.translations : {}),
-  ), [frames, inspection.status, inspection.translations, masterName, scriptId, title]);
+  ), [steps, inspection.status, inspection.translations, masterName, scriptId, title]);
 
   return {
     ...inspection,

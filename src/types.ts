@@ -73,6 +73,15 @@ export interface ScriptSearchResult {
 
 export type CharacterPosition = "left" | "center" | "right";
 
+/** Camera state for the composed game world (S-R6 镜头). */
+export interface StoryCameraState {
+  x: number;
+  y: number;
+  scale: number;
+  rotation: number;
+  filter: string | null;
+}
+
 export interface CharacterState {
   slot: string;
   id: string;
@@ -91,97 +100,6 @@ export interface CharacterState {
   rotation?: number;
   shadow?: boolean;
 }
-
-export type FrameEffect = "none" | "shake" | "flash";
-export type FrameTransition = "none" | "fade" | "wipe";
-
-export interface StoryCameraState {
-  x: number;
-  y: number;
-  scale: number;
-  rotation: number;
-  filter: string | null;
-}
-
-/** A non-character visual layer authored by sceneSet/imageSet commands. */
-export interface StageLayerState {
-  slot: string;
-  id: string;
-  source: "background" | "image";
-  visible: boolean;
-  position: CharacterPosition;
-  x: number;
-  y: number;
-  scale: number;
-  layer: "main" | "sub";
-  depth: number | null;
-  active: boolean;
-}
-
-/** Presentation state that must travel with a frame for faithful replay. */
-export interface FramePresentation {
-  messageVisible: boolean;
-  /** Script `bgm` parameter 2, when present; null means use reader volume. */
-  bgmVolume: number | null;
-  camera: StoryCameraState;
-  /** Script blur strength in CSS pixels; null means no active valid blur. */
-  blur: number | null;
-  screenEffect: string | null;
-  pictureFrame: string | null;
-  movie: string | null;
-  transitionColor: string | null;
-  stageLayers: StageLayerState[];
-}
-
-export interface DialogueFrame {
-  id: string;
-  type: "dialogue";
-  speaker: string;
-  text: string;
-  scene: string | null;
-  bgm: string | null;
-  characters: CharacterState[];
-  effect: FrameEffect;
-  transition: FrameTransition;
-  presentation?: FramePresentation;
-}
-
-export interface AnimationFrame {
-  id: string;
-  type: "animation";
-  speaker: "";
-  text: "";
-  /** Script-authored playback time. Null means the reader waits for input. */
-  durationMs: number | null;
-  scene: string | null;
-  bgm: string | null;
-  characters: CharacterState[];
-  effect: FrameEffect;
-  transition: FrameTransition;
-  presentation?: FramePresentation;
-}
-
-export interface ChoiceOption {
-  label: string;
-  frames: StoryFrame[];
-}
-
-export interface ChoiceFrame {
-  id: string;
-  type: "choice";
-  speaker: "CHOICE";
-  text: string;
-  scene: string | null;
-  bgm: string | null;
-  characters: CharacterState[];
-  effect: FrameEffect;
-  transition: FrameTransition;
-  options: ChoiceOption[];
-  selected?: number;
-  presentation?: FramePresentation;
-}
-
-export type StoryFrame = DialogueFrame | AnimationFrame | ChoiceFrame;
 
 export type ScriptDiagnosticSeverity = "warning" | "error";
 
@@ -203,18 +121,6 @@ export interface ChoiceDecision {
 
 /** Ordered decisions needed to reconstruct a branching story path. */
 export type ChoiceTrail = ChoiceDecision[];
-
-export interface ParsedScript {
-  scriptId: string;
-  parserVersion: 5;
-  frames: StoryFrame[];
-  frameCount: number;
-  choiceCount: number;
-  characterCount: number;
-  sceneCount: number;
-  bgmCount: number;
-  diagnostics: ScriptDiagnostic[];
-}
 
 export interface ReaderSettings {
   textSpeed: number;

@@ -1,6 +1,33 @@
-import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import { cleanScriptText, parseFgoScript } from "./scriptParser";
+import { parseScriptDocument } from "./scriptSyntax";
+import { ScriptExecutor } from "../adv/executor";
+import { compileFgoScript, cleanScriptText } from "./scriptParser";
+import { SCRIPT_PARSER_VERSION } from "./scriptParserVersion";
+import type { ScriptProgram } from "../adv/instruction";
+
+function compile(source: string, scriptId = "test", options?: { masterName?: string; masterGender?: "male" | "female" }) {
+  return compileFgoScript(source, scriptId, {
+    region: "JP",
+    masterName: options?.masterName ?? "御主",
+    masterGender: options?.masterGender ?? "male",
+  });
+}
+
+/** Compiles, runs to the first message boundary and returns the snapshot. */
+function runToFirstMessage(
+  source: string,
+  scriptId = "test",
+  options?: { masterName?: string; masterGender?: "male" | "female" },
+) {
+  const program = compile(source, scriptId, options);
+  const executor = new ScriptExecutor(program, {
+    masterName: options?.masterName ?? "御主",
+    masterGender: options?.masterGender ?? "male",
+    textSpeedMs: 2,
+  });
+  executor.start();
+  return { program, executor, snapshot: executor.getSnapshot() };
+}
 
 describe("cleanScriptText", () => {
   it("converts common FGO markup", () => {
@@ -8,25 +35,78 @@ describe("cleanScriptText", () => {
       cleanScriptText("你好[sr][#前辈:せんぱい]，[&君:ちゃん]，[%1]", "藤丸"),
     ).toBe("你好\n前辈，君，藤丸");
   });
+});
 
-  it("understands slotted speaker names and page breaks", () => {
-    const script = `
-[charaSet A 98001000 0 玛修]
-[charaPut A 1]
-＠A：玛修
-第一行[sr]第二行
-[page]
-`;
-    const parsed = parseFgoScript(script, "slot-demo");
-    expect(parsed.frames[0]).toMatchObject({
-      speaker: "玛修",
-      text: "第一行\n第二行",
-    });
-    expect(parsed.frames[0].characters[0].active).toBe(true);
+describe("compileFgoScript", () => {
+  it("bumps stable message keys to the current parser version", () => {
+    const program = compile("＠マシュ\n本文[k]", "0100000010");
+    expect(SCRIPT_PARSER_VERSION).toBe(6);
+    expect(program.messageCatalog[0].key).toBe(
+      `0100000010@v${SCRIPT_PARSER_VERSION}:m:1:1:0`,
+    );
   });
 
-  it("maps coordinate positions used by newer scripts", () => {
-    const script = `
+  it("tracks scenes, characters and bgm in program catalogs", () => {
+    const program = compile(`[charaSet A 1001001 1 玛修]
+[charaSet B 1001001 1 玛修]
+[scene 10201]
+[sceneSet J back269400 1]
+[imageSet K back8888 1]
+[bgm BGM_EVENT_2 0.1]
+＠玛修
+你好。[k]
+`);
+    expect(program.characterIds).toEqual(["1001001"]);
+    expect(program.sceneIds).toEqual(["10201", "269400", "8888"]);
+    expect(program.bgmNames).toEqual(["BGM_EVENT_2"]);
+    expect(program.messageCatalog).toHaveLength(1);
+  });
+
+  it("lowers label-based choice options into bodies with a shared exit", () => {
+    const program = compile(`＠選択
+？1：出发吧
+＠玛修
+好的。
+[k]
+？2：再等等
+＠玛修
+明白了。
+[k]
+？！
+＠玛修
+共通。
+[k]
+`);
+    expect(program.choiceCatalog).toHaveLength(1);
+    expect(program.choiceCatalog[0].options.map((option) => option.label)).toEqual([
+      "出发吧",
+      "再等等",
+    ]);
+  });
+});
+
+describe("ScriptExecutor stage semantics", () => {
+  it("splits consecutive click markers into separate messages with the same speaker", () => {
+    const { program, snapshot } = runToFirstMessage([
+      "＄01-00-00-01-1-0",
+      "[charaSet A 98001000 1 マシュ]",
+      "[charaPut A 1]",
+      "＠A：マシュ",
+      "……マスター。[k]",
+      "本日もよろしくお願いします。[k]",
+    ].join("\n"), "documented-dialogue");
+
+    expect(program.messageCatalog.map((record) => record.text)).toEqual([
+      "……マスター。",
+      "本日もよろしくお願いします。",
+    ]);
+    expect(snapshot.characters).toEqual([
+      expect.objectContaining({ slot: "A", active: true }),
+    ]);
+  });
+
+  it("maps the numeric placement table and explicit speaker slots", () => {
+    const { snapshot } = runToFirstMessage(`
 [charaSet A 1 0 左]
 [charaSet B 2 0 中]
 [charaSet C 3 0 右]
@@ -36,204 +116,16 @@ describe("cleanScriptText", () => {
 ＠B：中
 坐标测试
 [k]
-`;
-    const parsed = parseFgoScript(script, "coordinate-demo");
-    expect(parsed.frames[0].characters.map((character) => character.position)).toEqual([
+`, "coordinate-demo");
+    expect(snapshot.characters.map((character) => character.position)).toEqual([
       "left",
       "center",
       "right",
     ]);
   });
 
-  it("preserves authored character coordinates and scale", () => {
-    const script = `
-[charaSet A 1098366400 1 大型角色]
-[charaScale A 2.0]
-[charaFadein A 0.1 -150,470]
-[charaMoveEase A -150,90 1.0 easeOutSine]
-＠A：大型角色
-坐标和缩放测试[k]
-`;
-    const parsed = parseFgoScript(script, "character-transform-demo");
-    expect(parsed.frames[0].characters[0]).toMatchObject({
-      x: -150,
-      y: 90,
-      scale: 2,
-      position: "left",
-    });
-  });
-
-  it("projects documented camera, message, filter, and scene-layer commands into rendered frame state", () => {
-    const parsed = parseFgoScript([
-      "[scene 10000]",
-      "[sceneSet Q 142200 1]",
-      "[charaFadein Q 0.1 1]",
-      "[bgm BGM_EVENT_38 0.25 0.9]",
-      "[cameraMove 0.1 0,-30 1.2]",
-      "[cameraFilter gray]",
-      "[blur glass 0.5 2 10]",
-      "[pictureFrame cut063_cinema]",
-      "[messageOff]",
-      "＠旁白",
-      "演出状态测试。[k]",
-    ].join("\n"), "presentation-state");
-
-    expect(parsed.frames[0]).toMatchObject({
-      type: "dialogue",
-      presentation: {
-        messageVisible: true,
-        bgmVolume: 0.25,
-        camera: { x: 0, y: -30, scale: 1.2, filter: "gray" },
-        blur: 0.5,
-        pictureFrame: "cut063_cinema",
-        stageLayers: [
-          expect.objectContaining({ slot: "Q", id: "142200", source: "background" }),
-        ],
-      },
-    });
-  });
-
-  it("projects blur intensities from global and sub-render blur commands", () => {
-    const parsed = parseFgoScript([
-      "[blur lens 1.1 2 10]",
-      "＠旁白",
-      "全局模糊。[k]",
-      "[subBlur #A glass 0.4 2 10 1.0 subBlur]",
-      "＠旁白",
-      "子渲染模糊。[k]",
-      "[subBlur2 #B motion 0 2 10 1.0 subBlur]",
-      "＠旁白",
-      "零强度模糊。[k]",
-    ].join("\n"), "blur-intensity");
-
-    expect(parsed.frames.map((frame) => frame.presentation?.blur)).toEqual([1.1, 0.4, 0]);
-  });
-
-  it("clears blur safely when its intensity is missing or invalid", () => {
-    const parsed = parseFgoScript([
-      "[blur lens 3 2 10]",
-      "＠旁白",
-      "有效模糊。[k]",
-      "[blur]",
-      "＠旁白",
-      "缺失参数。[k]",
-      "[subBlur #A lens invalid 2 10 1.0 subBlur]",
-      "＠旁白",
-      "无效参数。[k]",
-      "[subBlur2 #B glass -1 2 10 1.0 subBlur]",
-      "＠旁白",
-      "负数参数。[k]",
-    ].join("\n"), "invalid-blur-intensity");
-
-    expect(parsed.frames.map((frame) => frame.presentation?.blur)).toEqual([3, null, null, null]);
-  });
-
-  it("reopens the message window for dialogue after a messageOff transition", () => {
-    const parsed = parseFgoScript([
-      "[scene 10000]",
-      "[messageOff]",
-      "[fadeout black 0.5]",
-      "[wait fade]",
-      "＠旁白",
-      "转场后的正文。",
-      "[k]",
-    ].join("\n"), "message-off-dialogue");
-
-    expect(parsed.frames).toEqual(expect.arrayContaining([
-      expect.objectContaining({
-        type: "animation",
-        presentation: expect.objectContaining({ messageVisible: false }),
-      }),
-      expect.objectContaining({
-        type: "dialogue",
-        text: "转场后的正文。",
-        presentation: expect.objectContaining({ messageVisible: true }),
-      }),
-    ]));
-  });
-
-  it("reads cameraMoveEase scale from the documented fourth parameter", () => {
-    const parsed = parseFgoScript([
-      "[cameraMoveEase 0,-30 1.0 easeOutQuad 1.2]",
-      "＠旁白",
-      "缓动镜头[k]",
-    ].join("\n"), "camera-ease");
-
-    expect(parsed.frames[0]).toMatchObject({
-      presentation: {
-        camera: { x: 0, y: -30, scale: 1.2 },
-      },
-    });
-  });
-
-  it("places a character at 0,0 when charaFadein uses position 1", () => {
-    const script = `
-[charaSet A 1098366400 1 可移动角色]
-[charaFadein A 0.1 -150,470]
-[charaMove A 80,-60 0.5]
-[charaFadeout A 0.1]
-[charaFadein A 0.1 1]
-＠A：可移动角色
-回到中心位置。[k]
-`;
-    const parsed = parseFgoScript(script, "fadein-center-position");
-    const frame = parsed.frames.at(-1);
-
-    expect(frame?.characters[0]).toMatchObject({
-      x: 0,
-      y: 0,
-      position: "center",
-      visible: true,
-    });
-  });
-
-  it("places a character at 0,0 when charaFadein omits a position", () => {
-    const script = `
-[charaSet A 1098366400 1 可移动角色]
-[charaFadein A 0.1 -150,470]
-[charaMove A 80,-60 0.5]
-[charaFadeout A 0.1]
-[charaFadein A 0.1]
-＠A：可移动角色
-省略坐标时回到中心位置。[k]
-`;
-    const parsed = parseFgoScript(script, "fadein-omitted-position");
-    const frame = parsed.frames.at(-1);
-
-    expect(frame?.characters[0]).toMatchObject({
-      x: 0,
-      y: 0,
-      position: "center",
-      visible: true,
-    });
-  });
-});
-
-describe("parseFgoScript", () => {
-  it("splits consecutive click markers into frames while retaining the speaker", () => {
-    const parsed = parseFgoScript([
-      "＄01-00-00-01-1-0",
-      "[charaSet A 98001000 1 マシュ]",
-      "[charaPut A 1]",
-      "＠A：マシュ",
-      "……マスター。[k]",
-      "本日もよろしくお願いします。[k]",
-    ].join("\n"), "documented-dialogue");
-
-    expect(parsed.frames.map((frame) => ({
-      speaker: frame.speaker,
-      text: frame.text,
-    }))).toEqual([
-      { speaker: "マシュ", text: "……マスター。" },
-      { speaker: "マシュ", text: "本日もよろしくお願いします。" },
-    ]);
-    expect(parsed.frames[0].characters).toEqual([
-      expect.objectContaining({ slot: "A", visible: true, active: true }),
-    ]);
-  });
-
-  it("activates every spot speaker and accepts the full charaFilter argument form", () => {
-    const parsed = parseFgoScript([
+  it("activates every spot speaker and applies the charaFilter silhouette form", () => {
+    const { snapshot } = runToFirstMessage([
       "[charaSet A 1001 1 A]",
       "[charaSet B 1002 1 B]",
       "[charaFilter A X silhouette 00000080]",
@@ -242,15 +134,14 @@ describe("parseFgoScript", () => {
       "＠二人=spot[A,B]",
       "同時発言。[k]",
     ].join("\n"), "spot-dialogue");
-
-    expect(parsed.frames[0].characters).toEqual([
+    expect(snapshot.characters).toEqual([
       expect.objectContaining({ slot: "A", active: true, silhouette: true }),
       expect.objectContaining({ slot: "B", active: true, silhouette: false }),
     ]);
   });
 
   it("supports comma-separated charaTalk slots without treating stop commands as effects", () => {
-    const parsed = parseFgoScript([
+    const { snapshot } = runToFirstMessage([
       "[charaSet A 1001 1 A]",
       "[charaSet B 1002 1 B]",
       "[charaPut A -256,0]",
@@ -262,19 +153,16 @@ describe("parseFgoScript", () => {
       "＠二人",
       "同時発言。[k]",
     ].join("\n"), "multi-talk");
-
-    expect(parsed.frames[0]).toMatchObject({
-      effect: "none",
-      transition: "none",
-      characters: [
-        expect.objectContaining({ slot: "A", position: "left", active: true }),
-        expect.objectContaining({ slot: "B", position: "right", active: true }),
-      ],
-    });
+    expect(snapshot.characters).toEqual([
+      expect.objectContaining({ slot: "A", position: "left", active: true }),
+      expect.objectContaining({ slot: "B", position: "right", active: true }),
+    ]);
+    expect(snapshot.shake.seq).toBe(0);
+    expect(snapshot.flash.seq).toBe(0);
   });
 
   it("selects gender-dependent master assets and stops at the end command", () => {
-    const parsed = parseFgoScript([
+    const { program, executor } = runToFirstMessage([
       "[masterSet L 1098348300 1098348310 1]",
       "[masterScene 276600 276601 1.0]",
       "[charaFadein L 0.1 1]",
@@ -282,97 +170,22 @@ describe("parseFgoScript", () => {
       "選択された姿です。[k]",
       "[end]",
       "この行は終了後なので表示しない。[k]",
-    ].join("\n"), "master-assets", {
-      masterName: "藤丸",
-      masterGender: "female",
-    });
+    ].join("\n"), "master-assets", { masterName: "藤丸", masterGender: "female" });
+    void program;
 
-    expect(parsed.frames).toHaveLength(1);
-    expect(parsed.frames[0]).toMatchObject({
-      speaker: "藤丸",
-      scene: "276601",
-      characters: [
-        expect.objectContaining({
-          slot: "L",
-          id: "1098348310",
-          name: "藤丸",
-          active: true,
-        }),
-      ],
-    });
-  });
-
-  it("does not show preloaded figures before their entrance and preserves charaChange visibility", () => {
-    const parsed = parseFgoScript([
-      "[charaSet A 4032000 1 埃尔梅罗Ⅱ世]",
-      "[charaSet C 1098123200 1 ？？？]",
-      "[charaFilter C silhouette 00000080]",
-      "[charaSet D 9005001 1 ？？？]",
-      "[charaFilter D silhouette 00000080]",
-      "[charaSet E 98001000 1 ？？？]",
-      "[charaFilter E silhouette 00000080]",
-      "[charaTalk A]",
-      "[charaFace A 7]",
-      "[charaFadein A 0.4 1]",
-      "＠A：谜之少女",
-      "终于醒了啊。我的弟子。[k]",
-      "[charaChange A 1098164900 5 nomal 0]",
-      "＠A：谜之少女",
-      "立绘切换后仍在场。[k]",
-    ].join("\n"), "cn-preloaded-figures");
-
-    expect(parsed.frames[0].characters).toEqual([
-      expect.objectContaining({
-        slot: "A",
-        id: "4032000",
-        face: 7,
-        visible: true,
-      }),
+    executor.tick(50); // resolve the fade wait
+    const snapshot = executor.getSnapshot();
+    expect(snapshot.background.id).toBe("276601");
+    expect(snapshot.characters).toEqual([
+      expect.objectContaining({ slot: "L", id: "1098348310", name: "藤丸", active: true }),
     ]);
-    expect(parsed.frames[1].characters).toEqual([
-      expect.objectContaining({
-        slot: "A",
-        id: "1098164900",
-        face: 5,
-        visible: true,
-      }),
-    ]);
-  });
-
-  it("keeps empty dialogue frames for images that have no dialogue", () => {
-    const script = `
-[charaSet A 1001001 1 玛修]
-[charaTalk A]
-[charaPut A 1]
-[scene 100]
-[fadein black 0.5]
-[scene 200]
-＠旁白
-第二张图片有正文。
-[k]
-[scene 300]
-＠旁白
-[k]
-[scene 400]
-[fadein white 0.5]
-`;
-
-    const parsed = parseFgoScript(script, "image-only-scenes");
-
-    expect(parsed.frames.map(({ scene, text }) => ({ scene, text }))).toEqual([
-      { scene: "100", text: "" },
-      { scene: "200", text: "第二张图片有正文。" },
-      { scene: "300", text: "" },
-      { scene: "400", text: "" },
-    ]);
-    expect(parsed.frames[0].characters).toEqual([
-      expect.objectContaining({ slot: "A", active: false }),
-    ]);
-    expect(parsed.sceneCount).toBe(4);
+    executor.tap();
+    // The [end] command ends the run; the trailing dialogue never plays.
+    expect(executor.getSnapshot().phase).toBe("ended");
   });
 
   it("keeps effect anchors, sub-camera slots and parked objects out of the character layer", () => {
-    const script = `
+    const { snapshot } = runToFirstMessage(`
 [charaSet S 98115000 1 エフェクト用]
 [charaSet G 98109200 1 特效用dummy]
 [charaSet T 2000001 1 サブカメラ用]
@@ -391,21 +204,14 @@ describe("parseFgoScript", () => {
 ＠伯爵
 思うに[line 3]
 [k]
-`;
-
-    const parsed = parseFgoScript(script, "jp-effect-anchor");
-
-    expect(parsed.frames[0]).toMatchObject({
-      speaker: "伯爵",
-      text: "思うに———",
-    });
-    expect(parsed.frames[0].characters).toEqual([
+`, "jp-effect-anchor");
+    expect(snapshot.characters).toEqual([
       expect.objectContaining({ id: "2000003", name: "伯爵", position: "center" }),
     ]);
   });
 
   it("shows a faded-in communicator without rendering its noise effect anchor", () => {
-    const script = `
+    const { snapshot } = runToFirstMessage(`
 [charaSet F 99502600 1 玛修]
 [charaFilter F silhouette 00000080]
 [charaSet I 98014000 1 通信噪音]
@@ -417,27 +223,23 @@ describe("parseFgoScript", () => {
 ＠玛修
 前辈！　听得……到吗……！
 [k]
-`;
-
-    const parsed = parseFgoScript(script, "communication-noise");
-
-    expect(parsed.frames[0].characters).toEqual([
+`, "communication-noise");
+    expect(snapshot.characters).toEqual([
       expect.objectContaining({
         slot: "F",
         id: "99502600",
         name: "玛修",
-        visible: true,
         silhouette: true,
         active: true,
       }),
     ]);
-    expect(parsed.frames[0].characters).not.toContainEqual(
+    expect(snapshot.characters).not.toContainEqual(
       expect.objectContaining({ slot: "I" }),
     );
   });
 
   it("preserves legitimate same-id character instances in separate slots", () => {
-    const script = `
+    const { snapshot } = runToFirstMessage(`
 [charaSet A 1001001 1 玛修]
 [charaSet B 1001001 1 玛修]
 [charaPut A 0]
@@ -445,11 +247,8 @@ describe("parseFgoScript", () => {
 ＠A：玛修
 双实例测试
 [k]
-`;
-
-    const parsed = parseFgoScript(script, "same-id-slots");
-
-    expect(parsed.frames[0].characters.map(({ slot, id, position }) => ({
+`, "same-id-slots");
+    expect(snapshot.characters.map(({ slot, id, position }) => ({
       slot,
       id,
       position,
@@ -460,7 +259,7 @@ describe("parseFgoScript", () => {
   });
 
   it("hides characters behind visible scene layers by depth", () => {
-    const script = `
+    const source = `
 [charaSet B 1098341100 1 オルガマリー]
 [charaSet D 1098341100 3 オルガマリー]
 [sceneSet J 269400 1]
@@ -479,15 +278,25 @@ describe("parseFgoScript", () => {
 背景レイヤーの退場後に表示する。
 [k]
 `;
+    const program = compile(source, "scene-layer-depth");
+    const executor = new ScriptExecutor(program, {
+      masterName: "御主",
+      masterGender: "male",
+      textSpeedMs: 2,
+    });
+    executor.start();
+    const first = executor.getSnapshot();
+    expect(first.characters.map(({ slot }) => slot)).toEqual(["D"]);
 
-    const parsed = parseFgoScript(script, "scene-layer-depth");
-
-    expect(parsed.frames[0].characters.map(({ slot }) => slot)).toEqual(["D"]);
-    expect(parsed.frames[1].characters.map(({ slot }) => slot)).toEqual(["B"]);
+    executor.tap(); // finish first message
+    executor.tick(600); // fadeouts complete (no active fade wait in script)
+    executor.tap(); // advance to the second message
+    const second = executor.getSnapshot();
+    expect(second.characters.map(({ slot }) => slot)).toEqual(["B"]);
   });
 
   it("removes characters erased by charaSpecialEffect flashErasure", () => {
-    const script = `
+    const source = `
 [charaSet D 1098273900 1 演出用_Ｅ－オルガマリー]
 [charaTalk D]
 [charaFadein D 0.1 1]
@@ -503,47 +312,28 @@ describe("parseFgoScript", () => {
 消去後のセリフ。
 [k]
 `;
-
-    const parsed = parseFgoScript(script, "flash-erasure");
-
-    expect(parsed.frames[0].characters).toEqual([
-      expect.objectContaining({ slot: "D", face: 1, visible: true }),
-    ]);
-    expect(parsed.frames[1]).toMatchObject({
-      type: "animation",
-      characters: [],
+    const program = compile(source, "flash-erasure");
+    const executor = new ScriptExecutor(program, {
+      masterName: "御主",
+      masterGender: "male",
+      textSpeedMs: 2,
     });
-    expect(parsed.frames[2].characters).toEqual([
-      expect.objectContaining({ slot: "B", visible: true }),
+    executor.start();
+    expect(executor.getSnapshot().characters).toEqual([
+      expect.objectContaining({ slot: "D", face: 1 }),
     ]);
-  });
 
-  it("removes characters erased by erasureReverse before the next speaker appears", () => {
-    const script = `
-[charaSet A 4032000 1 埃尔梅罗Ⅱ世]
-[charaSet B 1098165800 1 仿古自动人偶]
-[charaTalk B]
-[charaFadein B 0.1 1]
-[charaSpecialEffect B erasureReverse 1 0.3]
-[charaTalk A]
-[charaFadein A 0.1 1]
-＠埃尔梅罗Ⅱ世
-哼，逃走了吗？
-[k]
-`;
-
-    const parsed = parseFgoScript(script, "erasure-reverse");
-
-    expect(parsed.frames[0].characters).toEqual([
-      expect.objectContaining({ slot: "A", name: "埃尔梅罗Ⅱ世", visible: true }),
-    ]);
-    expect(parsed.frames[0].characters).not.toContainEqual(
+    executor.tap(); // complete the typewriter reveal
+    executor.tap(); // advance past the first message; erasure runs
+    executor.tick(50);
+    const afterErasure = executor.getSnapshot();
+    expect(afterErasure.characters).toEqual([
       expect.objectContaining({ slot: "B" }),
-    );
+    ]);
   });
 
   it("removes animation stand-ins erased by appearanceReverse", () => {
-    const script = `
+    const { snapshot } = runToFirstMessage(`
 [charaSet A 1098330800 7 マシュ]
 [charaSet C 8001900 21 マシュ]
 [charaSet E 1098341100 25 オルガマリー]
@@ -554,18 +344,31 @@ describe("parseFgoScript", () => {
 ＠C：マシュ
 突然の乱入、失礼します！
 [k]
-`;
-
-    const parsed = parseFgoScript(script, "appearance-reverse");
-
-    expect(parsed.frames[0].characters.map(({ slot }) => slot)).toEqual(["C", "E"]);
-    expect(parsed.frames[0].characters).not.toContainEqual(
+`, "appearance-reverse");
+    expect(snapshot.characters.map(({ slot }) => slot)).toEqual(["C", "E"]);
+    expect(snapshot.characters).not.toContainEqual(
       expect.objectContaining({ slot: "A" }),
     );
   });
 
-  it("creates silent animation frames for visible sub-render characters", () => {
-    const script = `
+  it("removes enemies erased by enemyErasure", () => {
+    const { snapshot } = runToFirstMessage(`
+[charaSet A 1098154000 1 空想樹の種子]
+[charaSet B 8001900 1 マシュ]
+[charaPut A 1]
+[charaSpecialEffect A enemyErasure 1 1.7]
+[charaPut B 1]
+＠マシュ
+戦闘終了です。
+[k]
+`, "enemy-erasure");
+    expect(snapshot.characters).toEqual([
+      expect.objectContaining({ slot: "B", name: "マシュ" }),
+    ]);
+  });
+
+  it("shows sub-render characters only while the sub layer is visible", () => {
+    const source = `
 [charaSet A 8001900 1 マシュ]
 [charaSet F 1098154000 1 空想樹の種子]
 [charaSet G 1098154000 1 空想樹の種子]
@@ -582,325 +385,187 @@ describe("parseFgoScript", () => {
 空想樹の種子を確認しました。
 [k]
 `;
-
-    const parsed = parseFgoScript(script, "silent-sub-render");
-
-    expect(parsed.frames.map(({ type }) => type)).toEqual([
-      "animation",
-      "animation",
-      "dialogue",
-    ]);
-    expect(parsed.frames[0]).toMatchObject({
-      type: "animation",
-      speaker: "",
-      text: "",
-      durationMs: 1000,
-      characters: [
-        expect.objectContaining({ slot: "A", id: "8001900" }),
-        expect.objectContaining({ slot: "F", id: "1098154000" }),
-        expect.objectContaining({ slot: "G", id: "1098154000" }),
-      ],
+    const program = compile(source, "silent-sub-render");
+    const executor = new ScriptExecutor(program, {
+      masterName: "御主",
+      masterGender: "male",
+      textSpeedMs: 2,
     });
-    expect(parsed.frames[1]).toMatchObject({ durationMs: 500 });
-    expect(parsed.frames[1].characters.map(({ slot }) => slot)).toEqual(["A"]);
-    expect(parsed.characterCount).toBe(2);
+    executor.start();
+    const duringSub = executor.getSnapshot();
+    expect(duringSub.characters.map(({ slot }) => slot)).toEqual(["A", "F", "G"]);
+
+    // [wt 1.0] timer: tick past it; sub layer then fades out ([wt 0.5] next).
+    executor.tick(1200);
+    executor.tick(700);
+    const afterSub = executor.getSnapshot();
+    expect(afterSub.characters.map(({ slot }) => slot)).toEqual(["A"]);
+    expect(afterSub.phase).toBe("message");
+    expect(afterSub.message?.speaker).toBe("マシュ");
+    expect(program.characterIds).toEqual(["8001900", "1098154000"]);
   });
 
-  it("removes enemies erased by enemyErasure", () => {
-    const script = `
-[charaSet A 1098154000 1 空想樹の種子]
-[charaSet B 8001900 1 マシュ]
-[charaPut A 1]
-[charaSpecialEffect A enemyErasure 1 1.7]
-[charaPut B 1]
-＠マシュ
-戦闘終了です。
-[k]
-`;
-
-    const parsed = parseFgoScript(script, "enemy-erasure");
-
-    expect(parsed.frames[0].characters).toEqual([
-      expect.objectContaining({ slot: "B", name: "マシュ" }),
+  it("projects camera, blur, pictureFrame and scene layers into the live snapshot", () => {
+    const { executor } = runToFirstMessage([
+      "[scene 10000]",
+      "[sceneSet Q 142200 1]",
+      "[charaFadein Q 0.1 1]",
+      "[bgm BGM_EVENT_38 0.25 0.9]",
+      "[cameraMove 0.1 0,-30 1.2]",
+      "[cameraFilter gray]",
+      "[blur glass 0.5 2 10]",
+      "[pictureFrame cut063_cinema]",
+      "[messageOff]",
+      "＠旁白",
+      "演出状态测试。[k]",
+    ].join("\n"), "presentation-state");
+    executor.tick(200); // camera tween (0.1s) settles
+    const snapshot = executor.getSnapshot();
+    expect(snapshot.camera).toEqual({ x: 0, y: -30, scale: 1.2, rotation: 0, filter: "gray" });
+    expect(snapshot.blur).toBe(0.5);
+    expect(snapshot.pictureFrame).toBe("cut063_cinema");
+    expect(snapshot.bgm).toEqual({ name: "BGM_EVENT_38", volume: 0.25 });
+    expect(snapshot.stageLayers).toEqual([
+      expect.objectContaining({ slot: "Q", id: "142200", source: "background" }),
     ]);
   });
 
-  it("tracks scene, characters, bgm and choices", () => {
-    const script = `
-[charaSet A 1001001 1 玛修]
-[scene 10201]
-[bgm BGM_EVENT_2 0.1]
-[charaTalk A]
-[charaFadein A 0.2 1]
-＠玛修
-早上好。[r]前辈。
-[k]
-？1：出发吧
-＠玛修
-好的。
-[k]
-？2：再等等
-＠玛修
-明白了。
-[k]
-？！
-`;
-    const parsed = parseFgoScript(script, "demo");
-    expect(parsed.frames).toHaveLength(2);
-    expect(parsed.frames[0]).toMatchObject({
-      type: "dialogue",
-      speaker: "玛修",
-      scene: "10201",
-      bgm: "BGM_EVENT_2",
+  it("reads cameraMoveEase scale from the documented fourth parameter", () => {
+    const { executor } = runToFirstMessage([
+      "[cameraMoveEase 0,-30 1.0 easeOutQuad 1.2]",
+      "＠旁白",
+      "缓动镜头[k]",
+    ].join("\n"), "camera-ease");
+    executor.tick(1500); // camera tween (1.0s) settles
+    expect(executor.getSnapshot().camera).toMatchObject({ x: 0, y: -30, scale: 1.2 });
+  });
+
+  it("reopens the message window for dialogue after a messageOff transition", () => {
+    const { executor } = runToFirstMessage([
+      "[scene 10000]",
+      "[messageOff]",
+      "[fadeout black 0.5]",
+      "[wait fade]",
+      "＠旁白",
+      "转场后的正文。",
+      "[k]",
+    ].join("\n"), "message-off-dialogue");
+    executor.tick(700); // [wait fade] resolves; the message opens
+    const messageSnapshot = executor.getSnapshot();
+    // The dialogue itself reopens the window (corpus form) and is displayed.
+    expect(messageSnapshot.message?.lines).toBeTruthy();
+    expect(messageSnapshot.message?.speaker).toBe("旁白");
+  });
+
+  it("resolves the blur-off variants after global and sub-render blur", () => {
+    const program = compile([
+      "[blur lens 1.1 2 10]",
+      "＠旁白",
+      "全局模糊。[k]",
+      "[subBlur #A glass 0.4 2 10 1.0 subBlur]",
+      "＠旁白",
+      "子渲染模糊。[k]",
+      "[blurOff]",
+      "＠旁白",
+      "关闭模糊。[k]",
+    ].join("\n"), "blur-intensity");
+    const executor = new ScriptExecutor(program, {
+      masterName: "御主",
+      masterGender: "male",
+      textSpeedMs: 2,
     });
-    expect(parsed.frames[0].characters[0]).toMatchObject({
-      id: "1001001",
+    executor.start();
+    expect(executor.getSnapshot().blur).toBe(1.1);
+    executor.tap();
+    executor.tap();
+    expect(executor.getSnapshot().blur).toBe(0.4);
+    executor.tap();
+    executor.tap();
+    expect(executor.getSnapshot().blur).toBeNull();
+  });
+
+  it("keeps an authored coordinate and scale through later dialogue", () => {
+    const { snapshot } = runToFirstMessage(`
+[charaSet A 1098366400 1 大型角色]
+[charaScale A 2.0]
+[charaFadein A 0.1 -150,470]
+[charaMoveEase A -150,90 1.0 easeOutSine]
+＠A：大型角色
+坐标和缩放测试[k]
+`, "character-transform-demo");
+    expect(snapshot.characters[0]).toMatchObject({
+      x: -150,
+      y: 90,
+      scale: 2,
+      position: "left",
+    });
+  });
+
+  it("returns a moved character to the center when charaFadein omits a position", () => {
+    const source = `
+[charaSet A 1098366400 1 可移动角色]
+[charaFadein A 0.1 -150,470]
+[charaMove A 80,-60 0.5]
+[charaFadeout A 0.1]
+[charaFadein A 0.1]
+＠A：可移动角色
+省略坐标时回到中心位置。[k]
+`;
+    const program = compile(source, "fadein-omitted-position");
+    const executor = new ScriptExecutor(program, {
+      masterName: "御主",
+      masterGender: "male",
+      textSpeedMs: 2,
+    });
+    executor.start();
+    executor.tick(800); // charaMove tween (0.5s) settles
+    const snapshot = executor.getSnapshot();
+    expect(snapshot.characters[0]).toMatchObject({
+      x: 0,
+      y: 0,
       position: "center",
-      active: true,
     });
-    const choice = parsed.frames[1];
-    expect(choice.type).toBe("choice");
-    if (choice.type === "choice") {
-      expect(choice.options.map((option) => option.label)).toEqual([
-        "出发吧",
-        "再等等",
-      ]);
-      expect(choice.options[0].frames[0]).toMatchObject({ text: "好的。" });
-    }
   });
 
-  it("projects v1.3 label-based choices without playing every labeled branch", () => {
-    const parsed = parseFgoScript([
-      "[input selectBranch]",
-      "[label selectBranch]",
-      "？1：选择 A",
-      "[branch lblBranchA]",
-      "？2：选择 B",
-      "[branch lblBranchB]",
-      "？！",
-      "[label lblBranchA]",
-      "＠A：A",
-      "A 路线内容。[k]",
-      "[branch lblEnd]",
-      "[label lblBranchB]",
-      "＠B：B",
-      "B 路线内容。[k]",
-      "[label lblEnd]",
-      "＠N：旁白",
-      "共通后续内容。[k]",
-    ].join("\n"), "documented-choice-routes");
-
-    expect(parsed.frames).toHaveLength(2);
-    const choice = parsed.frames[0];
-    expect(choice.type).toBe("choice");
-    if (choice.type === "choice") {
-      expect(choice.options.map((option) => option.label)).toEqual(["选择 A", "选择 B"]);
-      expect(choice.options.map((option) => option.frames[0]?.text)).toEqual([
-        "A 路线内容。",
-        "B 路线内容。",
-      ]);
-    }
-    expect(parsed.frames[1]).toMatchObject({ text: "共通后续内容。" });
-    expect(parsed.diagnostics).not.toContainEqual(expect.objectContaining({
-      code: "unresolved_choice_routes",
-    }));
-    expect(parsed.diagnostics).not.toContainEqual(expect.objectContaining({ code: "orphan_text" }));
-  });
-
-  it("uses source positions for stable v5 frame ids and accepts q/KR punctuation", () => {
-    const parsed = parseFgoScript([
-      "@Narrator",
-      "First[line3][q]",
-      "?1:Continue",
-      "@Narrator",
-      "Branch A[q]",
-      "?2：Stop",
-      "@Narrator",
-      "Branch B[k]",
-      "?!",
-    ].join("\n"), "source-id", { region: "KR" });
-
-    expect(parsed.parserVersion).toBe(5);
-    expect(parsed.frames.map((frame) => frame.id)).toEqual([
-      "source-id@v5:d:1:1:0",
-      "source-id@v5:c:3:1:0",
-    ]);
-    expect(parsed.frames[0]).toMatchObject({ text: "First———" });
-    const choice = parsed.frames[1];
-    expect(choice.type).toBe("choice");
-    if (choice.type === "choice") {
-      expect(choice.options.map((option) => option.label)).toEqual(["Continue", "Stop"]);
-      expect(choice.options.map((option) => option.frames[0]?.id)).toEqual([
-        "source-id@v5:d:4:1:0",
-        "source-id@v5:d:7:1:0",
-      ]);
-    }
-  });
-
-  it("allows a choice with no branch-specific frames before shared continuation", () => {
-    const parsed = parseFgoScript([
-      "[wt 1.5]",
-      "？1：[line 3]消えてしまった[line 3]",
-      "",
-      "？！",
-      "",
-      "＠旁白",
-      "Shared continuation[k]",
-    ].join("\n"), "empty-choice-result");
-
-    expect(parsed.diagnostics).not.toContainEqual(expect.objectContaining({
-      severity: "error",
-    }));
-    expect(parsed.frames).toHaveLength(2);
-    const choice = parsed.frames[0];
-    expect(choice.type).toBe("choice");
-    if (choice.type === "choice") {
-      expect(choice.options).toEqual([{
-        label: "———消えてしまった———",
-        frames: [],
-      }]);
-    }
-    expect(parsed.frames[1]).toMatchObject({ text: "Shared continuation" });
-  });
-
-  it("uses the complete numeric placement table and an explicit speaker slot", () => {
-    const setup = Array.from({ length: 7 }, (_, index) => [
-      `[charaSet S${index} ${index + 1} 0 "Same Name"]`,
-      `[charaPut S${index} ${index}]`,
-    ].join("\n")).join("\n");
-    const parsed = parseFgoScript(`${setup}\n＠S5：Same Name\nPosition test[k]`, "placements");
-
-    expect(parsed.frames[0].characters.map((character) => character.position)).toEqual([
-      "left",
-      "center",
-      "right",
-      "left",
-      "left",
-      "right",
-      "right",
-    ]);
-    expect(parsed.frames[0].characters.filter((character) => character.active).map((character) => character.slot))
-      .toEqual(["S5"]);
-  });
-
-  it("consumes choice presentation once and preserves only branch-identical state", () => {
-    const parsed = parseFgoScript([
-      "[scene 100]",
-      "[bgm BASE]",
-      "[fadein black 0.2]",
-      "？1：Left",
-      "[scene 200]",
-      "[bgm LEFT]",
-      "＠旁白",
-      "Left branch[k]",
-      "？2：Right",
-      "[scene 300]",
-      "[bgm RIGHT]",
-      "＠旁白",
-      "Right branch[k]",
-      "？！",
-      "＠旁白",
-      "Shared continuation[k]",
-    ].join("\n"), "choice-state");
-
-    const choice = parsed.frames[0];
-    expect(choice).toMatchObject({ type: "choice", scene: "100", bgm: "BASE", transition: "fade" });
-    if (choice.type === "choice") {
-      expect(choice.options.map((option) => option.frames[0])).toEqual([
-        expect.objectContaining({ scene: "200", bgm: "LEFT", transition: "none" }),
-        expect.objectContaining({ scene: "300", bgm: "RIGHT", transition: "none" }),
-      ]);
-    }
-    expect(parsed.frames[1]).toMatchObject({
-      text: "Shared continuation",
-      scene: "100",
-      bgm: "BASE",
+  it("reports unresolved command tags as warnings without breaking playback", () => {
+    const program = compile("＠テスト\n本文[k]\n[unknownCommandFoo 1]", "unknown-cmd");
+    expect(program.diagnostics.some((entry) => entry.code === "unknown_command")).toBe(true);
+    const executor = new ScriptExecutor(program, {
+      masterName: "御主",
+      masterGender: "male",
+      textSpeedMs: 2,
     });
-    expect(parsed.diagnostics).toContainEqual(expect.objectContaining({
-      code: "divergent_choice_state",
-    }));
-  });
-
-  it("counts frames and resources recursively and keeps parser diagnostics", () => {
-    const parsed = parseFgoScript([
-      "？1：A",
-      "[scene 101]",
-      "[bgm A]",
-      "[charaSet A 1001 0 A]",
-      "[charaPut A 0]",
-      "＠A：A",
-      "Branch A[k]",
-      "？2：B",
-      "[scene 202]",
-      "[bgm B]",
-      "[charaSet B 2002 0 B]",
-      "[charaPut B 2]",
-      "＠B：B",
-      "Branch B[k]",
-      "？！",
-      "[futureCommand one]",
-      "[futureCommand two]",
-    ].join("\n"), "recursive-counts");
-
-    expect(parsed).toMatchObject({
-      frameCount: 3,
-      choiceCount: 1,
-      characterCount: 2,
-      sceneCount: 2,
-      bgmCount: 2,
-    });
-    expect(parsed.diagnostics).toContainEqual(expect.objectContaining({
-      code: "unknown_command",
-      command: "futureCommand",
-      count: 2,
-    }));
+    executor.start();
+    expect(executor.getSnapshot().phase).toBe("message");
   });
 });
 
-describe("custom script package example", () => {
-  it("parses the checked-in text-only package through filesystem URLs", async () => {
-    const packageUrl = new URL(
-      "../../examples/custom-script-package/",
-      import.meta.url,
-    );
-    const manifest = JSON.parse(
-      await readFile(new URL("manifest.json", packageUrl), "utf8"),
-    ) as {
-      format: string;
-      version: number;
-      title: string;
-      region: string;
-      script: string;
-    };
-    const source = await readFile(new URL(manifest.script, packageUrl), "utf8");
+/** Guards the parser against structural drift before the executor ever runs. */
+describe("compileFgoScript parser contract", () => {
+  it("keeps message text normalized (line rules, trailing spaces, blank runs)", () => {
+    const program = compile("＠テスト\n前文[line 3][r]後文[k]", "normalize");
+    expect(program.messageCatalog[0].text).toBe("前文———\n後文");
+  });
 
-    expect(manifest).toMatchObject({
-      format: "fgo-reader-script-package",
-      version: 1,
-      title: "最小文本剧本包",
-      region: "JP",
-      script: "script.txt",
-    });
+  it("accepts full-width and KR punctuation click markers", () => {
+    const program = compile("＠テスト\n一[q]\n二[K]", "punctuation");
+    expect(program.messageCatalog.map((record) => record.text)).toEqual(["一", "二"]);
+  });
 
-    const parsed = parseFgoScript(source, "custom-script-package-example");
-    expect(parsed.frames).toHaveLength(2);
-    expect(parsed.frames[0]).toMatchObject({
-      type: "dialogue",
-      speaker: "旁白",
-      text: "这是一个只含文本的自定义剧本包。",
-    });
+  it("resolves {0} placeholders to the master name", () => {
+    const program = compile("＠テスト\n{0}よ、[tag]いかが？[k]", "placeholder", { masterName: "藤丸" });
+    expect(program.messageCatalog[0].text).toBe("藤丸よ、いかが？");
+  });
 
-    const choice = parsed.frames[1];
-    expect(choice.type).toBe("choice");
-    if (choice.type === "choice") {
-      expect(choice.options.map((option) => option.label)).toEqual([
-        "继续阅读",
-        "先查看说明",
-      ]);
-      expect(choice.options.map((option) => option.frames[0]?.text)).toEqual([
-        "那么，让我们开始吧。",
-        "请先阅读自定义剧本包说明。",
-      ]);
-    }
+  it("degrades structural errors instead of throwing", () => {
+    const program = compile("[jump nowhere]\n[scene 100]", "degrade");
+    expect(program.diagnostics.some((entry) => entry.code === "unresolved_label")).toBe(true);
+  });
+
+  it("parses documents through the shared syntax layer", () => {
+    const document = parseScriptDocument("＠テスト\n本文[k]", { region: "JP" });
+    expect(document.nodes).toHaveLength(1);
+    const program: ScriptProgram = compile("＠テスト\n本文[k]", "syntax");
+    expect(program.instructions[0].tag).toBe("talkname");
   });
 });

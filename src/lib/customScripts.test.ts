@@ -137,7 +137,7 @@ describe("custom script package parser", () => {
       title: "测试剧本",
       region: "JP",
       translationAllowed: false,
-      preview: { parserVersion: 5, frameCount: 1, characterCount: 0 },
+      preview: { parserVersion: 6, frameCount: 1, characterCount: 0 },
     });
     expect(preview.assets.map((asset) => asset.path).sort()).toEqual([
       "assets/background.png",
@@ -201,8 +201,8 @@ describe("custom script package parser", () => {
     }));
 
     expect(preview.record.preview).toEqual({
-      parserVersion: 5,
-      frameCount: 3,
+      parserVersion: 6,
+      frameCount: 2,
       choiceCount: 1,
       characterCount: 2,
       sceneCount: 2,
@@ -213,10 +213,12 @@ describe("custom script package parser", () => {
       "manifest.json": manifest(),
       "story.txt": "？1：Continue\n？！\n＠旁白\nShared continuation[k]",
     }));
-    expect(sharedContinuation.parsedScript.frames[0]).toMatchObject({
-      type: "choice",
-      options: [{ label: "Continue", frames: [] }],
-    });
+    // The shared continuation after the choice block stays addressable in the
+    // compiled program: a choice instruction plus the follow-up message.
+    expect(sharedContinuation.program.instructions.some((instruction) => instruction.tag === "choice")).toBe(true);
+    expect(sharedContinuation.program.messageCatalog.map((record) => record.text)).toEqual([
+      "Shared continuation",
+    ]);
   });
 });
 
@@ -306,7 +308,7 @@ describe("custom script package persistence facade", () => {
     setCustomScriptPackageStorageForTesting(storage);
 
     expect((await listCustomScriptPackages())[0].preview).toMatchObject({
-      parserVersion: 5,
+      parserVersion: 6,
       frameCount: 1,
     });
     expect(updateCount).toBe(1);

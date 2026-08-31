@@ -12,6 +12,10 @@ SCRIPT = """
 ＠旁白
 第二张图片有正文。
 [k]
+[scene 10203]
+＠旁白
+第三张图片有正文。
+[k]
 """
 PIXEL = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
@@ -53,16 +57,18 @@ with sync_playwright() as playwright:
     page.locator(".reader-loading").wait_for(state="hidden", timeout=60000)
     page.locator(".dialogue-box").wait_for(timeout=15000)
 
+    # The executor bursts scene commands within the same frame (S-E8), so the
+    # visible background is already the second scene when the message opens.
     assert page.locator(".speaker-plate strong").text_content() == "旁白"
-    assert page.locator(".dialogue-text").text_content() == ""
+    assert page.locator(".dialogue-text").text_content() == "第二张图片有正文。"
     assert page.locator(".advance-indicator").count() == 1
-    assert page.locator(".scene-image").get_attribute("src").endswith("back10201.png")
+    assert page.locator(".scene-image").get_attribute("src").endswith("back10202.png")
 
     page.locator(".reader-stage").click(position={"x": 800, "y": 500})
     page.wait_for_function(
-        "document.querySelector('.dialogue-text')?.textContent === '第二张图片有正文。'"
+        "document.querySelector('.dialogue-text')?.textContent === '第三张图片有正文。'"
     )
-    assert page.locator(".scene-image").get_attribute("src").endswith("back10202.png")
+    assert page.locator(".scene-image").get_attribute("src").endswith("back10203.png")
     assert not page_errors, f"Page errors: {page_errors}"
 
     browser.close()

@@ -1,7 +1,7 @@
-import type { StoryFrame } from "../types";
 import {
-  frameTranslationUnits,
   stableHash,
+  stepTranslationUnits,
+  type TranslatableStep,
   translationForUnit,
   translationUnitSourceHash,
   type CachedTranslation,
@@ -79,7 +79,8 @@ interface TranslationTemplateContext {
   scriptId: string;
   title: string;
   masterName: string;
-  frames: StoryFrame[];
+  /** The script's full message catalog in program order (all branches). */
+  steps: TranslatableStep[];
 }
 
 let databasePromise: Promise<IDBDatabase> | null = null;
@@ -111,75 +112,55 @@ function cloneManualTranslationRecord(record: ManualTranslationRecord): ManualTr
   };
 }
 
-function flattenScriptFrames(frames: StoryFrame[]) {
-  const flattened: StoryFrame[] = [];
-  const visit = (branchFrames: StoryFrame[]) => {
-    for (const frame of branchFrames) {
-      flattened.push(frame);
-      if (frame.type === "choice") {
-        for (const option of frame.options) visit(option.frames);
-      }
-    }
-  };
-  visit(frames);
-  return flattened;
-}
-
-/** Collects every translatable unit, including frames nested below every choice branch. */
-export function collectScriptTranslationUnits(frames: StoryFrame[]) {
+/**
+ * Collects every translatable unit in the message catalog. The catalog is
+ * already flat and covers every choice branch, so no recursion is needed.
+ */
+export function collectScriptTranslationUnits(steps: TranslatableStep[]) {
   const units: TranslationUnit[] = [];
   const byId = new Map<string, TranslationUnit>();
 
-  const visit = (branchFrames: StoryFrame[]) => {
-    for (const frame of branchFrames) {
-      for (const unit of frameTranslationUnits(frame)) {
-        const existing = byId.get(unit.id);
-        if (existing) {
-          if (
-            existing.kind !== unit.kind
-            || existing.text !== unit.text
-            || existing.speaker !== unit.speaker
-            || translationUnitSourceHash(existing) !== translationUnitSourceHash(unit)
-          ) {
-            throw new ManualTranslationError(
-              `脚本中存在冲突的翻译单元：${unit.id}`,
-              "conflicting_translation_unit",
-            );
-          }
-          continue;
+  for (const step of steps) {
+    for (const unit of stepTranslationUnits(step)) {
+      const existing = byId.get(unit.id);
+      if (existing) {
+        if (
+          existing.kind !== unit.kind
+          || existing.text !== unit.text
+          || existing.speaker !== unit.speaker
+          || translationUnitSourceHash(existing) !== translationUnitSourceHash(unit)
+        ) {
+          throw new ManualTranslationError(
+            `脚本中存在冲突的翻译单元：${unit.id}`,
+            "conflicting_translation_unit",
+          );
         }
-        byId.set(unit.id, unit);
-        units.push(unit);
+        continue;
       }
-
-      if (frame.type === "choice") {
-        for (const option of frame.options) visit(option.frames);
-      }
+      byId.set(unit.id, unit);
+      units.push(unit);
     }
-  };
-
-  visit(frames);
+  }
   return units;
 }
 
-/** Collects one-shot translation batches in groups of story frames. */
+/** Collects one-shot translation batches in groups of message steps. */
 export function collectScriptTranslationUnitBatches(
-  frames: StoryFrame[],
-  frameBatchSize = ONE_SHOT_TRANSLATION_FRAME_BATCH_SIZE,
+  steps: TranslatableStep[],
+  stepBatchSize = ONE_SHOT_TRANSLATION_FRAME_BATCH_SIZE,
 ) {
-  const normalizedBatchSize = Number.isFinite(frameBatchSize)
-    ? Math.max(1, Math.floor(frameBatchSize))
+  const normalizedBatchSize = Number.isFinite(stepBatchSize)
+    ? Math.max(1, Math.floor(stepBatchSize))
     : ONE_SHOT_TRANSLATION_FRAME_BATCH_SIZE;
-  const units = collectScriptTranslationUnits(frames);
+  const units = collectScriptTranslationUnits(steps);
   const unitById = new Map(units.map((unit) => [unit.id, unit]));
   const seen = new Set<string>();
-  const flattenedFrames = flattenScriptFrames(frames);
   const batches: TranslationUnit[][] = [];
 
-  for (let index = 0; index < flattenedFrames.length; index += normalizedBatchSize) {
+  for (let index = 0; index < steps.length; index += normalizedBatchSize) {
     const batch: TranslationUnit[] = [];
-    for (const frame of flattenedFrames.slice(index, index + normalizedBatchSize)) {
-      for (const unit of frameTranslationUnits(frame)) {
+    for (const step of steps.slice(index, index + normalizedBatchSize)) {
+      for (const unit of stepTranslationUnits(step)) {
         if (seen.has(unit.id)) continue;
         const canonical = unitById.get(unit.id);
         if (!canonical) continue;
@@ -193,8 +174,8 @@ export function collectScriptTranslationUnitBatches(
   return batches;
 }
 
-export function translationSourceSignature(frames: StoryFrame[]) {
-  return stableHash(collectScriptTranslationUnits(frames)
+export function translationSourceSignature(steps: TranslatableStep[]) {
+  return stableHash(collectScriptTranslationUnits(steps)
     .map((unit) => `${unit.id}:${translationUnitSourceHash(unit)}`)
     .join("\u0000"));
 }
@@ -203,7 +184,7 @@ export function createTranslationTemplate(
   context: TranslationTemplateContext,
   existingTranslations: Record<string, CachedTranslation> = {},
 ): TranslationTemplateV2 {
-  const entries = collectScriptTranslationUnits(context.frames).map((unit) => ({
+  const entries = collectScriptTranslationUnits(context.steps).map((unit) => ({
     id: unit.id,
     kind: unit.kind,
     ...(unit.speaker === undefined ? {} : { speaker: unit.speaker }),
@@ -281,7 +262,7 @@ export function parseTranslationTemplate(
     throw new ManualTranslationError("翻译母本缺少 entries 数组");
   }
 
-  const units = collectScriptTranslationUnits(context.frames);
+  const units = collectScriptTranslationUnits(context.steps);
   if (value.entries.length !== units.length) {
     throw new ManualTranslationError("翻译母本的文本条目不完整，请重新导出", "source_mismatch");
   }
@@ -338,9 +319,9 @@ export function parseTranslationTemplate(
 
 export function inspectManualTranslationRecord(
   record: ManualTranslationRecord | null,
-  context: Pick<TranslationTemplateContext, "scriptId" | "masterName" | "frames">,
+  context: Pick<TranslationTemplateContext, "scriptId" | "masterName" | "steps">,
 ): ManualTranslationInspection {
-  const units = collectScriptTranslationUnits(context.frames);
+  const units = collectScriptTranslationUnits(context.steps);
   const empty: ManualTranslationInspection = {
     status: "none",
     translations: {},

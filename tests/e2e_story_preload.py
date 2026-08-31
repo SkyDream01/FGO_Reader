@@ -5,9 +5,10 @@ from pathlib import Path
 import time
 
 from playwright.sync_api import sync_playwright
+import os
 
 
-BASE_URL = "http://127.0.0.1:5192"
+BASE_URL = os.environ.get("FGO_E2E_URL", "http://127.0.0.1:5192")
 SCREENSHOT = Path(__file__).resolve().parents[1] / "screenshots" / "story-preload.png"
 PIXEL_PNG = b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/"

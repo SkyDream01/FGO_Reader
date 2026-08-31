@@ -1,6 +1,7 @@
-import { parseFgoScript } from "./scriptParser";
+import { compileFgoScript } from "./scriptParser";
 import { SCRIPT_PARSER_VERSION } from "./scriptParserVersion";
-import type { ParsedScript, Region } from "../types";
+import type { ScriptProgram } from "../adv/instruction";
+import type { Region } from "../types";
 
 export const CUSTOM_SCRIPT_URL_PREFIX = "fgo-reader-custom://";
 export const CUSTOM_SCRIPT_FORMAT = "fgo-reader-script-package";
@@ -13,7 +14,6 @@ const MAX_MANIFEST_BYTES = 64 * 1024;
 const MAX_SCRIPT_BYTES = 2 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 12 * 1024 * 1024;
 const MAX_AUDIO_BYTES = 24 * 1024 * 1024;
-const MAX_FLATTENED_FRAMES = 10_000;
 const MAX_CHOICE_OPTIONS = 9;
 const MAX_CHARACTER_SLOTS = 64;
 
@@ -79,7 +79,7 @@ export interface CustomScriptAssetBlob {
 /** The validated import result. Pass this object to saveCustomScriptPackage. */
 export interface CustomScriptArchivePreview {
   record: CustomScriptPackageRecord;
-  parsedScript: ParsedScript;
+  program: ScriptProgram;
   assets: CustomScriptAssetBlob[];
 }
 
@@ -547,35 +547,34 @@ function validateAssetEntries(entries: Map<string, ZipEntry>, prefix: string, as
   }
 }
 
-function previewFromParsedScript(parsedScript: ParsedScript): CustomScriptPreviewCounts {
+function previewFromParsedScript(program: ScriptProgram): CustomScriptPreviewCounts {
   return {
     parserVersion: SCRIPT_PARSER_VERSION,
-    frameCount: parsedScript.frameCount,
-    choiceCount: parsedScript.choiceCount,
-    characterCount: parsedScript.characterCount,
-    sceneCount: parsedScript.sceneCount,
-    bgmCount: parsedScript.bgmCount,
+    frameCount: program.messageCatalog.length,
+    choiceCount: program.choiceCatalog.length,
+    characterCount: program.characterIds.length,
+    sceneCount: program.sceneIds.length,
+    bgmCount: program.bgmNames.length,
   };
 }
 
 function parseCustomScript(source: string, scriptId: string, region: Region) {
-  const parsedScript = parseFgoScript(source, scriptId, {
+  const parsedProgram = compileFgoScript(source, scriptId, {
     region,
     limits: {
-      maxFrames: MAX_FLATTENED_FRAMES,
       maxChoiceOptions: MAX_CHOICE_OPTIONS,
       maxCharacterSlots: MAX_CHARACTER_SLOTS,
     },
   });
-  const fatal = parsedScript.diagnostics.find((diagnostic) => diagnostic.severity === "error");
+  const fatal = parsedProgram.diagnostics.find((diagnostic) => diagnostic.severity === "error");
   if (fatal) {
     packageError(
       `script parse error at ${fatal.line}:${fatal.column}: ${fatal.message}`,
       "invalid_script",
     );
   }
-  if (!parsedScript.frameCount) packageError("script contains no playable frames", "invalid_script");
-  return parsedScript;
+  if (!parsedProgram.messageCatalog.length) packageError("script contains no playable frames", "invalid_script");
+  return parsedProgram;
 }
 
 async function hashArchive(archive: ArrayBuffer) {
@@ -630,7 +629,7 @@ export async function parseCustomScriptArchive(input: CustomScriptArchiveInput):
 
   const id = await hashArchive(archive);
   const scriptText = decodeUtf8(new Uint8Array(await extractZipEntry(archive, scriptEntry)), "script", true);
-  const parsedScript = parseCustomScript(scriptText, id, manifest.region);
+  const parsedProgram = parseCustomScript(scriptText, id, manifest.region);
 
   const assetByPath = new Map<string, CustomScriptAssetBlob>();
   for (const kind of ["backgrounds", "characters", "bgm"] as const) {
@@ -664,9 +663,9 @@ export async function parseCustomScriptArchive(input: CustomScriptArchiveInput):
       archiveName,
       byteSize: archive.byteLength,
       translationAllowed: false,
-      preview: previewFromParsedScript(parsedScript),
+      preview: previewFromParsedScript(parsedProgram),
     },
-    parsedScript,
+    program: parsedProgram,
     assets: [...assetByPath.values()],
   };
 }

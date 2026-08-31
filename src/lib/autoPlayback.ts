@@ -1,4 +1,4 @@
-import type { ChoiceOption } from "../types";
+
 
 const AUTO_PLAY_BASE_DELAY_MS = 500;
 const AUTO_PLAY_CHARACTER_DELAY_MS = 200;
@@ -16,7 +16,7 @@ export function autoPlaybackDelayMs(characterCount: number): number {
 
 /** Branches use the combined character count of all option labels. */
 export function choiceAutoPlaybackCharacterCount(
-  options: ReadonlyArray<Pick<ChoiceOption, "label">>,
+  options: ReadonlyArray<{ label: string }>,
 ): number {
   return options.reduce(
     (total, option) => total + countAutoPlaybackCharacters(option.label),

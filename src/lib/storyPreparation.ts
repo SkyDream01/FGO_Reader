@@ -16,21 +16,19 @@ import {
   type CustomScriptPackageRecord,
 } from "./customScripts";
 import {
-  clearChoiceTrail,
-  replayChoiceTrail,
   validateChoiceTrail,
 } from "./choiceTrail";
-import { parseFgoScript } from "./scriptParser";
+import { compileFgoScript } from "./scriptParser";
 import {
   choiceTrailStorageKey,
   loadStoredFrameIndex,
   progressStorageKey,
 } from "./scriptParserVersion";
 import { retryAsync } from "./loadRetry";
+import type { ScriptProgram, MessageRecord } from "../adv/instruction";
+import type { TranslatableStep } from "./translation";
 import type {
   ChoiceTrail,
-  ParsedScript,
-  StoryFrame,
   StoryLaunch,
 } from "../types";
 
@@ -51,9 +49,11 @@ export interface PreparedCustomPackage {
 }
 
 export interface PreparedStory {
-  baseFrames: StoryFrame[];
-  frames: StoryFrame[];
+  program: ScriptProgram;
+  /** Full readable catalog in program order (manual translation source). */
+  steps: TranslatableStep[];
   choiceTrail: ChoiceTrail;
+  /** Instruction index to fast-forward to (docs/FGO_Story_Reader_Standard §7). */
   startIndex: number;
   customPackage: PreparedCustomPackage | null;
   japaneseStoryLoaded: boolean;
@@ -95,14 +95,44 @@ function throwIfAborted(signal?: AbortSignal) {
   if (signal?.aborted) throw abortError();
 }
 
-function parsePlayableStory(
+/** The readable catalog, covering every branch of the compiled program. */
+export function collectStorySteps(program: ScriptProgram): TranslatableStep[] {
+  const steps: TranslatableStep[] = program.messageCatalog.map((record) => ({
+    key: record.key,
+    kind: "message" as const,
+    speaker: record.speaker,
+    text: record.text,
+  }));
+  for (const choice of program.choiceCatalog) {
+    steps.push({
+      key: choice.key,
+      kind: "choice" as const,
+      speaker: "CHOICE",
+      text: "",
+      optionLabels: choice.options.map((option) => option.label),
+    });
+  }
+  // Keep the catalog in program order for stable template exports.
+  steps.sort((left, right) => {
+    const leftIndex = left.kind === "message"
+      ? program.messageCatalog.find((record) => record.key === left.key)?.instructionIndex ?? Number.MAX_SAFE_INTEGER
+      : program.choiceCatalog.find((choice) => choice.key === left.key)?.instructionIndex ?? Number.MAX_SAFE_INTEGER;
+    const rightIndex = right.kind === "message"
+      ? program.messageCatalog.find((record) => record.key === right.key)?.instructionIndex ?? Number.MAX_SAFE_INTEGER
+      : program.choiceCatalog.find((choice) => choice.key === right.key)?.instructionIndex ?? Number.MAX_SAFE_INTEGER;
+    return leftIndex - rightIndex;
+  });
+  return steps;
+}
+
+function compilePlayableStory(
   source: string,
   story: Pick<StoryLaunch, "scriptId" | "region">,
   masterName: string,
-): ParsedScript {
-  let parsed: ParsedScript;
+): ScriptProgram {
+  let program: ScriptProgram;
   try {
-    parsed = parseFgoScript(source, story.scriptId, {
+    program = compileFgoScript(source, story.scriptId, {
       region: story.region,
       masterName,
     });
@@ -112,16 +142,16 @@ function parsePlayableStory(
     );
   }
 
-  const fatal = parsed.diagnostics.find((diagnostic) => diagnostic.severity === "error");
+  const fatal = program.diagnostics.find((diagnostic) => diagnostic.severity === "error");
   if (fatal) {
     throw new StoryPreparationError(
       `脚本解析失败：第 ${fatal.line} 行第 ${fatal.column} 列：${fatal.message}`,
     );
   }
-  if (!parsed.frames.length) {
+  if (!program.messageCatalog.length) {
     throw new StoryPreparationError("脚本解析失败：脚本中没有可播放的对话");
   }
-  return parsed;
+  return program;
 }
 
 function loadStoredChoiceTrail(scriptId: string): ChoiceTrail {
@@ -133,40 +163,6 @@ function loadStoredChoiceTrail(scriptId: string): ChoiceTrail {
   } catch {
     return [];
   }
-}
-
-export function collectStoryResources(frames: StoryFrame[]): StoryResources {
-  const backgrounds = new Set<string>();
-  const characters = new Set<string>();
-  const bgm = new Set<string>();
-
-  const visit = (storyFrames: StoryFrame[]) => {
-    for (const frame of storyFrames) {
-      if (frame.scene) backgrounds.add(frame.scene);
-      if (frame.bgm) bgm.add(frame.bgm);
-      for (const character of frame.characters) characters.add(character.id);
-      for (const layer of frame.presentation?.stageLayers ?? []) {
-        if (layer.source === "background") {
-          backgrounds.add(layer.id.replace(/^back/i, ""));
-        } else {
-          // imageSet resources use the same static Back bucket in the Atlas
-          // export.  Keeping them in the background preload set also makes
-          // local custom packages available before the first animation frame.
-          backgrounds.add(layer.id.replace(/^back/i, ""));
-        }
-      }
-      if (frame.type === "choice") {
-        for (const option of frame.options) visit(option.frames);
-      }
-    }
-  };
-  visit(frames);
-
-  return {
-    backgrounds: [...backgrounds],
-    characters: [...characters],
-    bgm: [...bgm],
-  };
 }
 
 function withResourceTimeout<T>(
@@ -321,23 +317,18 @@ async function prepareCustomAsset(
   return url;
 }
 
-async function createResourceTasks(
+function createResourceTasks(
   story: StoryLaunch,
-  frames: StoryFrame[],
+  program: ScriptProgram,
+  bgmByFile: Map<string, { audioAsset?: string }>,
   customRecord: CustomScriptPackageRecord | null,
   assetUrls: CustomScriptAssetMappings,
   objectUrls: string[],
   signal?: AbortSignal,
-) {
-  const resources = collectStoryResources(frames);
-  const bgmCatalog = resources.bgm.length
-    ? await awaitResource(getBgmCatalog(story.region), signal).catch(() => [])
-    : [];
-  throwIfAborted(signal);
-  const bgmByFile = new Map(bgmCatalog.map((entry) => [entry.fileName, entry]));
+): ResourceTask[] {
   const tasks: ResourceTask[] = [];
 
-  for (const sceneId of resources.backgrounds) {
+  for (const sceneId of program.sceneIds) {
     tasks.push({
       label: `背景 ${sceneId}`,
       load: async () => {
@@ -356,7 +347,7 @@ async function createResourceTasks(
     });
   }
 
-  for (const characterId of resources.characters) {
+  for (const characterId of program.characterIds) {
     tasks.push({
       label: `立绘 ${characterId}`,
       load: async () => {
@@ -387,7 +378,7 @@ async function createResourceTasks(
     });
   }
 
-  for (const fileName of resources.bgm) {
+  for (const fileName of program.bgmNames) {
     tasks.push({
       label: `BGM ${fileName}`,
       load: async () => {
@@ -401,9 +392,8 @@ async function createResourceTasks(
               signal,
             )
           : null;
-        const entry = bgmByFile.get(fileName);
         await preloadAudio(
-          localUrl || entry?.audioAsset || fallbackBgmUrl(story.region, fileName),
+          localUrl || bgmByFile.get(fileName)?.audioAsset || fallbackBgmUrl(story.region, fileName),
           signal,
         );
       },
@@ -437,7 +427,8 @@ export async function prepareStory(
 
     const customSource = isCustomScriptUrl(story.scriptUrl);
     let customRecord: CustomScriptPackageRecord | null = null;
-    let parsed: ParsedScript;
+    let program: ScriptProgram;
+    let steps: TranslatableStep[];
     let loadNote = "";
     let offlineFallback = false;
 
@@ -447,7 +438,7 @@ export async function prepareStory(
       if (!customRecord) {
         throw new StoryPreparationError("无法打开本地资源包：资源包已不存在或已被删除");
       }
-      parsed = parsePlayableStory(customRecord.scriptText, story, masterName);
+      program = compilePlayableStory(customRecord.scriptText, story, masterName);
     } else {
       try {
         const source = await getScriptText(
@@ -457,11 +448,11 @@ export async function prepareStory(
           story.scriptId,
         );
         throwIfAborted(signal);
-        parsed = parsePlayableStory(source, story, masterName);
+        program = compilePlayableStory(source, story, masterName);
       } catch (reason) {
         if (signal?.aborted) throw abortError();
         if (reason instanceof StoryPreparationError) throw reason;
-        parsed = parseFgoScript(offlineDemoScript, "offline-demo", {
+        program = compileFgoScript(offlineDemoScript, "offline-demo", {
           region: "JP",
           masterName,
         });
@@ -471,15 +462,17 @@ export async function prepareStory(
         }`;
       }
     }
+    steps = collectStorySteps(program);
 
     const restoredTrail = story.choiceTrail ?? loadStoredChoiceTrail(story.scriptId);
-    const replayed = replayChoiceTrail(parsed.frames, restoredTrail);
+    // Resume replays inside the executor; the stored cursor is clamped to the
+    // compiled program for stale-progress safety.
     const savedProgress = loadStoredFrameIndex(progressStorageKey(story.scriptId));
     const startIndex = Math.max(
       0,
       Math.min(
         story.startIndex ?? savedProgress,
-        Math.max(0, replayed.frames.length - 1),
+        Math.max(0, program.instructions.length - 1),
       ),
     );
     onProgress?.({
@@ -489,10 +482,16 @@ export async function prepareStory(
       label: "剧情脚本已展开",
     });
 
+    const bgmCatalog = program.bgmNames.length
+      ? await awaitResource(getBgmCatalog(story.region), signal).catch(() => [])
+      : [];
+    throwIfAborted(signal);
+    const bgmByFile = new Map(bgmCatalog.map((entry) => [entry.fileName, entry]));
     const assetUrls = emptyAssetUrls();
-    const tasks = await createResourceTasks(
+    const tasks = createResourceTasks(
       story,
-      parsed.frames,
+      program,
+      bgmByFile,
       customRecord,
       assetUrls,
       objectUrls,
@@ -506,9 +505,9 @@ export async function prepareStory(
     }
 
     return {
-      baseFrames: parsed.frames,
-      frames: replayed.frames,
-      choiceTrail: replayed.choiceTrail,
+      program,
+      steps,
+      choiceTrail: restoredTrail,
       startIndex,
       customPackage: customRecord
         ? {
@@ -531,3 +530,5 @@ export async function prepareStory(
     throw reason;
   }
 }
+
+export type { MessageRecord };

@@ -1,4 +1,3 @@
-import type { StoryFrame } from "../types";
 import { TRANSLATION_QUALITY_VERSION } from "../../shared/translation-core.mjs";
 import { isAndroidNative } from "../platform/runtime";
 import {
@@ -266,36 +265,45 @@ export function translationUnitSourceHash(unit: TranslationUnit) {
   return stableHash(`${unit.kind}\u0000${unit.speaker ?? ""}\u0000${unit.text.replace(/\r\n?/g, "\n")}`);
 }
 
-export function frameTranslationUnits(frame: StoryFrame): TranslationUnit[] {
-  if (frame.type === "animation") return [];
-  if (frame.type === "choice") {
-    return frame.options.map((option, index) => ({
-      id: `${frame.id}:choice:${index}`,
-      kind: "choice",
-      text: option.label,
+/**
+ * Message-catalog based translation unit source (v6 pipeline). A step is one
+ * readable unit: a dialogue message or a choice with its option labels.
+ */
+export interface TranslatableStep {
+  key: string;
+  kind: "message" | "choice";
+  speaker: string;
+  text: string;
+  optionLabels?: string[];
+}
+
+export function stepTranslationUnits(step: TranslatableStep): TranslationUnit[] {
+  if (step.kind === "choice") {
+    return (step.optionLabels ?? []).map((label, index) => ({
+      id: `${step.key}:choice:${index}`,
+      kind: "choice" as const,
+      text: label,
     }));
   }
-  const speakerId = `speaker:${stableHash(frame.speaker)}`;
   return [
-    ...(frame.speaker.trim() ? [{
-      id: speakerId,
+    ...(step.speaker.trim() ? [{
+      id: `speaker:${stableHash(step.speaker)}`,
       kind: "speaker" as const,
-      text: frame.speaker,
+      text: step.speaker,
     }] : []),
-    ...(frame.text.trim() ? [{
-      id: `${frame.id}:dialogue`,
+    ...(step.text.trim() ? [{
+      id: `${step.key}:dialogue`,
       kind: "dialogue" as const,
-      speaker: frame.speaker,
-      text: frame.text,
+      speaker: step.speaker,
+      text: step.text,
     }] : []),
   ];
 }
 
-/** Collects unique translation units from a group of frames in display order. */
-export function collectTranslationUnits(frames: StoryFrame[]) {
+export function collectStepTranslationUnits(steps: TranslatableStep[]) {
   const units = new Map<string, TranslationUnit>();
-  for (const frame of frames) {
-    for (const unit of frameTranslationUnits(frame)) {
+  for (const step of steps) {
+    for (const unit of stepTranslationUnits(step)) {
       const key = `${unit.id}:${translationUnitSourceHash(unit)}`;
       if (!units.has(key)) units.set(key, unit);
     }
@@ -749,70 +757,6 @@ export async function translateTranslationUnits({
   }
 
   return { translations, configurationId };
-}
-
-function translationFrameBatchKey(frames: StoryFrame[]) {
-  return frames
-    .flatMap(frameTranslationUnits)
-    .map((unit) => `${unit.id}:${translationUnitSourceHash(unit)}`)
-    .join("|");
-}
-
-function mergeTranslationFrameStep(frameGroups: StoryFrame[][]) {
-  const frames = new Map<string, StoryFrame>();
-  for (const frame of frameGroups.flat()) {
-    const key = translationFrameBatchKey([frame]);
-    if (key && !frames.has(key)) frames.set(key, frame);
-  }
-  return [...frames.values()];
-}
-
-/**
- * Expands a route into logical translation steps. A normal story frame takes
- * one step. At an unresolved choice, every option advances by one frame in the
- * same step; the shared continuation resumes after the longest option branch.
- */
-function collectTranslationFrameSteps(
-  frames: StoryFrame[],
-  frameIndex: number,
-  limit: number,
-) {
-  const steps: StoryFrame[][] = [];
-  for (let index = Math.max(0, frameIndex); index < frames.length && steps.length < limit; index += 1) {
-    const frame = frames[index];
-    steps.push([frame]);
-    if (frame.type !== "choice" || frame.selected !== undefined || !frame.options.length) continue;
-
-    const branchLimit = limit - steps.length;
-    const branches = frame.options.map((option) => (
-      collectTranslationFrameSteps(option.frames, 0, branchLimit)
-    ));
-    const branchDepth = Math.min(
-      branchLimit,
-      branches.reduce((depth, branch) => Math.max(depth, branch.length), 0),
-    );
-    for (let depth = 0; depth < branchDepth; depth += 1) {
-      const branchStep = mergeTranslationFrameStep(
-        branches.map((branch) => branch[depth] ?? []),
-      );
-      if (branchStep.length) steps.push(branchStep);
-    }
-  }
-  return steps;
-}
-
-/** Returns the current frame plus up to ten logical unread frames. */
-export function createTranslationFrameLookahead(
-  frames: StoryFrame[],
-  frameIndex: number,
-  aheadFrameCount = TRANSLATION_AHEAD_FRAME_COUNT,
-) {
-  const normalizedAheadCount = Math.max(0, Math.floor(aheadFrameCount));
-  return collectTranslationFrameSteps(
-    frames,
-    frameIndex,
-    normalizedAheadCount + (frames[frameIndex] ? 1 : 0),
-  );
 }
 
 export async function fetchTranslationServerConfig(signal?: AbortSignal): Promise<TranslationServerConfig> {

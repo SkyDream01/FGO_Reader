@@ -1,5 +1,7 @@
 from pathlib import Path
+import base64
 import os
+import time
 from playwright.sync_api import sync_playwright
 
 
@@ -7,6 +9,51 @@ ROOT = Path(__file__).resolve().parents[1]
 SCREENSHOTS = ROOT / "screenshots"
 SCREENSHOTS.mkdir(exist_ok=True)
 BASE_URL = os.environ.get("FGO_E2E_URL", "http://127.0.0.1:5192")
+
+
+def observation_wait(expression: str) -> str:
+    """Build a null-safe last-observation condition.
+
+    The app persists the record after story preparation finishes, so a missing
+    key must keep the condition false instead of throwing on the first check.
+    """
+    return (
+        "(() => { try {"
+        " const record = JSON.parse(localStorage.getItem('fgo-reader-last-observation:v6') ?? 'null');"
+        f" return record !== null && {expression};"
+        " } catch { return false; } })()"
+    )
+
+
+def wait_for_condition(page, expression: str, timeout_ms: int = 30000) -> None:
+    """Poll a JavaScript condition via page.evaluate until it turns truthy.
+
+    wait_for_function() re-evaluates its string from page timers, which can
+    surface the app's Content-Security-Policy (script-src 'self') as an
+    EvalError; one-shot page.evaluate calls stay inside the CDP evaluation
+    and run reliably.
+    """
+    deadline = time.monotonic() + timeout_ms / 1000
+    while True:
+        try:
+            if page.evaluate(expression):
+                return
+        except Exception:
+            pass
+        if time.monotonic() >= deadline:
+            raise TimeoutError(
+                f"condition not met within {timeout_ms}ms: {expression[:120]}"
+            )
+        page.wait_for_timeout(100)
+
+PIXEL = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+)
+
+AUDIO = base64.b64decode(
+    "UklGRqQMAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+)
+
 
 BASIC_WARS = [
     {
@@ -68,6 +115,33 @@ with sync_playwright() as playwright:
         "}"
     )
 
+    def _cdn_mock(route):
+        # Deterministic offline assets. Script text must be real (the parser
+        # needs it) — fetch it through Python, which retains network access.
+        # Audio becomes silence, everything else a 1px placeholder image.
+        url = route.request.url
+        if url.endswith(".txt") and "/Script/" in url:
+            import urllib.request
+
+            try:
+                data = urllib.request.urlopen(url, timeout=20).read()
+                route.fulfill(
+                    status=200,
+                    content_type="text/plain; charset=utf-8",
+                    body=data,
+                )
+            except Exception:
+                route.fulfill(status=404, body="")
+            return
+        if url.endswith(".mp3") or "/Audio/" in url or url.endswith(".wav"):
+            route.fulfill(status=200, content_type="audio/wav", body=AUDIO)
+        else:
+            route.fulfill(status=200, content_type="image/png", body=PIXEL)
+
+    page.route(
+        "https://static.atlasacademy.io/**",
+        _cdn_mock,
+    )
     page.route(
         "https://api.atlasacademy.io/export/CN/basic_war.json",
         lambda route: route.fulfill(
@@ -98,17 +172,15 @@ with sync_playwright() as playwright:
 
     page.goto(BASE_URL, wait_until="networkidle", timeout=30000)
     page.get_by_text("暂无可继续的记录", exact=True).wait_for(timeout=5000)
+    page.locator(".region-select select").select_option("CN")
+    page.wait_for_timeout(300)
     page.get_by_role("button", name="开始观测").click()
-    page.wait_for_function(
-        "JSON.parse(localStorage.getItem('fgo-reader-last-observation')).frameIndex === 0"
-    )
+    wait_for_condition(page, observation_wait("record.frameIndex === 1"))
     page.locator(".reader-loading").wait_for(state="hidden", timeout=10000)
     page.locator(".dialogue-box").wait_for(timeout=5000)
 
     page.keyboard.press("Space")
-    page.wait_for_function(
-        "JSON.parse(localStorage.getItem('fgo-reader-last-observation')).frameIndex === 1"
-    )
+    wait_for_condition(page, observation_wait("record.frameIndex === 3"))
     assert page.locator(".dialogue-text").text_content() == "第二条记录。"
     assert page.locator(".dialogue-meta span").first.text_content() == "LOG 002"
     assert page.evaluate("localStorage.getItem('fgo-reader-bookmark')") is None
@@ -162,9 +234,7 @@ with sync_playwright() as playwright:
     page.get_by_text("已保存当前位置", exact=True).wait_for(timeout=5000)
     page.keyboard.press("Space")
     page.locator(".completion-panel").wait_for(timeout=5000)
-    page.wait_for_function(
-        "JSON.parse(localStorage.getItem('fgo-reader-last-observation')).scriptId === '1000000002'"
-    )
+    wait_for_condition(page, observation_wait("record.scriptId === '1000000002'"))
     page.locator(".completion-panel").get_by_role("button", name="返回目录").click()
 
     page.get_by_text("继续上次观测", exact=True).wait_for(timeout=5000)
@@ -177,8 +247,8 @@ with sync_playwright() as playwright:
 
     page.keyboard.press("Space")
     page.locator(".completion-panel").wait_for(timeout=5000)
-    page.wait_for_function(
-        "localStorage.getItem('fgo-reader-last-observation') === null"
+    wait_for_condition(
+        page, "localStorage.getItem('fgo-reader-last-observation:v6') === null"
     )
     page.locator(".completion-panel").get_by_role("button", name="返回目录").click()
     page.get_by_text("读取手动书签", exact=True).wait_for(timeout=5000)
@@ -195,9 +265,7 @@ with sync_playwright() as playwright:
     page.locator(".reader-loading").wait_for(state="hidden", timeout=10000)
     assert page.locator(".dialogue-text").text_content() == "第一条记录。"
     assert page.locator(".dialogue-meta span").first.text_content() == "LOG 001"
-    page.wait_for_function(
-        "JSON.parse(localStorage.getItem('fgo-reader-last-observation')).frameIndex === 0"
-    )
+    wait_for_condition(page, observation_wait("record.frameIndex === 1"))
 
     page.screenshot(path=str(SCREENSHOTS / "resume-observation.png"), full_page=True)
     assert not page_errors, f"Page errors: {page_errors}"

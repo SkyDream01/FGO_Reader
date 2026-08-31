@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it } from "vitest";
-import type { StoryFrame } from "../types";
 import {
   collectScriptTranslationUnitBatches,
   collectScriptTranslationUnits,
@@ -14,61 +13,30 @@ import {
   type ManualTranslationStorage,
   type TranslationTemplateV2,
 } from "./manualTranslations";
-import { frameTranslationUnits } from "./translation";
+import { stepTranslationUnits, type TranslatableStep } from "./translation";
 
-function dialogue(id: string, speaker: string, text: string): StoryFrame {
-  return {
-    id,
-    type: "dialogue",
-    speaker,
-    text,
-    scene: null,
-    bgm: null,
-    characters: [],
-    effect: "none",
-    transition: "none",
-  };
+function message(id: string, speaker: string, text: string): TranslatableStep {
+  return { key: id, kind: "message", speaker, text };
 }
 
-function animation(id: string): StoryFrame {
-  return {
-    id,
-    type: "animation",
-    speaker: "",
-    text: "",
-    durationMs: 0,
-    scene: null,
-    bgm: null,
-    characters: [],
-    effect: "none",
-    transition: "none",
-  };
-}
-
-const frames: StoryFrame[] = [
-  dialogue("script-0", "マシュ", "先輩。\nおはようございます。"),
+const steps: TranslatableStep[] = [
+  message("script-0", "マシュ", "先輩。\nおはようございます。"),
   {
-    id: "script-3",
-    type: "choice",
+    key: "script-3",
+    kind: "choice",
     speaker: "CHOICE",
-    text: "选择回应",
-    scene: null,
-    bgm: null,
-    characters: [],
-    effect: "none",
-    transition: "none",
-    options: [
-      { label: "おはよう", frames: [dialogue("script-1", "マシュ", "今日もよろしくお願いします。")] },
-      { label: "まだ眠い", frames: [dialogue("script-2", "ダ・ヴィンチ", "もう少し休みたまえ。")] },
-    ],
+    text: "",
+    optionLabels: ["おはよう", "まだ眠い"],
   },
+  message("script-1", "マシュ", "今日もよろしくお願いします。"),
+  message("script-2", "ダ・ヴィンチ", "もう少し休みたまえ。"),
 ];
 
 const context = {
   scriptId: "script",
   title: "翻译测试",
   masterName: "御主",
-  frames,
+  steps,
 };
 
 afterEach(() => {
@@ -77,7 +45,7 @@ afterEach(() => {
 
 describe("manual translation template", () => {
   it("collects every choice branch in reading order and deduplicates speakers", () => {
-    const units = collectScriptTranslationUnits(frames);
+    const units = collectScriptTranslationUnits(steps);
     expect(units.map((unit) => [unit.kind, unit.text])).toEqual([
       ["speaker", "マシュ"],
       ["dialogue", "先輩。\nおはようございます。"],
@@ -90,17 +58,20 @@ describe("manual translation template", () => {
     expect(units.filter((unit) => unit.kind === "speaker" && unit.text === "マシュ")).toHaveLength(1);
   });
 
-  it("groups one-shot translation units by five story frames", () => {
-    const scriptFrames = [
-      dialogue("frame-0", "speaker-0", "text-0"),
-      ...Array.from({ length: 4 }, (_, index) => animation(`animation-${index + 1}`)),
-      dialogue("frame-5", "speaker-5", "text-5"),
+  it("groups one-shot translation units by five message steps", () => {
+    const scriptSteps = [
+      message("frame-0", "speaker-0", "text-0"),
+      message("frame-1", "speaker-1", "text-1"),
+      message("frame-2", "speaker-2", "text-2"),
+      message("frame-3", "speaker-3", "text-3"),
+      message("frame-4", "speaker-4", "text-4"),
+      message("frame-5", "speaker-5", "text-5"),
     ];
 
-    expect(collectScriptTranslationUnitBatches(scriptFrames).map((batch) => batch.map((unit) => unit.id)))
+    expect(collectScriptTranslationUnitBatches(scriptSteps).map((batch) => batch.map((unit) => unit.id)))
       .toEqual([
-        frameTranslationUnits(scriptFrames[0]).map((unit) => unit.id),
-        frameTranslationUnits(scriptFrames.at(-1)!).map((unit) => unit.id),
+        scriptSteps.slice(0, 5).flatMap((step) => stepTranslationUnits(step).map((unit) => unit.id)),
+        stepTranslationUnits(scriptSteps[5]).map((unit) => unit.id),
       ]);
   });
 
@@ -144,7 +115,7 @@ describe("manual translation template", () => {
     const record = parse(template);
     expect(inspectManualTranslationRecord(record, {
       ...context,
-      frames: [dialogue("script-0", "マシュ", "更新后的原文")],
+      steps: [message("script-0", "マシュ", "更新后的原文")],
     }).status).toBe("stale");
   });
 

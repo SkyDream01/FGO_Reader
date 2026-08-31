@@ -914,13 +914,13 @@ export function LibraryView({ onOpenStory }: LibraryViewProps) {
                 <p className="custom-import-note">
                   脚本与本地资源保存在当前浏览器；未映射的场景、立绘和 BGM 将按包内区服从 Atlas 读取。
                 </p>
-                {importPreview.parsedScript.diagnostics.some(
+                {importPreview.program.diagnostics.some(
                   (diagnostic) => diagnostic.severity === "warning",
                 ) && (
                   <p className="custom-import-note custom-import-warning">
                     <CircleAlert size={14} />
                     解析器记录了 {
-                      importPreview.parsedScript.diagnostics
+                      importPreview.program.diagnostics
                         .filter((diagnostic) => diagnostic.severity === "warning")
                         .reduce((total, diagnostic) => total + (diagnostic.count ?? 1), 0)
                     } 条警告；不支持的命令不会改变画面。

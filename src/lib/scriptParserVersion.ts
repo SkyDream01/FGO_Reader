@@ -1,4 +1,4 @@
-export const SCRIPT_PARSER_VERSION = 5 as const;
+export const SCRIPT_PARSER_VERSION = 6 as const;
 
 const VERSION_NAMESPACE = `v${SCRIPT_PARSER_VERSION}`;
 
