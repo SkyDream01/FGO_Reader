@@ -116,6 +116,14 @@ export interface StageSnapshot {
   boundaryCount: number;
 }
 
+export interface ExecutorTraceEvent {
+  index: number;
+  tag: string;
+  line: number;
+  phase: ExecutorPhase;
+  status: "continue" | "wait" | "end" | "unknown";
+}
+
 export interface ExecutorOptions {
   masterName: string;
   masterGender: "male" | "female";
@@ -178,6 +186,9 @@ export class ScriptExecutor {
   private changeVersion = 0;
   /** S-A audio intents emitted by commands; ReaderView bridges to elements. */
   onAudioIntent: ((intent: AudioIntent) => void) | null = null;
+  /** Optional deterministic headless replay trace sink. */
+  onTrace: ((event: ExecutorTraceEvent) => void) | null = null;
+  readonly unknownCommands = new Map<string, number>();
 
   constructor(program: ScriptProgram, options: ExecutorOptions) {
     this.program = program;
@@ -484,6 +495,18 @@ export class ScriptExecutor {
     return this.program.messageCatalog.length;
   }
 
+  /** Stable JSON representation used by headless replay and screenshot tests. */
+  getSceneStateHash(): string {
+    const snapshot = this.getSnapshot();
+    const json = JSON.stringify(snapshot);
+    let hash = 2166136261;
+    for (let index = 0; index < json.length; index += 1) {
+      hash ^= json.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0).toString(16).padStart(8, "0");
+  }
+
   setTextSpeed(ms: number): void {
     this.messageWindow.baseStepMs = Math.max(4, ms);
   }
@@ -611,7 +634,14 @@ export class ScriptExecutor {
         return;
       }
       const instruction = instructions[this.cursor];
+      const before = this.cursor;
       const code = this.executeInstruction(instruction);
+      if (instruction.tag !== "message" && instruction.tag !== "choice") {
+        this.onTrace?.({
+          index: before, tag: instruction.tag, line: instruction.line, phase: this.phase,
+          status: code === ReturnCode.Normal ? "wait" : this.phase === "ended" ? "end" : "continue",
+        });
+      }
       if (this.phase === "ended") return;
       if (code === ReturnCode.Normal) return;
       // Continue: same-frame burst keeps consuming (S-E8 节奏特征).
@@ -740,6 +770,7 @@ export class ScriptExecutor {
         return ReturnCode.Normal;
 
       default:
+        let handled = true;
         executeStageCommand(instruction, {
           stage: this.stage,
           masterGender: this.options.masterGender,
@@ -749,7 +780,14 @@ export class ScriptExecutor {
           emitAudio: (intent) => {
             if (!this.fastForwarding) this.onAudioIntent?.(intent);
           },
-          onUnhandled: () => undefined,
+          onUnhandled: (tag) => {
+            handled = false;
+            this.unknownCommands.set(tag, (this.unknownCommands.get(tag) ?? 0) + 1);
+          },
+        });
+        this.onTrace?.({
+          index: this.cursor, tag: instruction.tag, line: instruction.line,
+          phase: this.phase, status: handled ? "continue" : "unknown",
         });
         this.cursor += 1;
         if (this.fastForwarding) this.tweens.finishAll();
@@ -769,7 +807,17 @@ export class ScriptExecutor {
         : [];
     if (explicit.some((slot) => this.stage.characters.has(slot))) {
       this.currentSpeaker.slots = explicit.filter((slot) => this.stage.characters.has(slot));
+      this.stage.talkSlots = [...this.currentSpeaker.slots];
+      return;
     }
+    // Engine fallback: resolve a speaker by the authored display name when no
+    // explicit slot/spot is present, then expose the result to the renderer.
+    const matched = [...this.stage.characters.values()]
+      .filter((character) => character.name && character.name === speaker.name)
+      .map((character) => character.slot);
+    const fallback = matched.length ? matched : this.stage.talkSlots;
+    this.currentSpeaker.slots = fallback;
+    this.stage.talkSlots = [...fallback];
   }
 
   private openMessage(instruction: Instruction, revealAll: boolean, pushLog = true): void {
@@ -850,8 +898,9 @@ export class ScriptExecutor {
   }
 
   private isCompletionBusy(type: string): boolean {
-    return type === "fade"
-      && (this.tweens.isActive("fade") || this.tweens.isActive("sceneCrossfade"));
+    if (type === "fade") return this.tweens.isActive("fade") || this.tweens.isActive("sceneCrossfade");
+    if (type === "wipe") return this.tweens.isActive("wipe");
+    return false;
   }
 
   private executeEnd(instruction: Instruction): void {

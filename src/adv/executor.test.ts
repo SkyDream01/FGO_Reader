@@ -225,4 +225,17 @@ describe("ScriptExecutor", () => {
     const revealed = executor.getSnapshot().message?.lines[0]?.spans ?? [];
     expect(revealed.some((span) => span.color === "#51d4ff" && span.text === "青い文字")).toBe(true);
   });
+  it("retains scene headers and emits deterministic trace/hash diagnostics", () => {
+    const { program, executor } = createExecutor("＄01-00-00-00-1-0\n[unknownThing x]\n＠旁白\n文本[k]");
+    expect(program.header).toBe("01-00-00-00-1-0");
+    const trace: string[] = [];
+    executor.onTrace = (event) => trace.push(`${event.index}:${event.tag}:${event.status}`);
+    executor.start();
+    expect(executor.unknownCommands.get("unknownthing")).toBe(1);
+    expect(trace.some((entry) => entry.includes("unknownthing:unknown"))).toBe(true);
+    const hash = executor.getSceneStateHash();
+    expect(hash).toMatch(/^[0-9a-f]{8}$/);
+    expect(executor.getSceneStateHash()).toBe(hash);
+  });
+
 });

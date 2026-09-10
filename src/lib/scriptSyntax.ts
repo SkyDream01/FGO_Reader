@@ -78,6 +78,8 @@ export interface ScriptChoiceNode {
 export type ScriptNode = ScriptCommandNode | ScriptDialogueNode | ScriptChoiceNode;
 
 export interface ScriptDocument {
+  /** First full-width-dollar scene header; recorded for progress/debugging and never executed. */
+  header: string | null;
   nodes: ScriptNode[];
   diagnostics: ScriptDiagnostic[];
   characterSlotCount: number;
@@ -1287,8 +1289,11 @@ export function parseScriptDocument(
   // files.  The engine does not validate the six numeric segments either;
   // accepting any full-width-dollar header keeps custom and legacy scripts
   // compatible while preserving source line numbers.
+  let header: string | null = null;
   for (let index = 0; index < records.length; index += 1) {
-    if (records[index].content.trimStart().startsWith("＄")) {
+    const candidate = records[index].content.trimStart();
+    if (candidate.startsWith("＄")) {
+      if (header === null) header = candidate.slice(1).trim();
       records[index] = { ...records[index], content: "" };
     }
   }
@@ -1300,6 +1305,7 @@ export function parseScriptDocument(
   };
 
   return {
+    header,
     nodes: parseSequence(records, context),
     diagnostics: diagnostics.values(),
     characterSlotCount: context.definedCharacterSlots.size,

@@ -693,31 +693,6 @@ t ≥ shakeTime：offset 归零
 
 **验收口径**：以 `scripts/Singularity FFlame Contaminated City Fuyuki/0100000010.txt`（序章，含 `[charaSet]/[scene]/[bgm]/[fadein]/[k]` 基本闭环）与任一含 `[selectBranch]` 的章节为冒烟用例；逐字速度、槽位构图（1=居中、0/2=三分位）与官方截图对照。
 
-## 11. 本阅读器实现状态（v6 管线重构后）
-
-> 2026-08-30 按本标准完成的三段管线重构。解析器版本升级为 **v6**（进度/已读/选项轨迹/翻译缓存的存储键随版本隔离，旧记录自动失效）。
-
-**已对齐标准**
-
-| 标准项 | 实现 |
-|---|---|
-| ① Parser（S-P） | `src/lib/scriptSyntax.ts`（AST、行分类、分词、容错，重构前即达标） |
-| ② Compiler（S-P6） | `src/adv/compiler.ts`：AST → `Instruction[]`（tag/params/line/column/raw/isMessage），`Labels` 索引、消息目录（`messageCatalog`）、选项目录（`choiceCatalog`）；？选项块降级为「choice 指令 + 选项体内联 + jump 汇合」；未解析标签退化线性播放（S-P7） |
-| ③ Executor（S-E） | `src/adv/executor.ts`：游标 + `while(Continue)` 同帧连发（S-E1/E8）、四类阻塞（S-E3：消息边界/定时/即时/转场完成标志）、`[wait fade]` 由补间完成标志自动释放、`PlaySpeed`/`timeScale`、`fastForwardTo` 断点快进续播（S-E7/§7）、运行时控制流（S-E6：`jump`/`branch`(旗标)/`flag`/`ifClear`/`else`/`endIf`/`switchCase` 记忆） |
-| 舞台层栈（S-R2） | `src/adv/stage.ts`：L0 背景双缓冲（`scene` 交叉淡化）、L1 A-Z 槽位（Kind/深度/子渲染可见性/遮挡剔除）、L3 转场网格状态（fade 为补间 alpha；wipe/flash/shake 为一次性序列号触发）、L4 画框、L5 消息窗状态 |
-| 补间体系（S-R9.10） | `src/adv/tween.ts` + `src/adv/easings.ts`：20 种语料缓动、秒单位帧率无关、按 owner 取消、快进时 `finishAll()`；`charaMove*`（含 `charaMoveScale`）与 `cameraMove*` 按脚本时长+缓动补间，`fadein/fadeout` 与 `scene` 交叉淡化走补间 |
-| 文本窗（S-R7/R9.9） | `src/adv/message.ts`：token 流逐字步进（标点停顿）、`[hex]…[-]` 颜色、`[#漢字:かな]` ruby（`<ruby>` 渲染）、`[line N]`、`[align]`、`[s]/[speed]`、点击补全 |
-| 音声通道（S-A） | `src/adv/audio.ts`：BGM(1)+SubBGM(1)+SE(多通道)+Voice(1)+Jingle(1) 意图通道，`se/voice/jingle/subBgm` 命令已接入；BGM 交叉淡化仍由 `useBgm` 驱动；SE/Voice 缺素材映射时静默降级（§6 策略） |
-| 进度与状态（§7） | 进度 = `(脚本名, 指令索引)`（消息边界为恢复锚点）；断点恢复/历史跳转/回退统一走 `fastForwardTo` 快进重放；选项轨迹按 choice 指令稳定 id 记录，重选时替换 |
-
-**与标准的差异（现状）**
-
-- `StartMode` 仅实现视觉子集（`NONE/CLEAR_BLACK/CLEAR_WHITE/BLACK/WHITE/THROUGH`），其余映射为 NONE。
-- wipe/flash 转场仍为一次性 CSS 动画（时长/方向参数未完全参数化）；`[shake]` 为固定节奏 CSS 动画，未实现振幅/周期波形。
-- 相机滤镜仅 `gray/darkred/inversion` 三种 CSS 近似（S-R9.5 的色彩矩阵/高斯未实现）；`[fsm]/[criMovie]/[insertionAnimation]` 维持降级占位（S-R8）。
-- SE/Voice 通道就绪但无素材映射表（Atlas 不提供），播放静默。
-- `[branchMaterial]/[branchRouteSelectCount]/[branchSetGrandSvtCount]` 与任务通关类条件按"首次阅读"路径处理（阅读器无玩家进度）。
-
 ---
 
 > **文档版本**: v1.1（2026-08-30）

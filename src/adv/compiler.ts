@@ -752,7 +752,7 @@ export function compileScriptDocument(
 
   return {
     scriptId: options.scriptId,
-    header: null,
+    header: document.header,
     instructions: context.instructions,
     labels: context.labels,
     messageCatalog: context.messages,

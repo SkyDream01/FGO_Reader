@@ -1,100 +1,20 @@
-# FGO 脚本格式规范
+# FGO 剧情脚本语法全集与命令参考（整合版）
 
-> 基于 `scripts/` 目录中的 2,583 个脚本文件（当前快照：2026-08-15）逆向分析，并对照 Atlas Academy 解析器实现校准。
->
-> 解析器对照版本：[`packages/db/src/Component/Script.tsx`](https://github.com/atlasacademy/apps/blob/a596decc0a0f8cb4556dcf7fc59fa53e3916faa1/packages/db/src/Component/Script.tsx)（commit `a596decc0a0f8cb4556dcf7fc59fa53e3916faa1`）。
+> 本文是《FGO非官方剧情阅读器实现标准与指导》的配套参考。内容基于 `FGO-script-engine-2.138.0`（APK 2.138.0 / versionCode 496）反编译结果，以及 2,583 个脚本文件的标签统计。它描述可观察语法和兼容实现建议，不承诺对其他客户端版本完全有效。
 
----
-
-## 目录
-
-1. [概述](#概述)
-   - [解析器对照与证据等级](#解析器对照与证据等级)
-2. [文件结构](#文件结构)
-3. [语法基础](#语法基础)
-4. [文本标记](#文本标记)
-5. [命令参考](#命令参考)
-   - [场景/背景](#场景背景)
-   - [角色管理](#角色管理)
-   - [音频](#音频)
-   - [摄像机](#摄像机)
-   - [视觉效果](#视觉效果)
-   - [影片/动画](#影片动画)
-   - [控制流](#控制流)
-   - [UI 控制](#ui-控制)
-   - [子摄像机系统](#子摄像机系统)
-   - [其他命令](#其他命令)
-6. [画面合成与坐标系（客户端逆向）](#画面合成与坐标系客户端逆向)
-   - [引擎侧解析与执行管线](#引擎侧解析与执行管线)
-   - [画面合成栈](#画面合成栈)
-   - [素材的 00 点（锚点）](#素材的-00-点锚点)
-7. [非官方剧情阅读器实现指南](#非官方剧情阅读器实现指南)
-   - [总体架构：三段管线](#总体架构三段管线)
-   - [脚本解析标准](#脚本解析标准)
-   - [执行语义标准](#执行语义标准)
-   - [画面演出标准](#画面演出标准)
-   - [素材体系与降级策略](#素材体系与降级策略)
-   - [引擎常量速查表](#引擎常量速查表)
-8. [控制流模式](#控制流模式)
-9. [完整示例](#完整示例)
-10. [附录](#附录)
+> **整合说明（2026-09-09）**：本文以原《FGO脚本语法全集与命令参考》为主文档和命令清单权威来源，吸收《FGO_Script_Format_Spec》的文件规范、详细语义、客户端逆向、阅读器实现指南、示例与附录。若概述性说明与“完整命令参考”冲突，以第 6 章的命令名、词频、参数形态和证据等级为准。
 
 ---
 
-## 概述
+## 1. 证据、范围与阅读规则
 
-FGO（Fate/Grand Order）使用自定义文本 DSL 作为视觉小说脚本引擎。所有脚本均为 `.txt` 文件，UTF-8 编码，包含日文文本和嵌入式命令。
-
-### 解析器对照与证据等级
-
-本文把结论分为四类：
-
-- **样本确认**：直接出现在当前 `scripts/` 快照中的语法、参数形态或统计值。
-- **解析器确认**：上面链接的 Atlas Academy `Script.tsx` 明确实现的分词、状态转换或命令分支。
-- **客户端逆向确认**：来自 FGO 客户端 APK（2.138.0，versionCode 496）IL2CPP 逆向的结果——即游戏引擎本体（`libil2cpp.so` 中 Assembly-CSharp 的 `ScriptManager` 体系）的真实行为。证据摘要与工具链见 [附录：客户端逆向资料](#客户端逆向资料)。
-- **推测/待确认**：只有资源命名、参数聚类或演出效果能够支持，尚未由游戏客户端或更多样本证明的语义。
-
-Atlas Academy 的代码是用于展示和检索脚本的解析器，不是 FGO 客户端本身的完整执行器。因此：
-
-1. `parseScript` 按行识别 `＄` 头部、`＠` 说话者、`？` 选项和 `？！` 选项段结束；`＄` 头部在解析器中被跳过，不会校验文件名或六段编号。
-2. 对话行中的方括号标记会先按成对的 `[`/`]` 切分；颜色、字体、对齐、换行、Ruby、性别依存文本等属于文本标记，其他可识别命令交给命令解析分支。
-3. `parseBracketComponent` 没有覆盖的命令会保留为 `UNPARSED`。这表示“该版本展示解析器没有专门建模”，不表示游戏引擎一定拒绝该命令。
-4. 解析器大多只按参数位置读取 `parseInt`/`parseFloat`，不严格校验参数数量；多余参数可能被忽略，缺失参数可能变成 `undefined` 或 `NaN`。本规范因此同时保留原始样本中的扩展形态。
-
-当前版本直接建模的核心命令包括：`charaSet`、`imageSet`/`verticalImageSet`/`horizontalImageSet`、`equipSet`、`sceneSet`、`charaChange`、`charaTalk`、`charaFace`、`charaFaceFade`、`charaFilter`、`charaFadein`/`charaFadeout`、`charaFadeTime`、`charaCrossFade`、`charaMove`、`charaPut`/`charaPutFSR`、`charaScale`、`charaDepth`、`charaCutin`/`charaCutinPause`、`charaEffect`/`charaEffectStop`、`se`、`cueSe`、`wt`、`label`、`branch`、`branchQuestNotClear`、`pictureFrame`、`bgm`/`bgmStop`、`voice`、`criMovie`、`scene`、`flag`、`masterBranch`、`enableFullScreen`、`cameraFilter`、`effect`/`effectStop`/`effectDestroy`。
-
-解析器专门处理的文本标记还包括 `[k]`/`[page]`/`[q]`、`[r]`/`[sr]`/`[csr]`、`[s]`/`[speed]`、`[%1]`、`[line N]`、`[servantName ...]`、`[image ...]`/`[i ...]`、`[#原文:读音]`、`[&男性:女性]`、颜色、字体和对齐标记。
-
-#### 高影响的兼容性差异
-
-| 原始脚本形态 | Atlas 当前解析器的处理 | 规范写法 |
-|---|---|---|
-| `[line N]` / `[line3]` | 作为带长度的横线组件 | 不要解释为“显示 N 行” |
-| `[wait 类型 ...]` | 没有与 `[wt 秒]` 相同的专用等待类型 | 保留原始命令；区分 `wait` 与 `wt` |
-| `[bgm ID 参数2 参数3]` | 参数 2/3 分别按 `volume`/`fadeinTime` 读取 | 保留位置，不按旧注释交换参数 |
-| `[charaTalk A,B]` | 把 `A,B` 保存成一个字面说话者代码 | 多人语义属于客户端/原始 DSL 层 |
-| `[input ...]`、`[fadein ...]`、`[cameraMove ...]` 等 | 当前版本没有对应的直接命令类型 | `UNPARSED` 只表示展示解析器未建模 |
-| `[Q]` 与 `[q]` | `[Q]` 可出现在 `spot[Q]`；消息边界是小写 `[q]` | 保持大小写 |
-
-### 设计原则
-
-- **事件驱动**：脚本按顺序执行，无函数/循环结构
-- **有限状态控制**：没有通用表达式/变量系统，但存在 `flag`、任务条件、路线计数和文本替换
-- **视觉小说范式**：以对话为核心，命令控制演出效果
-- **角色槽位制**：A-Z 单字母标识角色、效果、图像等槽位，`#A` 等标识子渲染层；具体用途不是固定分区
-
-> **引擎侧对应**（客户端逆向确认）：客户端把每个槽位映射为 `ScriptCharaData`（最多 26 个，对应 A-Z；见 `ScriptManager.CHARA_MAX = 26`），表情槽位上限 `FACE_MAX = 133`。脚本加载后被逐行切分进 `executeTagList`（标签名）/`executeDataList`（参数原文）/`executeLineList`（行号）数组，再由 `ScriptCommandExecute` 逐条分发执行；控制流（`label`/`jump`/`branch`/`selectBranch`）只是对执行索引 `executeIndex` 的跳转，与"无函数/循环"的观察一致。详见 [画面合成与坐标系（客户端逆向）](#画面合成与坐标系客户端逆向) 一章。
-
-### 文件编码
-
-- 编码：UTF-8
-- 扩展名：`.txt`
-- 当前样本：UTF-8 无 BOM，2,583 个文件均使用 CRLF
-- 兼容性：解析器按脚本中是否出现 `CRLF` 选择 `CRLF` 或 `LF` 分行；混合换行不应视为规范格式
+- **E0**：`dump.cs` 的类型、字段、方法签名；**E1**：标签分发调用摘要；**E2**：脚本样本统计/参数归纳；**E3**：尚待运行时或画面对比验证。
+- 表中“参数形态”来自 `tag_inventory.json`：`S`=槽位/短字符串，`N`=整数，`F`=浮点，`w`=单词/枚举，`str`=字符串，`HEX`=十六进制样式资源或颜色。形态是观测到的签名集合，不是严格重载列表。
+- 方括号是脚本命令；正文中的 `[r]` 等是行内标记。参数含空格时使用引号；坐标允许 `x,y`、`x, y` 和三分量形式。未知参数必须保留原文。
 
 ---
 
-## 文件结构
+## 2. 文件结构与源文件约定
 
 ### 目录组织
 
@@ -151,7 +71,43 @@ XXXXXXXXXX.txt
 
 ---
 
-## 语法基础
+---
+
+## 3. 词法与基础语法
+
+### 2.1 顶层记录
+```ebnf
+file       = { record } ;
+record     = scene-header | command-line | talk-line | text-line | blank ;
+scene-header = "＄", text ;
+command-line = "[", name, { whitespace, argument }, "]" ;
+talk-line  = "＠", inline-text ;
+text-line  = inline-text ;
+argument   = quoted | bare ;
+quoted     = "\"", { escaped | not-\" }, "\"" ;
+bare       = 1*(not-whitespace, not-"]") ;
+```
+标签行可能有制表符、空参数和多个变体；解析器应保留 `rawLine`、物理行号及未识别参数。
+
+### 2.2 行内标记
+| 标记 | 作用 | 备注 |
+|---|---|---|
+| `[k]` | 消息段结束并等待点击 | 可被快进策略控制 |
+| `[r]` | 软换行 | 不产生等待 |
+| `[#原文:读音]` | ruby 注音 | 读音可按空格拆分 |
+| `[RRGGBB]...[-]` / `[RRGGBBAA]` | 颜色栈 | 支持嵌套；`[-]` 弹栈 |
+| `[line N]` | 横线 | `[line3]` 是无空格简写 |
+| `[image ...]` / `[i name]` | 行内图片 | 可能带缩放和偏移 |
+| `[f ...]`、`[font ...]`、`[fontSize ...]` | 字体/字号 | 作用范围依版本而定 |
+| `[%1]`、`&男:女` | 玩家名/性别替换 | 替换前后文本都应入日志 |
+
+### 2.3 参数与默认值
+- 数字使用 invariant culture；`1.`、负数和零均合法。
+- 六位颜色默认为 alpha=255；八位颜色按 `RRGGBBAA` 解析，若目标版本验证不同则由 profile 覆盖。
+- 可选参数缺省时使用 profile 默认值；不要用 `0` 混淆“未提供”。
+- `wait`、`branch`、`charaFadein`、`se` 等存在多种参数形态，schema 应允许最短和扩展形式。
+
+### 3.4 补充语法规则
 
 ### 命令格式
 
@@ -206,7 +162,9 @@ XXXXXXXXXX.txt
 
 ---
 
-## 文本标记
+---
+
+## 4. 文本标记详解
 
 > **（客户端逆向确认）** 以下标记由 `AnalysText`（RVA 0x314154C）在文本分析阶段识别。反汇编其字符串表可得引擎侧标记词表，其中**多字符标记以字符串比较**：`k`、`q`、`page`、`page3`、`wt`、`twt`、`font`、`wait`、`skip`、`center`、`right`、`label`、`jump`、`branch`、`tdelay`、`else`、`endIf`、`once`、`start`、`tRoute`、`tVoice` 等；**单字符标记（如 `r`）以字符比较**（`String.get_Chars`），不作为字符串常量出现。引擎还会对连续换行做特殊处理（字符串表中有字面量 `"[r][r]"`）。同一分发器既处理独立命令也处理行内标记，因此文本标记与命令在引擎层是同一套语法。
 
@@ -325,332 +283,351 @@ XXXXXXXXXX.txt
 
 ---
 
-## 命令参考
+---
 
-### 命令总索引（语料全集）
+## 5. 执行语义速查
 
-> 下表为当前语料的**命令全集**：263 种在用标签 + 4 种声明未用（`[tRoute]` 引擎有专用解析正则、`[branchNotMaterial]/[branchHaveSvtEquip]/[branchNotHaveSvtEquip]` 解析器声明支持），共 267 行；16 进制颜色码、`[#汉字:かな]` 注音、`[A,B]` spot 槽位、`[&男性:女性]` 性别分支 4 类伪标签见"语法基础/文本标记"章，不在此列。词频 = 原始出现次数（2,583 文件统计）；**词频 0 = 声明支持但当前语料未使用**。各命令的详细参数与示例见后续分类小节；索引语义为本规范口径，与引擎行为冲突处以逆向证据为准。
+| 返回 | VM 行为 |
+|---|---|
+| `Normal` | 指令完成，PC 前进 |
+| `Continue` | 保留 PC，等待异步句柄/输入/资源 |
+| `ReturnFalse` | 当前路径失败或退出，必须生成诊断 |
 
-**文本与排版标记（语法见"文本标记"章）**（合计 346,683 次）
+任何动画、资源加载、电影或选择都必须有完成、跳过、取消或超时路径。`wait` 的具体等待对象由参数决定；资源缺失默认继续并记录 warning。
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| `[k]` | 184,799 | 消息段边界，等待点击 |
-| `[r]` | 133,096 | 软换行，不等待 |
-| `[q]` | 2 | 消息段边界（少见变体） |
-| `[-]` | 2,953 | 颜色/样式复位 |
-| `[%1]` | 3,956 | 玩家名占位（ScriptReplaceString） |
-| `[%5]` | 1 | 占位符变体，语义未确认 |
-| `[line N]` | 19,539 | 插入长度 N 的横线 |
-| `[line3]` | 1 | `[line 3]` 无空格简写 |
-| `[f …]` | 1,304 | 字号标记（`f small/-/large`，可带对齐） |
-| `[font …]` | 16 | 字体切换（large/x-large 等） |
-| `[fontSize N]` | 24 | 字号设置 |
-| `[s N]` | 52 | 逐字速度短写 |
-| `[speed N]` | 48 | 逐字速度 |
-| `[align …]` | 536 | 文本对齐 |
-| `[messageAlign …]` | 1 | 消息窗整体对齐（bottom 等） |
-| `[i 名]` | 49 | 行内图片短写（语音图标等） |
-| `[image …]` | 302 | 行内图片（可带缩放/偏移） |
-| `[imageChange …]` | 1 | 替换已放置的行内图片 |
-| `[tRoute …]` | 0 | 带编号的选项路由文本（引擎有专用解析正则） |
-| `[tRaidShortName …]` | 3 | Raid 任务简称占位 |
-**等待与输入（详见"UI 控制/控制流"章）**（合计 143,645 次）
+---
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [wt] | 116,117 | 定时等待 N 秒（可点击打断） |
-| [twt] | 27 | wt 的语音同步变体 |
-| [wait] | 26,884 | 按类型等待（fade/se/ad1/movie 等 25+ 种） |
-| [input] | 83 | 玩家输入控制（selectBranch 跳转控制等，参数可带引号） |
-| [skip] | 217 | 跳过模式开关 |
-| [tapSkip] | 1 | 显示点击跳过提示 |
-| [clear] | 152 | 清屏/清空消息显示 |
-| [turnPageOn] | 12 | 开启翻页模式（f=强制） |
-| [turnPageOff] | 11 | 关闭翻页模式 |
-| [autoAndBackLog] | 1 | 自动播放+回顾组合开关 |
-| [selectionUse] | 30 | 启用已保存的选择（masterMale 等） |
-| [enableWaitLoadAssetWhenResume] | 108 | 断点续播时允许等待资源加载 |
-| [scrollStop] | 1 | 滚动停止 |
-| [interruption] | 1 | 标记可被外部系统中断续播 |
+## 6. 完整命令参考
 
-**场景与转场（详见"场景/背景""视觉效果"章）**（合计 46,718 次）
+以下表覆盖统计清单中的全部 267 个标签/伪标签。词频为样本出现次数；示例仅用于说明形态，不代表唯一合法写法。
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [scene] | 10,447 | 装载背景图并交叉淡化 |
-| [sceneSet] | 4,687 | 预装载背景（不立即显示） |
-| [pictureFrame] | 854 | 画框/遮幅形态 |
-| [pictureFrameTop] | 224 | 顶部画框（z=-230 层） |
-| [backCameraColor] | 43 | 背景相机底色重置 |
-| [fadein] | 8,791 | 从颜色遮罩淡入（默认 0.5s） |
-| [fadeout] | 8,770 | 淡出到颜色遮罩 |
-| [fadeMove] | 83 | 带位移的遮罩淡入淡出 |
-| [wipein] | 3,104 | 擦除显现（30+ 方向） |
-| [wipeout] | 3,124 | 擦除覆盖 |
-| [wipeOff] | 215 | 清除擦除层 |
-| [wipeFilter] | 250 | 擦除花式遮罩（cinema/circleIn/openEye…） |
-| [flashin] | 1,231 | 闪光转入 |
-| [flashout] | 48 | 闪光转出 |
-| [flashOff] | 145 | 清除闪光层 |
-| [maskin] | 156 | 遮罩淡入（黑/白） |
-| [maskout] | 73 | 遮罩淡出 |
-| [stretchin] | 4 | 画布拉伸入场 |
-| [stretchout] | 1 | 画布拉伸出场 |
-| [subStretch] | 1 | 子层拉伸开关 |
-| [blur] | 523 | 画面模糊（类型 强度 参数） |
-| [blurOff] | 507 | 解除模糊 |
-| [capture] | 14 | 捕获当前画面到捕获纹理 |
-| [captureRelease] | 1 | 释放捕获纹理 |
-| [shake] | 2,426 | 屏幕震动（X,Y 周期 时长） |
-| [shakeStop] | 331 | 停止屏幕震动 |
-| [messageShake] | 635 | 消息窗震动 |
-| [messageShakeStop] | 29 | 停止消息窗震动 |
-| [endFade] | 1 | 结局淡出（white 等） |
+### 文本与排版标记（语法见"文本标记"章）
 
-**角色管理（详见"角色管理"章）**（合计 394,090 次）
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[k]` | 184,799 | `—` | `[k]` | 消息段边界，等待点击 |
+| `[r]` | 133,096 | `—` | `[r]` | 软换行，不等待 |
+| `[q]` | 2 | `—` | `[q]` | 消息段边界（少见变体） |
+| `[-]` | 2,953 | `—` | `[-]` | 颜色/样式复位（写作 [-]） |
+| `[%1]` | 3,956 | `—` | `[%1]` | 玩家名占位（ScriptReplaceString） |
+| `[%5]` | 1 | `—` | `[%5]` | 占位符变体，语义未确认 |
+| `[line]` | 19,539 | `N` | `[line 3]` | 插入长度 N 的横线 |
+| `[line3]` | 1 | `—` | `[line3]` | [line 3] 无空格简写 |
+| `[f]` | 1,304 | `w, str, w w, str w` | `[f small]`<br>`[f -]` | 字号标记（f small/-/large，可带对齐） |
+| `[font]` | 16 | `w, str` | `[font large]`<br>`[font x-large]` | 字体切换（large/x-large 等） |
+| `[fontSize]` | 24 | `str, w` | `[fontSize x-large]`<br>`[fontSize large]` | 字号设置 |
+| `[s]` | 52 | `N` | `[s 0]` | 逐字速度短写 |
+| `[speed]` | 48 | `str, N` | `[speed -]`<br>`[speed 32]` | 逐字速度 |
+| `[align]` | 536 | `w, ` | `[align center]`<br>`[align]` | 文本对齐 |
+| `[messageAlign]` | 1 | `w` | `[messageAlign bottom]` | 消息窗整体对齐（bottom 等） |
+| `[i]` | 49 | `str` | `[i berserker_language_1]` | 行内图片短写（语音图标等） |
+| `[image]` | 302 | `str, str F str` | `[image berserker_language_2]`<br>`[image talk_language_2 1.6 0,-8]` | 行内图片（可带缩放/偏移） |
+| `[imageChange]` | 1 | `S str w F` | `[imageChange E cut543_ntco02 normal 0.1]` | 替换已放置的行内图片 |
+| `[tRoute]` | 0 | `—` | — | 带编号的选项路由文本（正则解析） |
+| `[tRaidShortName]` | 3 | `N N` | `[tRaidShortName 80593 1]` | Raid 任务简称占位 |
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [charaSet] | 26,798 | 建/换角色：槽位 图像ID 位置 显示名 |
-| [charaPut] | 11,546 | 把已有角色放到坐标/位置 |
-| [charaPutFSL] | 130 | 放到左侧全屏延展区 |
-| [charaPutFSR] | 128 | 放到右侧全屏延展区 |
-| [charaPutFSSideL] | 7 | 放到侧左延展区 |
-| [charaPutFSSideR] | 14 | 放到侧右延展区 |
-| [charaFace] | 115,973 | 切表情（Face.Type 索引） |
-| [charaFaceFade] | 2,066 | 表情交叉淡化 |
-| [charaFadein] | 74,320 | 角色淡入（含位置变体） |
-| [charaFadeout] | 76,808 | 角色淡出 |
-| [charaFadeTime] | 1,822 | 设置该角色后续淡入淡出时长 |
-| [charaFadeinFSL] | 1,611 | 左侧延展区淡入 |
-| [charaFadeinFSR] | 1,659 | 右侧延展区淡入 |
-| [charaFadeinFSSideL] | 158 | 侧左淡入 |
-| [charaFadeinFSSideR] | 189 | 侧右淡入 |
-| [charaFadeinFSLNotNotch] | 6 | 左侧淡入（避开刘海安全区） |
-| [charaFadeinFSRNotNotch] | 6 | 右侧淡入（避开刘海安全区） |
-| [charaMove] | 9,030 | 绝对坐标移动 |
-| [charaMoveEase] | 2,578 | 带缓动的移动 |
-| [charaMoveReturn] | 1,464 | 移回槽位原坐标 |
-| [charaMoveReturnEase] | 2 | 带缓动移回 |
-| [charaMoveFSL] | 369 | 左延展区移动 |
-| [charaMoveFSR] | 345 | 右延展区移动 |
-| [charaMoveFSSideL] | 44 | 侧左移动 |
-| [charaMoveFSSideR] | 81 | 侧右移动 |
-| [charaMoveEaseFSL] | 72 | 左延展区缓动移动 |
-| [charaMoveEaseFSR] | 80 | 右延展区缓动移动 |
-| [charaMoveEaseFSSideL] | 7 | 侧左缓动移动 |
-| [charaMoveEaseFSSideR] | 26 | 侧右缓动移动 |
-| [charaMoveReturnFSL] | 123 | 从左延展区移回 |
-| [charaMoveReturnFSR] | 125 | 从右延展区移回 |
-| [charaMoveReturnFSSideL] | 23 | 从侧左移回 |
-| [charaMoveReturnFSSideR] | 25 | 从侧右移回 |
-| [charaMoveReturnEaseFSL] | 1 | 左延展区缓动移回 |
-| [charaMoveReturnEaseFSR] | 1 | 右延展区缓动移回 |
-| [charaMoveScale] | 1,419 | 缩放动画 |
-| [charaMoveScaleEase] | 441 | 带缓动缩放动画 |
-| [charaScale] | 15,860 | 设置缩放倍率 |
-| [charaDepth] | 21,768 | 设置排序层级 |
-| [charaLayer] | 8,269 | 设置渲染子层（normal/#A/#B/#mask） |
-| [charaRoll] | 337 | 设置旋转角度（可带旋转中心） |
-| [charaRollAxis] | 71 | 绕指定轴旋转 |
-| [charaRollMove] | 28 | 旋转动画 |
-| [charaRollMoveEx] | 8 | 扩展旋转（带位移） |
-| [charaShake] | 2,766 | 角色震动 |
-| [charaShakeStop] | 204 | 停止角色震动 |
-| [charaCrossFade] | 476 | 双网格交叉淡化换装 |
-| [charaChange] | 149 | 整体换立绘（kind 控制过渡方式） |
-| [charaClear] | 6 | 从舞台移除角色 |
-| [charaCutin] | 16 | 切入特写（方向/时长） |
-| [charaCutout] | 8 | 切出特写 |
-| [charaAttack] | 53 | 攻击动作演出 |
-| [charaShadow] | 49 | 角色阴影开关 |
-| [charaFilter] | 890 | 角色滤镜（名称 颜色） |
-| [charaEffect] | 4,657 | 角色特效（bit_talk_* 等） |
-| [charaEffectStop] | 1,829 | 停止角色特效 |
-| [charaEffectDestroy] | 1,006 | 销毁角色特效 |
-| [charaEffectStart] | 8 | 启动已备特效 |
-| [charaEffectPause] | 8 | 暂停角色特效 |
-| [charaEffectEdgeBlur] | 178 | 边缘模糊+描边色 |
-| [charaEffectEdgeBlurStart] | 7 | 启动边缘模糊 |
-| [charaEffectEdgeBlurStop] | 66 | 停止边缘模糊 |
-| [charaEffectEdgeBlurPause] | 7 | 暂停边缘模糊 |
-| [charaEffectEdgeBlurDestroy] | 118 | 销毁边缘模糊 |
-| [charaSpecialEffect] | 1,287 | 特殊演出（appearance/flash/enemyErasure…） |
-| [charaSpecialEffectStop] | 7 | 停止特殊演出 |
-| [charaBackEffect] | 49 | 角色背后特效 |
-| [charaBackEffectStop] | 27 | 停止背后特效 |
-| [charaBackEffectDestroy] | 10 | 销毁背后特效 |
-| [charaRelativeLoopMove] | 39 | 相对偏移循环移动（呼吸/悬浮） |
-| [charaRelativeLoopMoveStop] | 31 | 停止循环移动 |
-| [imageSet] | 2,028 | 图片槽位设置（Kind=IMAGE） |
-| [verticalImageSet] | 30 | 竖图槽位 |
-| [horizontalImageSet] | 4 | 横图槽位 |
-| [equipSet] | 4 | 灵基外观槽位（Kind=EQUIP） |
-| [masterSet] | 50 | 主角槽位设置（男女双 ID） |
-| [masterImageSet] | 18 | 主角图片（男女双 ID） |
-| [communicationChara] | 131 | 通讯立绘（id 姿势 表情 位置 形态） |
-| [communicationCharaLoop] | 691 | 通讯立绘（带循环位） |
-| [communicationCharaFace] | 528 | 通讯立绘切表情 |
-| [communicationCharaClear] | 814 | 清除通讯立绘 |
-| [communicationCharaStop] | 3 | 停止通讯立绘 |
+### 等待与输入（详见"UI 控制/控制流"章）
 
-**音频（详见"音频"章）**（合计 81,776 次）
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[wt]` | 116,117 | `F, N, str` | `[wt 1.0]`<br>`[wt 2]` | 定时等待 N 秒（可点击打断） |
+| `[twt]` | 27 | `F` | `[twt 0.5]` | wt 的语音同步变体 |
+| `[wait]` | 26,884 | `w, w S, w str, w S w, w S str` | `[wait fade]`<br>`[wait charaCrossFade A]` | 按类型等待（fade/se/ad1/movie 等 25+ 种） |
+| `[input]` | 83 | `w, w w "…" N str` | `[input selectBranch]`<br>`[input selectBranch skipStop "branchNotRouteSelect 4000517 4000574"]` | 玩家输入控制（selectBranch 跳转控制等，参数可带引号） |
+| `[skip]` | 217 | `w` | `[skip false]` | 跳过模式开关 |
+| `[tapSkip]` | 1 | `str` | `[tapSkip test_skip]` | 显示点击跳过提示 |
+| `[clear]` | 152 | `—` | `[clear]` | 清屏/清空消息显示 |
+| `[turnPageOn]` | 12 | `w, ` | `[turnPageOn f]`<br>`[turnPageOn]` | 开启翻页模式（f=强制） |
+| `[turnPageOff]` | 11 | `—` | `[turnPageOff]` | 关闭翻页模式 |
+| `[autoAndBackLog]` | 1 | `w` | `[autoAndBackLog false]` | 自动播放+回顾组合开关 |
+| `[selectionUse]` | 30 | `w` | `[selectionUse masterMale]` | 启用已保存的选择（masterMale 等） |
+| `[enableWaitLoadAssetWhenResume]` | 108 | `—` | `[enableWaitLoadAssetWhenResume]` | 断点续播时允许等待资源加载 |
+| `[scrollStop]` | 1 | `—` | `[scrollStop]` | 滚动停止 |
+| `[interruption]` | 1 | `—` | `[interruption]` | 标记可被外部系统中断续播 |
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [bgm] | 12,478 | 播放 BGM（名 音量 淡入） |
-| [bgmStop] | 9,146 | 停止 BGM（带淡出） |
-| [bgmStopEnd] | 228 | 停止 BGM 并等待完成 |
-| [se] | 24,080 | 播放音效 |
-| [seStop] | 11,506 | 停止音效 |
-| [seVolume] | 10,256 | 音效音量 |
-| [seLoop] | 132 | 循环音效 |
-| [seContinue] | 64 | 跨消息持续音效 |
-| [seContinueStop] | 25 | 停止持续音效 |
-| [seContinueVolume] | 6 | 调整持续音效音量 |
-| [cueSe] | 5,767 | 播放 CRI cue 音效 |
-| [cueSeStop] | 1,686 | 停止 cue 音效 |
-| [cueSeVolume] | 1,034 | cue 音效音量 |
-| [cueSeContinue] | 32 | 跨消息 cue 音效 |
-| [cueSeContinueStop] | 20 | 停止跨消息 cue |
-| [cueSeContinueVolume] | 14 | 调整跨消息 cue 音量 |
-| [soundStopAll] | 4,929 | 停止全部声音 |
-| [soundStopAllEnd] | 255 | 停止全部声音并等待完成 |
-| [soundStopAllFade] | 32 | 全部声音带淡出停止 |
-| [voice] | 62 | 播放语音 |
-| [voiceStop] | 5 | 停止语音 |
-| [jingle] | 1 | 播放 jingle 短曲 |
-| [tVoice] | 18 | 测试/临时语音等待 |
+### 场景与转场（详见"场景/背景""视觉效果"章）
 
-**摄像机（详见"摄像机"章）**（合计 4,703 次）
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[scene]` | 10,447 | `N, N F, N N, str, str F` | `[scene 104100]`<br>`[scene 95202 0.5]` | 装载背景图并交叉淡化 |
+| `[sceneSet]` | 4,687 | `S N N, S N N N` | `[sceneSet Q 142200 1]`<br>`[sceneSet G 120901 1 1]` | 预装载背景（不立即显示） |
+| `[pictureFrame]` | 854 | `str, ` | `[pictureFrame cut063_cinema]`<br>`[pictureFrame]` | 画框/遮幅形态 |
+| `[pictureFrameTop]` | 224 | `str, ` | `[pictureFrameTop cut063_cinema]`<br>`[pictureFrameTop]` | 顶部画框（z=-230 层） |
+| `[backCameraColor]` | 43 | `—` | `[backCameraColor]` | 背景相机底色重置 |
+| `[fadein]` | 8,791 | `w F, w N, w F F, w, N F` | `[fadein black 2.0]`<br>`[fadein black 2]` | 从颜色遮罩淡入（默认 0.5s） |
+| `[fadeout]` | 8,770 | `w F, w N, w F F, N F, HEX F` | `[fadeout black 2.0]`<br>`[fadeout black 1]` | 淡出到颜色遮罩 |
+| `[fadeMove]` | 83 | `w F F, w F N, w N N` | `[fadeMove white 1.5 0.9]`<br>`[fadeMove white 1.0 0]` | 带位移的遮罩淡入淡出 |
+| `[wipein]` | 3,104 | `w F F, w F N, w N F, w F, str F F` | `[wipein rightToLeft 1.0 1.0]`<br>`[wipein circleIn 1.0 1]` | 擦除显现（30+ 方向） |
+| `[wipeout]` | 3,124 | `w F F, w F N, w N N, w N F, w F` | `[wipeout leftToRight 1.0 1.0]`<br>`[wipeout circleIn 1.0 1]` | 擦除覆盖 |
+| `[wipeOff]` | 215 | `—` | `[wipeOff]` | 清除擦除层 |
+| `[wipeFilter]` | 250 | `w F N, w F F` | `[wipeFilter cinema 0.5 0]`<br>`[wipeFilter circleIn 0.5 1.0]` | 擦除花式遮罩（cinema/circleIn/openEye…） |
+| `[flashin]` | 1,231 | `w F F str str, w F F w str, w F F w N, w F F str N, w F N str str` | `[flashin loop 0.7 0.7 FF000080 FF000000]`<br>`[flashin once 0.1 0.3 FFFFFFAF FFFFFF00]` | 闪光转入 |
+| `[flashout]` | 48 | `F, N` | `[flashout 0.5]`<br>`[flashout 0]` | 闪光转出 |
+| `[flashOff]` | 145 | `—` | `[flashOff]` | 清除闪光层 |
+| `[maskin]` | 156 | `w F, w N` | `[maskin black 1.0]`<br>`[maskin black 1]` | 遮罩淡入（黑/白） |
+| `[maskout]` | 73 | `w F` | `[maskout white 0.3]` | 遮罩淡出 |
+| `[stretchin]` | 4 | `w F F` | `[stretchin full 2.0 2.0]` | 画布拉伸入场 |
+| `[stretchout]` | 1 | `w F F` | `[stretchout full 3.0 3.0]` | 画布拉伸出场 |
+| `[subStretch]` | 1 | `w` | `[subStretch on]` | 子层拉伸开关 |
+| `[blur]` | 523 | `w F N N, w F N N F N F N, w N N N, w F N N F F F N, w F N N str F N` | `[blur lens 1.1 2 10]`<br>`[blur motion 0.7 2 50 0.5 0 0.01 10]` | 画面模糊（类型 强度 参数） |
+| `[blurOff]` | 507 | `w F, , w N, F` | `[blurOff lens 0.1]`<br>`[blurOff]` | 解除模糊 |
+| `[capture]` | 14 | `—` | `[capture]` | 捕获当前画面到捕获纹理 |
+| `[captureRelease]` | 1 | `—` | `[captureRelease]` | 释放捕获纹理 |
+| `[shake]` | 2,426 | `F N N F, F N N N, N N N F, F F F N` | `[shake 0.05 2 2 3.0]`<br>`[shake 0.05 0 3 0]` | 屏幕震动（X,Y 周期 时长） |
+| `[shakeStop]` | 331 | `, F, F N N N` | `[shakeStop]`<br>`[shakeStop 0.1]` | 停止屏幕震动 |
+| `[messageShake]` | 635 | `F N N F, F N N N` | `[messageShake 0.05 4 4 0.4]`<br>`[messageShake 0.05 3 3 0]` | 消息窗震动 |
+| `[messageShakeStop]` | 29 | `—` | `[messageShakeStop]` | 停止消息窗震动 |
+| `[endFade]` | 1 | `w` | `[endFade white]` | 结局淡出（white 等） |
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [cameraMove] | 2,512 | 镜头平移 |
-| [cameraMoveEase] | 172 | 带缓动镜头平移 |
-| [cameraHome] | 454 | 镜头复位 |
-| [cameraFilter] | 356 | 镜头滤镜（darkred 等） |
-| [cameraRoll] | 2 | 镜头旋转 |
-| [cameraRollMove] | 20 | 镜头旋转动画 |
-| [enableFullScreen] | 1,187 | 解除 16:9 遮幅（全屏延展） |
+### 角色管理（详见"角色管理"章）
 
-**影片与插入动画（详见"影片/动画"章）**（合计 886 次）
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[charaSet]` | 26,798 | `S N N str, S N N N, S N N w, str N N str` | `[charaSet A 1098158200 1 シオン]`<br>`[charaSet R 1098345110 0 1]` | 建/换角色：槽位 图像ID 位置 显示名 |
+| `[charaPut]` | 11,546 | `S str, S N, S N F, S str N` | `[charaPut B 0,0]`<br>`[charaPut F 0]` | 把已有角色放到坐标/位置 |
+| `[charaPutFSL]` | 130 | `S str, S N` | `[charaPutFSL G -240,0]`<br>`[charaPutFSL B 0]` | 放到左侧全屏延展区 |
+| `[charaPutFSR]` | 128 | `S str, S N` | `[charaPutFSR N 30,50]`<br>`[charaPutFSR F 2]` | 放到右侧全屏延展区 |
+| `[charaPutFSSideL]` | 7 | `S str` | `[charaPutFSSideL N -375,-50]` | 放到侧左延展区 |
+| `[charaPutFSSideR]` | 14 | `S str` | `[charaPutFSSideR K 450,-50]` | 放到侧右延展区 |
+| `[charaFace]` | 115,973 | `S N, N N, str N` | `[charaFace A 12]`<br>`[charaFace 2 0]` | 切表情（Face.Type 索引） |
+| `[charaFaceFade]` | 2,066 | `S N F` | `[charaFaceFade A 20 0.3]` | 表情交叉淡化 |
+| `[charaFadein]` | 74,320 | `S F N, S F str, S N N, S F, S N str` | `[charaFadein A 0.4 1]`<br>`[charaFadein G 0.4 150,0]` | 角色淡入（含位置变体） |
+| `[charaFadeout]` | 76,808 | `S F, S N, str F` | `[charaFadeout A 0.1]`<br>`[charaFadeout A 0]` | 角色淡出 |
+| `[charaFadeTime]` | 1,822 | `S N F, S F F, S N N, S F N` | `[charaFadeTime C 0 0.4]`<br>`[charaFadeTime R 0.2 0.5]` | 设置该角色后续淡入淡出时长 |
+| `[charaFadeinFSL]` | 1,611 | `S F N, S F str, S N str, S N N` | `[charaFadeinFSL L 0.1 0]`<br>`[charaFadeinFSL G 0.1 -280,0]` | 左侧延展区淡入 |
+| `[charaFadeinFSR]` | 1,659 | `S F N, S F str, S N str, S N N` | `[charaFadeinFSR A 0.1 2]`<br>`[charaFadeinFSR A 0.1 280,0]` | 右侧延展区淡入 |
+| `[charaFadeinFSSideL]` | 158 | `S F str, S N str, S F N` | `[charaFadeinFSSideL F 0.1 -350,0]`<br>`[charaFadeinFSSideL Q 0 150,35]` | 侧左淡入 |
+| `[charaFadeinFSSideR]` | 189 | `S F str, S N str, S F N` | `[charaFadeinFSSideR A 0.1 390,0]`<br>`[charaFadeinFSSideR P 0 -150,65]` | 侧右淡入 |
+| `[charaFadeinFSLNotNotch]` | 6 | `S F str` | `[charaFadeinFSLNotNotch K 0.2 -110,-105]` | 左侧淡入（避开刘海安全区） |
+| `[charaFadeinFSRNotNotch]` | 6 | `S F str` | `[charaFadeinFSRNotNotch L 0.2 270,-105]` | 右侧淡入（避开刘海安全区） |
+| `[charaMove]` | 9,030 | `S str F, S N F, S str N, S str str, S str` | `[charaMove G 0,0 0.3]`<br>`[charaMove A 1 0.1]` | 绝对坐标移动 |
+| `[charaMoveEase]` | 2,578 | `S str F w` | `[charaMoveEase V 0,-350 4.0 easeOutQuad]` | 带缓动的移动 |
+| `[charaMoveReturn]` | 1,464 | `S str F, S N F, S N N` | `[charaMoveReturn G 200,-5 0.6]`<br>`[charaMoveReturn E 0 0.5]` | 移回槽位原坐标 |
+| `[charaMoveReturnEase]` | 2 | `S str F w w` | `[charaMoveReturnEase G 0,10 0.4 easeOutSine easeInSine]` | 带缓动移回 |
+| `[charaMoveFSL]` | 369 | `S str F, S N F` | `[charaMoveFSL E -250,0 10.0]`<br>`[charaMoveFSL J 0 0.3]` | 左延展区移动 |
+| `[charaMoveFSR]` | 345 | `S str F, S N F, S str F w` | `[charaMoveFSR D 236,0 0.6]`<br>`[charaMoveFSR F 2 0.3]` | 右延展区移动 |
+| `[charaMoveFSSideL]` | 44 | `S str F` | `[charaMoveFSSideL Q 165,65 15.0]` | 侧左移动 |
+| `[charaMoveFSSideR]` | 81 | `S str F` | `[charaMoveFSSideR P -290,-320 5.3]` | 侧右移动 |
+| `[charaMoveEaseFSL]` | 72 | `S str F w` | `[charaMoveEaseFSL D -250,0 0.8 easeInOutSine]` | 左延展区缓动移动 |
+| `[charaMoveEaseFSR]` | 80 | `S str F w` | `[charaMoveEaseFSR C 256,225 0.3 easeOutQuad]` | 右延展区缓动移动 |
+| `[charaMoveEaseFSSideL]` | 7 | `S str F w` | `[charaMoveEaseFSSideL R 150,-250 7.0 easeOutSine]` | 侧左缓动移动 |
+| `[charaMoveEaseFSSideR]` | 26 | `S str F w` | `[charaMoveEaseFSSideR L 470,-150 1.8 easeOutSine]` | 侧右缓动移动 |
+| `[charaMoveReturnFSL]` | 123 | `S str F` | `[charaMoveReturnFSL L -256,-10 0.3]` | 从左延展区移回 |
+| `[charaMoveReturnFSR]` | 125 | `S str F` | `[charaMoveReturnFSR A 256,-10 0.3]` | 从右延展区移回 |
+| `[charaMoveReturnFSSideL]` | 23 | `S str F` | `[charaMoveReturnFSSideL E -380,-3 0.5]` | 从侧左移回 |
+| `[charaMoveReturnFSSideR]` | 25 | `S str F` | `[charaMoveReturnFSSideR H 380,-3 0.5]` | 从侧右移回 |
+| `[charaMoveReturnEaseFSL]` | 1 | `S str F w w` | `[charaMoveReturnEaseFSL H -330,0 1.0 easeInSine easeOutSine]` | 左延展区缓动移回 |
+| `[charaMoveReturnEaseFSR]` | 1 | `S str F w w` | `[charaMoveReturnEaseFSR J 330,0 1.0 easeInSine easeOutSine]` | 右延展区缓动移回 |
+| `[charaMoveScale]` | 1,419 | `S F F, S str F, w F F` | `[charaMoveScale R 2.5 1.0]`<br>`[charaMoveScale D 1. 0.6]` | 缩放动画 |
+| `[charaMoveScaleEase]` | 441 | `S F F w` | `[charaMoveScaleEase H 1.0 1.0 easeOutSine]` | 带缓动缩放动画 |
+| `[charaScale]` | 15,860 | `S F, S N` | `[charaScale C 1.1]`<br>`[charaScale A 1]` | 设置缩放倍率 |
+| `[charaDepth]` | 21,768 | `S N` | `[charaDepth B 1]` | 设置排序层级 |
+| `[charaLayer]` | 8,269 | `S w str, S w, S w w` | `[charaLayer T sub #A]`<br>`[charaLayer T normal]` | 设置渲染子层（normal/#A/#B/#mask） |
+| `[charaRoll]` | 337 | `S N, S N str, S N w, S str N` | `[charaRoll X 31]`<br>`[charaRoll S 90 0,350]` | 设置旋转角度（可带旋转中心） |
+| `[charaRollAxis]` | 71 | `S w N F, S w N N N, S w N N, S w N F N` | `[charaRollAxis K y 180 0.1]`<br>`[charaRollAxis I y -180 0 0]` | 绕指定轴旋转 |
+| `[charaRollMove]` | 28 | `S F N, S N N` | `[charaRollMove O 0.1 0]`<br>`[charaRollMove I 0 355]` | 旋转动画 |
+| `[charaRollMoveEx]` | 8 | `S F N str, S N N str, S F N` | `[charaRollMoveEx O 6.5 1440 0,-200]`<br>`[charaRollMoveEx J 0 -10 0,0]` | 扩展旋转（带位移） |
+| `[charaShake]` | 2,766 | `S F N N F, S F N N N` | `[charaShake A 0.05 3 3 0.25]`<br>`[charaShake H 0.05 3 3 0]` | 角色震动 |
+| `[charaShakeStop]` | 204 | `S` | `[charaShakeStop H]` | 停止角色震动 |
+| `[charaCrossFade]` | 476 | `S N N F, S N N N` | `[charaCrossFade A 1098158210 6 0.2]`<br>`[charaCrossFade F 1098344810 0 0]` | 双网格交叉淡化换装 |
+| `[charaChange]` | 149 | `S N N w N, S N N w F` | `[charaChange A 98020000 1 fade 2]`<br>`[charaChange J 9018002 13 normal 0.1]` | 整体换立绘（kind 控制过渡方式） |
+| `[charaClear]` | 6 | `S` | `[charaClear F]` | 从舞台移除角色 |
+| `[charaCutin]` | 16 | `S w F F, S w F N` | `[charaCutin H leftToRight 0.1 1.0]`<br>`[charaCutin F upToDown 0.1 0]` | 切入特写（方向/时长） |
+| `[charaCutout]` | 8 | `S F` | `[charaCutout F 1.0]` | 切出特写 |
+| `[charaAttack]` | 53 | `S w str F` | `[charaAttack D normal 250,0 0.25]` | 攻击动作演出 |
+| `[charaShadow]` | 49 | `S w` | `[charaShadow F true]` | 角色阴影开关 |
+| `[charaFilter]` | 890 | `S w N, S w str, S w, S w w, S w HEX` | `[charaFilter G silhouette 00000080]`<br>`[charaFilter H normal FFFFFF00]` | 角色滤镜（名称 颜色） |
+| `[charaEffect]` | 4,657 | `S str, S str str S, S str str, S str N S, S str N str` | `[charaEffect B bit_talk_noise]`<br>`[charaEffect T bit_talk_43h_fs 0,0 V]` | 角色特效（bit_talk_* 等） |
+| `[charaEffectStop]` | 1,829 | `S str, S, S str str, S str N S, S str str S` | `[charaEffectStop G bit_talk_10]`<br>`[charaEffectStop B]` | 停止角色特效 |
+| `[charaEffectDestroy]` | 1,006 | `S str, S, S str str S, S str str, S N str` | `[charaEffectDestroy S bit_talk_4elements_light]`<br>`[charaEffectDestroy R]` | 销毁角色特效 |
+| `[charaEffectStart]` | 8 | `S str, S` | `[charaEffectStart J bit_talk_gram_slash_03_fs]`<br>`[charaEffectStart G]` | 启动已备特效 |
+| `[charaEffectPause]` | 8 | `S str str S, S str str, S str` | `[charaEffectPause J bit_talk_gram_slash_03_fs 0,50 H]`<br>`[charaEffectPause K bit_talk_flame_slash_blue 0,50]` | 暂停角色特效 |
+| `[charaEffectEdgeBlur]` | 178 | `S HEX HEX N N, S HEX N N F, S HEX HEX N F, S HEX HEX, S HEX` | `[charaEffectEdgeBlur Y FFFFFB FFFFFB 3 3]`<br>`[charaEffectEdgeBlur N ffffff 000000 4 1.5]` | 边缘模糊+描边色 |
+| `[charaEffectEdgeBlurStart]` | 7 | `S` | `[charaEffectEdgeBlurStart A]` | 启动边缘模糊 |
+| `[charaEffectEdgeBlurStop]` | 66 | `S, S N, S F` | `[charaEffectEdgeBlurStop F]`<br>`[charaEffectEdgeBlurStop C 663399]` | 停止边缘模糊 |
+| `[charaEffectEdgeBlurPause]` | 7 | `S HEX HEX N F` | `[charaEffectEdgeBlurPause A FFF9A5 FFF9A5 4 3.0]` | 暂停边缘模糊 |
+| `[charaEffectEdgeBlurDestroy]` | 118 | `S, S HEX HEX` | `[charaEffectEdgeBlurDestroy Y]`<br>`[charaEffectEdgeBlurDestroy A ffffcc ffffcc]` | 销毁边缘模糊 |
+| `[charaSpecialEffect]` | 1,287 | `S w N F, S w N N, S w, S w N, S w N F N F` | `[charaSpecialEffect F appearance 0 1.0]`<br>`[charaSpecialEffect E flash 0 1]` | 特殊演出（appearance/flash/enemyErasure…） |
+| `[charaSpecialEffectStop]` | 7 | `S, S w, S N` | `[charaSpecialEffectStop E]`<br>`[charaSpecialEffectStop G flash]` | 停止特殊演出 |
+| `[charaBackEffect]` | 49 | `S str str, S str, S str str S` | `[charaBackEffect K bit_talk_fire_wall -250,0]`<br>`[charaBackEffect A bit_talk_black_aura_tsk]` | 角色背后特效 |
+| `[charaBackEffectStop]` | 27 | `S str, S str F, S` | `[charaBackEffectStop A bit_talk_black_aura_tsk]`<br>`[charaBackEffectStop A bit_talk_lightning_01t 0.1]` | 停止背后特效 |
+| `[charaBackEffectDestroy]` | 10 | `S str` | `[charaBackEffectDestroy K bit_talk_fire_wall]` | 销毁背后特效 |
+| `[charaRelativeLoopMove]` | 39 | `S N str str F F N, S N str str str F F F N` | `[charaRelativeLoopMove N 2 0,-2 0,0 0.4 0.4 0]`<br>`[charaRelativeLoopMove B 3 0,-5 0,0 0,0 0.6 0.4 0.3 10]` | 相对偏移循环移动（呼吸/悬浮） |
+| `[charaRelativeLoopMoveStop]` | 31 | `S` | `[charaRelativeLoopMoveStop N]` | 停止循环移动 |
+| `[imageSet]` | 2,028 | `S str N N, S str N, S N N, S N str, S w N` | `[imageSet C back10000 1 1]`<br>`[imageSet T back10000 1]` | 图片槽位设置（Kind=IMAGE） |
+| `[verticalImageSet]` | 30 | `S str N` | `[verticalImageSet J back68500 1]` | 竖图槽位 |
+| `[horizontalImageSet]` | 4 | `S str N` | `[horizontalImageSet K scene88101 2]` | 横图槽位 |
+| `[equipSet]` | 4 | `S N N str` | `[equipSet S 9402490 1 アトラス院]` | 灵基外观槽位（Kind=EQUIP） |
+| `[masterSet]` | 50 | `S N N N` | `[masterSet L 1098348300 1098348310 1]` | 主角槽位设置（男女双 ID） |
+| `[masterImageSet]` | 18 | `S N N N, S str str N` | `[masterImageSet L 276600 276601 1]`<br>`[masterImageSet J cut396_costume_m cut396_costume_w 1]` | 主角图片（男女双 ID） |
+| `[communicationChara]` | 131 | `N N N N N` | `[communicationChara 98003003 1 5 0 2]` | 通讯立绘（id 姿势 表情 位置 形态） |
+| `[communicationCharaLoop]` | 691 | `N N N N N, N str N N N` | `[communicationCharaLoop 98003003 1 5 0 2]`<br>`[communicationCharaLoop 98003003 -256,0 5 0 2]` | 通讯立绘（带循环位） |
+| `[communicationCharaFace]` | 528 | `N` | `[communicationCharaFace 4]` | 通讯立绘切表情 |
+| `[communicationCharaClear]` | 814 | `—` | `[communicationCharaClear]` | 清除通讯立绘 |
+| `[communicationCharaStop]` | 3 | `—` | `[communicationCharaStop]` | 停止通讯立绘 |
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [criMovie] | 181 | 播放 CRI 视频 |
-| [movie] | 1 | 播放影片（旧形式） |
-| [insertionAnimationSetFSSideR] | 1 | 右侧插入动画装载 |
-| [insertionAnimationStart] | 1 | 开始插入动画 |
-| [insertionAnimationEnd] | 1 | 结束插入动画 |
-| [overlayFadein] | 650 | 叠加层淡入（槽位 时长 偏移） |
-| [masterScene] | 50 | 主角场景图切换（男女双 ID） |
-| [masterNameWidth] | 1 | 主角名牌宽度设置 |
+### 音频（详见"音频"章）
 
-**子摄像机与子渲染层（详见"子摄像机系统"章）**（合计 11,626 次）
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[bgm]` | 12,478 | `str F, str F F, str N F, str, str F N` | `[bgm BGM_EVENT_38 0.1]`<br>`[bgm BGM_MAP_57 0.1 0.9]` | 播放 BGM（名 音量 淡入） |
+| `[bgmStop]` | 9,146 | `str F, str N` | `[bgmStop BGM_EVENT_38 1.5]`<br>`[bgmStop BGM_EVENT_251 0]` | 停止 BGM（带淡出） |
+| `[bgmStopEnd]` | 228 | `str F` | `[bgmStopEnd BGM_BATTLE_43 2.0]` | 停止 BGM 并等待完成 |
+| `[se]` | 24,080 | `str, HEX, str N N, str N F, HEX N N` | `[se ad1]`<br>`[se ade393]` | 播放音效 |
+| `[seStop]` | 11,506 | `str F, str, HEX F, HEX, str N` | `[seStop ad931 1.5]`<br>`[seStop ad59]` | 停止音效 |
+| `[seVolume]` | 10,256 | `str N F, str F F, str N N, HEX N N, HEX F F` | `[seVolume ad9 0 0.4]`<br>`[seVolume ad9 0.5 0.2]` | 音效音量 |
+| `[seLoop]` | 132 | `str` | `[seLoop ad84]` | 循环音效 |
+| `[seContinue]` | 64 | `str N F N, HEX N F N, str N, HEX F F N, str N N N` | `[seContinue ad864 0 1.0 1]`<br>`[seContinue ade458 0 1.0 1]` | 跨消息持续音效 |
+| `[seContinueStop]` | 25 | `str F, str F N, HEX F N` | `[seContinueStop ad284 1.5]`<br>`[seContinueStop ad322 1.5 1]` | 停止持续音效 |
+| `[seContinueVolume]` | 6 | `str F F N` | `[seContinueVolume ad31 1.2 0.5 1]` | 调整持续音效音量 |
+| `[cueSe]` | 5,767 | `str str, w HEX, str str F F, str str F, str str N F` | `[cueSe SE_21 21_ad1097]`<br>`[cueSe Battle bac170]` | 播放 CRI cue 音效 |
+| `[cueSeStop]` | 1,686 | `str F, HEX F, str, w HEX F, str str F` | `[cueSeStop m84916 2.0]`<br>`[cueSeStop bac821 2.0]` | 停止 cue 音效 |
+| `[cueSeVolume]` | 1,034 | `str N F, str F F, str N N, str F N, HEX N F` | `[cueSeVolume m84916 0 0.2]`<br>`[cueSeVolume 22_adm89 2.0 0.05]` | cue 音效音量 |
+| `[cueSeContinue]` | 32 | `str str N F N, str str N, str str F F N, str str N N N` | `[cueSeContinue SE_21 21_ade665 0 0.4 1]`<br>`[cueSeContinue Servants_9943960 m23605 1]` | 跨消息 cue 音效 |
+| `[cueSeContinueStop]` | 20 | `str F N` | `[cueSeContinueStop 21_ade665 1.4 1]` | 停止跨消息 cue |
+| `[cueSeContinueVolume]` | 14 | `str F F N` | `[cueSeContinueVolume 26_ad1550 1.0 0.7 10]` | 调整跨消息 cue 音量 |
+| `[soundStopAll]` | 4,929 | `—` | `[soundStopAll]` | 停止全部声音 |
+| `[soundStopAllEnd]` | 255 | `—` | `[soundStopAllEnd]` | 停止全部声音并等待完成 |
+| `[soundStopAllFade]` | 32 | `F` | `[soundStopAllFade 0.4]` | 全部声音带淡出停止 |
+| `[voice]` | 62 | `str` | `[voice 302800_0_B030]` | 播放语音 |
+| `[voiceStop]` | 5 | `str, str N` | `[voiceStop NP_502300_1]`<br>`[voiceStop NP_100100_1 0]` | 停止语音 |
+| `[jingle]` | 1 | `str` | `[jingle BGM_ENDING_1]` | 播放 jingle 短曲 |
+| `[tVoice]` | 18 | `str str F, str str` | `[tVoice ChrVoice_7100100 0_T010 0.4]`<br>`[tVoice ChrVoice_7100100 0_T030]` | 测试/临时语音等待 |
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [subCameraOn] | 908 | 开子相机 |
-| [subCameraOff] | 603 | 关子相机 |
-| [subCameraMove] | 54 | 子相机平移 |
-| [subCameraMoveEase] | 12 | 子相机缓动平移 |
-| [subCameraHome] | 12 | 子相机复位 |
-| [subCameraFilter] | 1,948 | 子相机滤镜 |
-| [subCameraRoll] | 56 | 子相机旋转 |
-| [subCameraRollMove] | 4 | 子相机旋转动画 |
-| [subRenderFadein] | 1,880 | 子层淡入 |
-| [subRenderFadeout] | 2,357 | 子层淡出 |
-| [subRenderFadeinFSL] | 154 | 子层左延展区淡入 |
-| [subRenderFadeinFSR] | 162 | 子层右延展区淡入 |
-| [subRenderFadeinFSSideL] | 133 | 子层侧左淡入 |
-| [subRenderFadeinFSSideR] | 165 | 子层侧右淡入 |
-| [subRenderMove] | 512 | 子层移动 |
-| [subRenderMoveEase] | 374 | 子层缓动移动 |
-| [subRenderMoveFSL] | 70 | 子层左延展区移动 |
-| [subRenderMoveFSR] | 103 | 子层右延展区移动 |
-| [subRenderMoveFSSideL] | 67 | 子层侧左移动 |
-| [subRenderMoveFSSideR] | 90 | 子层侧右移动 |
-| [subRenderMoveEaseFSL] | 35 | 子层左缓动移动 |
-| [subRenderMoveEaseFSR] | 48 | 子层右缓动移动 |
-| [subRenderMoveEaseFSSideL] | 29 | 子层侧左缓动移动 |
-| [subRenderMoveEaseFSSideR] | 54 | 子层侧右缓动移动 |
-| [subRenderMoveScale] | 24 | 子层缩放动画 |
-| [subRenderMoveScaleEase] | 29 | 子层缓动缩放 |
-| [subRenderScale] | 783 | 子层缩放 |
-| [subRenderDepth] | 859 | 子层层级 |
-| [subRenderShake] | 16 | 子层震动 |
-| [subRenderShakeStop] | 2 | 停止子层震动 |
-| [subBlur] | 38 | 子层模糊 |
-| [subBlurOff] | 36 | 解除子层模糊 |
-| [subBlur2] | 5 | 二代子层模糊（透镜类） |
-| [subBlur2Off] | 4 | 解除二代子层模糊 |
+### 摄像机（详见"摄像机"章）
 
-**演出对象与特殊效果（详见"视觉效果/其他命令"章）**（合计 6,647 次）
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[cameraMove]` | 2,512 | `F str F, N str F, F str, str str F` | `[cameraMove 0.1 0,-30 1.2]`<br>`[cameraMove 0 0,0 1.01]` | 镜头平移 |
+| `[cameraMoveEase]` | 172 | `str F w F, str N w F` | `[cameraMoveEase 0,-30 1.0 easeOutQuad 1.2]`<br>`[cameraMoveEase 0,0 0 easeOutCubic 1.0]` | 带缓动镜头平移 |
+| `[cameraHome]` | 454 | `F, , N` | `[cameraHome 3.0]`<br>`[cameraHome]` | 镜头复位 |
+| `[cameraFilter]` | 356 | `w, w N N N N N N, ` | `[cameraFilter gray]`<br>`[cameraFilter aberration 1 2 1 -2 -1 2]` | 镜头滤镜（darkred 等） |
+| `[cameraRoll]` | 2 | `N, N str` | `[cameraRoll 0]`<br>`[cameraRoll 10 0,0]` | 镜头旋转 |
+| `[cameraRollMove]` | 20 | `F N` | `[cameraRollMove 2.0 2]` | 镜头旋转动画 |
+| `[enableFullScreen]` | 1,187 | `—` | `[enableFullScreen]` | 解除 16:9 遮幅（全屏延展） |
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [effect] | 3,164 | 场景特效（bit_talk_*） |
-| [effectStop] | 778 | 停止特效 |
-| [effectDestroy] | 652 | 销毁特效 |
-| [effectStart] | 1 | 启动特效 |
-| [effectPause] | 1 | 暂停特效 |
-| [effectForceStop] | 19 | 强制停止特效 |
-| [fowardEffect] | 1,303 | 前景特效 |
-| [fowardEffectStart] | 4 | 启动前景特效 |
-| [fowardEffectStop] | 192 | 停止前景特效 |
-| [fowardEffectPause] | 4 | 暂停前景特效 |
-| [fowardEffectDestroy] | 212 | 销毁前景特效 |
-| [backEffect] | 143 | 背景侧特效 |
-| [backEffectStop] | 67 | 停止背景特效 |
-| [backEffectDestroy] | 35 | 销毁背景特效 |
-| [effectmessage] | 12 | 特效文字消息（图/文本合成） |
-| [effectmessageStop] | 12 | 停止特效文字 |
-| [specialEffect] | 8 | 特殊演出（cutting 等） |
-| [distortionstart] | 13 | 画面扭曲（6 参数） |
-| [distortionstop] | 11 | 停止扭曲 |
-| [fsmObjSet] | 3 | 装载 FSM 演出对象（PlayMaker） |
-| [fsmObjLayer] | 3 | FSM 对象层级 |
-| [fsmObjSetState] | 3 | FSM 跳转状态 |
-| [fsmObjSendEvent] | 3 | FSM 发送事件 |
-| [fsmObjDestroy] | 3 | 销毁 FSM 对象 |
-| [useSimpleMeshFigure] | 1 | 使用简化网格立绘 |
+### 影片与插入动画（详见"影片/动画"章）
 
-**控制流与分支（详见"控制流"章）**（合计 4,912 次）
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[criMovie]` | 181 | `str w w` | `[criMovie talk_mov148 bgmPlay true]` | 播放 CRI 视频 |
+| `[movie]` | 1 | `str` | `[movie talk_mov010]` | 播放影片（旧形式） |
+| `[insertionAnimationSetFSSideR]` | 1 | `str str` | `[insertionAnimationSetFSSideR ac_fude_triangle_slide_R 0,70]` | 右侧插入动画装载 |
+| `[insertionAnimationStart]` | 1 | `str str` | `[insertionAnimationStart ac_fude_triangle_slide_R cut530_ior_06]` | 开始插入动画 |
+| `[insertionAnimationEnd]` | 1 | `str` | `[insertionAnimationEnd ac_fude_triangle_slide_R]` | 结束插入动画 |
+| `[overlayFadein]` | 650 | `S F str, S N str, S F N, S F` | `[overlayFadein I 0.1 0,734]`<br>`[overlayFadein O 0 0,757]` | 叠加层淡入（槽位 时长 偏移） |
+| `[masterScene]` | 50 | `N N F, N N, N N N` | `[masterScene 276600 276601 1.0]`<br>`[masterScene 277008 277908]` | 主角场景图切换（男女双 ID） |
+| `[masterNameWidth]` | 1 | `w N str str` | `[masterNameWidth large 339 _Name339Less _Name339Over]` | 主角名牌宽度设置 |
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [label] | 1,095 | 定义跳转标签 |
-| [branch] | 785 | 条件跳转 |
-| [branchQuestClear] | 27 | 任务已通关分支 |
-| [branchQuestNotClear] | 24 | 任务未通关分支 |
-| [branchMaterial] | 26 | 素材条件分支 |
-| [branchNotMaterial] | 0 | 无素材反向分支 |
-| [branchHaveSvtEquip] | 0 | 持有特定灵基分支 |
-| [branchNotHaveSvtEquip] | 0 | 未持有反向分支 |
-| [branchRouteSelect] | 18 | 路线选择分支 |
-| [branchNotRouteSelect] | 14 | 路线反向分支 |
-| [branchRouteSelectCount] | 22 | 按选择次数分支 |
-| [branchSetGrandSvtCount] | 2 | 冠位从者计数分支 |
-| [masterBranch] | 137 | 主角性别分支 |
-| [flag] | 159 | 旗标开关（on/off 判断标签） |
-| [ifClear] | 3 | 任务通关条件块 |
-| [else] | 3 | 条件块否决支 |
-| [endIf] | 3 | 条件块结束 |
-| [end] | 2,594 | 场景结束 |
+### 子摄像机与子渲染层（详见"子摄像机系统"章）
 
-**界面与对话窗（详见"UI 控制"章）**（合计 97,966 次）
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[subCameraOn]` | 908 | `N, ` | `[subCameraOn 1]`<br>`[subCameraOn]` | 开子相机 |
+| `[subCameraOff]` | 603 | `—` | `[subCameraOff]` | 关子相机 |
+| `[subCameraMove]` | 54 | `str F str F, str N str F` | `[subCameraMove #A 0.1 10,0 1.1]`<br>`[subCameraMove #A 0 0,0 1.01]` | 子相机平移 |
+| `[subCameraMoveEase]` | 12 | `str str F w F` | `[subCameraMoveEase #A 0,-50 0.5 easeOutQuart 1.2]` | 子相机缓动平移 |
+| `[subCameraHome]` | 12 | `str F, str N` | `[subCameraHome #A 1.0]`<br>`[subCameraHome #A 60]` | 子相机复位 |
+| `[subCameraFilter]` | 1,948 | `str w, str w str, str w str N str, str w str N str N, str str str N str N` | `[subCameraFilter #A through]`<br>`[subCameraFilter #A mask cut359_mask12]` | 子相机滤镜 |
+| `[subCameraRoll]` | 56 | `str N, str N str` | `[subCameraRoll #A 30]`<br>`[subCameraRoll #A -5 0,0]` | 子相机旋转 |
+| `[subCameraRollMove]` | 4 | `str F N` | `[subCameraRollMove #A 5.0 30]` | 子相机旋转动画 |
+| `[subRenderFadein]` | 1,880 | `str F str, str N str, F str, N str` | `[subRenderFadein #A 1.0 -200,0]`<br>`[subRenderFadein #A 0 0,0]` | 子层淡入 |
+| `[subRenderFadeout]` | 2,357 | `str F, str N, F` | `[subRenderFadeout #A 0.4]`<br>`[subRenderFadeout #A 0]` | 子层淡出 |
+| `[subRenderFadeinFSL]` | 154 | `str F str` | `[subRenderFadeinFSL #B 0.4 -120,-120]` | 子层左延展区淡入 |
+| `[subRenderFadeinFSR]` | 162 | `str F str, F str, str N str` | `[subRenderFadeinFSR #A 0.4 300,-150]`<br>`[subRenderFadeinFSR 0.4 -150,-300]` | 子层右延展区淡入 |
+| `[subRenderFadeinFSSideL]` | 133 | `str F str, str N str` | `[subRenderFadeinFSSideL #A 0.4 100,-170]`<br>`[subRenderFadeinFSSideL #A 0 -300,-250]` | 子层侧左淡入 |
+| `[subRenderFadeinFSSideR]` | 165 | `str F str, F str` | `[subRenderFadeinFSSideR #B 0.4 -100,-170]`<br>`[subRenderFadeinFSSideR 0.4 380,-200]` | 子层侧右淡入 |
+| `[subRenderMove]` | 512 | `str str F, str str N, str F, str str str` | `[subRenderMove #A 150,0 16.0]`<br>`[subRenderMove #A 2000,2500 0]` | 子层移动 |
+| `[subRenderMoveEase]` | 374 | `str str F w` | `[subRenderMoveEase #B 0,-330 0.3 easeOutQuint]` | 子层缓动移动 |
+| `[subRenderMoveFSL]` | 70 | `str str F` | `[subRenderMoveFSL #B -120,-160 0.5]` | 子层左延展区移动 |
+| `[subRenderMoveFSR]` | 103 | `str str F` | `[subRenderMoveFSR #A 300,-180 0.4]` | 子层右延展区移动 |
+| `[subRenderMoveFSSideL]` | 67 | `str str F` | `[subRenderMoveFSSideL #A 100,-200 0.4]` | 子层侧左移动 |
+| `[subRenderMoveFSSideR]` | 90 | `str str F, str F, str str F w` | `[subRenderMoveFSSideR #B -100,-200 0.4]`<br>`[subRenderMoveFSSideR -95,-200 0.4]` | 子层侧右移动 |
+| `[subRenderMoveEaseFSL]` | 35 | `str str F w` | `[subRenderMoveEaseFSL #A -370,-300 0.5 easeOutExpo]` | 子层左缓动移动 |
+| `[subRenderMoveEaseFSR]` | 48 | `str str F w, str F w` | `[subRenderMoveEaseFSR #A 180,-330 0.8 easeInOutSine]`<br>`[subRenderMoveEaseFSR 75,-190 0.4 easeOutSine]` | 子层右缓动移动 |
+| `[subRenderMoveEaseFSSideL]` | 29 | `str str F w` | `[subRenderMoveEaseFSSideL #C 150,-200 0.4 easeOutExpo]` | 子层侧左缓动移动 |
+| `[subRenderMoveEaseFSSideR]` | 54 | `str str F w, str F w` | `[subRenderMoveEaseFSSideR #A 400,-190 0.4 easeOutCubic]`<br>`[subRenderMoveEaseFSSideR 400,-150 0.4 easeOutSine]` | 子层侧右缓动移动 |
+| `[subRenderMoveScale]` | 24 | `str F F` | `[subRenderMoveScale #C 1.1 3.5]` | 子层缩放动画 |
+| `[subRenderMoveScaleEase]` | 29 | `str F F w` | `[subRenderMoveScaleEase #A 1.2 1.5 easeOutSine]` | 子层缓动缩放 |
+| `[subRenderScale]` | 783 | `str F, F` | `[subRenderScale #A 1.5]`<br>`[subRenderScale 1.1]` | 子层缩放 |
+| `[subRenderDepth]` | 859 | `str N` | `[subRenderDepth #A 2]` | 子层层级 |
+| `[subRenderShake]` | 16 | `str F N N N, str F N N F` | `[subRenderShake #C 0.03 3 4 0]`<br>`[subRenderShake #A 0.05 4 4 2.0]` | 子层震动 |
+| `[subRenderShakeStop]` | 2 | `str` | `[subRenderShakeStop #C]` | 停止子层震动 |
+| `[subBlur]` | 38 | `str w F N N F w, str w N N N F w` | `[subBlur #A lens 0.4 2 10 1.0 subBlur]`<br>`[subBlur #B lens 0 4 20 1.0 subBlur]` | 子层模糊 |
+| `[subBlurOff]` | 36 | `str w F w, str w N w` | `[subBlurOff #A lens 0.5 normal]`<br>`[subBlurOff #A lens 0 normal]` | 解除子层模糊 |
+| `[subBlur2]` | 5 | `str w F N N F w` | `[subBlur2 #A lens 0.4 4 3 1.0 subBlur]` | 二代子层模糊（透镜类） |
+| `[subBlur2Off]` | 4 | `str w F w, str w N w` | `[subBlur2Off #A lens 0.1 normal]`<br>`[subBlur2Off #D lens 0 normal]` | 解除二代子层模糊 |
 
-| 命令 | 词频 | 语义 |
-|---|---:|---|
-| [charaTalk] | 70,650 | 对话窗模式切换（on/off/槽位组/spot） |
-| [messageOff] | 27,236 | 隐藏消息窗 |
-| [talkNameBack] | 33 | 说话者名牌背景图 |
-| [backlogStart] | 16 | 手动开始 BackLog 记录段 |
-| [backlogEnd] | 16 | 结束 BackLog 记录段 |
-| [messageSpeedForcedNormal] | 14 | 强制正常文字速度 |
-| [messageChange] | 1 | 消息窗形态切换（cinema 等） |
+### 演出对象与特殊效果（详见"视觉效果/其他命令"章）
+
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[effect]` | 3,164 | `str, str str, str str S, str N` | `[effect bit_sepia01_depth_fs]`<br>`[effect bit_talk_explosion_triple02 -450,100]` | 场景特效（bit_talk_*） |
+| `[effectStop]` | 778 | `str, , str F, str str, str str S` | `[effectStop bit_sepia01_depth_fs]`<br>`[effectStop]` | 停止特效 |
+| `[effectDestroy]` | 652 | `str, , str str, str str S` | `[effectDestroy bit_talk_security_fs]`<br>`[effectDestroy]` | 销毁特效 |
+| `[effectStart]` | 1 | `—` | `[effectStart]` | 启动特效 |
+| `[effectPause]` | 1 | `str` | `[effectPause bit_talk_42]` | 暂停特效 |
+| `[effectForceStop]` | 19 | `str` | `[effectForceStop bit_talk_fire_fs]` | 强制停止特效 |
+| `[fowardEffect]` | 1,303 | `str, str str S, str str, str N` | `[fowardEffect bit_talk_29]`<br>`[fowardEffect bit_talk_kamifubuki03 0,0 H]` | 前景特效 |
+| `[fowardEffectStart]` | 4 | `—` | `[fowardEffectStart]` | 启动前景特效 |
+| `[fowardEffectStop]` | 192 | `str, , str str` | `[fowardEffectStop bit_talk_41]`<br>`[fowardEffectStop]` | 停止前景特效 |
+| `[fowardEffectPause]` | 4 | `str` | `[fowardEffectPause bit_talk_execution1]` | 暂停前景特效 |
+| `[fowardEffectDestroy]` | 212 | `str, str str, , str str S` | `[fowardEffectDestroy bit_talk_spotlight]`<br>`[fowardEffectDestroy bit_talk_impactlanding 0,-100]` | 销毁前景特效 |
+| `[backEffect]` | 143 | `str, str str, str str S` | `[backEffect bit_talk_07_loop]`<br>`[backEffect bit_talk_explosion_continuous -500,0]` | 背景侧特效 |
+| `[backEffectStop]` | 67 | `str, str F, ` | `[backEffectStop bit_talk_07_loop]`<br>`[backEffectStop bit_talk_lightning_01t 0.1]` | 停止背景特效 |
+| `[backEffectDestroy]` | 35 | `str, ` | `[backEffectDestroy bit_talk_light_range]`<br>`[backEffectDestroy]` | 销毁背景特效 |
+| `[effectmessage]` | 12 | `str str F N` | `[effectmessage bit_talk_hknf_text 440,179 1.5 48]` | 特效文字消息（图/文本合成） |
+| `[effectmessageStop]` | 12 | `str` | `[effectmessageStop bit_talk_hknf_text]` | 停止特效文字 |
+| `[specialEffect]` | 8 | `w` | `[specialEffect cutting]` | 特殊演出（cutting 等） |
+| `[distortionstart]` | 13 | `F F F F F F` | `[distortionstart 3.5 0.5 0.5 0.4 0.4 10.0]` | 画面扭曲（6 参数） |
+| `[distortionstop]` | 11 | `F` | `[distortionstop 0.1]` | 停止扭曲 |
+| `[fsmObjSet]` | 3 | `S str str` | `[fsmObjSet K ScriptUI/SelectPanel/select01 select01]` | 装载 FSM 演出对象（PlayMaker） |
+| `[fsmObjLayer]` | 3 | `S w` | `[fsmObjLayer K ui]` | FSM 对象层级 |
+| `[fsmObjSetState]` | 3 | `S str` | `[fsmObjSetState K WAIT_SELECTED_ANIMATION]` | FSM 跳转状态 |
+| `[fsmObjSendEvent]` | 3 | `S w` | `[fsmObjSendEvent K START]` | FSM 发送事件 |
+| `[fsmObjDestroy]` | 3 | `S` | `[fsmObjDestroy K]` | 销毁 FSM 对象 |
+| `[useSimpleMeshFigure]` | 1 | `str` | `[useSimpleMeshFigure 1009000,1098321800]` | 使用简化网格立绘 |
+
+### 控制流与分支（详见"控制流"章）
+
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[label]` | 1,095 | `str, w` | `[label lblNotClear01]`<br>`[label lblSetGrandSvt]` | 定义跳转标签 |
+| `[branch]` | 785 | `str, w, str w, str w w, str str N` | `[branch lblConf01]`<br>`[branch lblNotSetGrandSvt]` | 条件跳转 |
+| `[branchQuestClear]` | 27 | `str N, w N` | `[branchQuestClear lblClear01 4000217]`<br>`[branchQuestClear lblClear 2000216]` | 任务已通关分支 |
+| `[branchQuestNotClear]` | 24 | `str N, w N` | `[branchQuestNotClear lblNotClear05 4000326]`<br>`[branchQuestNotClear lblNotClear 2000316]` | 任务未通关分支 |
+| `[branchMaterial]` | 26 | `w, str` | `[branchMaterial lblMaterial]`<br>`[branchMaterial lblMaterial2]` | 素材条件分支 |
+| `[branchNotMaterial]` | 0 | `—` | — | 无素材反向分支 |
+| `[branchHaveSvtEquip]` | 0 | `—` | — | 持有特定灵基分支 |
+| `[branchNotHaveSvtEquip]` | 0 | `—` | — | 未持有反向分支 |
+| `[branchRouteSelect]` | 18 | `str N N` | `[branchRouteSelect select_answer_01 3000810 5000]` | 路线选择分支 |
+| `[branchNotRouteSelect]` | 14 | `str N N` | `[branchNotRouteSelect select_answer_02 3000810 5000]` | 路线反向分支 |
+| `[branchRouteSelectCount]` | 22 | `str N w str str, str N w N str, str N w N N` | `[branchRouteSelectCount truthflag1 2 EQUAL 3000910,3000919 2030,2060]`<br>`[branchRouteSelectCount playflag0 1 EQUAL 05000102 1000,2000,3000]` | 按选择次数分支 |
+| `[branchSetGrandSvtCount]` | 2 | `w N w` | `[branchSetGrandSvtCount lblSetGrandSvt 1 ABOVE]` | 冠位从者计数分支 |
+| `[masterBranch]` | 137 | `str str, w w` | `[masterBranch _Male01 _Female01]`<br>`[masterBranch lblBoy lblGirl]` | 主角性别分支 |
+| `[flag]` | 159 | `w N, str w, w w, str N` | `[flag smn 1]`<br>`[flag flag_1 true]` | 旗标开关（on/off 判断标签） |
+| `[ifClear]` | 3 | `N` | `[ifClear 60152100]` | 任务通关条件块 |
+| `[else]` | 3 | `—` | `[else]` | 条件块否决支 |
+| `[endIf]` | 3 | `—` | `[endIf]` | 条件块结束 |
+| `[end]` | 2,594 | `, w` | `[end]`<br>`[end white]` | 场景结束 |
+
+### 界面与对话窗（详见"UI 控制"章）
+
+| 命令 | 词频 | 参数形态 | 示例 | 语义/实现动作 |
+|---|---:|---|---|---|
+| `[charaTalk]` | 70,650 | `w, S, str` | `[charaTalk depthOff]`<br>`[charaTalk A]` | 对话窗模式切换（on/off/槽位组/spot） |
+| `[messageOff]` | 27,236 | `—` | `[messageOff]` | 隐藏消息窗 |
+| `[talkNameBack]` | 33 | `str, ` | `[talkNameBack img_talk_namebg02]`<br>`[talkNameBack]` | 说话者名牌背景图 |
+| `[backlogStart]` | 16 | `—` | `[backlogStart]` | 手动开始 BackLog 记录段 |
+| `[backlogEnd]` | 16 | `—` | `[backlogEnd]` | 结束 BackLog 记录段 |
+| `[messageSpeedForcedNormal]` | 14 | `w` | `[messageSpeedForcedNormal on]` | 强制正常文字速度 |
+| `[messageChange]` | 1 | `w` | `[messageChange cinema]` | 消息窗形态切换（cinema 等） |
+
+---
+
+## 7. 命令详细语义
+
+> 本章补充典型签名、参数说明和示例。命令是否存在、统计频次及观测到的参数形态以第 6 章为准。
 
 ### 场景/背景
 
@@ -2535,7 +2512,9 @@ Atlas 解析器只在行首把 `tVoice`/`tVoiceUser` 作为对话语音元数据
 
 ---
 
-## 画面合成与坐标系（客户端逆向）
+---
+
+## 8. 画面合成与坐标系（客户端逆向）
 
 > 本章来自对客户端 APK（2.138.0）IL2CPP 代码的逆向，证据分级见[概述](#概述)。逆向工具链与完整产物清单见[附录：客户端逆向资料](#客户端逆向资料)。
 
@@ -2629,7 +2608,9 @@ UIRoot（NGUI 根，UIRootReScale 做全屏适配）
 
 ---
 
-## 非官方剧情阅读器实现指南
+---
+
+## 9. 非官方剧情阅读器实现指南
 
 > 本章把前文的格式规范与客户端逆向结论收敛为一套**可落地的实现标准**，供构建非官方 FGO 剧情阅读器/播放器参考。文中"引擎确认"均指 APK 2.138.0 IL2CPP 逆向结论（证据与 RVA 见[附录：客户端逆向资料](#客户端逆向资料)）；标注"建议"的为工程实践意见，非引擎行为。
 >
@@ -2735,7 +2716,9 @@ ERROR：脚本结构错误兜底态
 
 ---
 
-## 控制流模式
+---
+
+## 10. 控制流模式
 
 ### 线性叙事
 
@@ -2838,7 +2821,9 @@ ERROR：脚本结构错误兜底态
 
 ---
 
-## 完整示例
+---
+
+## 11. 完整示例
 
 ### 最小可运行脚本
 
@@ -2934,7 +2919,9 @@ ERROR：脚本结构错误兜底态
 
 ---
 
-## 附录
+---
+
+## 12. 附录
 
 ### 角色 ID 前缀
 
@@ -3074,6 +3061,35 @@ ERROR：脚本结构错误兜底态
 
 ---
 
+---
+
+## 13. 标签注册项最低字段
+
+实现时每个标签应注册：`name`、`aliases`、参数 schema、读写的 `SceneState` 字段、返回/等待类型、是否可跳过、资源依赖类型、缺失资源策略、证据等级、最小回归样例。建议将表格数据编译为 `EngineProfile`，避免把字符串判断散落在渲染器中。
+
+---
+
+## 14. 兼容性与诊断
+
+- 未知标签：保留原文，生成 `UnknownCommand`，默认不等待；按名称和 profile 可将 `movie/load/animation/wait` 类标为可配置等待。
+- 跳转失败：报告文件、行号、标签、目标名和当前 PC；有安全 fallback 时继续，否则进入可恢复 Error。
+- 选择无可用项、等待无回调、资源加载超时：不得永久阻塞 VM。
+- 每次回放输出 source hash、profile、指令索引、状态差异和最终 `SceneState` hash，保证问题可复现。
+
+---
+
+## 15. 证据文件、逆向资料与更新方法
+
+| 资料 | 用途 |
+|---|---|
+| `fgo_dump/tag_inventory.json` | 标签、词频、参数形态、样例 |
+| `fgo_dump/command_index.md` | 按功能分组的人工语义索引 |
+| `fgo_dump/tag_handlers.json` / `dispatch_trace.txt` | 分发器到处理调用的摘要 |
+| `fgo_dump/dump.cs` | 类型、字段、方法和 RVA |
+| `fgo_dump/FGO剧情引擎分析报告.md` | 反编译定位和总体结构 |
+
+重新导出或更换客户端版本后，应重新生成标签统计，比较新增/删除标签和签名变化，并为每个 profile 保留独立位置表、资源规则和文本规则。
+
 ### 客户端逆向资料
 
 以下资料支撑了本文所有"客户端逆向确认"级结论，分析对象为 `1.apk`（`com.aniplex.fategrandorder` 2.138.0 / versionCode 496，Unity IL2CPP）：
@@ -3109,16 +3125,6 @@ ERROR：脚本结构错误兜底态
 
 ---
 
-> **文档版本**: v1.8
-> **生成日期**: 2026-08-30
-> **基于文件数**: 2,583 个脚本 + 客户端 APK 2.138.0 逆向
-> **更新内容**: 
-> - v1.8: 命令参考章新增**命令总索引（语料全集）**——覆盖全部 267 种标签（4 类伪标签指向语法章）的词频、典型形态与一句话语义，机器生成自语料全量统计；词频 0 表示引擎支持但当前语料未使用（如 `[tRoute]`，引擎侧有专用解析正则）；补齐 `[backlogStart]/[backlogEnd]`、`[capture]/[captureRelease]`、`[f]` 字号标记、`[-]` 颜色复位等此前未单独收录的条目
-> - v1.7: 新增**非官方剧情阅读器实现指南**：三段管线总体架构（对应引擎解析/编译/执行分层）、脚本解析标准（行分类、分词容错）、执行语义标准（`ScriptManager.State` 17 态状态机、阻塞模型四分类、`StartMode` 17 种开场淡入、自动播放/跳过/分支状态）、画面演出标准（画布口径、层序、镜头仿射链、转场默认时长）、素材体系与 `[fsm]` 类演出降级策略、引擎常量速查表；补充 `ScriptCharaData.Kind` 五类槽位与 `setScene`/`imageSet` 命令族的共用关系
-> - v1.6: 用引擎逆向证据重写脚本格式解释：文件命名规则修正为引擎确认的 `{questId:D8}{phase:D1}{尾号}` 结构（尾号 0-9 含义表来自 `SCRIPT_NAME_BATTLE_*` 常量）；`＄/＠` 行首码改为"数据驱动字段"说明（`codeSceneString/codeTalkString` 等由通用脚本数据初始化，`＠` 已在二进制中找到常量）；补充 `GetCommandTag` 分词算法（遇空格或 `]` 结束、命令名大小写敏感）；补充对话行引擎机制（`talkName` 匹配槽位、行内标签与命令同管线、`isScriptWait` 等待机制）；补充 `debugComment` 注释标签、文本标记引擎词表（多字符标记字符串比较、单字符标记字符比较）、自动播放等待模板 `AUTO_WAIT_TAG_FORMAT`、变量替换 `ScriptReplaceString` 实现
-> - v1.5: 引入**客户端逆向确认**证据等级（APK 2.138.0 IL2CPP 逆向，见附录"客户端逆向资料"）；新增**画面合成与坐标系**一章（引擎解析管线、NGUI+多相机合成栈、坐标直通证据、7 槽位表、遮幅/宽屏常量）；"角色位置"升级为引擎确认并补充 `ScriptPosition.positionList` 槽位表与素材 00 点说明；新增"素材的 00 点（锚点）"（立绘 1024×2048 表、表情块 254×254、纵向锚点在素材下 1/3 处）；确认 `charaRelativeLoopMove` 为基座相对偏移；确认 `scrollStop`/`capture`/`interruption`/`tapSkip`/`useSimpleMeshFigure`/`wipeFilter` 的引擎侧字段
-> - v1.4: 按当前 2,583 个文件重新校准头部覆盖率和行号分布；补充 Atlas Academy 解析器的证据边界、`UNPARSED` 行为、文本标记解析、BGM 参数顺序、`wait`/`wt` 差异、`line` 横线语义、场景扩展参数、选项和结束标记兼容性
-> - v1.3: 修正头部位置和文件名映射说明；明确命令可嵌入台词；统一可选参数表示；修正 `cameraMoveEase`、`charaFilter`、擦除方向和 `tVoice` 大小写；补充分支选择语法、等待参数变体、缓动函数和统计口径；精确化 `overlayFadein`、等待类型和子渲染层可选参数；修正完整分支示例
-> - v1.2: 补充 `wait` 完整类型列表（25+种）、扩展淡入淡出颜色值（18+种）、扩展擦除方向（30+种）、修正 `charaFilter` 格式描述、补充 `charaLayer` 子层（#C/#D/#mask/main）、补充 `subCameraFilter` 模式、补充模糊类型（motion/glass）、补充 `cameraFilter darkred`、添加 `masterNameWidth` 命令、添加 `soundStopAllFade` 参数说明、添加 `effectStart`/`effectPause`/`fowardEffectStart`/`fowardEffectPause` 详细说明、添加 `seContinueVolume`/`cueSeContinueVolume` 参数表、修正 `＄` 头部非必需说明、修正 `voiceStop` 双参数形式
-> - v1.1: 补充了多角色对话标记（spot）、多角色 charaTalk、角色移动位置变体（FSL/FSR/SideL/SideR）、子渲染层完整命令、角色效果暂停/恢复、对话模式开关（charaTalk on）等
-> **说明**: 本文档基于实际脚本文件逆向分析。命令拼写和常见参数形式以样本为准；资源 ID、效果参数和少量控制流语义仍可能存在推测或历史兼容差异。
+> **整合版日期**：2026-09-09  
+> **分析基线**：2,583 个脚本文件 + FGO 客户端 APK 2.138.0（versionCode 496）  
+> **来源优先级**：第 6 章完整命令参考 > 本文其他概述性章节。

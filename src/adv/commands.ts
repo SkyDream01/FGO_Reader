@@ -557,15 +557,18 @@ export function executeStageCommand(
       return;
     }
 
-    case name === "se" || name === "cuese": {
-      if (args[0]) ctx.emitAudio({ kind: "play", channel: "se", name: args[0] });
+    case name === "se" || name === "cuese" || name === "seloop" || name === "secontinue" || name === "cuesecontinue": {
+      if (args[0]) ctx.emitAudio({ kind: "play", channel: "se", name: args[0], loop: name.includes("loop") || name.includes("continue") });
       return;
     }
 
-    case name === "sestop" || name === "cuesestop": {
+    case name === "sestop" || name === "cuesestop" || name === "secontinuestop" || name === "cuesecontinuestop": {
       ctx.emitAudio({ kind: "stop", channel: "se", ...(args[0] ? { name: args[0] } : {}) });
       return;
     }
+
+    case name === "sevolume" || name === "cuesevolume" || name === "secontinuevolume" || name === "cuesecontinuevolume":
+      return;
 
     case name === "voice" || name === "tvoice": {
       if (args[0]) ctx.emitAudio({ kind: "play", channel: "voice", name: args[0] });
@@ -628,11 +631,20 @@ export function executeStageCommand(
     }
 
     case name === "wipein" || name === "wipeout" || name === "wipefilter": {
+      const duration = Math.max(0, parseNumber(args[1]) ?? 0.5);
       stage.requestWipe({
         color: namedColorToCss(args[0]),
         kind: name === "wipefilter" ? "filter" : name === "wipeout" ? "out" : "in",
-        duration: parseNumber(args[1]) ?? 0.5,
+        duration,
       });
+      if (duration > 0 && !ctx.fastForward) {
+        ctx.tweens.add({
+          owner: "wipe",
+          duration,
+          onUpdate: () => undefined,
+          onComplete: () => stage.touch(),
+        });
+      }
       return;
     }
 
@@ -663,6 +675,19 @@ export function executeStageCommand(
       stage.setScreenEffect(null);
       return;
     }
+
+    case name === "subcamerahome":
+      stage.camera.x = 0; stage.camera.y = 0; stage.camera.scale = 1; stage.camera.rotation = 0; stage.touch(); return;
+
+    case name === "subcameramove" || name === "subcameramoveease": {
+      const coordinate = parseCoordinateToken(args[0]) ?? { x: parseNumber(args[0]) ?? 0, y: parseNumber(args[1]) ?? 0 };
+      stage.camera.x = coordinate.x; stage.camera.y = coordinate.y;
+      const scale = parseNumber(args[2]); if (scale !== null && scale > 0) stage.camera.scale = scale;
+      stage.touch(); return;
+    }
+
+    case name === "subcameraroll" || name === "subcamerarollmove":
+      stage.camera.rotation = parseNumber(args[0]) ?? 0; stage.touch(); return;
 
     case name === "subcameraon":
     case name === "subrenderon":
@@ -721,8 +746,8 @@ export function executeStageCommand(
       return;
     }
 
-    case name === "messageshake" || name === "shake" || name === "quake" || name === "vibrate": {
-      stage.requestShake();
+    case name === "messageshake" || name === "shake" || name === "quake" || name === "vibrate" || name === "charashake" || name === "subrendershake": {
+      stage.requestShake(parseNumber(args[0]) ?? 0, parseNumber(args[1]) ?? 0, parseNumber(args[2]) ?? 0, parseNumber(args[3]) ?? 0);
       return;
     }
 
