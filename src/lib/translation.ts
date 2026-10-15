@@ -266,7 +266,7 @@ export function translationUnitSourceHash(unit: TranslationUnit) {
 }
 
 /**
- * Message-catalog based translation unit source (v6 pipeline). A step is one
+ * Message-catalog based translation unit source. A step is one
  * readable unit: a dialogue message or a choice with its option labels.
  */
 export interface TranslatableStep {
@@ -275,12 +275,13 @@ export interface TranslatableStep {
   speaker: string;
   text: string;
   optionLabels?: string[];
+  optionIndices?: number[];
 }
 
 export function stepTranslationUnits(step: TranslatableStep): TranslationUnit[] {
   if (step.kind === "choice") {
     return (step.optionLabels ?? []).map((label, index) => ({
-      id: `${step.key}:choice:${index}`,
+      id: `${step.key}:choice:${step.optionIndices?.[index] ?? index}`,
       kind: "choice" as const,
       text: label,
     }));

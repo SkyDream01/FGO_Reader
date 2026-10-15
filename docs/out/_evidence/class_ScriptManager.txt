@@ -1,0 +1,1737 @@
+==============================================================================
+// ScriptManager  (dump.cs line 167792)
+public class ScriptManager : SingletonMonoBehaviour<ScriptManager> // TypeDefIndex: 4870
+{
+	// Fields
+	public static readonly float DEFAULT_FADE_TIME; // 0x0
+	public static readonly int CHARA_MAX; // 0x4
+	public static readonly int FACE_MAX; // 0x8
+	private static readonly int DELAY_INDEX_MAX; // 0xC
+	private static readonly float PICTURE_FRAME_Z_POS_NORMAL; // 0x10
+	private static readonly float PICTURE_FRAME_Z_POS_TOP; // 0x14
+	public const string SCRIPT_NAME_BATTLE_BASE = "{0:D8}{1:D1}";
+	public const string SCRIPT_NAME_BATTLE_START = "{0:D8}{1:D1}0";
+	public const string SCRIPT_NAME_BATTLE_START2 = "{0:D8}{1:D1}2";
+	public const string SCRIPT_NAME_BATTLE_START_JUST_BEFORE = "{0:D8}{1:D1}9";
+	public const string SCRIPT_NAME_BATTLE_END = "{0:D8}{1:D1}1";
+	public const string SCRIPT_NAME_BATTLE_END2 = "{0:D8}{1:D1}3";
+	public const string SCRIPT_NAME_BATTLE_OTHERWIN_END = "{0:D8}{1:D1}4";
+	public const string SCRIPT_NAME_BATTLE_OTHERWIN_END2 = "{0:D8}{1:D1}6";
+	public const string SCRIPT_NAME_BATTLE_LOSEWIN_END = "{0:D8}{1:D1}5";
+	public const string SCRIPT_NAME_BATTLE_LOSEWIN_END2 = "{0:D8}{1:D1}7";
+	public const string SCRIPT_NAME_NOTMEETS_COND = "{0:D8}{1:D1}8";
+	public const string SCRIPT_AUTO_MESSAGE_SAVE_KEY = "ScriptManagerAutoMessage";
+	public const string SCRIPT_SELECT_BRANCH_SAVE_KEY = "ScriptManagerSelectBranch";
+	public const string SCRIPT_NAME_WAR_EPILOGUE = "WarEpilogue";
+	public const string FLAG_NAME_INPUT_SELECT_BRANCH = "INPUT_SELECT_BRANCH";
+	public const string DIALOG_IGNORE_TIME_KEY = "dialogIgnoreTime";
+	private const int DEPTH_BUFFER_BITS = 24;
+	private const string QUEST_MESSAGE_ADD = "QuestMessageAdd";
+	private const string QUEST_MESSAGE_OVERWRITE = "QUEST_MESSAGE_OVERWRITE_";
+	public static readonly int PICTURE_FRAME_SPRITE_WIDTH_16_9; // 0x18
+	public static readonly int PICTURE_FRAME_SPRITE_WIDTH_21_9; // 0x1C
+	private const float FS_OFFSET_X_MARGIN = 80;
+	public static bool defaultForceObi_16_9; // 0x20
+	public static string textPathRaw; // 0x28
+	public static string textPath; // 0x30
+	private static readonly string TalkResumeKey; // 0x38
+	private static readonly string TalkResumeKeyV2; // 0x40
+	private static readonly string KEY_SWITCH_INFO; // 0x48
+	private static readonly string KEY_SWITCH_INFO_ROUTE_TYPE; // 0x50
+	private static readonly string KEY_LINE_INFO; // 0x58
+	private static readonly string KEY_FLAG_DATA_INFO; // 0x60
+	private static readonly string MovieResumeKey; // 0x68
+	private static readonly string PlayedLastMovieKey; // 0x70
+	private static readonly string DUMMY_TEXT; // 0x78
+	private const int RENDER_TEXTURE_CMAERA_DEPTH_DEFAULT = 1;
+	private const string AUTO_WAIT_TAG_FORMAT = "[wait skippableTime {0:F2}]";
+	private readonly string[] NOT_COUNT_EXCLUDE_WAIT_TYPES; // 0x20
+	private const string WaitLoadAssetMaxTimeWhenResumeKey = "WAIT_LOAD_ASSET_MAX_TIME_WHEN_RESUME_SCENARIO";
+	protected ScriptMessageCommonManager messageManager; // 0x28
+	[SerializeField]
+	protected ScriptMessageManager normalMessageManager; // 0x30
+	[SerializeField]
+	protected ScriptFaceMessageManager faceMessageManager; // 0x38
+	protected UIPanel blockPanel; // 0x40
+	[SerializeField]
+	protected UIPanel normalBlockPanel; // 0x48
+	[SerializeField]
+	protected UIPanel faceBlockPanel; // 0x50
+	[SerializeField]
+	protected ScriptSelectDialog selectDialog; // 0x58
+	[SerializeField]
+	protected UIPanel systemPanel; // 0x60
+	[SerializeField]
+	protected UIPanel actionPanel; // 0x68
+	[SerializeField]
+	protected UIPanel renderPanel; // 0x70
+	[SerializeField]
+	protected ExUISpriteRenderer pictureFrameSprite; // 0x78
+	[SerializeField]
+	protected ExUISpriteRenderer backSprite1; // 0x80
+	[SerializeField]
+	protected ExUISpriteRenderer backSprite2; // 0x88
+	[SerializeField]
+	protected ItemSeed figureSeed; // 0x90
+	[SerializeField]
+	protected ItemSeed equipSeed; // 0x98
+	[SerializeField]
+	protected ItemSeed imageSeed; // 0xA0
+	[SerializeField]
+	protected ItemSeed verticalImageSeed; // 0xA8
+	[SerializeField]
+	protected ItemSeed horizontalImageSeed; // 0xB0
+	[SerializeField]
+	protected ItemSeed equipViewSeed; // 0xB8
+	[SerializeField]
+	protected Transform shakeRoot; // 0xC0
+	[SerializeField]
+	protected UIWidget stretchBase; // 0xC8
+	[SerializeField]
+	protected UITweenRenderer meshFlashBase; // 0xD0
+	[SerializeField]
+	protected ExUIMeshRenderer meshWipeBase; // 0xD8
+	[SerializeField]
+	protected ExUIUserMeshRenderer meshExWipeBase; // 0xE0
+	[SerializeField]
+	protected UITweenRenderer meshFadeBase; // 0xE8
+	[SerializeField]
+	protected UITweenRenderer charaMeshFlashBase; // 0xF0
+	[SerializeField]
+	protected GameObject cameraScale; // 0xF8
+	[SerializeField]
+	protected GameObject cameraPosition; // 0x100
+	[SerializeField]
+	protected GameObject cameraRoll1; // 0x108
+	[SerializeField]
+	protected GameObject cameraRoll2; // 0x110
+	[SerializeField]
+	protected UIRoot uiRoot; // 0x118
+	[SerializeField]
+	protected UIRootReScale scriptReScale; // 0x120
+	[SerializeField]
+	protected ExUIMeshRenderer meshCaptureBase; // 0x128
+	[SerializeField]
+	protected ExUIMeshRenderer meshRenderBase; // 0x130
+	[SerializeField]
+	protected Camera renderTextureCamera; // 0x138
+	[SerializeField]
+	protected Camera margeCamera; // 0x140
+	[SerializeField]
+	protected Camera mapCamera; // 0x148
+	[SerializeField]
+	protected Camera ui2dCamera; // 0x150
+	[SerializeField]
+	protected GameObject communicationCharaEffectBase; // 0x158
+	[SerializeField]
+	protected GameObject specialEffectBase; // 0x160
+	[SerializeField]
+	protected GameObject fowardEffectBase; // 0x168
+	[SerializeField]
+	protected GameObject effectBase; // 0x170
+	[SerializeField]
+	protected GameObject backEffectBase; // 0x178
+	[SerializeField]
+	protected GameObject normalOperationBase; // 0x180
+	[SerializeField]
+	protected GameObject backViewOperationBase; // 0x188
+	[SerializeField]
+	protected GameObject figureViewOperationBase; // 0x190
+	[SerializeField]
+	protected GameObject equipGraphViewOperationBase; // 0x198
+	[SerializeField]
+	protected GameObject imageViewOperationBase; // 0x1A0
+	[SerializeField]
+	protected UILabel viewBackLabel; // 0x1A8
+	[SerializeField]
+	protected UILabel viewFigureLabel; // 0x1B0
+	[SerializeField]
+	protected UILabel viewEquipGraphLabel; // 0x1B8
+	[SerializeField]
+	protected UILabel viewFaceLabel; // 0x1C0
+	[SerializeField]
+	protected UILabel viewImageLabel; // 0x1C8
+	[SerializeField]
+	protected UICommonButton skipButton; // 0x1D0
+	[SerializeField]
+	protected GameObject touchFullScreen; // 0x1D8
+	[SerializeField]
+	protected GameObject fastPlayMark; // 0x1E0
+	[SerializeField]
+	protected ScriptSkipDialog skipConfirmDialog; // 0x1E8
+	[SerializeField]
+	protected ScriptBackLog backLogDialog; // 0x1F0
+	[SerializeField]
+	protected ScriptLogMessage logMessage; // 0x1F8
+	[SerializeField]
+	protected ScriptNotificationDialog notificationDialog; // 0x200
+	[SerializeField]
+	protected float defaultKeyDelayTime; // 0x208
+	[SerializeField]
+	private SpriteMask spriteMask; // 0x210
+	[SerializeField]
+	protected ScriptStoryOpenDialog storyOpenDialog; // 0x218
+	[SerializeField]
+	private TweenAlpha chapterSubTitleBase; // 0x220
+	[SerializeField]
+	private UILabel chapterSubTitleLabel; // 0x228
+	[SerializeField]
+	private GameObject nextMark; // 0x230
+	[SerializeField]
+	protected GameObject scriptPlayBase; // 0x238
+	[SerializeField]
+	protected UILabel scriptPlayLabel; // 0x240
+	[SerializeField]
+	protected ScriptActionAdvPrefabController scriptActionAdvPrefabController; // 0x248
+	[SerializeField]
+	protected ExUIMeshRenderer meshAdvPrefabRenderBase; // 0x250
+	public UISprite backMaskImage; // 0x258
+	[Header("Sub Layer")]
+	[SerializeField]
+	private ScriptSubLayerManager subLayerManager; // 0x260
+	protected RenderTexture captureTexture; // 0x268
+	protected static bool isReadScriptSetting; // 0x80
+	protected static bool isEnforceDebugSetting; // 0x81
+	protected static string scriptServerSettingAddress; // 0x88
+	protected static string scriptObjectSettingAddress; // 0x90
+	protected static string scriptPlayerPathSettingAddress; // 0x98
+	protected static string scriptPlayerObjectSettingAddress; // 0xA0
+	protected static int scriptGenderSettingIndex; // 0xA8
+	protected static string scriptStartModeSettingName; // 0xB0
+	protected static bool isHiddenTruthSetting; // 0xB8
+	protected static bool debugIsForceCheckOn; // 0xB9
+	protected static string playScriptDataName; // 0xC0
+	protected static QuestEntity.enType questType; // 0xC8
+	protected static int warId; // 0xCC
+	protected static int eventId; // 0xD0
+	protected static int questId; // 0xD4
+	protected static int scriptQuestId; // 0xD8
+	private static int questPhase; // 0xDC
+	private static int preQuestPhase; // 0xE0
+	private static int questPhaseMax; // 0xE4
+	private static string chapterSubTitle; // 0xE8
+	protected static string questTitle; // 0xF0
+	protected static string questMessage; // 0xF8
+	protected static string questMessageRuby; // 0x100
+	private static int questMessageLabelMaxLine; // 0x108
+	protected static Action templateCallbackFunc; // 0x110
+	protected static int templateSvtId; // 0x118
+	protected static int templateSvtVoiceId; // 0x11C
+	protected static int templateImageLimitCount; // 0x120
+	protected static bool templateIsFaceFirst; // 0x124
+	protected static ServantVoiceData[] templateVoiceList; // 0x128
+	private static bool isMyRoomMaterial; // 0x130
+	private static string questStartAction; // 0x138
+	private static bool isPictureFrameForceChangeSize; // 0x140
+	private bool enableWaitLoadAssetWhenResume; // 0x270
+	private float waitLoadAssetEndTime; // 0x274
+	private bool enableWaitLoadAssetTimeLimit; // 0x278
+	protected static ScriptManager.NotificationInfoManager notificationInfoManager; // 0x148
+	private const string FORM_ID = "form";
+	protected bool isInitBusy; // 0x279
+	protected ScriptManager.PlayMode playMode; // 0x27C
+	protected ScriptManager.StartMode startMode; // 0x280
+	protected bool isStartModeEnd; // 0x284
+	protected ScriptManager.State state; // 0x288
+	protected ScriptManager.PlaySpeed playSpeed; // 0x28C
+	protected ScriptManager.PlaySpeed requestPlaySpeed; // 0x290
+	protected ScriptManager.InputTopMode inputTopMode; // 0x294
+	protected List<string> downloadAssetList; // 0x298
+	protected List<string> fontAssetList; // 0x2A0
+	protected List<string> audioAssetList; // 0x2A8
+	protected List<string> uiAssetList; // 0x2B0
+	protected List<string> animationAssetList; // 0x2B8
+	protected bool isExecuteLoadAsset; // 0x2C0
+	protected int audioLoadIndex; // 0x2C4
+	protected bool isSkipAudioStop; // 0x2C8
+	protected bool isNonStopBgm; // 0x2C9
+	protected string assetName; // 0x2D0
+	protected string scriptLabel; // 0x2D8
+	protected ScriptManager.CallbackFunc callbackFunc; // 0x2E0
+	protected Action recoverBgmFunc; // 0x2E8
+	public bool isSkipExit; // 0x2F0
+	protected string[] scriptFileList; // 0x2F8
+	protected ScriptEncryptSettings scriptEncryptSettings; // 0x300
+	protected AssetData commonAssetData; // 0x308
+	protected AssetData assetData; // 0x310
+	protected AssetData gameDemoAssetData; // 0x318
+	protected int executeIndex; // 0x320
+	protected int executeIndexMax; // 0x324
+	protected int executeIndexMovie; // 0x328
+	protected int executeWaitIndex; // 0x32C
+	protected string[] executeTagList; // 0x330
+	protected string[] executeDataList; // 0x338
+	protected int[] executeLineList; // 0x340
+	protected int[] executeOrgLineList; // 0x348
+	protected bool[] executeMessageFlagList; // 0x350
+	protected int[] executeMessageMaxSizeList; // 0x358
+	protected int[] executeSwitchList; // 0x360
+	protected string[] orgScriptList; // 0x368
+	protected bool isSwitchCase; // 0x370
+	protected bool isCollection; // 0x371
+	protected bool isSkippedInCollection; // 0x372
+	public bool isSkippedInCollectionFinish; // 0x373
+	private bool isRevival; // 0x374
+	protected bool isCancelInput; // 0x375
+	protected bool isStartSkip; // 0x376
+	protected bool isSkip; // 0x377
+	protected string skipFade; // 0x378
+	protected string tapSkipLabel; // 0x380
+	protected string tapSkipFade; // 0x388
+	protected bool tapSkipResetPlaySpeedWhenNoSkip; // 0x390
+	protected bool isBackLog; // 0x391
+	protected bool isBacklogOnly; // 0x392
+	protected bool isButtonDisable; // 0x393
+	protected long[] parameterList; // 0x398
+	protected bool isAutoMessage; // 0x3A0
+	protected bool hideAutoMessageButton; // 0x3A1
+	protected bool hideBackLogButton; // 0x3A2
+	protected bool isRequestSkip; // 0x3A3
+	protected bool isExecuteSkip; // 0x3A4
+	protected List<int> inputCommandIndex; // 0x3A8
+	protected bool isMessageOffTalkMode; // 0x3B0
+	protected bool isTalkMask; // 0x3B1
+	protected bool isTalkDepth; // 0x3B2
+	protected string talkMaskName; // 0x3B8
+	protected bool isRequestEffect; // 0x3C0
+	private string isRequestEffectCommand; // 0x3C8
+	protected bool isSelectBranch; // 0x3D0
+	protected string waitType; // 0x3D8
+	protected int waitIndex; // 0x3E0
+	protected float waitCount; // 0x3E4
+	protected string waitName; // 0x3E8
+	private string waitTitle; // 0x3F0
+	protected string waitMessage; // 0x3F8
+	protected float waitTime; // 0x400
+	private bool isQuestOpen; // 0x404
+	protected bool isRequestVoiceCancel; // 0x405
+	protected int playScriptJumpLine; // 0x408
+	protected bool maskOnWhileJumping; // 0x40C
+	private string startEffectSkipName; // 0x410
+	private float margeCameraDepth; // 0x418
+	private Color margeCameraBackgroundColor; // 0x41C
+	private bool isScrollStop; // 0x42C
+	private int inputSelectBranchCount; // 0x430
+	private List<int> resetCommandIndex; // 0x438
+	private int branchLblLoopLine; // 0x440
+	private bool isLblLoop; // 0x444
+	private int labelLblLoopLine; // 0x448
+	private List<GetSvtCoin> getSvtCoins; // 0x450
+	private bool dialogIgnoreTime; // 0x458
+	private bool isScriptInterruption; // 0x459
+	protected SePlayer sePlayer; // 0x460
+	protected SePlayer loopSePlayer; // 0x468
+	protected Dictionary<int, SePlayer> seContinuePlayers; // 0x470
+	protected SePlayer voicePlayer; // 0x478
+	private bool isTVoice; // 0x480
+	private bool isPlayTVoice; // 0x481
+	private float tVoiceWaitCount; // 0x484
+	protected List<ScriptFlagData> flagDataList; // 0x488
+	protected ScriptCharaData[] charaList; // 0x490
+	protected bool isLoadCommunicationChara; // 0x498
+	protected string[] menuMessageList; // 0x4A0
+	protected string[] menuLabelList; // 0x4A8
+	protected int menuRouteSelectEndIndex; // 0x4B0
+	protected ScriptManager.MenuRouteInfo[] menuRouteList; // 0x4B8
+	protected List<int> selectedRouteTypeList; // 0x4C0
+	private bool limitTimeMode; // 0x4C8
+	private float limitTimeSeconds; // 0x4CC
+	private string[] limitTimeSeNames; // 0x4D0
+	private static readonly string SAVE_ROUTE_SELECT_IN_COLLECTION; // 0x150
+	private static readonly string MARK_STOPPED_CHARA_EFFECT; // 0x158
+	protected bool isBusyPictureFrame; // 0x4D8
+	protected bool isBusyPictureFrameLoad; // 0x4D9
+	protected int sceneMainIndex; // 0x4DC
+	protected bool isBusyScene; // 0x4E0
+	protected bool isBusySceneLoad; // 0x4E1
+	protected float sceneCrossFadeTime; // 0x4E4
+	protected float shakeTime; // 0x4E8
+	protected float shakeCycle; // 0x4EC
+	protected float shakeX; // 0x4F0
+	protected float shakeY; // 0x4F4
+	protected bool isExecuteCamera; // 0x4F8
+	protected bool isExecuteCameraRoll; // 0x4F9
+	protected string stretchName; // 0x500
+	protected bool isExecuteStretch; // 0x508
+	protected Vector2 stretchBaseRange; // 0x50C
+	protected string flashName; // 0x518
+	protected bool isExecuteFlash; // 0x520
+	protected bool isEndRequestFlash; // 0x521
+	protected int flashCount; // 0x524
+	protected float flashTime1; // 0x528
+	protected float flashTime2; // 0x52C
+	protected float flashTime3; // 0x530
+	protected Color flashColor1; // 0x534
+	protected Color flashColor2; // 0x544
+	protected string flashDepName; // 0x558
+	protected bool isExecuteFlashDep; // 0x560
+	protected bool isEndRequestFlashDep; // 0x561
+	protected int flashDepCount; // 0x564
+	protected float flashDepTime1; // 0x568
+	protected float flashDepTime2; // 0x56C
+	protected float flashDepTime3; // 0x570
+	protected Color flashDepColor1; // 0x574
+	protected Color flashDepColor2; // 0x584
+	private int flashDepNum; // 0x594
+	protected string wipeName; // 0x598
+	protected AssetData wipeAssetData; // 0x5A0
+	protected bool isExecuteWipe; // 0x5A8
+	protected bool isLoadWipe; // 0x5A9
+	protected bool isWipeFilter; // 0x5AA
+	protected bool isWipeIn; // 0x5AB
+	protected float wipeDuration; // 0x5AC
+	protected float wipeLevel; // 0x5B0
+	private float wipeParam1; // 0x5B4
+	private float wipeParam2; // 0x5B8
+	private float wipeParam3; // 0x5BC
+	private float wipeParam4; // 0x5C0
+	private bool isEffectMessageStopping; // 0x5C4
+	private CRIMoviePlayer cRIMoviePlayer; // 0x5C8
+	private bool isDetectionDebugCheckOn; // 0x5D0
+	private bool isEnableCheckDebugCheckOn; // 0x5D1
+	private ScriptManager.ExWipeType exWipeType; // 0x5D4
+	private int[] wipeExCutVarTriangles; // 0x5D8
+	private ScriptActionRenderEffectController scriptActionRenderEffectController; // 0x5E0
+	protected string fadeName; // 0x5E8
+	protected Color fadeColor; // 0x5F0
+	protected bool isExecuteFade; // 0x600
+	protected string backName; // 0x608
+	protected string figureName; // 0x610
+	protected string equipGraphName; // 0x618
+	protected string imageName; // 0x620
+	protected string[] backNameList; // 0x628
+	protected string[] figureNameList; // 0x630
+	protected int figureFaceNum; // 0x638
+	protected string[] equipGraphNameList; // 0x640
+	protected List<string> numberSortedEquipGraphNameList; // 0x648
+	protected string[] imageNameList; // 0x650
+	protected string codeCommentString; // 0x658
+	protected string codeLabelString; // 0x660
+	protected string codeSceneString; // 0x668
+	protected string codeTalkString; // 0x670
+	protected string codeSwitchCaseString; // 0x678
+	protected string codeSwitchCaseSplitString; // 0x680
+	protected string codeSwitchCaseHiddenString; // 0x688
+	protected string codeSwitchEndString; // 0x690
+	protected string codeInsertString; // 0x698
+	protected string codeVoiceString; // 0x6A0
+	protected string codeReturnString; // 0x6A8
+	protected string backLogTalkStartString; // 0x6B0
+	protected string backLogTalkEndString; // 0x6B8
+	protected string backLogTalkSelectMessageString; // 0x6C0
+	protected string backLogTalkSelectMessage2String; // 0x6C8
+	protected string backLogTalkSelectColorString; // 0x6D0
+	private string backLogTalkSelectTimeOverColorString; // 0x6D8
+	private bool isScriptExecuteMoviePlay; // 0x6E0
+	private bool isNeedSkipStateAfterMovie; // 0x6E1
+	private ScriptCommandDelayParam[] executeDelayParam; // 0x6E8
+	protected float scenarioSpeed; // 0x6F0
+	private float scenarioTextWaitTimeSecond; // 0x6F4
+	private float autoWaitTime; // 0x6F8
+	private string setAutoWaitTarget; // 0x700
+	private string notSetAutoWaitTarget; // 0x708
+	private string notSetAutoWaitCommand; // 0x710
+	private string[] notSetAutoWaitCommands; // 0x718
+	private float textStepTime; // 0x720
+	private bool isIfClearAfterSkip; // 0x724
+	private bool isIfClearResult; // 0x725
+	private string[] ifTags; // 0x728
+	private static int cachedSelectBranchQuestId; // 0x160
+	private static int cachedOverWriteQuestId; // 0x164
+	private bool isAligned; // 0x730
+	private bool isMaskEnabled; // 0x731
+	private bool isSpriteMaskLoading; // 0x732
+	private string frostedGlassAssetName; // 0x738
+	private string sublayerFrostedGlassAssetName; // 0x740
+	private bool isInsertionAnimationLoading; // 0x748
+	private bool isFrostedGlassTextureLoading; // 0x749
+	private bool isSublayerFrostedGlassTextureLoading; // 0x74A
+	private Action<bool> onEndRewardSwitchScript; // 0x750
+	private bool isGetReward; // 0x758
+	private bool isPlayScenarioWithMap; // 0x759
+	private int lineMaxFontSize; // 0x75C
+	private ScriptLoop scriptLoop; // 0x760
+	private bool isWaitSubLayer; // 0x768
+	private List<UITweener> currentSubLayerTweenerList; // 0x770
+	private List<GameObject> animationInsertionObjects; // 0x778
+	private List<string> animationInsertionAssetNames; // 0x780
+	private List<string> simpleMeshFigureNames; // 0x788
+	private readonly ScriptFsmObjectData[] fsmObjectDataList; // 0x790
+	protected static List<ScriptManager.ScriptRouteSelectParam> scriptRouteSelectParams; // 0x168
+	private Dictionary<string, object> switchSelections; // 0x798
+
+	// Properties
+	public bool IsLoading { get; }
+	public bool DialogIgnoreTime { set; }
+	public bool IsScriptInterruption { get; }
+
+	// Methods
+
+	// RVA: 0x319402C Offset: 0x319002C VA: 0x319402C
+	public string ScriptDebugLineString() { }
+
+	[Conditional("ENABLE_DEBUG")]
+	// RVA: 0x319406C Offset: 0x319006C VA: 0x319406C
+	public void ScriptAssertAreEqual(int expected, int actual, string message, GameObject gameObject, string filePath = "", int line = 0) { }
+
+	[Conditional("ENABLE_DEBUG")]
+	// RVA: -1 Offset: -1
+	public void ScriptAssertIsNotNull<T>(T value, string message = "ScriptAssertIsNotNull", GameObject gameObject, string filePath = "", int line = 0) { }
+	/* GenericInstMethod :
+	|
+	|-RVA: 0x39BAA6C Offset: 0x39B6A6C VA: 0x39BAA6C
+	|-ScriptManager.ScriptAssertIsNotNull<object>
+	*/
+
+	[Conditional("ENABLE_DEBUG")]
+	// RVA: -1 Offset: -1
+	public void ScriptAssertIsInRange<T>(T[] array, int index, string message, GameObject gameObject, string filePath = "", int line = 0) { }
+	/* GenericInstMethod :
+	|
+	|-RVA: 0x39BAA68 Offset: 0x39B6A68 VA: 0x39BAA68
+	|-ScriptManager.ScriptAssertIsInRange<__Il2CppFullySharedGenericType>
+	*/
+
+	[Conditional("ENABLE_DEBUG")]
+	// RVA: 0x3194070 Offset: 0x3190070 VA: 0x3194070
+	public void ScriptAssertIsTrue(bool condition, string message = "ScriptAssertIsTrue", GameObject gameObject, string filePath = "", int line = 0) { }
+
+	[Conditional("ENABLE_DEBUG")]
+	// RVA: 0x3194074 Offset: 0x3190074 VA: 0x3194074
+	public void ScriptAssertIsFalse(bool condition, string message = "ScriptAssertIsFalse", GameObject gameObject, string filePath = "", int line = 0) { }
+
+	// RVA: 0x3194078 Offset: 0x3190078 VA: 0x3194078
+	public bool get_IsLoading() { }
+
+	// RVA: 0x3194088 Offset: 0x3190088 VA: 0x3194088
+	public void set_DialogIgnoreTime(bool value) { }
+
+	// RVA: 0x3194090 Offset: 0x3190090 VA: 0x3194090
+	public bool get_IsScriptInterruption() { }
+
+	// RVA: 0x3194098 Offset: 0x3190098 VA: 0x3194098
+	public static void AddNotificationInfo(bool openQuest, string title, string message) { }
+
+	// RVA: 0x3194154 Offset: 0x3190154 VA: 0x3194154
+	public static void InitNotificationInfo() { }
+
+	// RVA: 0x31941B8 Offset: 0x31901B8 VA: 0x31941B8
+	public static int GetQuestId() { }
+
+	// RVA: 0x3194210 Offset: 0x3190210 VA: 0x3194210
+	public static string GetScriptLabel() { }
+
+	// RVA: 0x3194260 Offset: 0x3190260 VA: 0x3194260
+	public static string GetStartModeForAssetStorage(string path, string label) { }
+
+	// RVA: 0x31947E0 Offset: 0x31907E0 VA: 0x31947E0
+	protected static ScriptManager.StartMode GetStartMode(string startModeName) { }
+
+	// RVA: 0x31949E8 Offset: 0x31909E8 VA: 0x31949E8
+	public static int GetSelectBranchIndex() { }
+
+	// RVA: 0x3194A30 Offset: 0x3190A30 VA: 0x3194A30
+	public static void SetSelectBranchIndex(int branchIndex) { }
+
+	// RVA: 0x3194AC0 Offset: 0x3190AC0 VA: 0x3194AC0
+	public static void ClearSelectRouteArray() { }
+
+	// RVA: 0x3194B20 Offset: 0x3190B20 VA: 0x3194B20
+	public static int[] GetSelectRouteArray() { }
+
+	// RVA: 0x3194DC0 Offset: 0x3190DC0 VA: 0x3194DC0
+	public static bool isExistSelectRoute(int targetRoute) { }
+
+	// RVA: 0x3194E4C Offset: 0x3190E4C VA: 0x3194E4C
+	public static void SetScriptRouteSelectParam(int line, int route, bool isCollection) { }
+
+	// RVA: 0x31957C0 Offset: 0x31917C0 VA: 0x31957C0
+	public static void RemoveSelectRoute(int targetRoute) { }
+
+	// RVA: 0x3195518 Offset: 0x3191518 VA: 0x3195518
+	public static bool GetSelectRouteArrayInCollection(out int questId, out int phase, out int[] routes) { }
+
+	// RVA: 0x3195764 Offset: 0x3191764 VA: 0x3195764
+	public static void ClearSelectRouteArrayInCollection() { }
+
+	// RVA: 0x3195990 Offset: 0x3191990 VA: 0x3195990
+	public static int GetCachedSelectedBranchQuestId(int originalQuestId, int phase) { }
+
+	// RVA: 0x3195B0C Offset: 0x3191B0C VA: 0x3195B0C
+	public static bool GetNonStopEndBgm(int questId, int phase) { }
+
+	// RVA: 0x3195BC0 Offset: 0x3191BC0 VA: 0x3195BC0
+	public static void PlayScenario(string label, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False) { }
+
+	// RVA: 0x31962EC Offset: 0x31922EC VA: 0x31962EC
+	public static void PlayScenario(string label, bool isSkip, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False) { }
+
+	// RVA: 0x3196414 Offset: 0x3192414 VA: 0x3196414
+	public static void PlayMessage(string message, Action callbackFunc, bool isPlayScript = False, Camera mapCamera, int jumpLine = -1) { }
+
+	// RVA: 0x31965D4 Offset: 0x31925D4 VA: 0x31965D4
+	private void SetupMapCamera(Camera mapCamera) { }
+
+	// RVA: 0x3196BA0 Offset: 0x3192BA0 VA: 0x3196BA0
+	protected static void EndPlayMessagePlayLocal(bool isExit) { }
+
+	// RVA: 0x3196C24 Offset: 0x3192C24 VA: 0x3196C24
+	public static void PlayShop(string label, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False) { }
+
+	// RVA: 0x3196D48 Offset: 0x3192D48 VA: 0x3196D48
+	public static void PlayShopRewardSwitch(string label, Action<bool> onEndRewardSwitchScript, bool isCollection = False) { }
+
+	// RVA: 0x3196E88 Offset: 0x3192E88 VA: 0x3196E88
+	public static void PlayGacha(int svtId, int limitCount, bool isFaceFirst, Action callbackFunc, int svtVoiceId = 0, int scriptIdx = -1) { }
+
+	// RVA: 0x3197280 Offset: 0x3193280 VA: 0x3197280
+	public void PlayGacha(UserServantEntity userSvtEntity, int svtId, int limitCount, bool isEventSvtGet, bool checkQuestOpens, Action endAction, bool isEventJoinSkip = False, int presentDialogMessageId = 0, string summonScriptId) { }
+
+	// RVA: 0x31973B4 Offset: 0x31933B4 VA: 0x31973B4
+	private void QuestOpenNotify(int svtId, bool checkQuestOpen) { }
+
+	// RVA: 0x3197588 Offset: 0x3193588 VA: 0x3197588
+	private void SvtJoinNotify(UserServantEntity userSvtEntity, bool isEventSvtGet, bool isEventJoinSkip) { }
+
+	// RVA: 0x3197958 Offset: 0x3193958 VA: 0x3197958
+	private void PresentMessageNotify(int presentDialogMessageId, int servantId) { }
+
+	// RVA: 0x3197D0C Offset: 0x3193D0C VA: 0x3197D0C
+	public static void PlayWarBoardMessage(int stageId, int sceneType, long scriptId, Action callbackFunc) { }
+
+	// RVA: 0x3197B14 Offset: 0x3193B14 VA: 0x3197B14
+	public static void PlayNewSvtTalk(int svtId, int limitCount, string summonSctiptId, Action callbackFunc) { }
+
+	// RVA: 0x3196F20 Offset: 0x3192F20 VA: 0x3196F20
+	public static void PlayGacha(UserServantEntity userSvtEntity, int svtId, int limitCount, bool isFaceFirst, Action callbackFunc, int voiceId = 0, int scriptIdx = -1) { }
+
+	// RVA: 0x3197F40 Offset: 0x3193F40 VA: 0x3197F40
+	private static void _playGacha(int svtId, int svtVoiceId, int imageLimitCount, bool isFaceFirst, ServantVoiceData[] voiceList, Action callbackFunc) { }
+
+	// RVA: 0x319836C Offset: 0x319436C VA: 0x319836C
+	protected static void EndLoadPlayGachaVoice() { }
+
+	// RVA: 0x3198470 Offset: 0x3194470 VA: 0x3198470
+	protected static void EndLoadPlatGachaTemplate(AssetData data) { }
+
+	// RVA: 0x3198774 Offset: 0x3194774 VA: 0x3198774
+	protected static string CreateSummonMultiTemplate(AssetData data, List<SvtMultiPortraitEntity> entities) { }
+
+	// RVA: 0x319946C Offset: 0x319546C VA: 0x319946C
+	protected static string CreateSummonSingleTemplate(AssetData data) { }
+
+	// RVA: 0x3199B30 Offset: 0x3195B30 VA: 0x3199B30
+	protected static string CreateEquipSummonTemplate(AssetData data) { }
+
+	// RVA: 0x3199F48 Offset: 0x3195F48 VA: 0x3199F48
+	protected static void EndPlayGachaPlayLocal(bool isExit) { }
+
+	// RVA: 0x319A044 Offset: 0x3196044 VA: 0x319A044
+	public static void PlayChapterStart(int warId, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, int jumpLine = -1) { }
+
+	// RVA: 0x319A528 Offset: 0x3196528 VA: 0x319A528
+	public static void PlayChapterStartQuest(int warId, int qstId, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, int jumpLine = -1) { }
+
+	// RVA: 0x319A8E8 Offset: 0x31968E8 VA: 0x319A8E8
+	public static void PlayChapterStartNotCollection(int warId, Action callbackFunc, int jumpLine = -1) { }
+
+	// RVA: 0x319AB88 Offset: 0x3196B88 VA: 0x319AB88
+	public static void PlayChapterStartQuestNotCollection(int warId, int qstId, Action callbackFunc, int jumpLine = -1) { }
+
+	// RVA: 0x319A388 Offset: 0x3196388 VA: 0x319A388
+	public static void PlayChapterStartEffect(int warId, ScriptManager.CallbackFunc callbackFunc, bool isCollection) { }
+
+	// RVA: 0x319ACB8 Offset: 0x3196CB8 VA: 0x319ACB8
+	public static void PlayChapterEpilogue(int warId, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False) { }
+
+	// RVA: 0x319AE8C Offset: 0x3196E8C VA: 0x319AE8C
+	public static void PlayChapterClear(int warId, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False) { }
+
+	// RVA: 0x319B000 Offset: 0x3197000 VA: 0x319B000
+	protected static void SetQuestStartData(int warId, int questId, int questPhase, string questMessage, bool isMyRoomMaterial = False, QuestEntity dummyQuestEntity, string questStartAction) { }
+
+	// RVA: 0x319B4BC Offset: 0x31974BC VA: 0x319B4BC
+	public static bool isPlayQuestStart(int warId, int questId) { }
+
+	// RVA: 0x319B55C Offset: 0x319755C VA: 0x319B55C
+	public static void PlayQuestStart(int warId, int questId, int questPhaseMax, bool isCollection, Action callbackFunc, string questMessage, bool isMyRoomMaterial = False, QuestEntity dummyQuestEntity, string questStartAction) { }
+
+	// RVA: 0x319B8E4 Offset: 0x31978E4 VA: 0x319B8E4
+	public static string GetScriptName_BattleStart(int questId, int questPhase) { }
+
+	// RVA: 0x319B974 Offset: 0x3197974 VA: 0x319B974
+	public static string GetScriptName_BattleStart2(int questId, int questPhase) { }
+
+	// RVA: 0x319BA04 Offset: 0x3197A04 VA: 0x319BA04
+	public static string GetScriptName_BattleStartJustBefore(int questId, int questPhase) { }
+
+	// RVA: 0x319BA94 Offset: 0x3197A94 VA: 0x319BA94
+	public static string GetScriptName_NotMeetsCond(int questId, int questPhase) { }
+
+	// RVA: 0x319BB24 Offset: 0x3197B24 VA: 0x319BB24
+	public static string GetScriptName_BattleEnd_Direct(int questId, int questPhase, BattleData.WinResult winResult) { }
+
+	// RVA: 0x319BC50 Offset: 0x3197C50 VA: 0x319BC50
+	public static string GetScriptName_BattleEnd2_Direct(int questId, int questPhase, BattleData.WinResult winResult) { }
+
+	// RVA: 0x319BD7C Offset: 0x3197D7C VA: 0x319BD7C
+	public static string GetScriptName_BattleEnd(int scriptQuestId, int questPhase, BattleData.WinResult winResult = 1) { }
+
+	// RVA: 0x319C000 Offset: 0x3198000 VA: 0x319C000
+	public static string GetScriptName_BattleEnd2(int scriptQuestId, int questPhase, BattleData.WinResult winResult = 1) { }
+
+	// RVA: 0x319C1C0 Offset: 0x31981C0 VA: 0x319C1C0
+	public static string GetScriptAssetName(int questId) { }
+
+	// RVA: 0x319C2DC Offset: 0x31982DC VA: 0x319C2DC
+	public static string GetScriptAssetName(long scriptId) { }
+
+	// RVA: 0x3195CE4 Offset: 0x3191CE4 VA: 0x3195CE4
+	public static string GetScriptAssetName(string label) { }
+
+	// RVA: 0x319C408 Offset: 0x3198408 VA: 0x319C408
+	public static void PlayBattleStart(int warId, int questId, int questPhase, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, Action recoverBgmFunc, int jumpLine = -1, bool isNotMeets = False, bool isMyRoomMaterial = False, QuestEntity dummyQuestEntity) { }
+
+	// RVA: 0x319A668 Offset: 0x3196668 VA: 0x319A668
+	public static void PlayBattleStartWhite(int warId, int questId, int questPhase, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, Action recoverBgmFunc, int jumpLine = -1, bool isMyRoomMaterial = False) { }
+
+	// RVA: 0x319C6D0 Offset: 0x31986D0 VA: 0x319C6D0
+	public static void PlayBattleStart(int questId, int questPhase, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, Action recoverBgmFunc, bool isMyRoomMaterial = False) { }
+
+	// RVA: 0x319C8F4 Offset: 0x31988F4 VA: 0x319C8F4
+	public static void PlayBattleStart2(int warId, int questId, int questPhase, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, Action recoverBgmFunc, int jumpLine = -1) { }
+
+	// RVA: 0x319CB04 Offset: 0x3198B04 VA: 0x319CB04
+	public static void PlayBattleStart2(int questId, int questPhase, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False) { }
+
+	// RVA: 0x319CD0C Offset: 0x3198D0C VA: 0x319CD0C
+	public static void PlayBattleStartJustBefore(int warId, int questId, int questPhase, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, int jumpLine = -1) { }
+
+	// RVA: 0x319CF20 Offset: 0x3198F20 VA: 0x319CF20
+	public static bool HasBattleStartJustBeforeScript(int questId, int questPhase) { }
+
+	// RVA: 0x319D088 Offset: 0x3199088 VA: 0x319D088
+	private static void SetQuestMessage(int questId) { }
+
+	// RVA: 0x319D1BC Offset: 0x31991BC VA: 0x319D1BC
+	public static void PlayBattleEnd(int questId, int questPhase, BattleData.WinResult winResult, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, int jumpLine = -1) { }
+
+	// RVA: 0x319D264 Offset: 0x3199264 VA: 0x319D264
+	public static void PlayBattleEnd(int questId, int questPhase, BattleData.WinResult winResult, ScriptManager.StartMode startMode, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, int jumpLine = -1, bool isPlayWithMap = False) { }
+
+	// RVA: 0x319D4BC Offset: 0x31994BC VA: 0x319D4BC
+	public static void PlayBattleEndWhite(int questId, int questPhase, BattleData.WinResult winResult, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, int jumpLine = -1) { }
+
+	// RVA: 0x319D6EC Offset: 0x31996EC VA: 0x319D6EC
+	public static void PlayBattleEnd2(int questId, int questPhase, BattleData.WinResult winResult, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, int jumpLine = -1) { }
+
+	// RVA: 0x319D794 Offset: 0x3199794 VA: 0x319D794
+	public static void PlayBattleEnd2(int questId, int questPhase, BattleData.WinResult winResult, ScriptManager.StartMode startMode, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False, int jumpLine = -1, bool isPlayWithMap = False) { }
+
+	// RVA: 0x319D9EC Offset: 0x31999EC VA: 0x319D9EC
+	public static void LoadBattleStartGameDemo(int questId, int questPhase, bool isBefore, Action<string> callbackFunc, bool isCollection = False) { }
+
+	// RVA: 0x319DD00 Offset: 0x3199D00 VA: 0x319DD00
+	protected void LoadBattleStartGameDemoLocal(string demoInfo, Action<string> callbackFunc) { }
+
+	// RVA: 0x319DEE8 Offset: 0x3199EE8 VA: 0x319DEE8
+	public static void LoadBattleEndGameDemo(int questId, int questPhase, bool isBefore, Action<string> callbackFunc, bool isCollection = False) { }
+
+	// RVA: 0x319E20C Offset: 0x319A20C VA: 0x319E20C
+	protected void LoadBattleEndGameDemoLocal(string demoInfo, Action<string> callbackFunc) { }
+
+	// RVA: 0x319E38C Offset: 0x319A38C VA: 0x319E38C
+	public static void ReleaseBattleDemo() { }
+
+	// RVA: 0x319E42C Offset: 0x319A42C VA: 0x319E42C
+	protected void ReleaseBattleDemoLoacal() { }
+
+	// RVA: 0x319E4AC Offset: 0x319A4AC VA: 0x319E4AC
+	public static void PlayRaceResult(long scriptId, int eventId, int termId, int groupId, int rank, long time, ScriptManager.CallbackFunc callbackFunc, bool isCollection = False) { }
+
+	// RVA: 0x319E7C0 Offset: 0x319A7C0 VA: 0x319E7C0
+	public static void Play(string name, string label, bool isCollection, bool isSkip, ScriptManager.CallbackFunc callbackFunc) { }
+
+	// RVA: 0x319E900 Offset: 0x319A900 VA: 0x319E900
+	public static void BackViewClear() { }
+
+	// RVA: 0x319E95C Offset: 0x319A95C VA: 0x319E95C
+	public static void BackViewPlay(string backName, string[] backNameList, ScriptManager.CallbackFunc callbackFunc) { }
+
+	// RVA: 0x319E960 Offset: 0x319A960 VA: 0x319E960
+	public static void ImageViewClear() { }
+
+	// RVA: 0x319E9BC Offset: 0x319A9BC VA: 0x319E9BC
+	public static void ImageViewPlay(string imageName, string[] imageNameList, ScriptManager.CallbackFunc callbackFunc) { }
+
+	// RVA: 0x319E9C0 Offset: 0x319A9C0 VA: 0x319E9C0
+	public static void FigureViewClear() { }
+
+	// RVA: 0x319EA1C Offset: 0x319AA1C VA: 0x319EA1C
+	public static void FigureViewPlay(string figureName, string[] figureNameList, ScriptManager.CallbackFunc callbackFunc) { }
+
+	// RVA: 0x319EA20 Offset: 0x319AA20 VA: 0x319EA20
+	public static void EquipGraphViewClear() { }
+
+	// RVA: 0x319EA7C Offset: 0x319AA7C VA: 0x319EA7C
+	public static void EquipGraphViewPlay(string equipGraphName, string[] equipGraphNameList, ScriptManager.CallbackFunc callbackFunc) { }
+
+	// RVA: 0x319EA80 Offset: 0x319AA80 VA: 0x319EA80
+	public static string GetScriptServerSetting() { }
+
+	// RVA: 0x319EAD8 Offset: 0x319AAD8 VA: 0x319EAD8
+	public static string GetScriptObjectSetting() { }
+
+	// RVA: 0x319EB30 Offset: 0x319AB30 VA: 0x319EB30
+	public static string GetScriptPlayerPathSetting() { }
+
+	// RVA: 0x319EB88 Offset: 0x319AB88 VA: 0x319EB88
+	public static string GetScriptPlayerObjectSetting() { }
+
+	// RVA: 0x319EBE0 Offset: 0x319ABE0 VA: 0x319EBE0
+	public static int GetScriptGenderSetting() { }
+
+	// RVA: 0x319EC38 Offset: 0x319AC38 VA: 0x319EC38
+	public static string GetScriptStartModeSetting() { }
+
+	// RVA: 0x319EC90 Offset: 0x319AC90 VA: 0x319EC90
+	public static bool GetScriptHiddenTruthSetting() { }
+
+	// RVA: 0x319ECE8 Offset: 0x319ACE8 VA: 0x319ECE8
+	public static bool GetScriptForceCheckOnSetting() { }
+
+	// RVA: 0x319ED40 Offset: 0x319AD40 VA: 0x319ED40
+	public static void SetScriptForceCheckOnSetting(bool isForceCheckOn) { }
+
+	// RVA: 0x319EDA0 Offset: 0x319ADA0 VA: 0x319EDA0
+	public static bool Fade(string name, bool isIn, float duration) { }
+
+	// RVA: 0x319F3A0 Offset: 0x319B3A0 VA: 0x319F3A0
+	public static bool IsBusyFade() { }
+
+	// RVA: 0x319F3F0 Offset: 0x319B3F0 VA: 0x319F3F0
+	public static bool SetScriptServerSetting(string scriptServer, string scriptObject, int genderIndex, string startModeName, bool isHiddenTruthSetting) { }
+
+	// RVA: 0x319F5D0 Offset: 0x319B5D0 VA: 0x319F5D0
+	public static bool SetScriptPlayerSetting(string scriptPath, string scriptObject, int genderIndex, string startModeName, bool isHiddenTruthSetting) { }
+
+	// RVA: 0x319F7B0 Offset: 0x319B7B0 VA: 0x319F7B0
+	public static void SetIsCollection(bool isCollection) { }
+
+	// RVA: 0x319F7B4 Offset: 0x319B7B4 VA: 0x319F7B4
+	public static bool GetIsCollection() { }
+
+	// RVA: 0x319F7BC Offset: 0x319B7BC VA: 0x319F7BC
+	public static void SetIsRevival(bool isRevival) { }
+
+	// RVA: 0x319F7C0 Offset: 0x319B7C0 VA: 0x319F7C0
+	public static bool GetIsRevival() { }
+
+	// RVA: 0x3199EAC Offset: 0x3195EAC VA: 0x3199EAC
+	protected string GetKey(string scriptName) { }
+
+	// RVA: 0x319F7C8 Offset: 0x319B7C8 VA: 0x319F7C8
+	public ScriptEncryptEntity GetEncryptEntity(string scriptName) { }
+
+	// RVA: 0x319F864 Offset: 0x319B864 VA: 0x319F864
+	public bool ReadSetting() { }
+
+	// RVA: 0x319F90C Offset: 0x319B90C VA: 0x319F90C
+	public void WriteSetting() { }
+
+	// RVA: 0x319F910 Offset: 0x319B910 VA: 0x319F910
+	private RenderTexture CreateRenderTexture(bool enableMask = False) { }
+
+	// RVA: 0x319F990 Offset: 0x319B990 VA: 0x319F990
+	protected void RenderCameraInit() { }
+
+	// RVA: 0x319FE48 Offset: 0x319BE48 VA: 0x319FE48
+	private void ReleaseRenderTexutre() { }
+
+	// RVA: 0x319FF8C Offset: 0x319BF8C VA: 0x319FF8C
+	protected void RenderCameraQuit() { }
+
+	// RVA: 0x319FF74 Offset: 0x319BF74 VA: 0x319FF74
+	private void RenderCameraSubInit() { }
+
+	// RVA: 0x31A00E8 Offset: 0x319C0E8 VA: 0x31A00E8
+	private void RenderCameraSubStart(int subLayerCount) { }
+
+	// RVA: 0x31A00D0 Offset: 0x319C0D0 VA: 0x31A00D0
+	private void RenderCameraSubQuit() { }
+
+	// RVA: 0x31A010C Offset: 0x319C10C VA: 0x31A010C
+	protected RenderTexture RenderCameraSwap(RenderTexture swapTexture) { }
+
+	// RVA: 0x31A02E4 Offset: 0x319C2E4 VA: 0x31A02E4
+	public RenderTexture GetRenderTargetTexture() { }
+
+	// RVA: 0x31A02FC Offset: 0x319C2FC VA: 0x31A02FC
+	public RenderTexture GetCaptureRenderTexture() { }
+
+	// RVA: 0x319FF30 Offset: 0x319BF30 VA: 0x319FF30
+	public void SetCameraFilter(string filterName, float[] paramsFloat) { }
+
+	// RVA: 0x31A0304 Offset: 0x319C304 VA: 0x31A0304
+	private void SetCameraFilter(Material mt, string filterName, float[] paramsFloat) { }
+
+	// RVA: 0x31A0608 Offset: 0x319C608 VA: 0x31A0608
+	private Shader GetSpriteScriptActionRenderShader(string shaderName) { }
+
+	// RVA: 0x31A0578 Offset: 0x319C578 VA: 0x31A0578
+	private string GetStringWithFirstLetterChangedToUpperCase(string str) { }
+
+	// RVA: 0x31A065C Offset: 0x319C65C VA: 0x31A065C
+	public void reboot(bool isRemoveScriptFileList = True) { }
+
+	// RVA: 0x31A0DC0 Offset: 0x319CDC0 VA: 0x31A0DC0
+	public void Initialize() { }
+
+	// RVA: 0x31A22E8 Offset: 0x319E2E8 VA: 0x31A22E8
+	private void EndLoadScriptFileListAssetData(AssetData assetData) { }
+
+	// RVA: 0x31A2420 Offset: 0x319E420 VA: 0x31A2420
+	public bool IsBusyInitialize() { }
+
+	// RVA: 0x31A2428 Offset: 0x319E428 VA: 0x31A2428
+	public string[] GetScriptFileList() { }
+
+	// RVA: 0x319BF3C Offset: 0x3197F3C VA: 0x319BF3C
+	public bool IsExistScriptFile(string scriptName) { }
+
+	// RVA: 0x31A2430 Offset: 0x319E430 VA: 0x31A2430
+	protected void InitSetting() { }
+
+	// RVA: 0x31A3250 Offset: 0x319F250 VA: 0x31A3250
+	private void SetBackLog(bool value) { }
+
+	// RVA: 0x3195DA0 Offset: 0x3191DA0 VA: 0x3195DA0
+	protected void PlayLocal(ScriptManager.PlayMode mode, ScriptManager.StartMode start, string name, string label, bool isCollection, bool isSkip, bool isBackLog, long[] parameterList, ScriptManager.CallbackFunc callbackFunc, Action recoverBgmFunc, int jumpLine = -1, bool forceSkipDisable = False) { }
+
+	// RVA: 0x31A36C0 Offset: 0x319F6C0 VA: 0x31A36C0
+	public static void SetIsSkippedInCollectionFalse() { }
+
+	// RVA: 0x31A37B8 Offset: 0x319F7B8 VA: 0x31A37B8
+	private void ShowChapterSubTitle() { }
+
+	// RVA: 0x31A3A08 Offset: 0x319FA08 VA: 0x31A3A08
+	private void SetOnEndRewardSwitchScript(Action<bool> onEndRewardSwitchScript) { }
+
+	// RVA: 0x31A3A18 Offset: 0x319FA18 VA: 0x31A3A18
+	protected void EndFirstLoadAsset(AssetData loadData) { }
+
+	// RVA: 0x31A32D4 Offset: 0x319F2D4 VA: 0x31A32D4
+	protected void FirstExecuteScriptLoadCommonData() { }
+
+	// RVA: 0x31A3E64 Offset: 0x319FE64 VA: 0x31A3E64
+	protected void EndLoadCommonScriptData(AssetData loadData) { }
+
+	// RVA: 0x31A3BA8 Offset: 0x319FBA8 VA: 0x31A3BA8
+	private string GetScriptData() { }
+
+	// RVA: 0x31A33EC Offset: 0x319F3EC VA: 0x31A33EC
+	protected void FirstExecuteScript() { }
+
+	// RVA: 0x31A40AC Offset: 0x31A00AC VA: 0x31A40AC
+	protected void LoadExecuteScript(string name, string label) { }
+
+	// RVA: 0x31A4298 Offset: 0x31A0298 VA: 0x31A4298
+	protected void EndLoadAsset(AssetData loadData) { }
+
+	// RVA: 0x31A4328 Offset: 0x31A0328 VA: 0x31A4328
+	protected void LoadScript(string name, string label, ScriptManager.CallbackBranchList callbackFunc) { }
+
+	// RVA: 0x31A45F0 Offset: 0x31A05F0 VA: 0x31A45F0
+	private List<List<string>> LoadScriptAnalys(string name, string label) { }
+
+	// RVA: 0x31A4620 Offset: 0x31A0620 VA: 0x31A4620
+	private List<List<string>> ScriptAnalys(string label, string scriptData, string oriScriptData) { }
+
+	// RVA: 0x31A7BBC Offset: 0x31A3BBC VA: 0x31A7BBC
+	protected string GetCommonScriptText(string label) { }
+
+	// RVA: 0x31A3E88 Offset: 0x319FE88 VA: 0x31A3E88
+	protected string GetExecuteScriptText(string label) { }
+
+	// RVA: 0x31A7E74 Offset: 0x31A3E74 VA: 0x31A7E74
+	private string GetOverwriteText(string label, int key) { }
+
+	// RVA: 0x31A3F58 Offset: 0x319FF58 VA: 0x31A3F58
+	protected void ExecuteScript(string label, string scriptData, string orgScriptData) { }
+
+	// RVA: 0x31A872C Offset: 0x31A472C VA: 0x31A872C
+	protected void EndDownloadAssetData() { }
+
+	// RVA: 0x31A891C Offset: 0x31A491C VA: 0x31A891C
+	protected void EndFontAssetData() { }
+
+	// RVA: 0x31A8824 Offset: 0x31A4824 VA: 0x31A8824
+	protected void StartLoadAnimationAssetData() { }
+
+	// RVA: 0x31A8920 Offset: 0x31A4920 VA: 0x31A8920
+	protected void StartLoadUIAssetData() { }
+
+	// RVA: 0x31A8A1C Offset: 0x31A4A1C VA: 0x31A8A1C
+	protected void StartLoadAudioAssetData() { }
+
+	// RVA: 0x31A8A24 Offset: 0x31A4A24 VA: 0x31A8A24
+	protected void LoadAudioAssetData() { }
+
+	// RVA: 0x31966F4 Offset: 0x31926F4 VA: 0x31966F4
+	protected void PlayLocal(ScriptManager.PlayMode mode, ScriptManager.StartMode start, string data, bool isCollection, bool isSkip, bool isBackLog, bool isButtonDisable, long[] parameterList, ScriptManager.CallbackFunc callbackFunc, int jumpLine = -1) { }
+
+	// RVA: 0x31A8BE8 Offset: 0x31A4BE8 VA: 0x31A8BE8
+	protected void PlayLocal(ScriptManager.PlayMode mode, ScriptManager.StartMode start, string data, string orgData, string[] list, int genderIndex, ScriptManager.CallbackFunc callbackFunc, int jumpLine = -1, DebugTestRootComponent.ScriptReloadCallback reloadCallback) { }
+
+	// RVA: 0x31A8F0C Offset: 0x31A4F0C VA: 0x31A8F0C
+	protected ScriptFlagData SearchFlag(string name) { }
+
+	// RVA: 0x31A50EC Offset: 0x31A10EC VA: 0x31A50EC
+	protected void AnalysScript(string scriptData, string orgScriptData) { }
+
+	// RVA: 0x31B0F80 Offset: 0x31ACF80 VA: 0x31B0F80
+	private void CheckAudioData(string addAudioData) { }
+
+	// RVA: 0x31B11A8 Offset: 0x31AD1A8 VA: 0x31B11A8
+	private void CheckFontData(string addFontData) { }
+
+	// RVA: 0x31B1364 Offset: 0x31AD364 VA: 0x31B1364
+	private void CheckAssetData(string addAssetData) { }
+
+	// RVA: 0x31B14C8 Offset: 0x31AD4C8 VA: 0x31B14C8
+	private void CheckAssetDataList(string[] addAssetDataList) { }
+
+	// RVA: 0x31A90E4 Offset: 0x31A50E4 VA: 0x31A90E4
+	private void AddSwitchCaseAsset(string paramText) { }
+
+	// RVA: 0x31A9080 Offset: 0x31A5080 VA: 0x31A9080
+	private bool IsCodeSwitchCaseString(string analysData) { }
+
+	// RVA: 0x31A906C Offset: 0x31A506C VA: 0x31A906C
+	private bool IsCodeSwitchEndString(string analysData) { }
+
+	// RVA: 0x31B15E4 Offset: 0x31AD5E4 VA: 0x31B15E4
+	public void destroyAnimationInsertionObjects() { }
+
+	// RVA: 0x31B17E8 Offset: 0x31AD7E8 VA: 0x31B17E8
+	public void destroyAnimationInsertionObject(string objName) { }
+
+	// RVA: 0x31B1974 Offset: 0x31AD974 VA: 0x31B1974
+	private string SetAutoWait(string stringData) { }
+
+	// RVA: 0x31B1EAC Offset: 0x31ADEAC VA: 0x31B1EAC
+	private bool CheckNotSetAutoWaitCommand(string[] commands, string stringData) { }
+
+	// RVA: 0x31B1F34 Offset: 0x31ADF34 VA: 0x31B1F34
+	private string GetCommandTag(int startIdx, string stringData) { }
+
+	// RVA: 0x31B2038 Offset: 0x31AE038 VA: 0x31B2038
+	private float GetAutoWaitTime(int stringCount) { }
+
+	// RVA: 0x31B210C Offset: 0x31AE10C VA: 0x31B210C
+	private bool IsExistsNotCountExcludeWaitType(int index) { }
+
+	// RVA: 0x31A7688 Offset: 0x31A3688 VA: 0x31A7688
+	protected string[] AnalysParam(string data) { }
+
+	// RVA: 0x31B220C Offset: 0x31AE20C VA: 0x31B220C
+	protected string GetAfterParam(string data, int index) { }
+
+	// RVA: 0x31B2710 Offset: 0x31AE710 VA: 0x31B2710
+	private int GetNextDelayEnd(int currentIndex) { }
+
+	// RVA: 0x31B27A8 Offset: 0x31AE7A8 VA: 0x31B27A8
+	protected bool TDelayJumpScript(int index) { }
+
+	// RVA: 0x31B27E4 Offset: 0x31AE7E4 VA: 0x31B27E4
+	protected bool JumpScript(int index) { }
+
+	// RVA: 0x31A8488 Offset: 0x31A4488 VA: 0x31A8488
+	protected bool JumpScript(string label) { }
+
+	// RVA: 0x31B2A9C Offset: 0x31AEA9C VA: 0x31B2A9C
+	private bool SearchBranchLabel(string label, int beforeExecuteIndex, bool isAfterSearch, int selectBranchCount) { }
+
+	// RVA: 0x31B2B88 Offset: 0x31AEB88 VA: 0x31B2B88
+	private bool SetJumpIndexByLabel(string label, int index, ref bool isResetSwitchCase) { }
+
+	// RVA: 0x31B2CFC Offset: 0x31AECFC VA: 0x31B2CFC
+	protected bool JumpScriptCommand(string command) { }
+
+	// RVA: 0x31B2E34 Offset: 0x31AEE34 VA: 0x31B2E34
+	protected bool JumpScriptSwitchCase(int index) { }
+
+	// RVA: 0x31B2FC4 Offset: 0x31AEFC4 VA: 0x31B2FC4
+	protected string GetStringParameter(string[] pd, int s, string name) { }
+
+	// RVA: 0x31B3130 Offset: 0x31AF130 VA: 0x31B3130
+	protected int[] GetPositionParameter(string[] pd, int s, string name) { }
+
+	// RVA: 0x31B33C4 Offset: 0x31AF3C4 VA: 0x31B33C4
+	protected int GetIntegerParameter(string[] pd, int s, string name) { }
+
+	// RVA: 0x31B3458 Offset: 0x31AF458 VA: 0x31B3458
+	protected float GetFloatParameter(string[] pd, int s, string name) { }
+
+	// RVA: 0x31B34F0 Offset: 0x31AF4F0 VA: 0x31B34F0
+	protected int ConvertCharaIndex(string s) { }
+
+	// RVA: 0x31B356C Offset: 0x31AF56C VA: 0x31B356C
+	protected int ConvertCharaIndexTalk(string s) { }
+
+	// RVA: 0x31B1530 Offset: 0x31AD530 VA: 0x31B1530
+	protected string ConvertNameString(string s) { }
+
+	// RVA: 0x31B36BC Offset: 0x31AF6BC VA: 0x31B36BC
+	protected Color ConvertColor(string s) { }
+
+	// RVA: 0x31B37C8 Offset: 0x31AF7C8 VA: 0x31B37C8
+	protected string ConvertTalkEffectName(string s) { }
+
+	// RVA: 0x31B3898 Offset: 0x31AF898 VA: 0x31B3898
+	protected string ConvertFontName(string s) { }
+
+	// RVA: 0x31B38E4 Offset: 0x31AF8E4 VA: 0x31B38E4
+	protected string ConvertPictureFrameImageName(string s) { }
+
+	// RVA: 0x31B3930 Offset: 0x31AF930 VA: 0x31B3930
+	protected string ConvertBackTextureName(string s) { }
+
+	// RVA: 0x31B39B4 Offset: 0x31AF9B4 VA: 0x31B39B4
+	private string ConvertSpriteMaskName(string s) { }
+
+	// RVA: 0x31B3A00 Offset: 0x31AFA00 VA: 0x31B3A00
+	protected string ConvertWipeName(string s) { }
+
+	// RVA: 0x31B3AD0 Offset: 0x31AFAD0 VA: 0x31B3AD0
+	protected CommonEffectManager.FlipKind ConvertEffectFlipKind(string s) { }
+
+	// RVA: 0x31B3B94 Offset: 0x31AFB94 VA: 0x31B3B94
+	protected Color ConvertMovieColor(string s) { }
+
+	// RVA: 0x31B3C38 Offset: 0x31AFC38 VA: 0x31B3C38
+	protected string ConvertMovieName(string s) { }
+
+	// RVA: 0x31B3C84 Offset: 0x31AFC84 VA: 0x31B3C84
+	protected string ConvertCRIMovieName(string s) { }
+
+	// RVA: 0x31B3CD0 Offset: 0x31AFCD0 VA: 0x31B3CD0
+	protected bool ConvertCRIMovieBgmStop(string s) { }
+
+	// RVA: 0x31B3D24 Offset: 0x31AFD24 VA: 0x31B3D24
+	protected bool ConvertCRIMovieSeStop(string s) { }
+
+	// RVA: 0x31B3D78 Offset: 0x31AFD78 VA: 0x31B3D78
+	protected bool ConvertCRIMovieVoiceStop(string s) { }
+
+	// RVA: 0x31B3DCC Offset: 0x31AFDCC VA: 0x31B3DCC
+	protected bool ConvertCRIMovieScriptStop(string s) { }
+
+	// RVA: 0x31B3E2C Offset: 0x31AFE2C VA: 0x31B3E2C
+	protected ScriptManager.MenuRouteInfo.RouteType ConvertToRouteType(string s) { }
+
+	// RVA: 0x31B3ED4 Offset: 0x31AFED4 VA: 0x31B3ED4
+	protected string ConvertMessageWindowName(string s) { }
+
+	// RVA: 0x31B3F20 Offset: 0x31AFF20 VA: 0x31B3F20
+	protected string ConvertInsertionAnimationName(string s) { }
+
+	// RVA: 0x31B3F6C Offset: 0x31AFF6C VA: 0x31B3F6C
+	protected int GetQuestId(string key) { }
+
+	// RVA: 0x31A087C Offset: 0x319C87C VA: 0x31A087C
+	protected void ReleaseAsset() { }
+
+	// RVA: 0x31A0D54 Offset: 0x319CD54 VA: 0x31A0D54
+	private void ReleaseAudioAssetList() { }
+
+	// RVA: 0x31B2824 Offset: 0x31AE824 VA: 0x31B2824
+	public void EndExecuteScript(string endFadeColor) { }
+
+	// RVA: 0x31B402C Offset: 0x31B002C VA: 0x31B402C
+	private ScriptManager.StartMode GetEndMode(string endFadeColor) { }
+
+	// RVA: 0x31B416C Offset: 0x31B016C VA: 0x31B416C
+	protected void ExitExecuteScript() { }
+
+	// RVA: 0x31B4C84 Offset: 0x31B0C84 VA: 0x31B4C84
+	protected void SoundStopAll() { }
+
+	// RVA: 0x31B4D08 Offset: 0x31B0D08 VA: 0x31B4D08
+	protected void CheckSameIdSeContinue(int playSeId) { }
+
+	// RVA: 0x31B4C1C Offset: 0x31B0C1C VA: 0x31B4C1C
+	private void SoundStopAllEnd(bool nonStopEndBgm = False) { }
+
+	// RVA: 0x31B4DC8 Offset: 0x31B0DC8 VA: 0x31B4DC8
+	private void SoundStopAllFade(float time) { }
+
+	// RVA: 0x31B4E64 Offset: 0x31B0E64 VA: 0x31B4E64
+	private bool IsEqualTalkName(string name) { }
+
+	// RVA: 0x31A3268 Offset: 0x319F268 VA: 0x31A3268
+	public bool IsJumpLine() { }
+
+	// RVA: 0x31B52F4 Offset: 0x31B12F4 VA: 0x31B52F4
+	protected bool IsAutoPlay() { }
+
+	// RVA: 0x31B5324 Offset: 0x31B1324 VA: 0x31B5324
+	protected bool IsNormalPlaySpeed() { }
+
+	// RVA: 0x31B5344 Offset: 0x31B1344 VA: 0x31B5344
+	protected bool IsFastPlaySpeed() { }
+
+	// RVA: 0x31B536C Offset: 0x31B136C VA: 0x31B536C
+	protected void PausePlaySpeed(bool isSwitchCase = False) { }
+
+	// RVA: 0x31B53D8 Offset: 0x31B13D8 VA: 0x31B53D8
+	protected void ResumePlaySpeed() { }
+
+	// RVA: 0x31A8220 Offset: 0x31A4220 VA: 0x31A8220
+	protected void ModifyPlaySpeed(bool isRecover = True) { }
+
+	// RVA: 0x31B55E8 Offset: 0x31B15E8 VA: 0x31B55E8
+	protected bool CheckSwitchType(string[] pd) { }
+
+	// RVA: 0x31B576C Offset: 0x31B176C VA: 0x31B576C
+	private void UpdateDelayScript(float originalDelta) { }
+
+	// RVA: 0x31B6618 Offset: 0x31B2618 VA: 0x31B6618
+	protected bool SkipFade(string skipFade) { }
+
+	// RVA: 0x31B682C Offset: 0x31B282C VA: 0x31B682C
+	protected void ReadyCommunicationChara() { }
+
+	// RVA: 0x31B6834 Offset: 0x31B2834 VA: 0x31B6834
+	protected void OnSelectSwitchCase(int index) { }
+
+	// RVA: 0x31B6E50 Offset: 0x31B2E50 VA: 0x31B6E50
+	protected void EndSelectSwitchCase(int index) { }
+
+	// RVA: 0x31B722C Offset: 0x31B322C VA: 0x31B722C
+	protected void OnSelectMenu(int index) { }
+
+	// RVA: 0x31B7380 Offset: 0x31B3380 VA: 0x31B7380
+	protected bool IsWaitTalk() { }
+
+	// RVA: 0x31B744C Offset: 0x31B344C VA: 0x31B744C
+	protected void SetTalkName(string name) { }
+
+	// RVA: 0x31B76DC Offset: 0x31B36DC VA: 0x31B76DC
+	private void SetCharaSpotlight(List<int> indexes) { }
+
+	// RVA: 0x31B75D8 Offset: 0x31B35D8 VA: 0x31B75D8
+	protected void SetTalkIndex(int index) { }
+
+	// RVA: 0x31B6BF8 Offset: 0x31B2BF8 VA: 0x31B6BF8
+	protected void SetSelectLogMessage(string message, bool isSelected = True) { }
+
+	// RVA: 0x31B77C4 Offset: 0x31B37C4 VA: 0x31B77C4
+	protected bool SetCharaImage(string name, string charaName) { }
+
+	// RVA: 0x31B78E8 Offset: 0x31B38E8 VA: 0x31B78E8
+	protected void SetCharaFace(int n) { }
+
+	// RVA: 0x31B79B4 Offset: 0x31B39B4 VA: 0x31B79B4
+	protected bool SetEquipGraphic(string name, string charaName) { }
+
+	// RVA: 0x31B7AD4 Offset: 0x31B3AD4 VA: 0x31B7AD4
+	private bool IsMessageLine(int index) { }
+
+	// RVA: 0x31B206C Offset: 0x31AE06C VA: 0x31B206C
+	private float GetTextSpeed() { }
+
+	// RVA: 0x31B58DC Offset: 0x31B18DC VA: 0x31B58DC
+	private bool IsTextSkip(bool checkTextSpeed) { }
+
+	// RVA: 0x31B7B3C Offset: 0x31B3B3C VA: 0x31B7B3C
+	protected bool ClearPictureFrameImage() { }
+
+	// RVA: 0x31B7BBC Offset: 0x31B3BBC VA: 0x31B7BBC
+	protected bool SetPictureFrameImage(string fileName, bool isTop) { }
+
+	// RVA: 0x31B7D60 Offset: 0x31B3D60 VA: 0x31B7D60
+	protected void OnLoadEndPictureFrame() { }
+
+	// RVA: 0x31B7D68 Offset: 0x31B3D68 VA: 0x31B7D68
+	private bool SetSceneImage(string fileName, ScriptManager.SCENE_MODE sceneMode = 0) { }
+
+	// RVA: 0x31B7FC0 Offset: 0x31B3FC0 VA: 0x31B7FC0
+	protected void OnLoadEndScene(string fileName, ScriptManager.SCENE_MODE sceneMode) { }
+
+	// RVA: 0x31B813C Offset: 0x31B413C VA: 0x31B813C
+	protected void OnCrossFadeEndScene() { }
+
+	// RVA: 0x31B8248 Offset: 0x31B4248 VA: 0x31B8248
+	protected object GetEffectParameter(string effectName) { }
+
+	// RVA: 0x31A1BEC Offset: 0x319DBEC VA: 0x31A1BEC
+	protected void InitEffect() { }
+
+	// RVA: 0x31A1CE4 Offset: 0x319DCE4 VA: 0x31A1CE4
+	protected void InitCamera() { }
+
+	// RVA: 0x31B83DC Offset: 0x31B43DC VA: 0x31B83DC
+	private void InitCamera(GameObject cameraScale, GameObject cameraPosition, bool isMainCamera) { }
+
+	// RVA: 0x31B5450 Offset: 0x31B1450 VA: 0x31B5450
+	protected void DestroyStoppedCharaEffect() { }
+
+	// RVA: 0x31B5500 Offset: 0x31B1500 VA: 0x31B5500
+	protected void StopMoveRelativePosition() { }
+
+	// RVA: 0x31B5574 Offset: 0x31B1574 VA: 0x31B5574
+	protected void StopMoveAlphaLoop() { }
+
+	// RVA: 0x31B85FC Offset: 0x31B45FC VA: 0x31B85FC
+	private void StopMoveTween(GameObject go) { }
+
+	// RVA: 0x31B86F4 Offset: 0x31B46F4 VA: 0x31B86F4
+	private void StopMoveScaleTween(GameObject go) { }
+
+	// RVA: 0x31B87EC Offset: 0x31B47EC VA: 0x31B87EC
+	public void SubCameraMoveEase(GameObject subLayer, float time, Vector3 vector, string easetype, float scale = 0, bool isScale = False) { }
+
+	// RVA: 0x31B8CF0 Offset: 0x31B4CF0 VA: 0x31B8CF0
+	public void SubRenderMoveScaleEase(GameObject subLayer, float scale, float time, string easetype) { }
+
+	// RVA: 0x31B8FF0 Offset: 0x31B4FF0 VA: 0x31B8FF0
+	public void MainCameraMoveEase(float time, Vector3 vector, string easetype, float scale, bool isScale) { }
+
+	// RVA: 0x31B94FC Offset: 0x31B54FC VA: 0x31B94FC
+	protected bool StartCamera(float duration, Vector3 position, float scale) { }
+
+	// RVA: 0x31B9518 Offset: 0x31B5518 VA: 0x31B9518
+	private bool StartCamera(GameObject cameraScale, GameObject cameraPosition, float duration, Vector3 position, float scale, bool isMainCamera) { }
+
+	// RVA: 0x31B97A8 Offset: 0x31B57A8 VA: 0x31B97A8
+	protected void EndExecuteCamera() { }
+
+	// RVA: 0x31B97B0 Offset: 0x31B57B0 VA: 0x31B97B0
+	private void EndExecuteSubCamera() { }
+
+	// RVA: 0x31A1CF0 Offset: 0x319DCF0 VA: 0x31A1CF0
+	protected void InitCameraRoll() { }
+
+	// RVA: 0x31B97B8 Offset: 0x31B57B8 VA: 0x31B97B8
+	private void InitCameraRoll(GameObject cameraRoll1, GameObject cameraRoll2, bool isMainCamera) { }
+
+	// RVA: 0x31B99D0 Offset: 0x31B59D0 VA: 0x31B99D0
+	protected bool SetCameraRoll(float rollZ, Vector3 centerOffset) { }
+
+	// RVA: 0x31B9830 Offset: 0x31B5830 VA: 0x31B9830
+	private bool SetCameraRoll(GameObject cameraRoll1, GameObject cameraRoll2, float rollZ, Vector3 centerOffset, bool isMainCamera) { }
+
+	// RVA: 0x31B99EC Offset: 0x31B59EC VA: 0x31B99EC
+	protected bool StartCameraRoll(float duration, float rollZ) { }
+
+	// RVA: 0x31B9A08 Offset: 0x31B5A08 VA: 0x31B9A08
+	private bool StartCameraRoll(GameObject cameraRoll1, float duration, float rollZ, bool isMainCamera) { }
+
+	// RVA: 0x31B9C18 Offset: 0x31B5C18 VA: 0x31B9C18
+	protected void EndExecuteCameraRoll() { }
+
+	// RVA: 0x31B9C20 Offset: 0x31B5C20 VA: 0x31B9C20
+	private void EndExecuteSubCameraRoll() { }
+
+	// RVA: 0x31A1CFC Offset: 0x319DCFC VA: 0x31A1CFC
+	protected void InitStretch() { }
+
+	// RVA: 0x31B9C28 Offset: 0x31B5C28 VA: 0x31B9C28
+	protected bool StartStretch(string name, bool isIn, float duration, float scale) { }
+
+	// RVA: 0x31BA08C Offset: 0x31B608C VA: 0x31BA08C
+	protected void EndExecuteStretch() { }
+
+	// RVA: 0x31BA0B0 Offset: 0x31B60B0 VA: 0x31BA0B0
+	public bool IsShake() { }
+
+	// RVA: 0x31A1C80 Offset: 0x319DC80 VA: 0x31A1C80
+	public void Shake(float duration, float cycle, float x, float y) { }
+
+	// RVA: 0x31BA0C0 Offset: 0x31B60C0 VA: 0x31BA0C0
+	protected void OnShake() { }
+
+	// RVA: 0x31A1F3C Offset: 0x319DF3C VA: 0x31A1F3C
+	protected void InitFlash() { }
+
+	// RVA: 0x31BA200 Offset: 0x31B6200 VA: 0x31BA200
+	private void InitFlashCommand() { }
+
+	// RVA: 0x31BA2EC Offset: 0x31B62EC VA: 0x31BA2EC
+	private void InitFlashDepCommand() { }
+
+	// RVA: 0x31BA3D8 Offset: 0x31B63D8 VA: 0x31BA3D8
+	protected bool StartFlash(string name, float duration1, float duration2, Color color1, Color color2) { }
+
+	// RVA: 0x31BA490 Offset: 0x31B6490 VA: 0x31BA490
+	protected void OnFlashRequest() { }
+
+	// RVA: 0x31BA8A8 Offset: 0x31B68A8 VA: 0x31BA8A8
+	protected void EndFlash(float duration) { }
+
+	// RVA: 0x31BA85C Offset: 0x31B685C VA: 0x31BA85C
+	protected void EndExecuteFlash() { }
+
+	// RVA: 0x31BA8C0 Offset: 0x31B68C0 VA: 0x31BA8C0
+	protected bool StartFlashDep(string name, int dep, float duration1, float duration2, Color color1, Color color2) { }
+
+	// RVA: 0x31BA988 Offset: 0x31B6988 VA: 0x31BA988
+	protected void OnFlashDepRequest() { }
+
+	// RVA: 0x31BAE78 Offset: 0x31B6E78 VA: 0x31BAE78
+	protected void EndFlashDep(float duration) { }
+
+	// RVA: 0x31BAE2C Offset: 0x31B6E2C VA: 0x31BAE2C
+	protected void EndExecuteFlashDep() { }
+
+	// RVA: 0x31A1F54 Offset: 0x319DF54 VA: 0x31A1F54
+	protected void InitWipe() { }
+
+	// RVA: 0x31BAE90 Offset: 0x31B6E90 VA: 0x31BAE90
+	protected bool StartWipe(string name, bool isIn, float duration, float level, float cvcenter = 0, float cvcentersize = 0, float cvleft = 0, float cvright = 0) { }
+
+	// RVA: 0x31BB07C Offset: 0x31B707C VA: 0x31BB07C
+	protected bool SetWipeFilter(string name, float duration, float level, float cvcenter = 0, float cvcentersize = 0, float cvleft = 0, float cvright = 0) { }
+
+	// RVA: 0x31BB1D0 Offset: 0x31B71D0 VA: 0x31BB1D0
+	protected void ResetWipeFilter() { }
+
+	// RVA: 0x31BB1D4 Offset: 0x31B71D4 VA: 0x31BB1D4
+	protected void EndLoadWipe(AssetData data) { }
+
+	// RVA: 0x31BB60C Offset: 0x31B760C VA: 0x31BB60C
+	private Vector2[] GetHorizontal5SplitUv() { }
+
+	// RVA: 0x31BB734 Offset: 0x31B7734 VA: 0x31BB734
+	private Vector3[] GetHorizontal5Split(float param1, float param2, float param3, float param4) { }
+
+	// RVA: 0x31BAFF4 Offset: 0x31B6FF4 VA: 0x31BAFF4
+	protected void EndExecuteWipe() { }
+
+	// RVA: 0x31B40D0 Offset: 0x31B00D0 VA: 0x31B40D0
+	protected MaskFade.Kind GetFadeoutType() { }
+
+	// RVA: 0x31A2158 Offset: 0x319E158 VA: 0x31A2158
+	protected void InitFade() { }
+
+	// RVA: 0x319EE18 Offset: 0x319AE18 VA: 0x319EE18
+	protected bool StartFade(string name, bool isIn, float duration, string withFrameOption) { }
+
+	// RVA: 0x31BB998 Offset: 0x31B7998 VA: 0x31BB998
+	protected bool StartFadeMove(string name, float duration, float level) { }
+
+	// RVA: 0x31BBB84 Offset: 0x31B7B84 VA: 0x31BBB84
+	protected void EndExecuteFade() { }
+
+	// RVA: 0x31BBBA8 Offset: 0x31B7BA8 VA: 0x31BBBA8
+	protected void InitMask() { }
+
+	// RVA: 0x31BBC10 Offset: 0x31B7C10 VA: 0x31BBC10
+	protected bool StartMask(string name, bool isIn, float duration) { }
+
+	// RVA: 0x31BBE00 Offset: 0x31B7E00 VA: 0x31BBE00
+	private void PlayCRIMovie(string name, bool isBgmPause, bool isScriptStop, bool isSePause, bool isVoicePause) { }
+
+	// RVA: 0x31BC278 Offset: 0x31B8278 VA: 0x31BC278
+	protected void Update() { }
+
+	// RVA: 0x31C31A0 Offset: 0x31BF1A0 VA: 0x31C31A0
+	public void OnClickSkip() { }
+
+	// RVA: 0x31C3238 Offset: 0x31BF238 VA: 0x31C3238
+	protected void SkipConfirm() { }
+
+	// RVA: 0x31C32E8 Offset: 0x31BF2E8 VA: 0x31C32E8
+	protected void EndSkipConfirm(ScriptSkipDialog.ResultKind result) { }
+
+	// RVA: 0x31C3394 Offset: 0x31BF394 VA: 0x31C3394
+	public void OnClickBackLog() { }
+
+	// RVA: 0x31C34C8 Offset: 0x31BF4C8 VA: 0x31C34C8
+	protected void OnEndBackLog() { }
+
+	// RVA: 0x31C359C Offset: 0x31BF59C VA: 0x31C359C
+	public void OnClickAutoMessage() { }
+
+	// RVA: 0x31C3680 Offset: 0x31BF680 VA: 0x31C3680
+	protected void OpenNotificationDialog(string typeName, string title, string message, int spacingY = 0) { }
+
+	// RVA: 0x31C3784 Offset: 0x31BF784 VA: 0x31C3784
+	protected void EndNotificationDialog() { }
+
+	// RVA: 0x31C3850 Offset: 0x31BF850 VA: 0x31C3850
+	protected void EndCloseNotificationDialog() { }
+
+	// RVA: 0x31C39F4 Offset: 0x31BF9F4 VA: 0x31C39F4
+	private void OpenStoryQuestOpenDialog(string typeName, string title, string message) { }
+
+	// RVA: 0x31C3AF0 Offset: 0x31BFAF0 VA: 0x31C3AF0
+	private void EndStoryQuestOpenDialog() { }
+
+	// RVA: 0x31C3BBC Offset: 0x31BFBBC VA: 0x31C3BBC
+	protected void JumpSelectBranch() { }
+
+	// RVA: 0x31C3C7C Offset: 0x31BFC7C VA: 0x31C3C7C
+	protected void ResetCharaEffect() { }
+
+	// RVA: 0x31C3D10 Offset: 0x31BFD10 VA: 0x31C3D10
+	protected void EndFadeoutSkipSelectBranch() { }
+
+	// RVA: 0x31C3E58 Offset: 0x31BFE58 VA: 0x31C3E58
+	protected void OpenNameInput() { }
+
+	// RVA: 0x31C40A4 Offset: 0x31C00A4 VA: 0x31C40A4
+	protected void EndFadeoutNameInput() { }
+
+	// RVA: 0x31C418C Offset: 0x31C018C VA: 0x31C418C
+	protected void StartNameInput() { }
+
+	// RVA: 0x31C42A0 Offset: 0x31C02A0 VA: 0x31C42A0
+	protected void EndCloseNameInput() { }
+
+	// RVA: 0x31C43D0 Offset: 0x31C03D0 VA: 0x31C43D0
+	protected void RecoverScreenNameInput() { }
+
+	// RVA: 0x31C3FDC Offset: 0x31BFFDC VA: 0x31C3FDC
+	protected void EndNameInput() { }
+
+	// RVA: 0x31C44E4 Offset: 0x31C04E4 VA: 0x31C44E4
+	public void OnTouchFullScreen() { }
+
+	// RVA: 0x31C45B0 Offset: 0x31C05B0 VA: 0x31C45B0
+	protected void OnSwipeBlockPanel(SwipeGesture gesture) { }
+
+	// RVA: 0x31C4758 Offset: 0x31C0758 VA: 0x31C4758
+	private void MessageManagerOpenUp() { }
+
+	// RVA: 0x31C47A0 Offset: 0x31C07A0 VA: 0x31C47A0
+	private void MessageManagerCloseDown() { }
+
+	// RVA: 0x31C4894 Offset: 0x31C0894 VA: 0x31C4894
+	public void OnMessageManagerEndUpDownAnime() { }
+
+	// RVA: 0x31C48F0 Offset: 0x31C08F0 VA: 0x31C48F0
+	public void OnClickReturnViewMode() { }
+
+	// RVA: 0x31C4940 Offset: 0x31C0940 VA: 0x31C4940
+	public void OnClickFowardView() { }
+
+	// RVA: 0x31C4944 Offset: 0x31C0944 VA: 0x31C4944
+	public void OnClickBackView() { }
+
+	// RVA: 0x31C4948 Offset: 0x31C0948 VA: 0x31C4948
+	public void OnClickSwitchBackGround() { }
+
+	// RVA: 0x319A364 Offset: 0x3196364 VA: 0x319A364
+	private static MaskFade.Kind MaskKindFromStartMode(ScriptManager.StartMode startMode) { }
+
+	// RVA: 0x31C494C Offset: 0x31C094C VA: 0x31C494C
+	public void OnClickFaceFowardView() { }
+
+	// RVA: 0x31C49C8 Offset: 0x31C09C8 VA: 0x31C49C8
+	public void OnClickFaceBackView() { }
+
+	// RVA: 0x31C4A44 Offset: 0x31C0A44 VA: 0x31C4A44
+	private void CheckEffectMessageStopping(string commandTag) { }
+
+	// RVA: 0x31C4C44 Offset: 0x31C0C44 VA: 0x31C4C44
+	private bool IsSkipAllFalse() { }
+
+	// RVA: 0x31C4CC0 Offset: 0x31C0CC0 VA: 0x31C4CC0
+	private void BackUpLineInfo(int line) { }
+
+	// RVA: 0x31C4D68 Offset: 0x31C0D68 VA: 0x31C4D68
+	public static void DeleteLineInfo() { }
+
+	// RVA: 0x31A3278 Offset: 0x319F278 VA: 0x31A3278
+	private void DeleteFlagInfo() { }
+
+	// RVA: 0x31C4E28 Offset: 0x31C0E28 VA: 0x31C4E28
+	public static void DeleteDialogKey() { }
+
+	// RVA: 0x31C4E6C Offset: 0x31C0E6C VA: 0x31C4E6C
+	public static int GetLastLineInfo() { }
+
+	// RVA: 0x31C4ECC Offset: 0x31C0ECC VA: 0x31C4ECC
+	public static void SaveTalkResumeInfo(BattleScriptRootComponent.TalkScriptInfo talkInfo) { }
+
+	// RVA: 0x31C4FBC Offset: 0x31C0FBC VA: 0x31C4FBC
+	public static BattleScriptRootComponent.TalkScriptInfo GetTalkResumeInfo() { }
+
+	// RVA: 0x31B6F3C Offset: 0x31B2F3C VA: 0x31B6F3C
+	private void SaveSwitchSelection(string switchLine, string idx) { }
+
+	// RVA: 0x31C54AC Offset: 0x31C14AC VA: 0x31C54AC
+	private int GetSwitchSelection(int switchLine) { }
+
+	// RVA: 0x31C59A0 Offset: 0x31C19A0 VA: 0x31C59A0
+	public static void DeleteTalkResumeInfo() { }
+
+	// RVA: 0x31C5A5C Offset: 0x31C1A5C VA: 0x31C5A5C
+	public static void DeleteContinueData() { }
+
+	// RVA: 0x31C5AB4 Offset: 0x31C1AB4 VA: 0x31C5AB4
+	private string DelayStop(int index, int skipFlag) { }
+
+	// RVA: 0x31B59C0 Offset: 0x31B19C0 VA: 0x31B59C0
+	private string ProcessDelayScript(float delta, ScriptCommandDelayParam delayParam, bool isSkip, bool isSkipForce) { }
+
+	// RVA: 0x31C5B68 Offset: 0x31C1B68 VA: 0x31C5B68
+	private float GetFSCommandOffsetX(string tag, string baseFSTag, bool checkAspect = True) { }
+
+	// RVA: 0x31C5F4C Offset: 0x31C1F4C VA: 0x31C5F4C
+	private void GetCharaImageNameAndFormId(string data, out string imageName, out int formId) { }
+
+	// RVA: 0x31C601C Offset: 0x31C201C VA: 0x31C601C
+	public static List<string> GetReplacedText(string txt) { }
+
+	// RVA: 0x31B6CF8 Offset: 0x31B2CF8 VA: 0x31B6CF8
+	private bool ShouldSetScriptRouteSelectParam(int selectIndex, IList<ScriptManager.MenuRouteInfo> menuRouteList) { }
+
+	// RVA: 0x31C6524 Offset: 0x31C2524 VA: 0x31C6524
+	private bool IsWithInScriptCondition(string conditionScript) { }
+
+	// RVA: 0x31C67C0 Offset: 0x31C27C0 VA: 0x31C67C0
+	public bool IsBadEndRoute() { }
+
+	// RVA: 0x31C5358 Offset: 0x31C1358 VA: 0x31C5358
+	private string CreateSelectedRouteTypeCsv() { }
+
+	// RVA: 0x31C57C4 Offset: 0x31C17C4 VA: 0x31C57C4
+	private void SetupSelectedRouteTypeList() { }
+
+	// RVA: 0x31C6908 Offset: 0x31C2908 VA: 0x31C6908
+	public void InitQuestStartEffectSkip(string questStartEffectName, string questStartCheckName) { }
+
+	// RVA: 0x31A18A4 Offset: 0x319D8A4 VA: 0x31A18A4
+	private void InitMessageManager(ScriptMessageCommonManager manager, UIPanel panel) { }
+
+	// RVA: 0x31C69F8 Offset: 0x31C29F8 VA: 0x31C69F8
+	private bool IsExistTargetSubLayerGroup(string tag, string[] pd) { }
+
+	// RVA: 0x31B5064 Offset: 0x31B1064 VA: 0x31B5064
+	private string ReplaceBranchText(string text) { }
+
+	// RVA: 0x31C6E9C Offset: 0x31C2E9C VA: 0x31C6E9C
+	private string TextOverwriteRoute(string data) { }
+
+	// RVA: 0x31C72E8 Offset: 0x31C32E8 VA: 0x31C72E8
+	private string TextOverwriteFlag(string data) { }
+
+	// RVA: 0x31C75F4 Offset: 0x31C35F4 VA: 0x31C75F4
+	private string TextOverwriteRaidShortName(string data) { }
+
+	// RVA: 0x31C7B28 Offset: 0x31C3B28 VA: 0x31C7B28
+	private string GetBackTextureNameScene(string data) { }
+
+	// RVA: 0x31C7D6C Offset: 0x31C3D6C VA: 0x31C7D6C
+	private void SetbSceneParam(string data, out ScriptManager.SCENE_MODE sceneMode, out float fadeTime) { }
+
+	// RVA: 0x31C7F48 Offset: 0x31C3F48 VA: 0x31C7F48
+	public void SetAutoMessage(bool isAuto) { }
+
+	// RVA: 0x31C7F50 Offset: 0x31C3F50 VA: 0x31C7F50
+	private string HiddenFlagCheckReplaceMessage(string message, int idx, ref bool hiddenMode) { }
+
+	// RVA: 0x31C8044 Offset: 0x31C4044 VA: 0x31C8044
+	private void SaveFlagInfo(string flagName) { }
+
+	// RVA: 0x31A2FD4 Offset: 0x319EFD4 VA: 0x31A2FD4
+	private void LoadFlagInfo() { }
+
+	// RVA: 0x31C8220 Offset: 0x31C4220 VA: 0x31C8220
+	private string ReplaceHiddenFlagText(string message) { }
+
+	// RVA: 0x31C82D4 Offset: 0x31C42D4 VA: 0x31C82D4
+	public static bool IsUseSimpleMeshFigure(string name) { }
+
+	// RVA: 0x31C8348 Offset: 0x31C4348 VA: 0x31C8348
+	private bool IsWaitingLoadAssetWhenResume() { }
+
+	// RVA: 0x31C8468 Offset: 0x31C4468 VA: 0x31C8468
+	public int GetUiRootActiveHeight() { }
+
+	// RVA: 0x31C84F0 Offset: 0x31C44F0 VA: 0x31C84F0
+	public static void SaveMovieResumeInfo(int questID, int phase, int gender) { }
+
+	// RVA: 0x31C8620 Offset: 0x31C4620 VA: 0x31C8620
+	public static void DeleteMovieResumeInfo() { }
+
+	// RVA: 0x31C86B0 Offset: 0x31C46B0 VA: 0x31C86B0
+	public static bool HasMovieResumeKey() { }
+
+	// RVA: 0x31C8738 Offset: 0x31C4738 VA: 0x31C8738
+	public static bool GetMovieResumeInfo(out int questID, out int phase, out int gender) { }
+
+	// RVA: 0x31C88A8 Offset: 0x31C48A8 VA: 0x31C88A8
+	public void moveBackScriptZ(int movePos, bool checkIsRoll = False) { }
+
+	// RVA: 0x31C8988 Offset: 0x31C4988 VA: 0x31C8988
+	public static bool HasPlayedLastMovieKey(int warId) { }
+
+	// RVA: 0x31C8A0C Offset: 0x31C4A0C VA: 0x31C8A0C
+	public static void SavePlayedLastMovie(int warId) { }
+
+	// RVA: 0x3198164 Offset: 0x3194164 VA: 0x3198164
+	private static void SetUseEfVoiceCpk(string assetName, int svtId) { }
+
+	// RVA: 0x31A920C Offset: 0x31A520C VA: 0x31A920C
+	protected void AnalysText(ref List<string> tagDataList, ref List<string> scriptDataList, ref List<int> lineDataList, ref List<int> orgLineDataList, ref int lastMessageIndex, ref string talkName, ref bool messageLine, ref int fontSize, string analysData, int line, int orgLine) { }
+
+	// RVA: 0x31C8A98 Offset: 0x31C4A98 VA: 0x31C8A98
+	public static void DebugPlay(string startModeName, string name, string label, int jumpLine, ScriptManager.CallbackFunc callbackFunc) { }
+
+	// RVA: 0x31C8A9C Offset: 0x31C4A9C VA: 0x31C8A9C
+	public static void DebugPlay(string startModeName, string data, string orgData, int genderIndex, int jumpLine, ScriptManager.CallbackFunc callbackFunc, DebugTestRootComponent.ScriptReloadCallback reloadCallback) { }
+
+	// RVA: 0x31C8AA0 Offset: 0x31C4AA0 VA: 0x31C8AA0
+	public static void DebugScriptLoad(string name, string label, ScriptManager.CallbackBranchList callbackFunc) { }
+
+	// RVA: 0x31C8AC0 Offset: 0x31C4AC0 VA: 0x31C8AC0
+	public static List<List<string>> DebugScriptAnalys(string label, string data, string orgData) { }
+
+	// RVA: 0x31A22CC Offset: 0x319E2CC VA: 0x31A22CC
+	protected void DebugProcessScript(int executeIndex = -1, ScriptManager.State state = 0) { }
+
+	// RVA: 0x31C8AC8 Offset: 0x31C4AC8 VA: 0x31C8AC8
+	public void DebugEndExecuteScript() { }
+
+	// RVA: 0x3177290 Offset: 0x3173290 VA: 0x3177290
+	private ScriptManager.ScriptCommandExecuteReturnCode ScriptCommandExecute(string tag, string[] pd, int line, string data, ref string scriptErrorMessage, ref bool isScriptWait, ref float delta) { }
+
+	// RVA: 0x31C8ACC Offset: 0x31C4ACC VA: 0x31C8ACC
+	private bool IsContinueSilhouette(ref string[] pd) { }
+
+	// RVA: 0x31C8BA4 Offset: 0x31C4BA4 VA: 0x31C8BA4
+	private ProgramEffectComponent.Param GetCharaSpecialEffectSubParam(ref string[] pd) { }
+
+	// RVA: 0x31C8D54 Offset: 0x31C4D54 VA: 0x31C8D54
+	private bool TryGetAndRemoveParams(ref string[] pd, string key, out string[] ary) { }
+
+	// RVA: 0x31C8B24 Offset: 0x31C4B24 VA: 0x31C8B24
+	private bool HasAndRemoveParam(ref string[] pd, string key) { }
+
+	// RVA: 0x31C8E9C Offset: 0x31C4E9C VA: 0x31C8E9C
+	private void RemoveParam(ref string[] pd, int index, int length) { }
+
+	// RVA: 0x31BC344 Offset: 0x31B8344 VA: 0x31BC344
+	protected bool ProcessScript(float delta) { }
+
+	// RVA: 0x31C8FB4 Offset: 0x31C4FB4 VA: 0x31C8FB4
+	public void .ctor() { }
+
+	// RVA: 0x31C9484 Offset: 0x31C5484 VA: 0x31C9484
+	private static void .cctor() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31C991C Offset: 0x31C591C VA: 0x31C991C
+	private void <ShowChapterSubTitle>b__544_0() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31C9948 Offset: 0x31C5948 VA: 0x31C9948
+	private void <SetPictureFrameImage>b__656_0() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31C9950 Offset: 0x31C5950 VA: 0x31C9950
+	private void <ProcessScript>b__814_0() { }

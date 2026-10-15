@@ -1,0 +1,6694 @@
+{
+ "autoAndBackLog": {
+  "cmp": 51876396,
+  "handler": 51876412,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51876460
+   ],
+   [
+    "System.String$$op_Equality",
+    51876508
+   ],
+   [
+    "ScriptMessageCommonManager$$ResetLongPress",
+    51876532
+   ],
+   [
+    "ScriptManager$$ModifyPlaySpeed",
+    51876552
+   ],
+   [
+    "ScriptMessageCommonManager$$SetActiveAutoMessageButton",
+    51876588
+   ],
+   [
+    "ScriptMessageCommonManager$$SetActiveBackLogButton",
+    51876620
+   ]
+  ],
+  "literals": [
+   [
+    "'true'",
+    51876456
+   ],
+   [
+    "'false'",
+    51876504
+   ]
+  ]
+ },
+ "ifClear": {
+  "cmp": 51876848,
+  "handler": 51876864,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51876908
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51876904
+   ]
+  ]
+ },
+ "fontType": {
+  "cmp": 51877352,
+  "handler": 51877368,
+  "calls": [
+   [
+    "System.String$$IsNullOrEmpty",
+    51877396
+   ],
+   [
+    "System.String$$op_Inequality",
+    51877448
+   ],
+   [
+    "ScriptManager$$ConvertFontName",
+    51877492
+   ],
+   [
+    "0x22305f4",
+    51877524
+   ],
+   [
+    "AssetManager$$getAssetStorage",
+    51877536
+   ],
+   [
+    "AssetData$$GetObject<object>",
+    51877556
+   ],
+   [
+    "UnityEngine.GameObject$$GetComponent<object>",
+    51877576
+   ],
+   [
+    "UILabel$$get_trueTypeFont",
+    51877588
+   ]
+  ],
+  "literals": [
+   [
+    "'normal'",
+    51877444
+   ]
+  ]
+ },
+ "subCameraOff": {
+  "cmp": 51877696,
+  "handler": 51877712,
+  "calls": [
+   [
+    "ScriptManager$$RenderCameraSubQuit",
+    51877720
+   ]
+  ],
+  "literals": []
+ },
+ "keepSubBgmOff": {
+  "cmp": 51877824,
+  "handler": 51877840,
+  "calls": [
+   [
+    "0x22305f4",
+    51877860
+   ],
+   [
+    "BgmManager$$Enable_KeepSubBgm",
+    51877872
+   ]
+  ],
+  "literals": []
+ },
+ "charaRollAxis": {
+  "cmp": 51877976,
+  "handler": 51877992,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51878024
+   ],
+   [
+    "System.Single$$Parse",
+    51878100
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51878116
+   ],
+   [
+    "System.Single$$Parse",
+    51878156
+   ]
+  ],
+  "literals": []
+ },
+ "masterBranch": {
+  "cmp": 51878824,
+  "handler": 51878840,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51878880
+   ],
+   [
+    "0x22305f4",
+    51878912
+   ],
+   [
+    "ScriptManager$$ScriptCommandExecute",
+    51878920
+   ],
+   [
+    "System.String$$op_Equality",
+    51879056
+   ],
+   [
+    "System.Single$$Parse",
+    51879096
+   ],
+   [
+    "System.Single$$Parse",
+    51879144
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51878876
+   ],
+   [
+    "'subRenderShake'",
+    51879052
+   ]
+  ]
+ },
+ "subRenderShake": {
+  "cmp": 51879052,
+  "handler": 51879068,
+  "calls": [
+   [
+    "System.Single$$Parse",
+    51879096
+   ],
+   [
+    "System.Single$$Parse",
+    51879144
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51879160
+   ],
+   [
+    "System.Int32$$Parse",
+    51879212
+   ],
+   [
+    "System.Int32$$Parse",
+    51879248
+   ],
+   [
+    "ScriptSubLayerManager$$GetScriptSubLayer",
+    51879288
+   ],
+   [
+    "ScriptSubLayer$$Shake",
+    51879316
+   ]
+  ],
+  "literals": []
+ },
+ "subCameraRollMove": {
+  "cmp": 51879420,
+  "handler": 51879436,
+  "calls": [
+   [
+    "ScriptSubLayerManager$$GetScriptSubLayer",
+    51879472
+   ],
+   [
+    "System.String$$op_Equality",
+    51879620
+   ],
+   [
+    "System.String$$op_Equality",
+    51879692
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51879732
+   ]
+  ],
+  "literals": [
+   [
+    "'cueVoiceStop'",
+    51879616
+   ],
+   [
+    "' '",
+    51879688
+   ]
+  ]
+ },
+ "cueVoiceStop": {
+  "cmp": 51879616,
+  "handler": 51879632,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51879692
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51879732
+   ],
+   [
+    "System.Single$$Parse",
+    51879768
+   ],
+   [
+    "0x22305f4",
+    51879796
+   ],
+   [
+    "System.String$$op_Equality",
+    51879908
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51879688
+   ],
+   [
+    "'spriteMaskSet'",
+    51879904
+   ],
+   [
+    "'spriteMaskSet'",
+    51879936
+   ]
+  ]
+ },
+ "spriteMaskSet": {
+  "cmp": 51879904,
+  "handler": 51879920,
+  "calls": [
+   [
+    "0x2230448",
+    51879956
+   ],
+   [
+    "ScriptManager$$ConvertSpriteMaskName",
+    51879996
+   ],
+   [
+    "0x2230710",
+    51880020
+   ],
+   [
+    "AssetLoader.LoadEndDataHandler$$.ctor",
+    51880048
+   ],
+   [
+    "0x22305f4",
+    51880072
+   ],
+   [
+    "AssetManager$$loadAssetStorage",
+    51880096
+   ]
+  ],
+  "literals": []
+ },
+ "warEventScript": {
+  "cmp": 51880364,
+  "handler": 51880380,
+  "calls": [
+   [
+    "System.Int32$$Parse",
+    51880408
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51880432
+   ],
+   [
+    "WarBoardManager$$AddEventScript",
+    51880452
+   ]
+  ],
+  "literals": []
+ },
+ "subCameraRoll": {
+  "cmp": 51880656,
+  "handler": 51880672,
+  "calls": [
+   [
+    "ScriptSubLayerManager$$GetScriptSubLayer",
+    51880708
+   ],
+   [
+    "ScriptManager$$InitCameraRoll",
+    51880756
+   ]
+  ],
+  "literals": []
+ },
+ "charaReturn": {
+  "cmp": 51880860,
+  "handler": 51880876,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51880908
+   ],
+   [
+    "System.String$$get_Chars",
+    51880980
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51881004
+   ],
+   [
+    "System.Single$$Parse",
+    51881048
+   ],
+   [
+    "System.String$$op_Equality",
+    51881156
+   ]
+  ],
+  "literals": [
+   [
+    "'charaEffectStop'",
+    51881152
+   ]
+  ]
+ },
+ "charaEffectStop": {
+  "cmp": 51881152,
+  "handler": 51881168,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51881200
+   ],
+   [
+    "ScriptManager$$ModifyPlaySpeed",
+    51881248
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51881260
+   ],
+   [
+    "System.String$$op_Equality",
+    51881308
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51881352
+   ],
+   [
+    "0x22305f4",
+    51881384
+   ],
+   [
+    "ScriptCharaData$$StopEffect",
+    51881416
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51881304
+   ]
+  ]
+ },
+ "cameraMoveEase": {
+  "cmp": 51881528,
+  "handler": 51881544,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51881584
+   ]
+  ],
+  "literals": [
+   [
+    "','",
+    51881580
+   ]
+  ]
+ },
+ "input": {
+  "cmp": 51881968,
+  "handler": 51881984,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51882028
+   ],
+   [
+    "System.String$$op_Equality",
+    51882056
+   ],
+   [
+    "ScriptSkipDialog$$Close",
+    51882096
+   ],
+   [
+    "ScriptManager$$ResumePlaySpeed",
+    51882108
+   ],
+   [
+    "System.String$$op_Equality",
+    51882148
+   ],
+   [
+    "0x0",
+    51882184
+   ],
+   [
+    "System.Collections.Generic.List<int>$$get_Item",
+    51882224
+   ],
+   [
+    "System.String$$op_Equality",
+    51882272
+   ]
+  ],
+  "literals": [
+   [
+    "'selectBranch'",
+    51882020
+   ],
+   [
+    "'selectBranchSkipTrueColor'",
+    51882052
+   ],
+   [
+    "'selectBranch'",
+    51882140
+   ],
+   [
+    "'selectBranch'",
+    51882264
+   ]
+  ]
+ },
+ "charaCrossFade": {
+  "cmp": 51882688,
+  "handler": 51882704,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51882736
+   ],
+   [
+    "ScriptCharaData$$IsLoad",
+    51882784
+   ],
+   [
+    "System.String$$op_Equality",
+    51882900
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51882944
+   ],
+   [
+    "ScriptFsmObjectData$$Destroy",
+    51882988
+   ],
+   [
+    "0x2019c04",
+    51883008
+   ]
+  ],
+  "literals": [
+   [
+    "'fsmObjDestroy'",
+    51882896
+   ]
+  ]
+ },
+ "fsmObjDestroy": {
+  "cmp": 51882896,
+  "handler": 51882912,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51882944
+   ],
+   [
+    "ScriptFsmObjectData$$Destroy",
+    51882988
+   ],
+   [
+    "0x2019c04",
+    51883008
+   ]
+  ],
+  "literals": []
+ },
+ "warCharaFadein": {
+  "cmp": 51883096,
+  "handler": 51883112,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51883144
+   ],
+   [
+    "ScriptCharaData$$IsMoveAlpha",
+    51883192
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51883212
+   ],
+   [
+    "System.Single$$Parse",
+    51883252
+   ],
+   [
+    "System.Int32$$Parse",
+    51883288
+   ],
+   [
+    "System.Int32$$Parse",
+    51883324
+   ],
+   [
+    "0x2230564",
+    51883352
+   ],
+   [
+    "System.Int32$$Parse",
+    51883388
+   ]
+  ],
+  "literals": []
+ },
+ "tVoiceUser": {
+  "cmp": 51883660,
+  "handler": 51883676,
+  "calls": [
+   [
+    "0x22305f4",
+    51883716
+   ],
+   [
+    "ScriptManager$$ScriptCommandExecute",
+    51883724
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51883764
+   ],
+   [
+    "System.String$$op_Equality",
+    51883884
+   ],
+   [
+    "System.String$$op_Equality",
+    51883936
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51883980
+   ],
+   [
+    "System.String$$IsNullOrEmpty",
+    51883992
+   ]
+  ],
+  "literals": [
+   [
+    "'notification'",
+    51883880
+   ],
+   [
+    "' '",
+    51883932
+   ]
+  ]
+ },
+ "notification": {
+  "cmp": 51883880,
+  "handler": 51883896,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51883936
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51883980
+   ],
+   [
+    "System.String$$IsNullOrEmpty",
+    51883992
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51883932
+   ]
+  ]
+ },
+ "distortionstart": {
+  "cmp": 51884312,
+  "handler": 51884328,
+  "calls": [
+   [
+    "ScriptManager$$ModifyPlaySpeed",
+    51884360
+   ],
+   [
+    "System.Single$$Parse",
+    51884388
+   ],
+   [
+    "System.Single$$Parse",
+    51884424
+   ],
+   [
+    "System.Single$$Parse",
+    51884460
+   ],
+   [
+    "System.Single$$Parse",
+    51884496
+   ],
+   [
+    "System.Single$$Parse",
+    51884532
+   ],
+   [
+    "System.Single$$Parse",
+    51884568
+   ],
+   [
+    "ScriptManager$$SetCameraFilter",
+    51884600
+   ],
+   [
+    "ScriptActionRenderEffectController$$StartDistortion",
+    51884644
+   ]
+  ],
+  "literals": [
+   [
+    "'Distortion'",
+    51884596
+   ]
+  ]
+ },
+ "charaBackEffectDestroy": {
+  "cmp": 51884752,
+  "handler": 51884768,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51884800
+   ],
+   [
+    "System.String$$op_Equality",
+    51884876
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51884920
+   ],
+   [
+    "ScriptCharaData$$StopBackEffect",
+    51884940
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51884872
+   ]
+  ]
+ },
+ "skip": {
+  "cmp": 51885028,
+  "handler": 51885044,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51885088
+   ],
+   [
+    "System.String$$op_Equality",
+    51885196
+   ],
+   [
+    "System.String$$op_Equality",
+    51885248
+   ],
+   [
+    "ScriptManager$$SearchFlag",
+    51885292
+   ],
+   [
+    "System.String$$op_Equality",
+    51885332
+   ]
+  ],
+  "literals": [
+   [
+    "'true'",
+    51885084
+   ],
+   [
+    "'branch'",
+    51885192
+   ],
+   [
+    "' '",
+    51885244
+   ],
+   [
+    "' '",
+    51885324
+   ]
+  ]
+ },
+ "branch": {
+  "cmp": 51885192,
+  "handler": 51885208,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51885248
+   ],
+   [
+    "ScriptManager$$SearchFlag",
+    51885292
+   ],
+   [
+    "System.String$$op_Equality",
+    51885332
+   ],
+   [
+    "ScriptFlagData$$Comp",
+    51885380
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51885244
+   ],
+   [
+    "' '",
+    51885324
+   ]
+  ]
+ },
+ "label": {
+  "cmp": 51885552,
+  "handler": 51885568,
+  "calls": [
+   [
+    "System.String$$Equals",
+    51885604
+   ],
+   [
+    "0x2230448",
+    51885644
+   ],
+   [
+    "ScriptMessageCommonManager$$SetTapSkip",
+    51885664
+   ],
+   [
+    "System.String$$Equals",
+    51885708
+   ]
+  ],
+  "literals": [
+   [
+    "'skip'",
+    51885704
+   ]
+  ]
+ },
+ "charaEffectEdgeBlurStart": {
+  "cmp": 51885856,
+  "handler": 51885872,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51885904
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51885948
+   ],
+   [
+    "System.String$$op_Equality",
+    51886048
+   ],
+   [
+    "ScriptManager$$ModifyPlaySpeed",
+    51886092
+   ],
+   [
+    "System.Single$$Parse",
+    51886120
+   ],
+   [
+    "0x2230710",
+    51886148
+   ],
+   [
+    "ScriptActionRenderEffectController.StopFunction$$.ctor",
+    51886176
+   ]
+  ],
+  "literals": [
+   [
+    "'distortionstop'",
+    51886044
+   ]
+  ]
+ },
+ "distortionstop": {
+  "cmp": 51886044,
+  "handler": 51886060,
+  "calls": [
+   [
+    "ScriptManager$$ModifyPlaySpeed",
+    51886092
+   ],
+   [
+    "System.Single$$Parse",
+    51886120
+   ],
+   [
+    "0x2230710",
+    51886148
+   ],
+   [
+    "ScriptActionRenderEffectController.StopFunction$$.ctor",
+    51886176
+   ],
+   [
+    "ScriptActionRenderEffectController$$StopDistortion",
+    51886196
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51886208
+   ]
+  ],
+  "literals": []
+ },
+ "cueVoiceVolume": {
+  "cmp": 51886404,
+  "handler": 51886420,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51886460
+   ],
+   [
+    "System.String$$op_Equality",
+    51886504
+   ],
+   [
+    "System.String$$op_Equality",
+    51886600
+   ],
+   [
+    "System.String$$op_Equality",
+    51886684
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51886708
+   ],
+   [
+    "0x201abc4",
+    51886728
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51886456
+   ],
+   [
+    "' '",
+    51886496
+   ],
+   [
+    "'useSimpleMeshFigure'",
+    51886596
+   ],
+   [
+    "','",
+    51886672
+   ]
+  ]
+ },
+ "useSimpleMeshFigure": {
+  "cmp": 51886596,
+  "handler": 51886612,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51886684
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51886708
+   ],
+   [
+    "0x201abc4",
+    51886728
+   ]
+  ],
+  "literals": [
+   [
+    "','",
+    51886672
+   ]
+  ]
+ },
+ "tapSkip": {
+  "cmp": 51886992,
+  "handler": 51887008,
+  "calls": [
+   [
+    "0x2230448",
+    51887052
+   ],
+   [
+    "System.String$$op_Equality",
+    51887180
+   ],
+   [
+    "ScriptMessageCommonManager$$OffScreen",
+    51887220
+   ],
+   [
+    "ScriptMessageCommonManager$$ClearText",
+    51887236
+   ],
+   [
+    "ScriptLoop$$ShouldAddLogMessage",
+    51887252
+   ],
+   [
+    "ScriptLogMessage$$ReturnText",
+    51887272
+   ],
+   [
+    "0x2230448",
+    51887304
+   ]
+  ],
+  "literals": [
+   [
+    "'dontResetPress'",
+    51887076
+   ],
+   [
+    "'messageOn'",
+    51887176
+   ],
+   [
+    "'message'",
+    51887296
+   ]
+  ]
+ },
+ "messageOn": {
+  "cmp": 51887176,
+  "handler": 51887192,
+  "calls": [
+   [
+    "ScriptMessageCommonManager$$OffScreen",
+    51887220
+   ],
+   [
+    "ScriptMessageCommonManager$$ClearText",
+    51887236
+   ],
+   [
+    "ScriptLoop$$ShouldAddLogMessage",
+    51887252
+   ],
+   [
+    "ScriptLogMessage$$ReturnText",
+    51887272
+   ],
+   [
+    "0x2230448",
+    51887304
+   ]
+  ],
+  "literals": [
+   [
+    "'message'",
+    51887296
+   ]
+  ]
+ },
+ "branchQuestClear": {
+  "cmp": 51887552,
+  "handler": 51887568,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51887608
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51887604
+   ]
+  ]
+ },
+ "wipeFilterEx": {
+  "cmp": 51887824,
+  "handler": 51887840,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51887896
+   ],
+   [
+    "System.String$$op_Equality",
+    51887940
+   ],
+   [
+    "ScriptManager$$ConvertWipeName",
+    51887980
+   ],
+   [
+    "System.Single$$Parse",
+    51888016
+   ],
+   [
+    "System.Single$$Parse",
+    51888052
+   ],
+   [
+    "System.Single$$Parse",
+    51888088
+   ],
+   [
+    "System.Single$$Parse",
+    51888124
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51887892
+   ],
+   [
+    "' '",
+    51887932
+   ]
+  ]
+ },
+ "else": {
+  "cmp": 51888332,
+  "handler": 51888348,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51888452
+   ],
+   [
+    "System.String$$op_Equality",
+    51888608
+   ]
+  ],
+  "literals": [
+   [
+    "'page'",
+    51888448
+   ],
+   [
+    "'backlogEnd'",
+    51888604
+   ]
+  ]
+ },
+ "page": {
+  "cmp": 51888448,
+  "handler": 51912760,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51912812
+   ],
+   [
+    "System.String$$op_Equality",
+    51912860
+   ],
+   [
+    "System.String$$op_Equality",
+    51912904
+   ],
+   [
+    "System.String$$op_Equality",
+    51912948
+   ],
+   [
+    "System.Single$$Parse",
+    51912984
+   ],
+   [
+    "System.Single$$Parse",
+    51913032
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51913048
+   ]
+  ],
+  "literals": [
+   [
+    "'messageShake'",
+    51912808
+   ],
+   [
+    "' '",
+    51912856
+   ],
+   [
+    "' '",
+    51912896
+   ],
+   [
+    "' '",
+    51912940
+   ]
+  ]
+ },
+ "backlogEnd": {
+  "cmp": 51888604,
+  "handler": 51888620,
+  "calls": [],
+  "literals": []
+ },
+ "fsmObjSet": {
+  "cmp": 51888696,
+  "handler": 51888712,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51888752
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51888748
+   ]
+  ]
+ },
+ "subRenderMoveScale": {
+  "cmp": 51889400,
+  "handler": 51889416,
+  "calls": [
+   [
+    "ScriptManager$$IsExistTargetSubLayerGroup",
+    51889444
+   ],
+   [
+    "System.String$$op_Equality",
+    51889552
+   ],
+   [
+    "System.String$$op_Equality",
+    51889652
+   ],
+   [
+    "ScriptManager$$InitFlashDepCommand",
+    51889672
+   ]
+  ],
+  "literals": [
+   [
+    "''",
+    51889440
+   ],
+   [
+    "'bScene'",
+    51889548
+   ],
+   [
+    "'flashOffDep'",
+    51889648
+   ]
+  ]
+ },
+ "bScene": {
+  "cmp": 51889548,
+  "handler": 51889564,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51889652
+   ],
+   [
+    "ScriptManager$$InitFlashDepCommand",
+    51889672
+   ]
+  ],
+  "literals": [
+   [
+    "'flashOffDep'",
+    51889648
+   ]
+  ]
+ },
+ "flashOffDep": {
+  "cmp": 51889648,
+  "handler": 51889664,
+  "calls": [
+   [
+    "ScriptManager$$InitFlashDepCommand",
+    51889672
+   ]
+  ],
+  "literals": []
+ },
+ "specialEffectStop": {
+  "cmp": 51889864,
+  "handler": 51889880,
+  "calls": [
+   [
+    "ScriptManager$$ConvertNameString",
+    51889912
+   ],
+   [
+    "ProgramEffectManager$$Stop",
+    51889932
+   ]
+  ],
+  "literals": []
+ },
+ "subRenderScale": {
+  "cmp": 51890888,
+  "handler": 51890904,
+  "calls": [
+   [
+    "ScriptManager$$IsExistTargetSubLayerGroup",
+    51890932
+   ],
+   [
+    "System.String$$op_Equality",
+    51891040
+   ],
+   [
+    "System.String$$op_Equality",
+    51891092
+   ],
+   [
+    "UnityEngine.Camera$$set_clearFlags",
+    51891120
+   ]
+  ],
+  "literals": [
+   [
+    "''",
+    51890928
+   ],
+   [
+    "'backCameraColor'",
+    51891036
+   ],
+   [
+    "'false'",
+    51891088
+   ]
+  ]
+ },
+ "backCameraColor": {
+  "cmp": 51891036,
+  "handler": 51891052,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51891092
+   ],
+   [
+    "UnityEngine.Camera$$set_clearFlags",
+    51891120
+   ]
+  ],
+  "literals": [
+   [
+    "'false'",
+    51891088
+   ]
+  ]
+ },
+ "tVoice": {
+  "cmp": 51891192,
+  "handler": 51891208,
+  "calls": [
+   [
+    "ScriptManager$$ConvertNameString",
+    51891240
+   ],
+   [
+    "System.String$$op_Equality",
+    51891356
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51891400
+   ]
+  ],
+  "literals": [
+   [
+    "'effectStart'",
+    51891352
+   ]
+  ]
+ },
+ "effectStart": {
+  "cmp": 51891352,
+  "handler": 51891368,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51891400
+   ],
+   [
+    "System.String$$op_Equality",
+    51891540
+   ],
+   [
+    "ScriptMessageCommonManager$$GetMessageBackSprite",
+    51891564
+   ],
+   [
+    "0x22305f4",
+    51891596
+   ],
+   [
+    "UnityEngine.Object$$op_Inequality",
+    51891612
+   ],
+   [
+    "0x22305f4",
+    51891640
+   ],
+   [
+    "AtlasManager$$SetWarBoardImage",
+    51891664
+   ],
+   [
+    "ScriptMessageCommonManager$$GetTalkNameBackSprite",
+    51891680
+   ]
+  ],
+  "literals": [
+   [
+    "'faceTalkScreen'",
+    51891536
+   ],
+   [
+    "'img_talk_textbg'",
+    51891660
+   ]
+  ]
+ },
+ "faceTalkScreen": {
+  "cmp": 51891536,
+  "handler": 51891552,
+  "calls": [
+   [
+    "ScriptMessageCommonManager$$GetMessageBackSprite",
+    51891564
+   ],
+   [
+    "0x22305f4",
+    51891596
+   ],
+   [
+    "UnityEngine.Object$$op_Inequality",
+    51891612
+   ],
+   [
+    "0x22305f4",
+    51891640
+   ],
+   [
+    "AtlasManager$$SetWarBoardImage",
+    51891664
+   ],
+   [
+    "ScriptMessageCommonManager$$GetTalkNameBackSprite",
+    51891680
+   ],
+   [
+    "0x22305f4",
+    51891704
+   ],
+   [
+    "UnityEngine.Object$$op_Inequality",
+    51891720
+   ],
+   [
+    "0x22305f4",
+    51891748
+   ],
+   [
+    "AtlasManager$$SetWarBoardImage",
+    51891772
+   ],
+   [
+    "0x22305f4",
+    51891800
+   ],
+   [
+    "UnityEngine.Object$$op_Inequality",
+    51891816
+   ]
+  ],
+  "literals": [
+   [
+    "'img_talk_textbg'",
+    51891660
+   ],
+   [
+    "'img_talk_namebg'",
+    51891768
+   ]
+  ]
+ },
+ "cueVoice": {
+  "cmp": 51891944,
+  "handler": 51891960,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51892000
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51891996
+   ]
+  ]
+ },
+ "communicationCharaFace": {
+  "cmp": 51892276,
+  "handler": 51892292,
+  "calls": [
+   [
+    "0x22305f4",
+    51892336
+   ],
+   [
+    "CommonEffectManager$$Get",
+    51892348
+   ],
+   [
+    "System.Int32$$Parse",
+    51892396
+   ],
+   [
+    "CommunicationCharaEffectComponent$$SetFace",
+    51892468
+   ]
+  ],
+  "literals": []
+ },
+ "advPrepare": {
+  "cmp": 51892540,
+  "handler": 51892556,
+  "calls": [
+   [
+    "ScriptActionAdvPrefabController$$Prepare",
+    51892596
+   ],
+   [
+    "UnityEngine.Component$$get_gameObject",
+    51892612
+   ],
+   [
+    "UnityEngine.GameObject$$SetActive",
+    51892628
+   ],
+   [
+    "UnityEngine.Component$$get_gameObject",
+    51892644
+   ],
+   [
+    "UnityEngine.GameObject$$SetActive",
+    51892660
+   ],
+   [
+    "0x0",
+    51892700
+   ],
+   [
+    "ExUIMeshRenderer$$SetImage",
+    51892728
+   ]
+  ],
+  "literals": []
+ },
+ "selectionUse": {
+  "cmp": 51892860,
+  "handler": 51892876,
+  "calls": [
+   [
+    "ScriptManager$$CheckSwitchType",
+    51892888
+   ]
+  ],
+  "literals": []
+ },
+ "subRenderFadeout": {
+  "cmp": 51892992,
+  "handler": 51893008,
+  "calls": [
+   [
+    "ScriptManager$$IsExistTargetSubLayerGroup",
+    51893036
+   ],
+   [
+    "System.String$$op_Equality",
+    51893144
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51893184
+   ],
+   [
+    "System.String$$op_Equality",
+    51893236
+   ],
+   [
+    "System.Single$$Parse",
+    51893276
+   ],
+   [
+    "ScriptSubLayerManager$$GetScriptSubLayer",
+    51893316
+   ]
+  ],
+  "literals": [
+   [
+    "''",
+    51893032
+   ],
+   [
+    "'subStretchout'",
+    51893140
+   ],
+   [
+    "' '",
+    51893232
+   ]
+  ]
+ },
+ "subStretchout": {
+  "cmp": 51893140,
+  "handler": 51893156,
+  "calls": [
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51893184
+   ],
+   [
+    "System.String$$op_Equality",
+    51893236
+   ],
+   [
+    "System.Single$$Parse",
+    51893276
+   ],
+   [
+    "ScriptSubLayerManager$$GetScriptSubLayer",
+    51893316
+   ],
+   [
+    "0x22305f4",
+    51893348
+   ],
+   [
+    "UnityEngine.Object$$op_Inequality",
+    51893364
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51893232
+   ]
+  ]
+ },
+ "turnPageOn": {
+  "cmp": 51893464,
+  "handler": 51893480,
+  "calls": [
+   [
+    "System.Linq.Enumerable$$Contains<object>",
+    51893520
+   ],
+   [
+    "System.String$$op_Equality",
+    51893668
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51893708
+   ]
+  ],
+  "literals": [
+   [
+    "'f'",
+    51893516
+   ],
+   [
+    "'subRenderMoveEaseFSL'",
+    51893592
+   ],
+   [
+    "'voice'",
+    51893664
+   ]
+  ]
+ },
+ "voice": {
+  "cmp": 51893664,
+  "handler": 51893680,
+  "calls": [
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51893708
+   ]
+  ],
+  "literals": []
+ },
+ "questMessageOverwrite": {
+  "cmp": 51894016,
+  "handler": 51894032,
+  "calls": [
+   [
+    "0x2230448",
+    51894076
+   ],
+   [
+    "System.String$$Concat",
+    51894116
+   ],
+   [
+    "0x22305f4",
+    51894148
+   ],
+   [
+    "ScriptManager$$GetOverwriteText",
+    51894176
+   ],
+   [
+    "System.String$$IsNullOrEmpty",
+    51894188
+   ]
+  ],
+  "literals": [
+   [
+    "'parameter error'",
+    51894068
+   ],
+   [
+    "'QuestMessageAdd'",
+    51894112
+   ]
+  ]
+ },
+ "flashOff": {
+  "cmp": 51894360,
+  "handler": 51894376,
+  "calls": [
+   [
+    "ScriptManager$$InitFlashCommand",
+    51894384
+   ]
+  ],
+  "literals": []
+ },
+ "voiceStop": {
+  "cmp": 51894456,
+  "handler": 51894472,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51894532
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51894572
+   ],
+   [
+    "System.Single$$Parse",
+    51894608
+   ],
+   [
+    "0x22305f4",
+    51894636
+   ],
+   [
+    "System.String$$op_Equality",
+    51894716
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51894760
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51894528
+   ],
+   [
+    "'charaCutinStart'",
+    51894712
+   ]
+  ]
+ },
+ "charaCutinStart": {
+  "cmp": 51894712,
+  "handler": 51894728,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51894760
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51894812
+   ],
+   [
+    "ScriptCharaData$$ResumeCutin",
+    51894828
+   ]
+  ],
+  "literals": []
+ },
+ "subCameraHome": {
+  "cmp": 51894960,
+  "handler": 51894976,
+  "calls": [
+   [
+    "ScriptSubLayerManager$$GetScriptSubLayer",
+    51895012
+   ],
+   [
+    "ScriptManager$$InitCamera",
+    51895060
+   ]
+  ],
+  "literals": []
+ },
+ "fowardEffectDestroy": {
+  "cmp": 51895132,
+  "handler": 51895148,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51895180
+   ],
+   [
+    "System.String$$op_Equality",
+    51895272
+   ]
+  ],
+  "literals": [
+   [
+    "'endIf'",
+    51895268
+   ]
+  ]
+ },
+ "endIf": {
+  "cmp": 51895268,
+  "handler": 51895284,
+  "calls": [],
+  "literals": []
+ },
+ "charaCutout": {
+  "cmp": 51895420,
+  "handler": 51895436,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51895476
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51895472
+   ]
+  ]
+ },
+ "cameraRollMove": {
+  "cmp": 51895756,
+  "handler": 51895772,
+  "calls": [
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51895800
+   ],
+   [
+    "System.Single$$Parse",
+    51895836
+   ],
+   [
+    "System.String$$op_Equality",
+    51895888
+   ],
+   [
+    "System.Single$$Parse",
+    51895924
+   ],
+   [
+    "System.String$$op_Equality",
+    51896080
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51895884
+   ],
+   [
+    "'flashin'",
+    51896076
+   ]
+  ]
+ },
+ "flashin": {
+  "cmp": 51896076,
+  "handler": 51896092,
+  "calls": [
+   [
+    "ScriptManager$$EndFlash",
+    51896112
+   ],
+   [
+    "System.String$$op_Equality",
+    51896196
+   ],
+   [
+    "System.Int32$$Parse",
+    51896236
+   ],
+   [
+    "System.Single$$Parse",
+    51896272
+   ],
+   [
+    "System.Single$$Parse",
+    51896308
+   ],
+   [
+    "System.Single$$Parse",
+    51896356
+   ],
+   [
+    "System.Single$$Parse",
+    51896392
+   ]
+  ],
+  "literals": [
+   [
+    "'warMoveCameraPos'",
+    51896192
+   ]
+  ]
+ },
+ "warMoveCameraPos": {
+  "cmp": 51896192,
+  "handler": 51896208,
+  "calls": [
+   [
+    "System.Int32$$Parse",
+    51896236
+   ],
+   [
+    "System.Single$$Parse",
+    51896272
+   ],
+   [
+    "System.Single$$Parse",
+    51896308
+   ],
+   [
+    "System.Single$$Parse",
+    51896356
+   ],
+   [
+    "System.Single$$Parse",
+    51896392
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51896412
+   ],
+   [
+    "WarBoardManager$$MoveCameraPosScript",
+    51896448
+   ]
+  ],
+  "literals": []
+ },
+ "shakeStop": {
+  "cmp": 51896520,
+  "handler": 51896536,
+  "calls": [
+   [
+    "ScriptManager$$Shake",
+    51896560
+   ]
+  ],
+  "literals": []
+ },
+ "branchSetGrandSvtCount": {
+  "cmp": 51896828,
+  "handler": 51896844,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51896884
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51896880
+   ]
+  ]
+ },
+ "voiceVolume": {
+  "cmp": 51897308,
+  "handler": 51897324,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51897364
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51897360
+   ]
+  ]
+ },
+ "charaBackEffectStop": {
+  "cmp": 51897640,
+  "handler": 51897656,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51897688
+   ],
+   [
+    "ScriptManager$$ModifyPlaySpeed",
+    51897736
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51897748
+   ],
+   [
+    "System.String$$op_Equality",
+    51897796
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51897840
+   ],
+   [
+    "ScriptCharaData$$StopBackEffect",
+    51897860
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51897792
+   ]
+  ]
+ },
+ "charaShadow": {
+  "cmp": 51898060,
+  "handler": 51898076,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51898116
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51898112
+   ]
+  ]
+ },
+ "pictureFrame": {
+  "cmp": 51898408,
+  "handler": 51898424,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51898512
+   ],
+   [
+    "ScriptMessageCommonManager$$Shake",
+    51898552
+   ]
+  ],
+  "literals": [
+   [
+    "'messageShakeStop'",
+    51898508
+   ]
+  ]
+ },
+ "messageShakeStop": {
+  "cmp": 51898508,
+  "handler": 51898524,
+  "calls": [
+   [
+    "ScriptMessageCommonManager$$Shake",
+    51898552
+   ]
+  ],
+  "literals": []
+ },
+ "charaEffectEdgeBlurStop": {
+  "cmp": 51899052,
+  "handler": 51899068,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51899100
+   ],
+   [
+    "ScriptManager$$ModifyPlaySpeed",
+    51899148
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51899160
+   ],
+   [
+    "0x22305f4",
+    51899192
+   ],
+   [
+    "System.String$$op_Equality",
+    51899296
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51899340
+   ],
+   [
+    "System.String$$op_Equality",
+    51899384
+   ]
+  ],
+  "literals": [
+   [
+    "'backEffectStop'",
+    51899292
+   ],
+   [
+    "'advSet'",
+    51899380
+   ]
+  ]
+ },
+ "backEffectStop": {
+  "cmp": 51899292,
+  "handler": 51899308,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51899340
+   ],
+   [
+    "System.String$$op_Equality",
+    51899384
+   ],
+   [
+    "ScriptActionAdvPrefabController$$GetAssetName",
+    51899440
+   ],
+   [
+    "ScriptActionAdvPrefabController$$Setup",
+    51899456
+   ],
+   [
+    "System.String$$op_Equality",
+    51899536
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51899580
+   ]
+  ],
+  "literals": [
+   [
+    "'advSet'",
+    51899380
+   ],
+   [
+    "'fsmObjSetString'",
+    51899496
+   ],
+   [
+    "'charaChange'",
+    51899532
+   ]
+  ]
+ },
+ "advSet": {
+  "cmp": 51899380,
+  "handler": 51899396,
+  "calls": [
+   [
+    "ScriptActionAdvPrefabController$$GetAssetName",
+    51899440
+   ],
+   [
+    "ScriptActionAdvPrefabController$$Setup",
+    51899456
+   ],
+   [
+    "System.String$$op_Equality",
+    51899536
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51899580
+   ],
+   [
+    "ScriptCharaData$$IsLoad",
+    51899628
+   ],
+   [
+    "System.String$$op_Equality",
+    51899680
+   ]
+  ],
+  "literals": [
+   [
+    "'fsmObjSetString'",
+    51899496
+   ],
+   [
+    "'charaChange'",
+    51899532
+   ],
+   [
+    "' '",
+    51899676
+   ]
+  ]
+ },
+ "charaChange": {
+  "cmp": 51899532,
+  "handler": 51899548,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51899580
+   ],
+   [
+    "ScriptCharaData$$IsLoad",
+    51899628
+   ],
+   [
+    "System.String$$op_Equality",
+    51899680
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51899676
+   ]
+  ]
+ },
+ "advActorHide": {
+  "cmp": 51900712,
+  "handler": 51900728,
+  "calls": [
+   [
+    "ScriptManager$$ConvertNameString",
+    51900776
+   ],
+   [
+    "ScriptActionAdvPrefabController$$SetHide",
+    51900792
+   ]
+  ],
+  "literals": []
+ },
+ "scrollStop": {
+  "cmp": 51900816,
+  "handler": 51900832,
+  "calls": [],
+  "literals": []
+ },
+ "distortionloop": {
+  "cmp": 51900880,
+  "handler": 51900896,
+  "calls": [
+   [
+    "ScriptManager$$ModifyPlaySpeed",
+    51900928
+   ],
+   [
+    "System.Single$$Parse",
+    51900956
+   ],
+   [
+    "System.Int32$$Parse",
+    51900992
+   ],
+   [
+    "System.Single$$Parse",
+    51901028
+   ],
+   [
+    "System.Single$$Parse",
+    51901064
+   ],
+   [
+    "System.Single$$Parse",
+    51901100
+   ],
+   [
+    "System.Single$$Parse",
+    51901136
+   ],
+   [
+    "System.Single$$Parse",
+    51901172
+   ],
+   [
+    "ScriptManager$$SetCameraFilter",
+    51901204
+   ]
+  ],
+  "literals": [
+   [
+    "'Distortion'",
+    51901200
+   ]
+  ]
+ },
+ "charaEffectDestroy": {
+  "cmp": 51901320,
+  "handler": 51901336,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51901368
+   ],
+   [
+    "System.String$$op_Equality",
+    51901444
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51901488
+   ],
+   [
+    "ScriptCharaData$$StopEffect",
+    51901512
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51901440
+   ]
+  ]
+ },
+ "warEffectSquare": {
+  "cmp": 51901536,
+  "handler": 51901552,
+  "calls": [
+   [
+    "System.Int32$$Parse",
+    51901588
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51901612
+   ],
+   [
+    "WarBoardManager$$PlayEffectSquareScript",
+    51901636
+   ]
+  ],
+  "literals": []
+ },
+ "charaRollMove": {
+  "cmp": 51901660,
+  "handler": 51901676,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51901716
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51901712
+   ]
+  ]
+ },
+ "fsmObjLayer": {
+  "cmp": 51901992,
+  "handler": 51902008,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51902048
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51902044
+   ]
+  ]
+ },
+ "subRenderMoveScaleEase": {
+  "cmp": 51902372,
+  "handler": 51902388,
+  "calls": [
+   [
+    "ScriptManager$$IsExistTargetSubLayerGroup",
+    51902416
+   ],
+   [
+    "System.String$$op_Equality",
+    51902476
+   ],
+   [
+    "UnityEngine.GameObject$$Find",
+    51902512
+   ],
+   [
+    "0x22305f4",
+    51902544
+   ],
+   [
+    "UnityEngine.Object$$op_Implicit",
+    51902556
+   ]
+  ],
+  "literals": [
+   [
+    "''",
+    51902412
+   ],
+   [
+    "'insertionAnimationEnd'",
+    51902472
+   ]
+  ]
+ },
+ "insertionAnimationEnd": {
+  "cmp": 51902472,
+  "handler": 51902488,
+  "calls": [
+   [
+    "UnityEngine.GameObject$$Find",
+    51902512
+   ],
+   [
+    "0x22305f4",
+    51902544
+   ],
+   [
+    "UnityEngine.Object$$op_Implicit",
+    51902556
+   ]
+  ],
+  "literals": []
+ },
+ "selectionCentering": {
+  "cmp": 51902716,
+  "handler": 51902732,
+  "calls": [
+   [
+    "0x22305f4",
+    51902776
+   ],
+   [
+    "System.Boolean$$TryParse",
+    51902792
+   ]
+  ],
+  "literals": []
+ },
+ "messageStart": {
+  "cmp": 51902844,
+  "handler": 51902860,
+  "calls": [
+   [
+    "ScriptMessageCommonManager$$CalcMessageVerticalAlign",
+    51902876
+   ]
+  ],
+  "literals": []
+ },
+ "k": {
+  "cmp": 51903000,
+  "handler": 51903016,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51903080
+   ],
+   [
+    "0x2230710",
+    51903104
+   ],
+   [
+    "System.Collections.Generic.List<object>$$.ctor",
+    51903124
+   ],
+   [
+    "0x2230710",
+    51903132
+   ],
+   [
+    "System.Collections.Generic.List<object>$$.ctor",
+    51903144
+   ],
+   [
+    "System.String$$op_Equality",
+    51903216
+   ],
+   [
+    "System.String$$op_Equality",
+    51903292
+   ]
+  ],
+  "literals": [
+   [
+    "'menu'",
+    51903076
+   ],
+   [
+    "' '",
+    51903200
+   ],
+   [
+    "'='",
+    51903288
+   ]
+  ]
+ },
+ "menu": {
+  "cmp": 51903076,
+  "handler": 51903092,
+  "calls": [
+   [
+    "0x2230710",
+    51903104
+   ],
+   [
+    "System.Collections.Generic.List<object>$$.ctor",
+    51903124
+   ],
+   [
+    "0x2230710",
+    51903132
+   ],
+   [
+    "System.Collections.Generic.List<object>$$.ctor",
+    51903144
+   ],
+   [
+    "System.String$$op_Equality",
+    51903216
+   ],
+   [
+    "System.String$$op_Equality",
+    51903292
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51903340
+   ],
+   [
+    "0x201abc4",
+    51903360
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51903400
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51903200
+   ],
+   [
+    "'='",
+    51903288
+   ]
+  ]
+ },
+ "subRenderShakeStop": {
+  "cmp": 51903472,
+  "handler": 51903488,
+  "calls": [
+   [
+    "ScriptSubLayerManager$$GetScriptSubLayer",
+    51903520
+   ],
+   [
+    "ScriptSubLayer$$ShakeStop",
+    51903532
+   ]
+  ],
+  "literals": []
+ },
+ "warEffectOff": {
+  "cmp": 51903568,
+  "handler": 51903584,
+  "calls": [
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51903620
+   ],
+   [
+    "WarBoardManager$$StopEffectScript",
+    51903636
+   ]
+  ],
+  "literals": []
+ },
+ "delayStopAll": {
+  "cmp": 51903660,
+  "handler": 51903676,
+  "calls": [
+   [
+    "System.Int32$$Parse",
+    51903720
+   ],
+   [
+    "System.String$$op_Equality",
+    51903752
+   ],
+   [
+    "0x2230564",
+    51903808
+   ],
+   [
+    "System.Int32$$Parse",
+    51903844
+   ],
+   [
+    "System.Int32$$Parse",
+    51903892
+   ],
+   [
+    "System.Int32$$Parse",
+    51903940
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51903972
+   ]
+  ],
+  "literals": [
+   [
+    "'warEffectPiece'",
+    51903748
+   ]
+  ]
+ },
+ "warEffectPiece": {
+  "cmp": 51903748,
+  "handler": 51903764,
+  "calls": [
+   [
+    "0x2230564",
+    51903808
+   ],
+   [
+    "System.Int32$$Parse",
+    51903844
+   ],
+   [
+    "System.Int32$$Parse",
+    51903892
+   ],
+   [
+    "System.Int32$$Parse",
+    51903940
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51903972
+   ],
+   [
+    "WarBoardManager$$PlayEffectPieceScript",
+    51903996
+   ]
+  ],
+  "literals": []
+ },
+ "cueSeContinue": {
+  "cmp": 51904404,
+  "handler": 51904420,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51904460
+   ],
+   [
+    "System.String$$op_Equality",
+    51904504
+   ],
+   [
+    "System.String$$op_Equality",
+    51904548
+   ],
+   [
+    "System.String$$op_Equality",
+    51904592
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51904612
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51904456
+   ],
+   [
+    "' '",
+    51904496
+   ],
+   [
+    "' '",
+    51904540
+   ],
+   [
+    "' '",
+    51904584
+   ]
+  ]
+ },
+ "jump": {
+  "cmp": 51904916,
+  "handler": 51904932,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51904972
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51905012
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51905052
+   ],
+   [
+    "ScriptManager$$LoadExecuteScript",
+    51905072
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51904968
+   ]
+  ]
+ },
+ "talkEnd": {
+  "cmp": 51905112,
+  "handler": 51905128,
+  "calls": [
+   [
+    "0x2230448",
+    51905148
+   ],
+   [
+    "System.String$$op_Equality",
+    51905188
+   ],
+   [
+    "System.String$$op_Equality",
+    51905244
+   ],
+   [
+    "System.String$$op_Equality",
+    51905284
+   ],
+   [
+    "System.String$$op_Equality",
+    51905336
+   ],
+   [
+    "System.String$$op_Equality",
+    51905380
+   ],
+   [
+    "System.String$$op_Equality",
+    51905424
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51905444
+   ]
+  ],
+  "literals": [
+   [
+    "'branchNotMaterial'",
+    51905176
+   ],
+   [
+    "'branchMaterial'",
+    51905240
+   ],
+   [
+    "'seContinue'",
+    51905280
+   ],
+   [
+    "' '",
+    51905332
+   ],
+   [
+    "' '",
+    51905372
+   ],
+   [
+    "' '",
+    51905416
+   ]
+  ]
+ },
+ "seContinue": {
+  "cmp": 51905280,
+  "handler": 51905296,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51905336
+   ],
+   [
+    "System.String$$op_Equality",
+    51905380
+   ],
+   [
+    "System.String$$op_Equality",
+    51905424
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51905444
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51905332
+   ],
+   [
+    "' '",
+    51905372
+   ],
+   [
+    "' '",
+    51905416
+   ]
+  ]
+ },
+ "screen": {
+  "cmp": 51905720,
+  "handler": 51905736,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51905776
+   ],
+   [
+    "System.String$$op_Equality",
+    51905820
+   ],
+   [
+    "System.String$$op_Equality",
+    51905864
+   ],
+   [
+    "System.String$$op_Equality",
+    51905908
+   ],
+   [
+    "System.Int32$$Parse",
+    51905956
+   ],
+   [
+    "System.Int32$$Parse",
+    51905992
+   ],
+   [
+    "System.Int32$$Parse",
+    51906028
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51905772
+   ],
+   [
+    "' '",
+    51905812
+   ],
+   [
+    "' '",
+    51905856
+   ],
+   [
+    "' '",
+    51905900
+   ]
+  ]
+ },
+ "subBlur2": {
+  "cmp": 51906148,
+  "handler": 51906164,
+  "calls": [
+   [
+    "0x2230710",
+    51906176
+   ],
+   [
+    "ScriptManager.<>c__DisplayClass808_4$$.ctor",
+    51906188
+   ],
+   [
+    "0x2230448",
+    51906212
+   ],
+   [
+    "ScriptSubLayerManager$$GetScriptSubLayer",
+    51906264
+   ],
+   [
+    "0x2230448",
+    51906292
+   ],
+   [
+    "0x2230448",
+    51906340
+   ],
+   [
+    "System.String$$op_Equality",
+    51906388
+   ],
+   [
+    "System.String$$op_Equality",
+    51906440
+   ]
+  ],
+  "literals": [
+   [
+    "'subBlur'",
+    51906332
+   ],
+   [
+    "'se'",
+    51906384
+   ],
+   [
+    "' '",
+    51906436
+   ],
+   [
+    "' '",
+    51906476
+   ]
+  ]
+ },
+ "se": {
+  "cmp": 51906384,
+  "handler": 51906400,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51906440
+   ],
+   [
+    "System.String$$op_Equality",
+    51906484
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51906504
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51906436
+   ],
+   [
+    "' '",
+    51906476
+   ]
+  ]
+ },
+ "flashout": {
+  "cmp": 51906988,
+  "handler": 51907004,
+  "calls": [
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51907032
+   ],
+   [
+    "System.Single$$Parse",
+    51907072
+   ],
+   [
+    "ScriptManager$$EndFlash",
+    51907084
+   ]
+  ],
+  "literals": []
+ },
+ "masterScene": {
+  "cmp": 51907108,
+  "handler": 51907124,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51907188
+   ],
+   [
+    "System.String$$op_Equality",
+    51907260
+   ],
+   [
+    "0x201a774",
+    51907284
+   ],
+   [
+    "System.String$$op_Equality",
+    51907336
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51907360
+   ],
+   [
+    "System.String$$op_Equality",
+    51907428
+   ]
+  ],
+  "literals": [
+   [
+    "'bgmStopEnd'",
+    51907160
+   ],
+   [
+    "'seStop'",
+    51907184
+   ],
+   [
+    "' '",
+    51907256
+   ],
+   [
+    "'fadein'",
+    51907324
+   ],
+   [
+    "'effect'",
+    51907424
+   ]
+  ]
+ },
+ "seStop": {
+  "cmp": 51907184,
+  "handler": 51907200,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51907260
+   ],
+   [
+    "0x201a774",
+    51907284
+   ],
+   [
+    "System.String$$op_Equality",
+    51907336
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51907360
+   ],
+   [
+    "System.String$$op_Equality",
+    51907428
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51907472
+   ],
+   [
+    "ScriptManager$$GetEffectParameter",
+    51907492
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51907508
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51907256
+   ],
+   [
+    "'fadein'",
+    51907324
+   ],
+   [
+    "'effect'",
+    51907424
+   ]
+  ]
+ },
+ "effect": {
+  "cmp": 51907424,
+  "handler": 51907440,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51907472
+   ],
+   [
+    "ScriptManager$$GetEffectParameter",
+    51907492
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51907508
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51907524
+   ],
+   [
+    "System.String$$Contains",
+    51907556
+   ]
+  ],
+  "literals": [
+   [
+    "'bit_shot_'",
+    51907552
+   ]
+  ]
+ },
+ "insertionAnimationStart": {
+  "cmp": 51907840,
+  "handler": 51907852,
+  "calls": [
+   [
+    "UnityEngine.GameObject$$Find",
+    51907876
+   ],
+   [
+    "0x22305f4",
+    51907908
+   ],
+   [
+    "UnityEngine.Object$$op_Implicit",
+    51907920
+   ]
+  ],
+  "literals": []
+ },
+ "scene": {
+  "cmp": 51908104,
+  "handler": 51908116,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51908156
+   ],
+   [
+    "System.String$$op_Equality",
+    51908204
+   ]
+  ],
+  "literals": [
+   [
+    "'charaFadeSpeed'",
+    51908152
+   ],
+   [
+    "' '",
+    51908200
+   ]
+  ]
+ },
+ "charaFadeSpeed": {
+  "cmp": 51908152,
+  "handler": 51908164,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51908204
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51908200
+   ]
+  ]
+ },
+ "charaRelativeLoopMove": {
+  "cmp": 51908996,
+  "handler": 51909008,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51909040
+   ],
+   [
+    "System.Int32$$Parse",
+    51909104
+   ],
+   [
+    "0x2230564",
+    51909172
+   ],
+   [
+    "0x2230564",
+    51909200
+   ],
+   [
+    "System.String$$get_Chars",
+    51909276
+   ]
+  ],
+  "literals": []
+ },
+ "backlogStart": {
+  "cmp": 51909588,
+  "handler": 51909600,
+  "calls": [],
+  "literals": []
+ },
+ "fowardEffectStart": {
+  "cmp": 51909632,
+  "handler": 51909644,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51909676
+   ],
+   [
+    "System.String$$op_Equality",
+    51909708
+   ],
+   [
+    "UnityEngine.Camera$$get_targetTexture",
+    51909728
+   ],
+   [
+    "0x22305f4",
+    51909760
+   ],
+   [
+    "UnityEngine.Object$$op_Equality",
+    51909776
+   ],
+   [
+    "System.String$$op_Equality",
+    51909820
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51909860
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51909880
+   ],
+   [
+    "System.String$$op_Equality",
+    51909924
+   ],
+   [
+    "ScriptMessageCommonManager$$OffScreen",
+    51909960
+   ]
+  ],
+  "literals": [
+   [
+    "'capture'",
+    51909704
+   ],
+   [
+    "'effectmessageStop'",
+    51909816
+   ],
+   [
+    "'messageOff'",
+    51909920
+   ]
+  ]
+ },
+ "capture": {
+  "cmp": 51909704,
+  "handler": 51909716,
+  "calls": [
+   [
+    "UnityEngine.Camera$$get_targetTexture",
+    51909728
+   ],
+   [
+    "0x22305f4",
+    51909760
+   ],
+   [
+    "UnityEngine.Object$$op_Equality",
+    51909776
+   ],
+   [
+    "System.String$$op_Equality",
+    51909820
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51909860
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51909880
+   ],
+   [
+    "System.String$$op_Equality",
+    51909924
+   ],
+   [
+    "ScriptMessageCommonManager$$OffScreen",
+    51909960
+   ],
+   [
+    "ScriptMessageCommonManager$$ClearText",
+    51909976
+   ],
+   [
+    "ScriptLoop$$ShouldAddLogMessage",
+    51909992
+   ]
+  ],
+  "literals": [
+   [
+    "'effectmessageStop'",
+    51909816
+   ],
+   [
+    "'messageOff'",
+    51909920
+   ]
+  ]
+ },
+ "effectmessageStop": {
+  "cmp": 51909816,
+  "handler": 51909828,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51909860
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51909880
+   ],
+   [
+    "System.String$$op_Equality",
+    51909924
+   ],
+   [
+    "ScriptMessageCommonManager$$OffScreen",
+    51909960
+   ],
+   [
+    "ScriptMessageCommonManager$$ClearText",
+    51909976
+   ],
+   [
+    "ScriptLoop$$ShouldAddLogMessage",
+    51909992
+   ]
+  ],
+  "literals": [
+   [
+    "'messageOff'",
+    51909920
+   ]
+  ]
+ },
+ "messageOff": {
+  "cmp": 51909920,
+  "handler": 51909932,
+  "calls": [
+   [
+    "ScriptMessageCommonManager$$OffScreen",
+    51909960
+   ],
+   [
+    "ScriptMessageCommonManager$$ClearText",
+    51909976
+   ],
+   [
+    "ScriptLoop$$ShouldAddLogMessage",
+    51909992
+   ]
+  ],
+  "literals": []
+ },
+ "charaScale": {
+  "cmp": 51910040,
+  "handler": 51910052,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51910092
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51910088
+   ]
+  ]
+ },
+ "charaBackEffect": {
+  "cmp": 51910232,
+  "handler": 51910244,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51910284
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51910280
+   ]
+  ]
+ },
+ "charaRelativePut": {
+  "cmp": 51910596,
+  "handler": 51910608,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51910648
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51910644
+   ]
+  ]
+ },
+ "charaSpecialEffectStop": {
+  "cmp": 51911040,
+  "handler": 51911052,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51911084
+   ],
+   [
+    "System.String$$op_Equality",
+    51911160
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51911204
+   ],
+   [
+    "ScriptCharaData$$StopSpecialEffect",
+    51911220
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51911156
+   ]
+  ]
+ },
+ "stretchOff": {
+  "cmp": 51911764,
+  "handler": 51911776,
+  "calls": [
+   [
+    "ScriptManager$$InitStretch",
+    51911784
+   ]
+  ],
+  "literals": []
+ },
+ "soundStopAllFade": {
+  "cmp": 51911820,
+  "handler": 51911832,
+  "calls": [
+   [
+    "System.Single$$Parse",
+    51911860
+   ],
+   [
+    "ScriptManager$$SoundStopAllFade",
+    51911872
+   ]
+  ],
+  "literals": []
+ },
+ "effectmessageDestroy": {
+  "cmp": 51911896,
+  "handler": 51911908,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51911940
+   ],
+   [
+    "System.String$$op_Equality",
+    51911984
+   ],
+   [
+    "System.String$$op_Equality",
+    51912052
+   ],
+   [
+    "0x22305f4",
+    51912084
+   ],
+   [
+    "CommonEffectManager$$Stop",
+    51912108
+   ]
+  ],
+  "literals": [
+   [
+    "'cameraFilter'",
+    51911980
+   ],
+   [
+    "'communicationCharaStop'",
+    51912048
+   ]
+  ]
+ },
+ "cameraFilter": {
+  "cmp": 51911980,
+  "handler": 51911992,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51912052
+   ],
+   [
+    "0x22305f4",
+    51912084
+   ],
+   [
+    "CommonEffectManager$$Stop",
+    51912108
+   ]
+  ],
+  "literals": [
+   [
+    "'communicationCharaStop'",
+    51912048
+   ]
+  ]
+ },
+ "communicationCharaStop": {
+  "cmp": 51912048,
+  "handler": 51912060,
+  "calls": [
+   [
+    "0x22305f4",
+    51912084
+   ],
+   [
+    "CommonEffectManager$$Stop",
+    51912108
+   ]
+  ],
+  "literals": []
+ },
+ "seVolume": {
+  "cmp": 51912132,
+  "handler": 51912144,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51912184
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51912180
+   ]
+  ]
+ },
+ "fadeMove": {
+  "cmp": 51912420,
+  "handler": 51912432,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51912472
+   ],
+   [
+    "System.String$$op_Equality",
+    51912544
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51912584
+   ],
+   [
+    "ScriptCharaData$$StopMoveRelativePositionLoop",
+    51912624
+   ]
+  ],
+  "literals": [
+   [
+    "'blur'",
+    51912468
+   ],
+   [
+    "'blur'",
+    51912516
+   ],
+   [
+    "'charaRelativeLoopMoveStop'",
+    51912540
+   ]
+  ]
+ },
+ "blur": {
+  "cmp": 51912468,
+  "handler": 51912480,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51912544
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51912584
+   ],
+   [
+    "ScriptCharaData$$StopMoveRelativePositionLoop",
+    51912624
+   ]
+  ],
+  "literals": [
+   [
+    "'charaRelativeLoopMoveStop'",
+    51912540
+   ]
+  ]
+ },
+ "charaRelativeLoopMoveStop": {
+  "cmp": 51912540,
+  "handler": 51912552,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51912584
+   ],
+   [
+    "ScriptCharaData$$StopMoveRelativePositionLoop",
+    51912624
+   ]
+  ],
+  "literals": []
+ },
+ "keepSubBgmOn": {
+  "cmp": 51912648,
+  "handler": 51912660,
+  "calls": [
+   [
+    "0x22305f4",
+    51912680
+   ],
+   [
+    "BgmManager$$Enable_KeepSubBgm",
+    51912692
+   ]
+  ],
+  "literals": []
+ },
+ "enableFullScreen": {
+  "cmp": 51912716,
+  "handler": 51912728,
+  "calls": [],
+  "literals": []
+ },
+ "clear": {
+  "cmp": 51912748,
+  "handler": 51912760,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51912812
+   ],
+   [
+    "System.String$$op_Equality",
+    51912860
+   ],
+   [
+    "System.String$$op_Equality",
+    51912904
+   ],
+   [
+    "System.String$$op_Equality",
+    51912948
+   ],
+   [
+    "System.Single$$Parse",
+    51912984
+   ],
+   [
+    "System.Single$$Parse",
+    51913032
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51913048
+   ]
+  ],
+  "literals": [
+   [
+    "'messageShake'",
+    51912808
+   ],
+   [
+    "' '",
+    51912856
+   ],
+   [
+    "' '",
+    51912896
+   ],
+   [
+    "' '",
+    51912940
+   ]
+  ]
+ },
+ "messageShake": {
+  "cmp": 51912808,
+  "handler": 51912820,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51912860
+   ],
+   [
+    "System.String$$op_Equality",
+    51912904
+   ],
+   [
+    "System.String$$op_Equality",
+    51912948
+   ],
+   [
+    "System.Single$$Parse",
+    51912984
+   ],
+   [
+    "System.Single$$Parse",
+    51913032
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51913048
+   ],
+   [
+    "System.Single$$Parse",
+    51913104
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51912856
+   ],
+   [
+    "' '",
+    51912896
+   ],
+   [
+    "' '",
+    51912940
+   ]
+  ]
+ },
+ "effectStop": {
+  "cmp": 51913196,
+  "handler": 51913208,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51913240
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51913260
+   ],
+   [
+    "0x22305f4",
+    51913292
+   ],
+   [
+    "CommonEffectManager$$Stop",
+    51913320
+   ],
+   [
+    "System.String$$op_Equality",
+    51913348
+   ],
+   [
+    "System.String$$op_Equality",
+    51913396
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51913436
+   ],
+   [
+    "System.Single$$Parse",
+    51913500
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51913516
+   ]
+  ],
+  "literals": [
+   [
+    "'charaMoveScaleEase'",
+    51913344
+   ],
+   [
+    "' '",
+    51913392
+   ]
+  ]
+ },
+ "charaMoveScaleEase": {
+  "cmp": 51913344,
+  "handler": 51913356,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51913396
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51913436
+   ],
+   [
+    "System.Single$$Parse",
+    51913500
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51913516
+   ],
+   [
+    "System.Single$$Parse",
+    51913556
+   ],
+   [
+    "ScriptCharaData$$MoveScaleEase",
+    51913600
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51913392
+   ]
+  ]
+ },
+ "captureRelease": {
+  "cmp": 51913624,
+  "handler": 51913636,
+  "calls": [
+   [
+    "0x22305f4",
+    51913660
+   ],
+   [
+    "UnityEngine.Object$$op_Inequality",
+    51913676
+   ]
+  ],
+  "literals": []
+ },
+ "backEffectStart": {
+  "cmp": 51913828,
+  "handler": 51913840,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51913872
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51913892
+   ],
+   [
+    "0x22305f4",
+    51913924
+   ],
+   [
+    "CommonEffectManager$$Resume",
+    51913944
+   ]
+  ],
+  "literals": []
+ },
+ "charaMoveScale": {
+  "cmp": 51914052,
+  "handler": 51914064,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51914104
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51914100
+   ]
+  ]
+ },
+ "advPlayAnimator": {
+  "cmp": 51914352,
+  "handler": 51914364,
+  "calls": [
+   [
+    "ScriptManager$$IsJumpLine",
+    51914372
+   ]
+  ],
+  "literals": []
+ },
+ "turnPageOff": {
+  "cmp": 51914516,
+  "handler": 51914528,
+  "calls": [
+   [
+    "ScriptMessageCommonManager$$SetForcedDisableTurnPage",
+    51914564
+   ]
+  ],
+  "literals": []
+ },
+ "specialEffectStart": {
+  "cmp": 51915008,
+  "handler": 51915020,
+  "calls": [
+   [
+    "ScriptManager$$ConvertNameString",
+    51915052
+   ],
+   [
+    "ProgramEffectManager$$Resume",
+    51915076
+   ]
+  ],
+  "literals": []
+ },
+ "charaClear": {
+  "cmp": 51915100,
+  "handler": 51915112,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51915144
+   ],
+   [
+    "ScriptCharaData$$Destroy",
+    51915188
+   ],
+   [
+    "0x2019c04",
+    51915208
+   ]
+  ],
+  "literals": []
+ },
+ "charaLayer": {
+  "cmp": 51915232,
+  "handler": 51915244,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51915276
+   ],
+   [
+    "System.String$$op_Equality",
+    51915356
+   ],
+   [
+    "ScriptManager$$IsExistTargetSubLayerGroup",
+    51915396
+   ],
+   [
+    "ScriptSubLayerManager$$RegistCharaData",
+    51915448
+   ]
+  ],
+  "literals": [
+   [
+    "'sub'",
+    51915348
+   ],
+   [
+    "''",
+    51915392
+   ]
+  ]
+ },
+ "talkStart": {
+  "cmp": 51915704,
+  "handler": 51915716,
+  "calls": [
+   [
+    "0x2230448",
+    51915736
+   ]
+  ],
+  "literals": []
+ },
+ "subRenderDepth": {
+  "cmp": 51915784,
+  "handler": 51915796,
+  "calls": [
+   [
+    "System.Single$$Parse",
+    51915828
+   ],
+   [
+    "ScriptSubLayerManager$$SetDepth",
+    51915848
+   ]
+  ],
+  "literals": []
+ },
+ "subCameraMove": {
+  "cmp": 51915872,
+  "handler": 51915884,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51915924
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51915920
+   ]
+  ]
+ },
+ "charaFaceIcon": {
+  "cmp": 51916280,
+  "handler": 51916292,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51916332
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51916328
+   ]
+  ]
+ },
+ "charaFadeTimeLoop": {
+  "cmp": 51916692,
+  "handler": 51916704,
+  "calls": [
+   [
+    "System.String$$op_Inequality",
+    51916768
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51916756
+   ]
+  ]
+ },
+ "warMoveCameraSquare": {
+  "cmp": 51916836,
+  "handler": 51916848,
+  "calls": [
+   [
+    "System.Int32$$Parse",
+    51916876
+   ],
+   [
+    "System.Single$$Parse",
+    51916912
+   ],
+   [
+    "System.Single$$Parse",
+    51916948
+   ],
+   [
+    "System.Int32$$Parse",
+    51916996
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51917020
+   ],
+   [
+    "WarBoardManager$$MoveCameraSquareScript",
+    51917052
+   ]
+  ],
+  "literals": []
+ },
+ "charaDepth": {
+  "cmp": 51917076,
+  "handler": 51917088,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51917128
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51917168
+   ],
+   [
+    "System.Int32$$Parse",
+    51917232
+   ],
+   [
+    "ScriptCharaData$$SetDepth",
+    51917248
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51917124
+   ]
+  ]
+ },
+ "maskOff": {
+  "cmp": 51917308,
+  "handler": 51917320,
+  "calls": [
+   [
+    "ScriptManager$$InitMask",
+    51917328
+   ]
+  ],
+  "literals": []
+ },
+ "subCameraFilter": {
+  "cmp": 51917352,
+  "handler": 51917364,
+  "calls": [
+   [
+    "ScriptManager$$IsExistTargetSubLayerGroup",
+    51917392
+   ],
+   [
+    "System.String$$op_Equality",
+    51917448
+   ],
+   [
+    "System.String$$op_Equality",
+    51917496
+   ]
+  ],
+  "literals": [
+   [
+    "''",
+    51917388
+   ],
+   [
+    "'charaFaceFade'",
+    51917444
+   ],
+   [
+    "' '",
+    51917492
+   ]
+  ]
+ },
+ "charaFaceFade": {
+  "cmp": 51917444,
+  "handler": 51917456,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51917496
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51917492
+   ]
+  ]
+ },
+ "subCameraOn": {
+  "cmp": 51917712,
+  "handler": 51917724,
+  "calls": [
+   [
+    "System.Int32$$Parse",
+    51917752
+   ],
+   [
+    "System.String$$op_Equality",
+    51917784
+   ],
+   [
+    "System.String$$op_Equality",
+    51917832
+   ],
+   [
+    "System.String$$op_Equality",
+    51917876
+   ],
+   [
+    "0x201a774",
+    51917900
+   ],
+   [
+    "System.Single$$Parse",
+    51917944
+   ],
+   [
+    "System.Single$$Parse",
+    51917980
+   ]
+  ],
+  "literals": [
+   [
+    "'seLoop'",
+    51917780
+   ],
+   [
+    "' '",
+    51917828
+   ],
+   [
+    "' '",
+    51917868
+   ],
+   [
+    "'branchRouteSelect'",
+    51918032
+   ]
+  ]
+ },
+ "seLoop": {
+  "cmp": 51917780,
+  "handler": 51917792,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51917832
+   ],
+   [
+    "System.String$$op_Equality",
+    51917876
+   ],
+   [
+    "0x201a774",
+    51917900
+   ],
+   [
+    "System.Single$$Parse",
+    51917944
+   ],
+   [
+    "System.Single$$Parse",
+    51917980
+   ],
+   [
+    "System.String$$op_Equality",
+    51918044
+   ],
+   [
+    "System.String$$op_Equality",
+    51918092
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51917828
+   ],
+   [
+    "' '",
+    51917868
+   ],
+   [
+    "'branchRouteSelect'",
+    51918032
+   ],
+   [
+    "' '",
+    51918088
+   ]
+  ]
+ },
+ "charaRollMoveEx": {
+  "cmp": 51918496,
+  "handler": 51918508,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51918548
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51918588
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51918632
+   ],
+   [
+    "System.Single$$Parse",
+    51918672
+   ],
+   [
+    "ApRecoverConfirmDlgComponent$$.ctor",
+    51918684
+   ],
+   [
+    "System.String$$op_Equality",
+    51918736
+   ],
+   [
+    "System.Single$$Parse",
+    51918772
+   ],
+   [
+    "System.String$$get_Chars",
+    51918816
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51918544
+   ],
+   [
+    "' '",
+    51918728
+   ]
+  ]
+ },
+ "advRelease": {
+  "cmp": 51919308,
+  "handler": 51919320,
+  "calls": [
+   [
+    "ExUIMeshRenderer$$ClearImage",
+    51919348
+   ],
+   [
+    "UnityEngine.Component$$get_gameObject",
+    51919364
+   ],
+   [
+    "UnityEngine.GameObject$$SetActive",
+    51919380
+   ],
+   [
+    "0x0",
+    51919420
+   ],
+   [
+    "UnityEngine.Component$$get_gameObject",
+    51919436
+   ],
+   [
+    "UnityEngine.GameObject$$SetActive",
+    51919452
+   ],
+   [
+    "ScriptActionAdvPrefabController$$Release",
+    51919468
+   ]
+  ],
+  "literals": []
+ },
+ "subBlurOff": {
+  "cmp": 51919504,
+  "handler": 51919516,
+  "calls": [
+   [
+    "0x2230710",
+    51919528
+   ],
+   [
+    "ScriptManager.<>c__DisplayClass808_5$$.ctor",
+    51919540
+   ],
+   [
+    "0x2230448",
+    51919564
+   ],
+   [
+    "ScriptSubLayerManager$$GetScriptSubLayer",
+    51919612
+   ],
+   [
+    "0x2230448",
+    51919632
+   ],
+   [
+    "0x2230448",
+    51919660
+   ],
+   [
+    "System.Single$$Parse",
+    51919708
+   ],
+   [
+    "0x2230448",
+    51919760
+   ],
+   [
+    "System.String$$op_Equality",
+    51919816
+   ]
+  ],
+  "literals": [
+   [
+    "'lens'",
+    51919808
+   ]
+  ]
+ },
+ "charaMask": {
+  "cmp": 51920764,
+  "handler": 51920776,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51920808
+   ],
+   [
+    "System.String$$op_Equality",
+    51920888
+   ],
+   [
+    "System.String$$op_Equality",
+    51920932
+   ],
+   [
+    "System.String$$op_Equality",
+    51920996
+   ],
+   [
+    "System.String$$op_Equality",
+    51921040
+   ],
+   [
+    "ScriptManager$$ConvertWipeName",
+    51921080
+   ]
+  ],
+  "literals": [
+   [
+    "'inside'",
+    51920880
+   ],
+   [
+    "'wipeoutEx'",
+    51920920
+   ],
+   [
+    "' '",
+    51920992
+   ],
+   [
+    "' '",
+    51921032
+   ]
+  ]
+ },
+ "messageSpeedForcedNormal": {
+  "cmp": 51921400,
+  "handler": 51921412,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51921452
+   ],
+   [
+    "System.String$$op_Equality",
+    51921520
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51921560
+   ],
+   [
+    "0x22305f4",
+    51921596
+   ],
+   [
+    "CommonEffectManager$$Stop",
+    51921628
+   ],
+   [
+    "System.String$$op_Equality",
+    51921656
+   ],
+   [
+    "System.String$$op_Equality",
+    51921704
+   ]
+  ],
+  "literals": [
+   [
+    "'on'",
+    51921448
+   ],
+   [
+    "'effectDestroy'",
+    51921516
+   ],
+   [
+    "'overlayFadein'",
+    51921652
+   ],
+   [
+    "' '",
+    51921700
+   ]
+  ]
+ },
+ "effectDestroy": {
+  "cmp": 51921516,
+  "handler": 51921528,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51921560
+   ],
+   [
+    "0x22305f4",
+    51921596
+   ],
+   [
+    "CommonEffectManager$$Stop",
+    51921628
+   ],
+   [
+    "System.String$$op_Equality",
+    51921656
+   ],
+   [
+    "System.String$$op_Equality",
+    51921704
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51921744
+   ],
+   [
+    "ScriptCharaData$$IsMoveAlpha",
+    51921792
+   ],
+   [
+    "System.String$$op_Equality",
+    51921836
+   ]
+  ],
+  "literals": [
+   [
+    "'overlayFadein'",
+    51921652
+   ],
+   [
+    "' '",
+    51921700
+   ],
+   [
+    "'endFade'",
+    51921832
+   ]
+  ]
+ },
+ "overlayFadein": {
+  "cmp": 51921652,
+  "handler": 51921664,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51921704
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51921744
+   ],
+   [
+    "ScriptCharaData$$IsMoveAlpha",
+    51921792
+   ],
+   [
+    "System.String$$op_Equality",
+    51921836
+   ],
+   [
+    "System.String$$op_Equality",
+    51921888
+   ],
+   [
+    "System.String$$op_Equality",
+    51921924
+   ],
+   [
+    "System.String$$op_Equality",
+    51921972
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51921700
+   ],
+   [
+    "'endFade'",
+    51921832
+   ],
+   [
+    "'clear'",
+    51921880
+   ],
+   [
+    "'cueSeVolume'",
+    51921920
+   ],
+   [
+    "' '",
+    51921968
+   ]
+  ]
+ },
+ "endFade": {
+  "cmp": 51921832,
+  "handler": 51921844,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51921888
+   ],
+   [
+    "System.String$$op_Equality",
+    51921924
+   ],
+   [
+    "System.String$$op_Equality",
+    51921972
+   ]
+  ],
+  "literals": [
+   [
+    "'clear'",
+    51921880
+   ],
+   [
+    "'cueSeVolume'",
+    51921920
+   ],
+   [
+    "' '",
+    51921968
+   ]
+  ]
+ },
+ "cueSeVolume": {
+  "cmp": 51921920,
+  "handler": 51921932,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51921972
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51921968
+   ]
+  ]
+ },
+ "effectForceStop": {
+  "cmp": 51922172,
+  "handler": 51922184,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51922216
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51922236
+   ],
+   [
+    "0x22305f4",
+    51922268
+   ],
+   [
+    "CommonEffectManager$$ForceStop",
+    51922296
+   ],
+   [
+    "System.String$$op_Equality",
+    51922324
+   ],
+   [
+    "System.String$$op_Equality",
+    51922372
+   ]
+  ],
+  "literals": [
+   [
+    "'branchHaveSvtEquip'",
+    51922312
+   ],
+   [
+    "' '",
+    51922368
+   ]
+  ]
+ },
+ "jingleStop": {
+  "cmp": 51922612,
+  "handler": 51922624,
+  "calls": [
+   [
+    "0x22305f4",
+    51922672
+   ],
+   [
+    "SoundManager$$isPlayJingle",
+    51922684
+   ]
+  ],
+  "literals": []
+ },
+ "l": {
+  "cmp": 51922720,
+  "handler": 51922732,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51922772
+   ],
+   [
+    "System.Single$$Parse",
+    51922808
+   ],
+   [
+    "ScriptMessageCommonManager$$SetBetweenLineHeight",
+    51922832
+   ],
+   [
+    "System.String$$op_Equality",
+    51922872
+   ],
+   [
+    "System.String$$op_Equality",
+    51922920
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51922960
+   ],
+   [
+    "System.Int32$$Parse",
+    51923024
+   ],
+   [
+    "ScriptCharaData$$SetFace",
+    51923044
+   ]
+  ],
+  "literals": [
+   [
+    "'-'",
+    51922768
+   ],
+   [
+    "'charaFace'",
+    51922868
+   ],
+   [
+    "' '",
+    51922916
+   ]
+  ]
+ },
+ "charaFace": {
+  "cmp": 51922868,
+  "handler": 51922880,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51922920
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51922960
+   ],
+   [
+    "System.Int32$$Parse",
+    51923024
+   ],
+   [
+    "ScriptCharaData$$SetFace",
+    51923044
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51922916
+   ]
+  ]
+ },
+ "advActorShow": {
+  "cmp": 51923088,
+  "handler": 51923100,
+  "calls": [
+   [
+    "ScriptManager$$ConvertNameString",
+    51923148
+   ],
+   [
+    "ScriptActionAdvPrefabController$$SetShow",
+    51923164
+   ]
+  ],
+  "literals": []
+ },
+ "talkNameBack": {
+  "cmp": 51923188,
+  "handler": 51923200,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51923256
+   ],
+   [
+    "ScriptManager$$InitWipe",
+    51923272
+   ]
+  ],
+  "literals": [
+   [
+    "'wipeOff'",
+    51923252
+   ]
+  ]
+ },
+ "wipeOff": {
+  "cmp": 51923252,
+  "handler": 51923264,
+  "calls": [
+   [
+    "ScriptManager$$InitWipe",
+    51923272
+   ]
+  ],
+  "literals": []
+ },
+ "fowardEffectStop": {
+  "cmp": 51923296,
+  "handler": 51923308,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51923340
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51923360
+   ],
+   [
+    "0x22305f4",
+    51923392
+   ],
+   [
+    "CommonEffectManager$$Stop",
+    51923420
+   ],
+   [
+    "System.String$$op_Equality",
+    51923448
+   ],
+   [
+    "ScriptManager$$IsWaitTalk",
+    51923464
+   ],
+   [
+    "0x2230448",
+    51923492
+   ],
+   [
+    "System.String$$op_Equality",
+    51923536
+   ],
+   [
+    "System.String$$op_Equality",
+    51923584
+   ],
+   [
+    "System.Single$$Parse",
+    51923620
+   ]
+  ],
+  "literals": [
+   [
+    "'charaTalk'",
+    51923444
+   ],
+   [
+    "'charaTalk'",
+    51923472
+   ],
+   [
+    "'s'",
+    51923532
+   ],
+   [
+    "'-'",
+    51923580
+   ]
+  ]
+ },
+ "charaTalk": {
+  "cmp": 51923444,
+  "handler": 51923456,
+  "calls": [
+   [
+    "ScriptManager$$IsWaitTalk",
+    51923464
+   ],
+   [
+    "0x2230448",
+    51923492
+   ],
+   [
+    "System.String$$op_Equality",
+    51923536
+   ],
+   [
+    "System.String$$op_Equality",
+    51923584
+   ],
+   [
+    "System.Single$$Parse",
+    51923620
+   ]
+  ],
+  "literals": [
+   [
+    "'s'",
+    51923532
+   ],
+   [
+    "'-'",
+    51923580
+   ]
+  ]
+ },
+ "s": {
+  "cmp": 51923532,
+  "handler": 51923544,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51923584
+   ],
+   [
+    "System.Single$$Parse",
+    51923620
+   ]
+  ],
+  "literals": [
+   [
+    "'-'",
+    51923580
+   ]
+  ]
+ },
+ "backEffectDestroy": {
+  "cmp": 51923652,
+  "handler": 51923664,
+  "calls": [
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51923696
+   ],
+   [
+    "0x22305f4",
+    51923732
+   ],
+   [
+    "CommonEffectManager$$Stop",
+    51923764
+   ],
+   [
+    "System.String$$op_Equality",
+    51923792
+   ],
+   [
+    "ScriptManager$$InitFade",
+    51923808
+   ]
+  ],
+  "literals": [
+   [
+    "'fadeOff'",
+    51923788
+   ]
+  ]
+ },
+ "fadeOff": {
+  "cmp": 51923788,
+  "handler": 51923800,
+  "calls": [
+   [
+    "ScriptManager$$InitFade",
+    51923808
+   ]
+  ],
+  "literals": []
+ },
+ "charaShakeStop": {
+  "cmp": 51924572,
+  "handler": 51924584,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51924616
+   ],
+   [
+    "ScriptCharaData$$ShakeStop",
+    51924656
+   ]
+  ],
+  "literals": []
+ },
+ "flagRandom": {
+  "cmp": 51924680,
+  "handler": 51924692,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51924732
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51924728
+   ]
+  ]
+ },
+ "rewardSwitch": {
+  "cmp": 51925536,
+  "handler": 51925548,
+  "calls": [
+   [
+    "0x2230448",
+    51925592
+   ],
+   [
+    "System.String$$op_Equality",
+    51925636
+   ]
+  ],
+  "literals": [
+   [
+    "'parameter error'",
+    51925584
+   ],
+   [
+    "'true'",
+    51925628
+   ]
+  ]
+ },
+ "messageChange": {
+  "cmp": 51925676,
+  "handler": 51925688,
+  "calls": [
+   [
+    "ScriptMessageCommonManager$$ResetLongPress",
+    51925700
+   ],
+   [
+    "ScriptManager$$ModifyPlaySpeed",
+    51925716
+   ],
+   [
+    "ScriptManager$$ConvertMessageWindowName",
+    51925752
+   ],
+   [
+    "0x22305f4",
+    51925784
+   ],
+   [
+    "AssetManager$$getAssetStorage",
+    51925796
+   ],
+   [
+    "AssetData$$GetObject",
+    51925820
+   ],
+   [
+    "UnityEngine.GameObject$$GetComponent<object>",
+    51925864
+   ],
+   [
+    "ScriptMessageCommonManager$$ChangeMessageWindow",
+    51925888
+   ]
+  ],
+  "literals": [
+   [
+    "'prefab'",
+    51925816
+   ]
+  ]
+ },
+ "revivalBranch": {
+  "cmp": 51925912,
+  "handler": 51925924,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51925964
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51925960
+   ]
+  ]
+ },
+ "subCameraMoveEase": {
+  "cmp": 51926052,
+  "handler": 51926064,
+  "calls": [
+   [
+    "ScriptManager$$IsExistTargetSubLayerGroup",
+    51926092
+   ],
+   [
+    "System.String$$op_Equality",
+    51926148
+   ],
+   [
+    "System.String$$op_Equality",
+    51926196
+   ],
+   [
+    "System.String$$op_Equality",
+    51926236
+   ],
+   [
+    "System.String$$op_Equality",
+    51926276
+   ],
+   [
+    "System.Single$$Parse",
+    51926308
+   ],
+   [
+    "System.Single$$Parse",
+    51926356
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51926372
+   ]
+  ],
+  "literals": [
+   [
+    "''",
+    51926088
+   ],
+   [
+    "'shake'",
+    51926144
+   ],
+   [
+    "' '",
+    51926192
+   ],
+   [
+    "' '",
+    51926228
+   ],
+   [
+    "' '",
+    51926268
+   ]
+  ]
+ },
+ "shake": {
+  "cmp": 51926144,
+  "handler": 51926156,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51926196
+   ],
+   [
+    "System.String$$op_Equality",
+    51926236
+   ],
+   [
+    "System.String$$op_Equality",
+    51926276
+   ],
+   [
+    "System.Single$$Parse",
+    51926308
+   ],
+   [
+    "System.Single$$Parse",
+    51926356
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51926372
+   ],
+   [
+    "System.Single$$Parse",
+    51926424
+   ],
+   [
+    "System.Single$$Parse",
+    51926460
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51926192
+   ],
+   [
+    "' '",
+    51926228
+   ],
+   [
+    "' '",
+    51926268
+   ]
+  ]
+ },
+ "charaCutStop": {
+  "cmp": 51926940,
+  "handler": 51926952,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51926984
+   ],
+   [
+    "ScriptCharaData$$StopCut",
+    51927024
+   ]
+  ],
+  "literals": []
+ },
+ "wipeFilter": {
+  "cmp": 51927048,
+  "handler": 51927060,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51927128
+   ],
+   [
+    "System.Single$$Parse",
+    51927168
+   ],
+   [
+    "ScriptManager$$ConvertWipeName",
+    51927204
+   ],
+   [
+    "System.String$$op_Equality",
+    51927256
+   ],
+   [
+    "System.Single$$Parse",
+    51927292
+   ],
+   [
+    "ScriptManager$$SetWipeFilter",
+    51927336
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51927124
+   ],
+   [
+    "' '",
+    51927252
+   ]
+  ]
+ },
+ "charaRollAxisLoopStop": {
+  "cmp": 51927388,
+  "handler": 51927400,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51927432
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51927476
+   ],
+   [
+    "ScriptCharaData$$StopRollAxisLoop",
+    51927492
+   ]
+  ],
+  "literals": []
+ },
+ "charaShake": {
+  "cmp": 51927516,
+  "handler": 51927528,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51927568
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51927564
+   ]
+  ]
+ },
+ "masterNameWidth": {
+  "cmp": 51928020,
+  "handler": 51928032,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51928072
+   ],
+   [
+    "System.String$$op_Equality",
+    51928116
+   ],
+   [
+    "System.String$$op_Equality",
+    51928160
+   ],
+   [
+    "System.Int32$$Parse",
+    51928208
+   ],
+   [
+    "0x22305f4",
+    51928240
+   ],
+   [
+    "ScriptReplaceString$$GetString",
+    51928252
+   ],
+   [
+    "0x22305f4",
+    51928284
+   ],
+   [
+    "LocalizationManager$$ReplaceNameTag",
+    51928300
+   ],
+   [
+    "LocalizationManager$$ReplaceNameTag",
+    51928312
+   ],
+   [
+    "0x22305f4",
+    51928344
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51928068
+   ],
+   [
+    "' '",
+    51928108
+   ],
+   [
+    "' '",
+    51928152
+   ]
+  ]
+ },
+ "flashoutDep": {
+  "cmp": 51928804,
+  "handler": 51928816,
+  "calls": [
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51928844
+   ],
+   [
+    "System.Single$$Parse",
+    51928884
+   ],
+   [
+    "ScriptManager$$EndFlashDep",
+    51928896
+   ]
+  ],
+  "literals": []
+ },
+ "charaAttack": {
+  "cmp": 51929700,
+  "handler": 51929712,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51929752
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51929748
+   ]
+  ]
+ },
+ "cueSe": {
+  "cmp": 51930152,
+  "handler": 51930164,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51930204
+   ],
+   [
+    "System.String$$op_Equality",
+    51930248
+   ],
+   [
+    "System.String$$op_Equality",
+    51930292
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51930312
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51930200
+   ],
+   [
+    "' '",
+    51930240
+   ],
+   [
+    "' '",
+    51930284
+   ]
+  ]
+ },
+ "charaEffectEdgeBlurDestroy": {
+  "cmp": 51930540,
+  "handler": 51930552,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51930584
+   ],
+   [
+    "ScriptCharaData$$StopEffect",
+    51930632
+   ]
+  ],
+  "literals": []
+ },
+ "q": {
+  "cmp": 51930656,
+  "handler": 51930668,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51930716
+   ],
+   [
+    "System.Single$$Parse",
+    51930760
+   ],
+   [
+    "System.Single$$Parse",
+    51930796
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51930816
+   ],
+   [
+    "WarBoardManager$$PlayEffectPosScript",
+    51930844
+   ]
+  ],
+  "literals": [
+   [
+    "'warEffectPos'",
+    51930712
+   ]
+  ]
+ },
+ "warEffectPos": {
+  "cmp": 51930712,
+  "handler": 51930724,
+  "calls": [
+   [
+    "System.Single$$Parse",
+    51930760
+   ],
+   [
+    "System.Single$$Parse",
+    51930796
+   ],
+   [
+    "SingletonMonoBehaviour<object>$$get_Instance",
+    51930816
+   ],
+   [
+    "WarBoardManager$$PlayEffectPosScript",
+    51930844
+   ]
+  ],
+  "literals": []
+ },
+ "communicationCharaClear": {
+  "cmp": 51930880,
+  "handler": 51930892,
+  "calls": [
+   [
+    "0x22305f4",
+    51930916
+   ],
+   [
+    "CommonEffectManager$$Destroy",
+    51930928
+   ]
+  ],
+  "literals": []
+ },
+ "charaSpecialEffectStart": {
+  "cmp": 51930952,
+  "handler": 51930964,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51930996
+   ],
+   [
+    "System.String$$op_Equality",
+    51931072
+   ],
+   [
+    "ScriptManager$$ConvertNameString",
+    51931112
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51931128
+   ],
+   [
+    "ScriptCharaData$$ResumeSpecialEffect",
+    51931148
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51931068
+   ]
+  ]
+ },
+ "cameraMove": {
+  "cmp": 51931184,
+  "handler": 51931196,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51931236
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51931232
+   ]
+  ]
+ },
+ "charaRoll": {
+  "cmp": 51931588,
+  "handler": 51931600,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51931632
+   ],
+   [
+    "ApRecoverConfirmDlgComponent$$.ctor",
+    51931672
+   ],
+   [
+    "System.String$$op_Equality",
+    51931732
+   ],
+   [
+    "System.Int32$$Parse",
+    51931768
+   ],
+   [
+    "System.String$$get_Chars",
+    51931812
+   ],
+   [
+    "System.Int32$$Parse",
+    51931856
+   ],
+   [
+    "System.Int32$$Parse",
+    51931892
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51931728
+   ]
+  ]
+ },
+ "jingle": {
+  "cmp": 51932004,
+  "handler": 51932016,
+  "calls": [
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51932044
+   ]
+  ],
+  "literals": []
+ },
+ "messageAlign": {
+  "cmp": 51932732,
+  "handler": 51932744,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51932792
+   ],
+   [
+    "System.String$$op_Equality",
+    51932840
+   ]
+  ],
+  "literals": [
+   [
+    "'charaPutFSLNotNotch'",
+    51932780
+   ],
+   [
+    "' '",
+    51932836
+   ]
+  ]
+ },
+ "charaRelativeLoopMoveEase": {
+  "cmp": 51933624,
+  "handler": 51933636,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51933668
+   ],
+   [
+    "System.Int32$$Parse",
+    51933732
+   ],
+   [
+    "0x2230564",
+    51933800
+   ],
+   [
+    "0x2230564",
+    51933828
+   ],
+   [
+    "System.String$$get_Chars",
+    51933904
+   ]
+  ],
+  "literals": []
+ },
+ "spriteMaskOff": {
+  "cmp": 51934260,
+  "handler": 51934272,
+  "calls": [
+   [
+    "UnityEngine.SpriteMask$$set_sprite",
+    51934288
+   ],
+   [
+    "UnityEngine.Component$$get_gameObject",
+    51934304
+   ],
+   [
+    "UnityEngine.GameObject$$SetActive",
+    51934320
+   ]
+  ],
+  "literals": []
+ },
+ "soundStopAllEnd": {
+  "cmp": 51934344,
+  "handler": 51934356,
+  "calls": [
+   [
+    "0x22305f4",
+    51934376
+   ],
+   [
+    "ScriptManager$$GetNonStopEndBgm",
+    51934400
+   ],
+   [
+    "ScriptManager$$SoundStopAllEnd",
+    51934416
+   ]
+  ],
+  "literals": []
+ },
+ "wait": {
+  "cmp": 51934440,
+  "handler": 51934452,
+  "calls": [
+   [
+    "0x2230448",
+    51934496
+   ],
+   [
+    "<PrivateImplementationDetails>$$ComputeStringHash",
+    51934512
+   ],
+   [
+    "System.String$$op_Equality",
+    51934652
+   ],
+   [
+    "ScriptManager$$JumpScriptCommand",
+    51934688
+   ]
+  ],
+  "literals": [
+   [
+    "'switchCase'",
+    51934648
+   ],
+   [
+    "'switchCaseEnd'",
+    51934684
+   ]
+  ]
+ },
+ "switchCase": {
+  "cmp": 51934648,
+  "handler": 51934660,
+  "calls": [
+   [
+    "ScriptManager$$JumpScriptCommand",
+    51934688
+   ]
+  ],
+  "literals": [
+   [
+    "'switchCaseEnd'",
+    51934684
+   ]
+  ]
+ },
+ "specialEffectPuase": {
+  "cmp": 51934712,
+  "handler": 51934724,
+  "calls": [
+   [
+    "ScriptManager$$ConvertNameString",
+    51934756
+   ],
+   [
+    "ScriptManager$$ScriptCommandExecute",
+    51934768
+   ],
+   [
+    "System.String$$op_Equality",
+    51934824
+   ],
+   [
+    "System.String$$op_Equality",
+    51934872
+   ],
+   [
+    "System.Int32$$Parse",
+    51934908
+   ],
+   [
+    "System.Int32$$Parse",
+    51934944
+   ],
+   [
+    "0x22305f4",
+    51934976
+   ],
+   [
+    "ScriptPosition$$GetPosition",
+    51934992
+   ],
+   [
+    "System.String$$op_Equality",
+    51935040
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51934820
+   ],
+   [
+    "','",
+    51934868
+   ],
+   [
+    "' '",
+    51935032
+   ]
+  ]
+ },
+ "charaFilter": {
+  "cmp": 51935268,
+  "handler": 51935280,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51935320
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51935316
+   ]
+  ]
+ },
+ "blurOff": {
+  "cmp": 51935624,
+  "handler": 51935636,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51935688
+   ],
+   [
+    "System.Single$$Parse",
+    51935728
+   ],
+   [
+    "0x2230710",
+    51935748
+   ],
+   [
+    "ScriptActionRenderEffectController.StopFunction$$.ctor",
+    51935776
+   ],
+   [
+    "ScriptActionRenderEffectController$$StopGaussianBlur",
+    51935800
+   ],
+   [
+    "System.String$$op_Equality",
+    51935828
+   ],
+   [
+    "System.String$$op_Equality",
+    51935876
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51935912
+   ]
+  ],
+  "literals": [
+   [
+    "'lens'",
+    51935680
+   ],
+   [
+    "'charaEffectPause'",
+    51935816
+   ],
+   [
+    "' '",
+    51935872
+   ]
+  ]
+ },
+ "talkName": {
+  "cmp": 51936228,
+  "handler": 51936240,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51936276
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51936316
+   ],
+   [
+    "ScriptCharaData$$IsLoad",
+    51936364
+   ],
+   [
+    "0x2230448",
+    51936400
+   ],
+   [
+    "System.String$$op_Equality",
+    51936436
+   ],
+   [
+    "System.String$$op_Equality",
+    51936484
+   ],
+   [
+    "System.Int32$$Parse",
+    51936520
+   ],
+   [
+    "System.Single$$Parse",
+    51936556
+   ]
+  ],
+  "literals": [
+   [
+    "'masterChange'",
+    51936272
+   ],
+   [
+    "'charaChange'",
+    51936380
+   ],
+   [
+    "'stretchin'",
+    51936424
+   ],
+   [
+    "'warMoveCameraPiece'",
+    51936480
+   ]
+  ]
+ },
+ "masterChange": {
+  "cmp": 51936272,
+  "handler": 51936284,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51936316
+   ],
+   [
+    "ScriptCharaData$$IsLoad",
+    51936364
+   ],
+   [
+    "0x2230448",
+    51936400
+   ],
+   [
+    "System.String$$op_Equality",
+    51936436
+   ],
+   [
+    "System.String$$op_Equality",
+    51936484
+   ],
+   [
+    "System.Int32$$Parse",
+    51936520
+   ],
+   [
+    "System.Single$$Parse",
+    51936556
+   ],
+   [
+    "System.Single$$Parse",
+    51936592
+   ]
+  ],
+  "literals": [
+   [
+    "'charaChange'",
+    51936380
+   ],
+   [
+    "'stretchin'",
+    51936424
+   ],
+   [
+    "'warMoveCameraPiece'",
+    51936480
+   ]
+  ]
+ },
+ "warMoveCameraPiece": {
+  "cmp": 51936480,
+  "handler": 51936492,
+  "calls": [
+   [
+    "System.Int32$$Parse",
+    51936520
+   ],
+   [
+    "System.Single$$Parse",
+    51936556
+   ],
+   [
+    "System.Single$$Parse",
+    51936592
+   ],
+   [
+    "0x2230564",
+    51936640
+   ],
+   [
+    "System.Int32$$Parse",
+    51936676
+   ],
+   [
+    "System.Int32$$Parse",
+    51936724
+   ],
+   [
+    "System.Int32$$Parse",
+    51936772
+   ]
+  ],
+  "literals": []
+ },
+ "charaFadeout": {
+  "cmp": 51936836,
+  "handler": 51936848,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51936888
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51936884
+   ]
+  ]
+ },
+ "flashinDep": {
+  "cmp": 51937028,
+  "handler": 51937040,
+  "calls": [
+   [
+    "ScriptManager$$EndFlash",
+    51937060
+   ],
+   [
+    "System.String$$op_Equality",
+    51937104
+   ],
+   [
+    "System.String$$op_Equality",
+    51937152
+   ],
+   [
+    "System.String$$op_Equality",
+    51937196
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51937236
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51937280
+   ],
+   [
+    "System.String$$op_Equality",
+    51937328
+   ]
+  ],
+  "literals": [
+   [
+    "'flashDep'",
+    51937076
+   ],
+   [
+    "'subStretch'",
+    51937100
+   ],
+   [
+    "'on'",
+    51937148
+   ],
+   [
+    "'charaBackEffectStart'",
+    51937192
+   ],
+   [
+    "' '",
+    51937324
+   ]
+  ]
+ },
+ "subStretch": {
+  "cmp": 51937100,
+  "handler": 51937112,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51937152
+   ],
+   [
+    "System.String$$op_Equality",
+    51937196
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51937236
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51937280
+   ],
+   [
+    "System.String$$op_Equality",
+    51937328
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51937368
+   ],
+   [
+    "ScriptCharaData$$ResumeBackEffect",
+    51937388
+   ]
+  ],
+  "literals": [
+   [
+    "'on'",
+    51937148
+   ],
+   [
+    "'charaBackEffectStart'",
+    51937192
+   ],
+   [
+    "' '",
+    51937324
+   ]
+  ]
+ },
+ "charaBackEffectStart": {
+  "cmp": 51937192,
+  "handler": 51937204,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51937236
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51937280
+   ],
+   [
+    "System.String$$op_Equality",
+    51937328
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51937368
+   ],
+   [
+    "ScriptCharaData$$ResumeBackEffect",
+    51937388
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51937324
+   ]
+  ]
+ },
+ "charaEffectStart": {
+  "cmp": 51937412,
+  "handler": 51937424,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51937456
+   ],
+   [
+    "ScriptManager$$IsFastPlaySpeed",
+    51937500
+   ],
+   [
+    "System.String$$op_Equality",
+    51937548
+   ],
+   [
+    "ScriptManager$$ConvertTalkEffectName",
+    51937588
+   ],
+   [
+    "ScriptCharaData$$ResumeEffect",
+    51937608
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51937544
+   ]
+  ]
+ },
+ "cameraRoll": {
+  "cmp": 51937836,
+  "handler": 51937848,
+  "calls": [
+   [
+    "System.Single$$Parse",
+    51937876
+   ],
+   [
+    "ApRecoverConfirmDlgComponent$$.ctor",
+    51937888
+   ],
+   [
+    "System.String$$get_Chars",
+    51937940
+   ],
+   [
+    "System.String$$op_Equality",
+    51937996
+   ],
+   [
+    "System.Int32$$Parse",
+    51938032
+   ],
+   [
+    "System.Int32$$Parse",
+    51938068
+   ],
+   [
+    "0x22305f4",
+    51938100
+   ],
+   [
+    "ScriptPosition$$GetPosition",
+    51938116
+   ],
+   [
+    "ScriptManager$$SetCameraRoll",
+    51938156
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51937992
+   ]
+  ]
+ },
+ "maskout": {
+  "cmp": 51938424,
+  "handler": 51938436,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51938476
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51938516
+   ],
+   [
+    "ScriptCharaData$$IsLoad",
+    51938564
+   ],
+   [
+    "0x2230448",
+    51938600
+   ],
+   [
+    "System.String$$op_Equality",
+    51938636
+   ],
+   [
+    "ScriptManager$$SoundStopAll",
+    51938652
+   ]
+  ],
+  "literals": [
+   [
+    "'horizontalImageChange'",
+    51938464
+   ],
+   [
+    "'charaChange'",
+    51938592
+   ],
+   [
+    "'soundStopAll'",
+    51938632
+   ]
+  ]
+ },
+ "soundStopAll": {
+  "cmp": 51938632,
+  "handler": 51938644,
+  "calls": [
+   [
+    "ScriptManager$$SoundStopAll",
+    51938652
+   ]
+  ],
+  "literals": []
+ },
+ "charaFadeTime": {
+  "cmp": 51938676,
+  "handler": 51938688,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51938728
+   ],
+   [
+    "System.String$$op_Equality",
+    51938768
+   ],
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51938804
+   ],
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51938848
+   ],
+   [
+    "System.Single$$Parse",
+    51938888
+   ],
+   [
+    "System.Single$$Parse",
+    51938924
+   ],
+   [
+    "System.String$$op_Equality",
+    51938968
+   ],
+   [
+    "System.Int32$$Parse",
+    51939004
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51938724
+   ],
+   [
+    "' '",
+    51938760
+   ],
+   [
+    "'delayStop'",
+    51938964
+   ]
+  ]
+ },
+ "delayStop": {
+  "cmp": 51938964,
+  "handler": 51938976,
+  "calls": [
+   [
+    "System.Int32$$Parse",
+    51939004
+   ],
+   [
+    "System.Int32$$Parse",
+    51939040
+   ],
+   [
+    "System.String$$op_Equality",
+    51939072
+   ],
+   [
+    "System.String$$op_Equality",
+    51939120
+   ]
+  ],
+  "literals": [
+   [
+    "'masterImageSet'",
+    51939060
+   ],
+   [
+    "' '",
+    51939116
+   ]
+  ]
+ },
+ "cameraHome": {
+  "cmp": 51939316,
+  "handler": 51939328,
+  "calls": [
+   [
+    "ScriptManager$$IsNormalPlaySpeed",
+    51939356
+   ],
+   [
+    "System.Single$$Parse",
+    51939392
+   ],
+   [
+    "ApRecoverConfirmDlgComponent$$.ctor",
+    51939404
+   ],
+   [
+    "System.String$$op_Equality",
+    51939472
+   ],
+   [
+    "System.String$$op_Equality",
+    51939520
+   ],
+   [
+    "System.String$$op_Equality",
+    51939560
+   ],
+   [
+    "System.String$$op_Equality",
+    51939600
+   ],
+   [
+    "System.Int32$$Parse",
+    51939640
+   ]
+  ],
+  "literals": [
+   [
+    "'cueSeContinueVolume'",
+    51939468
+   ],
+   [
+    "' '",
+    51939516
+   ],
+   [
+    "' '",
+    51939552
+   ],
+   [
+    "' '",
+    51939592
+   ]
+  ]
+ },
+ "cueSeContinueVolume": {
+  "cmp": 51939468,
+  "handler": 51939480,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51939520
+   ],
+   [
+    "System.String$$op_Equality",
+    51939560
+   ],
+   [
+    "System.String$$op_Equality",
+    51939600
+   ],
+   [
+    "System.Int32$$Parse",
+    51939640
+   ],
+   [
+    "BasicHelper$$GetValue<int, object>",
+    51939668
+   ],
+   [
+    "System.Single$$Parse",
+    51939708
+   ],
+   [
+    "System.Single$$Parse",
+    51939744
+   ],
+   [
+    "SePlayer$$ChangeVolume",
+    51939764
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51939516
+   ],
+   [
+    "' '",
+    51939552
+   ],
+   [
+    "' '",
+    51939592
+   ]
+  ]
+ },
+ "charaFadeTimeLoopStop": {
+  "cmp": 51939788,
+  "handler": 51939800,
+  "calls": [
+   [
+    "ScriptManager$$ConvertCharaIndex",
+    51939832
+   ],
+   [
+    "ScriptCharaData$$StopMoveAlphaLoop",
+    51939872
+   ]
+  ],
+  "literals": []
+ },
+ "flag": {
+  "cmp": 51939896,
+  "handler": 51939908,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51939948
+   ],
+   [
+    "ScriptManager$$SearchFlag",
+    51939984
+   ],
+   [
+    "ScriptFlagData$$Set",
+    51940020
+   ],
+   [
+    "System.String$$Contains",
+    51940064
+   ],
+   [
+    "System.String$$op_Equality",
+    51940112
+   ],
+   [
+    "System.String$$Contains",
+    51940168
+   ],
+   [
+    "System.String$$op_Equality",
+    51940216
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51939944
+   ],
+   [
+    "'Loop'",
+    51940060
+   ],
+   [
+    "'true'",
+    51940108
+   ],
+   [
+    "'isEnableLoopLogLaterErase'",
+    51940164
+   ],
+   [
+    "'true'",
+    51940212
+   ]
+  ]
+ },
+ "cueSeStop": {
+  "cmp": 51940260,
+  "handler": 51940272,
+  "calls": [
+   [
+    "System.String$$op_Equality",
+    51940332
+   ],
+   [
+    "0x201a774",
+    51940352
+   ],
+   [
+    "System.Single$$Parse",
+    51940396
+   ],
+   [
+    "System.String$$op_Equality",
+    51940432
+   ]
+  ],
+  "literals": [
+   [
+    "' '",
+    51940328
+   ],
+   [
+    "'switchCaseEnd'",
+    51940428
+   ]
+  ]
+ },
+ "switchCaseEnd": {
+  "cmp": 51940428,
+  "handler": 51940440,
+  "calls": [],
+  "literals": []
+ }
+}

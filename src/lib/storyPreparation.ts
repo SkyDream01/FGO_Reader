@@ -1,10 +1,13 @@
 import {
   backgroundUrl,
+  imageUrl,
+  pictureFrameUrl,
   characterTextureUrl,
   characterUrl,
   fallbackBgmUrl,
   getBgmCatalog,
   getCharacterFigureMetadata,
+  getEquipmentGraphUrl,
   getScriptText,
   offlineDemoScript,
 } from "../data/atlas";
@@ -72,6 +75,7 @@ export interface StoryPreparationProgress {
 export interface PrepareStoryOptions {
   signal?: AbortSignal;
   masterName?: string;
+  masterGender?: "male" | "female";
   onProgress?: (progress: StoryPreparationProgress) => void;
 }
 
@@ -129,12 +133,14 @@ function compilePlayableStory(
   source: string,
   story: Pick<StoryLaunch, "scriptId" | "region">,
   masterName: string,
+  masterGender: "male" | "female",
 ): ScriptProgram {
   let program: ScriptProgram;
   try {
     program = compileFgoScript(source, story.scriptId, {
       region: story.region,
       masterName,
+      masterGender,
     });
   } catch (reason) {
     throw new StoryPreparationError(
@@ -306,14 +312,14 @@ async function prepareCustomAsset(
   objectUrls: string[],
   signal?: AbortSignal,
 ) {
-  const assetPath = record.assets[kind][resourceId];
+  const assetPath = record.assets[kind]?.[resourceId];
   if (!assetPath) return null;
   const blob = await getCustomScriptAssetBlob(record.id, assetPath);
   throwIfAborted(signal);
   if (!blob) throw new Error(`本地资源不存在：${assetPath}`);
   const url = URL.createObjectURL(blob);
   objectUrls.push(url);
-  assetUrls[kind][resourceId] = url;
+  (assetUrls[kind] ??= {})[resourceId] = url;
   return url;
 }
 
@@ -327,6 +333,37 @@ function createResourceTasks(
   signal?: AbortSignal,
 ): ResourceTask[] {
   const tasks: ResourceTask[] = [];
+  const fullScreen = program.instructions.some((instruction) => instruction.tag === "enableFullScreen");
+  const pictureFrames = new Set(program.instructions.filter((instruction) => instruction.tag === "pictureFrame" || instruction.tag === "pictureFrameTop").map((instruction) => instruction.params[0]));
+  for (const asset of program.assets.filter(item => item.kind === "equip")) {
+    tasks.push({ label: `卡面 ${asset.name}`, load: async () => {
+      const local = customRecord?.assets.images?.[asset.path] ? await prepareCustomAsset(customRecord, "images", asset.path, assetUrls, objectUrls, signal) : customRecord?.assets.characters[asset.name] ? await prepareCustomAsset(customRecord, "characters", asset.name, assetUrls, objectUrls, signal) : null;
+      const url = local ?? await awaitResource(getEquipmentGraphUrl(story.region, asset.name), signal) ?? await awaitResource(getEquipmentGraphUrl(story.region, "9400010"), signal);
+      if (url) await preloadImage(url, signal);
+    } });
+  }
+  if (customRecord) {
+    for (const kind of ["sounds", "movies"] as const) for (const name of Object.keys(customRecord.assets[kind] ?? {})) {
+      tasks.push({ label: `${kind === "movies" ? "影片" : "声音"} ${name}`, load: async () => { await prepareCustomAsset(customRecord, kind, name, assetUrls, objectUrls, signal); } });
+    }
+    for (const asset of program.assets.filter(item => item.kind === "effect")) {
+      const name = customRecord.assets.images?.[asset.path] ? asset.path : asset.name;
+      if (customRecord.assets.images?.[name]) tasks.push({ label: `特效 ${asset.name}`, load: async () => { await prepareCustomAsset(customRecord, "images", name, assetUrls, objectUrls, signal); } });
+    }
+  }
+
+  for (const asset of program.assets.filter((item) => item.kind === "image" || item.kind === "audio")) {
+    const kind = asset.kind === "image" ? "images" : "sounds";
+    if (asset.optional && !customRecord?.assets[kind]?.[asset.name]) continue;
+    // Atlas does not expose every original audio bank. Explicit local mappings
+    // are used instead of guessing CDN bank names.
+    if (kind === "sounds" && !customRecord?.assets.sounds?.[asset.name]) continue;
+    tasks.push({ label: `${kind === "images" ? "图片" : "音效"} ${asset.name}`, load: async () => {
+      const url = customRecord ? await prepareCustomAsset(customRecord, kind, asset.name, assetUrls, objectUrls, signal) : null;
+      if (kind === "sounds") { if (url) await preloadAudio(url, signal); }
+      else await preloadImage(url || (pictureFrames.has(asset.name) ? pictureFrameUrl(story.region, asset.name, fullScreen) : imageUrl(story.region, asset.name)), signal);
+    } });
+  }
 
   for (const sceneId of program.sceneIds) {
     tasks.push({
@@ -342,7 +379,12 @@ function createResourceTasks(
               signal,
             )
           : null;
-        await preloadImage(localUrl || backgroundUrl(story.region, sceneId), signal);
+        try {
+          await preloadImage(localUrl || backgroundUrl(story.region, sceneId, fullScreen), signal);
+        } catch (error) {
+          if (localUrl || !fullScreen || signal?.aborted) throw error;
+          await preloadImage(backgroundUrl(story.region, sceneId), signal);
+        }
       },
     });
   }
@@ -408,6 +450,7 @@ export async function prepareStory(
   {
     signal,
     masterName = "御主",
+    masterGender = "male",
     onProgress,
   }: PrepareStoryOptions = {},
 ): Promise<PreparedStory> {
@@ -438,7 +481,7 @@ export async function prepareStory(
       if (!customRecord) {
         throw new StoryPreparationError("无法打开本地资源包：资源包已不存在或已被删除");
       }
-      program = compilePlayableStory(customRecord.scriptText, story, masterName);
+      program = compilePlayableStory(customRecord.scriptText, story, masterName, masterGender);
     } else {
       try {
         const source = await getScriptText(
@@ -448,13 +491,14 @@ export async function prepareStory(
           story.scriptId,
         );
         throwIfAborted(signal);
-        program = compilePlayableStory(source, story, masterName);
+        program = compilePlayableStory(source, story, masterName, masterGender);
       } catch (reason) {
         if (signal?.aborted) throw abortError();
         if (reason instanceof StoryPreparationError) throw reason;
         program = compileFgoScript(offlineDemoScript, "offline-demo", {
           region: "JP",
           masterName,
+          masterGender,
         });
         offlineFallback = true;
         loadNote = `Atlas 数据暂时无法读取，已进入离线演示：${

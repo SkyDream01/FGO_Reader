@@ -1,885 +1,314 @@
 import type { AudioIntent } from "./audio";
 import type { Instruction } from "./instruction";
-import {
-  parseBlurIntensity,
-  parseCoordinateToken,
-  resolvePlacement,
-  Stage,
-  isEffectOnlyCharacter,
-} from "./stage";
-import { resolveEasing } from "./easings";
-import type { TweenService } from "./tween";
-
-/**
- * Stage command registry — the runtime descendant of the old projector's
- * `applyCommand`. Every stage-facing command family executes against the live
- * Stage; wait-type commands (wait/wt/twt/tdelay/end/choice/message) are
- * handled by the executor itself and never reach this registry.
- *
- * Return value: all stage commands are instant presentations, so execution
- * continues with the next instruction in the same frame (S-E1 Continue).
- */
+import { DEFAULT_FADE_TIME } from "./constants";
+import { EMPTY_COMMANDS, FONT_SIZES } from "./spec";
+import { backgroundId } from "./resources";
+import { homeCamera, homeTransform, positionKind, resolvePlacement, type CharacterSlotState, type TransformState, type Stage } from "./stage";
+import { lerp, type TweenService } from "./tween";
+import { executePresentationCommand } from "./presentation";
+import { sideOffset, unquote } from "./motion";
+import { executeSoundCommand } from "./soundCommands";
 
 export interface CommandContext {
   stage: Stage;
-  masterGender: "male" | "female";
-  masterName: string;
-  /** Tween service for timed presentations (fades, scene crossfades). */
   tweens: TweenService;
-  /** Fast-forward runs complete every tween immediately. */
+  masterGender: "male" | "female";
   fastForward: boolean;
-  /** Audio intent sink (S-A channel model); ReaderView bridges to elements. */
+  reduceMotion: boolean;
+  aspectRatio: number;
   emitAudio: (intent: AudioIntent) => void;
-  /** Aggregates `unknown_command`-style diagnostics by command name. */
   onUnhandled: (tag: string) => void;
+  diagnose: (tag: string, reason: string) => void;
+  requestWait: (type: string, target?: string) => void;
+  retryNextFrame: () => void;
 }
-
-const BGM_STOP_TAGS = new Set([
-  "bgmstop",
-  "bgmstopend",
-  "soundstopall",
-  "soundstopallend",
-  "soundstopallfade",
-]);
-
-const EFFECT_TAGS = new Set([
-  "effect",
-  "fowardeffect",
-  "forwardeffect",
-  "backeffect",
-  "specialeffect",
-  "effectmessage",
-]);
-
-const EFFECT_STOP_TAGS = new Set([
-  "effectstop",
-  "effectdestroy",
-  "effectforcestop",
-  "effectstart",
-  "effectpause",
-  "effectmessagestop",
-  "fowardeffectstop",
-  "fowardeffectdestroy",
-  "fowardeffectstart",
-  "fowardeffectpause",
-  "backeffectstop",
-  "backeffectdestroy",
-]);
-
-const ROLL_TAGS = new Set(["chararoll", "chararollaxis", "chararollmove", "chararollmoveex"]);
-
-const SPECIALEFFECT_ERASURE = new Set([
-  "appearancereverse",
-  "darkerasure",
-  "darkenemyerasure",
-  "erasure",
-  "enemyerasure",
-  "erasurereverse",
-  "flasherasure",
-]);
-
-function parseNumber(value: string | undefined): number | null {
-  if (value === undefined) return null;
-  const parsed = Number.parseFloat(value);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function parseFace(value: string | undefined): number | null {
-  if (value === undefined) return null;
-  const parsed = Number.parseInt(value, 10);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function toBool(value: string | undefined): boolean {
-  const normalized = value?.toLowerCase();
-  return normalized === "true" || normalized === "on" || normalized === "1";
-}
-
-function newCharacterState(
-  slot: string,
-  id: string,
-  name: string,
-  face: number,
-) {
-  return {
-    slot,
-    id,
-    name,
-    face,
-    // charaSet/equipSet only preload a figure; charaFadein/charaPut reveal it
-    // (corpus convention: every entrance carries an explicit fadein).
-    visible: false,
-    onStage: true,
-    position: "center" as const,
-    x: 0,
-    y: 0,
-    scale: 1,
-    rotation: 0,
-    silhouette: false,
-    shadow: false,
-    layer: "main" as const,
-    depth: null,
-    effectOnly: isEffectOnlyCharacter(id, name),
-  };
-}
-
-function newLayerState(
-  slot: string,
-  id: string,
-  source: "background" | "image",
-  visible: boolean,
-) {
-  return {
-    slot,
-    id,
-    source,
-    visible,
-    onStage: true,
-    position: "center" as const,
-    x: 0,
-    y: 0,
-    scale: 1,
-    layer: "main" as const,
-    depth: null,
-  };
-}
-
-/**
- * Cancels in-flight slot tweens before a direct reposition/hide so a later
- * stage command always wins over an earlier animation (old reader semantics).
- */
-function cancelSlotTweens(ctx: CommandContext, slot: string): void {
-  ctx.tweens.cancel(`chara:${slot}:move`);
-  ctx.tweens.cancel(`chara:${slot}:scale`);
-}
-
-function namedColorToCss(value: string | null | undefined): string | null {
-  if (!value) return null;
-  if (value.startsWith("#")) return value;
+const number = (value: string | undefined, fallback = 0) => {
+  const parsed = Number(value);
+  return value !== undefined && Number.isFinite(parsed) ? parsed : fallback;
+};
+const positive = (value: string | undefined, fallback = DEFAULT_FADE_TIME) => Math.max(0, number(value, fallback));
+export function cssColor(value = "black"): string {
   if (value === "black") return "#000";
   if (value === "white") return "#fff";
-  return `#${value}`;
+  if (value === "clear") return "#00000000";
+  if (/^#?[\da-fA-F]{6}(?:[\da-fA-F]{2})?$/.test(value)) return `#${value.replace(/^#/, "")}`;
+  return "#000";
 }
 
-/**
- * Executes one stage command. Unknown tags are reported through
- * `ctx.onUnhandled` and skipped (S-P7 容错).
- */
-export function executeStageCommand(
-  instruction: Instruction,
-  ctx: CommandContext,
-): void {
-  const { stage } = ctx;
-  const name = instruction.tag;
-  const args = instruction.params;
+function animate(ctx: CommandContext, owner: string, target: object, values: Record<string, number>, seconds: number, easing?: string, complete?: () => void): void {
+  const record = target as Record<string, number>;
+  const from = Object.fromEntries(Object.keys(values).map((key) => [key, record[key]]));
+  ctx.tweens.add({ owner, duration: ctx.fastForward || ctx.reduceMotion ? 0 : seconds, easing,
+    onUpdate: (progress) => { for (const key of Object.keys(values)) record[key] = lerp(from[key], values[key], progress); ctx.stage.touch(); }, onComplete: complete });
+}
 
-  switch (true) {
-    case name === "sceneset": {
-      const slot = args[0];
-      if (!slot || !args[1]) return;
-      stage.characters.delete(slot);
-      stage.layers.set(slot, newLayerState(slot, args[1], "background", false));
-      stage.touch();
-      return;
-    }
+function withSide(point: { x: number; y: number }, tag: string, ctx: CommandContext) {
+  if (!/FS(?:L|R|SideL|SideR)/.test(tag)) return point;
+  return { x: point.x + sideOffset(tag, ctx.aspectRatio), y: point.y };
+}
 
-    case name === "imageset" || name === "verticalimageset" || name === "horizontalimageset": {
-      const slot = args[0];
-      if (!slot || !args[1]) return;
-      stage.characters.delete(slot);
-      stage.layers.set(slot, newLayerState(slot, args[1], "image", false));
-      stage.touch();
-      return;
-    }
+function shake(ctx: CommandContext, owner: string, target: { x: number; y: number }, duration: number, cycle: number, x: number, y: number): void {
+  ctx.tweens.cancel(owner);
+  target.x = 0; target.y = 0;
+  if (ctx.fastForward || ctx.reduceMotion || !duration) return;
+  ctx.tweens.add({ owner, duration, onUpdate: (t) => {
+    const sample = Math.floor(t * duration / Math.max(0.001, cycle));
+    // Native InvokeRepeating chooses independent uniform offsets each cycle.
+    // A deterministic seed makes reconstructed frames reproducible on back/resume.
+    const random = (seed: number) => {
+      let value = (sample + 1) ^ seed;
+      value = Math.imul(value ^ (value >>> 16), 0x45d9f3b);
+      value = Math.imul(value ^ (value >>> 16), 0x45d9f3b);
+      return ((value ^ (value >>> 16)) >>> 0) / 0xffffffff * 2 - 1;
+    };
+    target.x = random(0x1234) * x; target.y = random(0x5678) * y; ctx.stage.touch();
+  }, onComplete: () => { target.x = 0; target.y = 0; ctx.stage.touch(); } });
+}
 
-    case name === "imagechange": {
-      const layer = stage.layers.get(args[0]);
-      if (layer) {
-        layer.id = args[1];
-      } else {
-        stage.layers.set(args[0], newLayerState(args[0], args[1], "image", false));
+/** Presentation commands return whether the browser implements their behavior. */
+export function executeStageCommand(instruction: Instruction, ctx: CommandContext): boolean {
+  const { stage, tweens } = ctx, { tag, pd } = instruction, p = instruction.params.map(unquote);
+  const base = tag.replace(/FS(?:Side[LR]|[LR])(?:NotNotch)?$/, "");
+  const slot = stage.getStageSlot(p[0]);
+  const subKey = p[0]?.startsWith("#") ? p[0] : "#A";
+  const subArgs = p[0]?.startsWith("#") ? p.slice(1) : p;
+  if (EMPTY_COMMANDS.has(tag)) return true;
+  if (tag === "enableFullScreen") { stage.fullScreen = true; stage.touch(); return true; }
+  if (executePresentationCommand(instruction, ctx)) return true;
+  if (executeSoundCommand(instruction, ctx)) return true;
+
+  if (/^(?:chara|figure|equip|scene|image|verticalImage|horizontalImage)(?:Set|Change|CrossFade)$/.test(tag) || /^master(?:Set|Change|ImageSet|ImageChange|VerticalImageSet|VerticalImageChange|HorizontalImageSet|HorizontalImageChange)$/.test(tag)) {
+    const master = tag.startsWith("master"), offset = master ? (ctx.masterGender === "female" ? 2 : 1) : 1;
+    const id = p[offset];
+    if (!id) { ctx.diagnose(tag, "parameter error"); return true; }
+    const kind: CharacterSlotState["kind"] = tag === "sceneSet" ? "background" : /(?:[Ii]mage)/.test(tag) ? "image" : "figure";
+    const old = stage.slots.get(p[0]);
+    const placement = p[master ? 3 : 2] ?? "1";
+    if (/Change|CrossFade/.test(tag) && old) {
+      old.change = /CrossFade/.test(tag) ? { id: old.id, face: old.face, progress: 0 } : null;
+      old.id = id; old.face = 0; old.kind = kind;
+      if (old.change) {
+        animate(ctx, `chara:${old.slot}:change`, old.change, { progress: 1 }, positive(p[2]), undefined, () => { old.change = null; stage.touch(); });
+        ctx.requestWait("charaChange", old.slot);
       }
-      stage.touch();
-      return;
-    }
-
-    case name === "masterimageset": {
-      if (!args[0]) return;
-      const id = ctx.masterGender === "female" ? args[2] : args[1];
-      if (!id) return;
-      stage.characters.delete(args[0]);
-      stage.layers.set(args[0], newLayerState(args[0], id, "image", false));
-      stage.touch();
-      return;
-    }
-
-    case name === "image": {
-      if (!args[0]) return;
-      const slot = `image:${instruction.line}:${instruction.column}`;
-      stage.layers.set(slot, newLayerState(slot, args[0], "image", true));
-      stage.touch();
-      return;
-    }
-
-    case name === "equipset": {
-      const [slot, id, rawFace] = args;
-      if (!slot || !id) return;
-      const face = parseFace(rawFace);
-      if (face === null) return;
-      const name2 = args.slice(3).join(" ").trim();
-      stage.layers.delete(slot);
-      stage.characters.set(slot, newCharacterState(slot, id, name2, face));
-      stage.touch();
-      return;
-    }
-
-    case name === "charaset" || name === "masterset": {
-      if (!args[0]) return;
-      const id = name === "masterset"
-        ? (ctx.masterGender === "female" ? args[2] : args[1])
-        : args[1];
-      const faceToken = name === "masterset" ? args[3] : args[2];
-      const face = parseFace(faceToken);
-      if (!id || face === null) return;
-      const characterName = name === "masterset"
-        ? ctx.masterName
-        : args.slice(3).join(" ").trim();
-      stage.layers.delete(args[0]);
-      stage.characters.set(args[0], newCharacterState(args[0], id, characterName, face));
-      stage.touch();
-      return;
-    }
-
-    case name === "charachange" || name === "characrossfade": {
-      const [slot, id, rawFace] = args;
-      if (!slot || !id) return;
-      const current = stage.characters.get(slot);
-      const face = parseFace(rawFace) ?? current?.face ?? 0;
-      stage.layers.delete(slot);
-      stage.characters.set(slot, {
-        ...newCharacterState(slot, id, current?.name ?? "", face),
-        visible: current?.visible ?? false,
-        onStage: current?.onStage ?? true,
-        position: current?.position ?? "center",
-        x: current?.x ?? 0,
-        y: current?.y ?? 0,
-        scale: current?.scale ?? 1,
-        layer: current?.layer ?? "main",
-        depth: current?.depth ?? null,
-        silhouette: current?.silhouette ?? false,
-        rotation: current?.rotation ?? 0,
-        shadow: current?.shadow ?? false,
-      });
-      stage.touch();
-      return;
-    }
-
-    case name === "charaface" || name === "charafacefade": {
-      const character = stage.characters.get(args[0]);
-      const face = parseFace(args[1]);
-      if (character && face !== null) {
-        character.face = face;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "charafadetime": {
-      const character = stage.characters.get(args[0]);
-      const opacity = parseNumber(args[2]);
-      if (character && opacity !== null) {
-        character.visible = opacity > 0;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "charatalk": {
-      const mode = args[0]?.toLowerCase();
-      if (mode === "depthon") {
-        stage.subRenderVisible = true;
-      } else if (mode === "depthoff") {
-        stage.subRenderVisible = false;
-      } else if (mode === "off") {
-        stage.talkSlots = [];
-      } else if (mode && mode !== "on") {
-        stage.talkSlots = args[0].split(",").map((slot) => slot.trim()).filter(Boolean);
-      } else {
-        stage.touch();
-        return;
-      }
-      stage.touch();
-      return;
-    }
-
-    case name === "charascale" || name.startsWith("charamovescale"): {
-      const target = stage.getStageSlot(args[0]);
-      const scale = parseNumber(args[1]);
-      if (!target || scale === null || scale <= 0) return;
-      if (name === "charascale") {
-        target.scale = scale;
-        stage.touch();
-        return;
-      }
-      // [charaMoveScale 槽 倍率 时长 (缓动)] — tweened zoom.
-      const duration = Math.max(0, parseNumber(args[2]) ?? 0);
-      const easing = resolveEasing(name.endsWith("ease") ? args[3] : undefined);
-      const from = target.scale;
-      if (duration > 0 && !ctx.fastForward) {
-        ctx.tweens.add({
-          owner: `chara:${args[0]}:scale`,
-          duration,
-          easing,
-          onUpdate: (t) => {
-            target.scale = from + (scale - from) * t;
-            stage.touch();
-          },
-        });
-      } else {
-        target.scale = scale;
-      }
-      stage.touch();
-      return;
-    }
-
-    case name === "charalayer": {
-      const target = stage.getStageSlot(args[0]);
-      if (target) {
-        target.layer = args[1]?.toLowerCase().startsWith("sub") ? "sub" : "main";
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "charadepth": {
-      const target = stage.getStageSlot(args[0]);
-      const depth = parseNumber(args[1]);
-      if (target && depth !== null) {
-        target.depth = depth;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "charashadow": {
-      const character = stage.characters.get(args[0]);
-      if (character) {
-        character.shadow = toBool(args[1]);
-        stage.touch();
-      }
-      return;
-    }
-
-    case ROLL_TAGS.has(name): {
-      const character = stage.characters.get(args[0]);
-      const angleToken = name === "chararoll" ? args[1] : args[2];
-      const angle = parseNumber(angleToken ?? "0");
-      if (character && angle !== null) {
-        character.rotation = angle;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name.startsWith("charafadein"): {
-      const target = stage.getStageSlot(args[0]);
-      if (target) {
-        cancelSlotTweens(ctx, args[0]);
-        if (name === "charafadein") stage.applyFadein(target, args[2]);
-        else stage.applyPlacement(target, args[2], true);
-      }
-      return;
-    }
-
-    case name.startsWith("charaput"): {
-      const target = stage.getStageSlot(args[0]);
-      if (target) {
-        cancelSlotTweens(ctx, args[0]);
-        stage.applyPlacement(target, args[1], true);
-      }
-      return;
-    }
-
-    case name.startsWith("charamove") && !name.startsWith("charamovescale"): {
-      const target = stage.getStageSlot(args[0]);
-      if (!target || !args[1]) return;
-      const duration = Math.max(0, parseNumber(args[2]) ?? 0);
-      const easing = name.endsWith("ease") ? resolveEasing(args[3]) : resolveEasing(undefined);
-      const dest = resolvePlacement(args[1]);
-      const fromX = target.x;
-      const fromY = target.y;
-      // Classification (left/center/right) applies to the destination.
-      stage.applyPlacement(target, args[1]);
-      if (duration > 0 && !ctx.fastForward) {
-        ctx.tweens.add({
-          owner: `chara:${args[0]}:move`,
-          duration,
-          easing,
-          onUpdate: (t) => {
-            target.x = fromX + (dest.x - fromX) * t;
-            target.y = fromY + (dest.y - fromY) * t;
-            stage.touch();
-          },
-        });
-      }
-      return;
-    }
-
-    case name === "chararelativeloopmove": {
-      const target = stage.characters.get(args[0]);
-      const endpoint = parseCoordinateToken(args[3]);
-      if (target && endpoint) {
-        target.x += endpoint.x;
-        target.y += endpoint.y;
-        stage.applyPlacement(target, `${target.x},${target.y}`);
-      }
-      return;
-    }
-
-    case name === "characlearall": {
-      stage.characters.clear();
-      stage.layers.clear();
-      stage.talkSlots = [];
-      stage.subRenderVisible = false;
-      stage.touch();
-      return;
-    }
-
-    case name === "charafadeoutall" || name === "charahideall": {
-      for (const character of stage.characters.values()) character.visible = false;
-      for (const layer of stage.layers.values()) layer.visible = false;
-      stage.touch();
-      return;
-    }
-
-    case name.startsWith("charafadeout"): {
-      const target = stage.getStageSlot(args[0]);
-      if (target) {
-        cancelSlotTweens(ctx, args[0]);
-        target.visible = false;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "characlear" || name === "charadelete": {
-      stage.characters.delete(args[0]);
-      stage.layers.delete(args[0]);
-      if (stage.talkSlots.includes(args[0])) stage.talkSlots = [];
-      stage.touch();
-      return;
-    }
-
-    case name === "charahide": {
-      const target = stage.getStageSlot(args[0]);
-      if (target) {
-        cancelSlotTweens(ctx, args[0]);
-        target.visible = false;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "charafilter": {
-      const character = stage.characters.get(args[0]);
-      const mode = args.find((arg) => ["silhouette", "normal"].includes(arg.toLowerCase()));
-      if (character && mode) {
-        character.silhouette = mode.toLowerCase() === "silhouette";
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "characutin" || name === "characutinpause": {
-      const target = stage.getStageSlot(args[0]);
-      if (target) {
-        target.visible = true;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "characutout": {
-      const target = stage.getStageSlot(args[0]);
-      if (target) {
-        target.visible = false;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "charaspecialeffect": {
-      const character = stage.characters.get(args[0]);
-      const effect = args[1]?.toLowerCase();
-      if (character && effect) {
-        if (SPECIALEFFECT_ERASURE.has(effect)) character.visible = false;
-        if (effect === "appearance") character.visible = true;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "scene" || name === "masterscene": {
-      const id = name === "masterscene"
-        ? (ctx.masterGender === "female" ? args[1] : args[0])
-        : args[0];
-      if (!id) return;
-      const crossfadeDuration = parseNumber(name === "masterscene" ? args[2] : args[1]) ?? 0;
-      stage.setScene(id, crossfadeDuration > 0 ? "fade" : "none", crossfadeDuration);
-      if (crossfadeDuration > 0) {
-        // L0 double-buffer crossfade (S-R4): buffer B fades out over duration.
-        ctx.tweens.add({
-          owner: "sceneCrossfade",
-          duration: crossfadeDuration,
-          onUpdate: (t) => {
-            stage.background.crossfade = t;
-          },
-          onComplete: () => {
-            stage.background.crossfade = 1;
-            stage.background.previous = null;
-            stage.touch();
-          },
-        });
-      }
-      return;
-    }
-
-    case name === "bgm": {
-      if (!args[0]) return;
-      const volume = parseNumber(args[1]);
-      stage.setBgm(args[0], volume === null ? null : Math.max(0, Math.min(1, volume)));
-      return;
-    }
-
-    case BGM_STOP_TAGS.has(name): {
-      stage.setBgm(null, null);
-      ctx.emitAudio({ kind: "stopAll" });
-      return;
-    }
-
-    case name === "se" || name === "cuese" || name === "seloop" || name === "secontinue" || name === "cuesecontinue": {
-      if (args[0]) ctx.emitAudio({ kind: "play", channel: "se", name: args[0], loop: name.includes("loop") || name.includes("continue") });
-      return;
-    }
-
-    case name === "sestop" || name === "cuesestop" || name === "secontinuestop" || name === "cuesecontinuestop": {
-      ctx.emitAudio({ kind: "stop", channel: "se", ...(args[0] ? { name: args[0] } : {}) });
-      return;
-    }
-
-    case name === "sevolume" || name === "cuesevolume" || name === "secontinuevolume" || name === "cuesecontinuevolume":
-      return;
-
-    case name === "voice" || name === "tvoice": {
-      if (args[0]) ctx.emitAudio({ kind: "play", channel: "voice", name: args[0] });
-      return;
-    }
-
-    case name === "voicestop": {
-      ctx.emitAudio({ kind: "stop", channel: "voice" });
-      return;
-    }
-
-    case name === "jingle": {
-      if (args[0]) ctx.emitAudio({ kind: "play", channel: "jingle", name: args[0] });
-      return;
-    }
-
-    case name === "jinglestop": {
-      ctx.emitAudio({ kind: "stop", channel: "jingle" });
-      return;
-    }
-
-    case name === "subbgm": {
-      if (args[0]) ctx.emitAudio({ kind: "play", channel: "subBgm", name: args[0], loop: true });
-      return;
-    }
-
-    case name === "subbgmstop": {
-      ctx.emitAudio({ kind: "stop", channel: "subBgm" });
-      return;
-    }
-
-    case name === "fadein" || name === "fadeout" || name === "fademove": {
-      const duration = Math.max(0, parseNumber(args[1]) ?? 0.5);
-      const toColor = namedColorToCss(args[0]);
-      const isOut = name === "fadeout";
-      const from = stage.fade.alpha;
-      const to = isOut ? 1 : 0;
-      stage.requestFade({
-        color: toColor,
-        direction: isOut ? "out" : "in",
-        duration,
-      });
-      // R9.1: the fade mesh is a tweened alpha — fadeout covers the screen,
-      // fadein reveals it. [wait fade] suspends until the tween completes.
-      ctx.tweens.add({
-        owner: "fade",
-        duration,
-        onUpdate: (t) => {
-          stage.fade.alpha = from + (to - from) * t;
-        },
-        onComplete: () => {
-          stage.fade.alpha = to;
-          stage.touch();
-        },
-      });
-      if (args.some((arg) => arg.toLowerCase() === "white")) {
-        stage.requestFlash("#fff", 0.3);
-      }
-      return;
-    }
-
-    case name === "wipein" || name === "wipeout" || name === "wipefilter": {
-      const duration = Math.max(0, parseNumber(args[1]) ?? 0.5);
-      stage.requestWipe({
-        color: namedColorToCss(args[0]),
-        kind: name === "wipefilter" ? "filter" : name === "wipeout" ? "out" : "in",
-        duration,
-      });
-      if (duration > 0 && !ctx.fastForward) {
-        ctx.tweens.add({
-          owner: "wipe",
-          duration,
-          onUpdate: () => undefined,
-          onComplete: () => stage.touch(),
-        });
-      }
-      return;
-    }
-
-    case name === "wipeoff":
-    case name === "flashoff":
-    case name === "messageshakestop":
-    case name === "shakestop":
-    case name === "messagechange":
-    case name === "messagealign":
-    case name === "talknameback":
-    case name === "skip":
-    case name === "tapskip":
-    case name === "selectionuse":
-    case name === "clear":
-      return;
-
-    case name === "flashin" || name === "flashout": {
-      stage.requestFlash(namedColorToCss(args[2] ?? "white"), 0.3);
-      return;
-    }
-
-    case name === "distortionstart": {
-      stage.setScreenEffect("distortion");
-      return;
-    }
-
-    case name === "distortionstop": {
-      stage.setScreenEffect(null);
-      return;
-    }
-
-    case name === "subcamerahome":
-      stage.camera.x = 0; stage.camera.y = 0; stage.camera.scale = 1; stage.camera.rotation = 0; stage.touch(); return;
-
-    case name === "subcameramove" || name === "subcameramoveease": {
-      const coordinate = parseCoordinateToken(args[0]) ?? { x: parseNumber(args[0]) ?? 0, y: parseNumber(args[1]) ?? 0 };
-      stage.camera.x = coordinate.x; stage.camera.y = coordinate.y;
-      const scale = parseNumber(args[2]); if (scale !== null && scale > 0) stage.camera.scale = scale;
-      stage.touch(); return;
-    }
-
-    case name === "subcameraroll" || name === "subcamerarollmove":
-      stage.camera.rotation = parseNumber(args[0]) ?? 0; stage.touch(); return;
-
-    case name === "subcameraon":
-    case name === "subrenderon":
-    case name.startsWith("subrenderfadein"): {
-      stage.subRenderVisible = true;
-      stage.touch();
-      return;
-    }
-
-    case name === "subcameraoff"
-      || name === "subrenderoff"
-      || name === "subrenderdestroy"
-      || name.startsWith("subrenderfadeout"): {
-      stage.subRenderVisible = false;
-      stage.touch();
-      return;
-    }
-
-    case name === "subcamerafilter": {
-      stage.camera.filter = args.find((arg) => !arg.startsWith("#")) ?? null;
-      stage.touch();
-      return;
-    }
-
-    case name === "subrenderscale": {
-      const scale = parseNumber(args[1]);
-      if (scale !== null && scale > 0) {
-        for (const layer of stage.layers.values()) {
-          if (layer.layer === "sub") layer.scale = scale;
-        }
-        stage.touch();
-      }
-      return;
-    }
-
-    case name.startsWith("mask") || name.startsWith("stretch"): {
-      const from = stage.fade.alpha;
-      stage.requestFade({
-        color: namedColorToCss(args[0]),
-        direction: "out",
-        duration: 0.5,
-      });
-      ctx.tweens.add({
-        owner: "fade",
-        duration: 0.5,
-        onUpdate: (t) => {
-          stage.fade.alpha = from + (1 - from) * t;
-        },
-      });
-      return;
-    }
-
-    case name === "messageoff" || name === "messageon": {
-      stage.messageVisible = name === "messageon";
-      stage.touch();
-      return;
-    }
-
-    case name === "messageshake" || name === "shake" || name === "quake" || name === "vibrate" || name === "charashake" || name === "subrendershake": {
-      stage.requestShake(parseNumber(args[0]) ?? 0, parseNumber(args[1]) ?? 0, parseNumber(args[2]) ?? 0, parseNumber(args[3]) ?? 0);
-      return;
-    }
-
-    case name === "cameramove" || name === "cameramoveease": {
-      const eased = name === "cameramoveease";
-      const dest = parseCoordinateToken(eased ? args[0] : args[1]) ?? { x: 0, y: 0 };
-      const scale = parseNumber(eased ? args[3] : args[2]);
-      const duration = Math.max(0, parseNumber(eased ? args[1] : args[0]) ?? 0);
-      const easing = resolveEasing(eased ? args[2] : undefined);
-      const from = { x: stage.camera.x, y: stage.camera.y, scale: stage.camera.scale };
-      const toScale = scale !== null && scale > 0 ? scale : from.scale;
-      if (duration > 0 && !ctx.fastForward) {
-        ctx.tweens.add({
-          owner: "camera",
-          duration,
-          easing,
-          onUpdate: (t) => {
-            stage.camera.x = from.x + (dest.x - from.x) * t;
-            stage.camera.y = from.y + (dest.y - from.y) * t;
-            stage.camera.scale = from.scale + (toScale - from.scale) * t;
-            stage.touch();
-          },
-        });
-      } else {
-        stage.camera.x = dest.x;
-        stage.camera.y = dest.y;
-        stage.camera.scale = toScale;
-      }
-      stage.touch();
-      return;
-    }
-
-    case name === "camerahome": {
-      stage.camera.x = 0;
-      stage.camera.y = 0;
-      stage.camera.scale = 1;
-      stage.camera.rotation = 0;
-      stage.touch();
-      return;
-    }
-
-    case name === "cameraroll" || name === "camerarollmove": {
-      const angle = parseNumber(name === "cameraroll" ? args[0] : args[1]);
-      if (angle !== null) {
-        stage.camera.rotation = angle;
-        stage.touch();
-      }
-      return;
-    }
-
-    case name === "camerafilter": {
-      stage.camera.filter = args[0] ?? null;
-      stage.touch();
-      return;
-    }
-
-    case name === "backcameracolor": {
-      stage.camera.filter = null;
-      stage.touch();
-      return;
-    }
-
-    case name === "blur" || name === "subblur" || name === "subblur2": {
-      stage.blur = parseBlurIntensity(args, name === "blur" ? 0 : 1);
-      stage.touch();
-      return;
-    }
-
-    case name === "bluroff" || name === "subbluroff" || name === "subblur2off": {
-      stage.blur = null;
-      stage.touch();
-      return;
-    }
-
-    case name === "pictureframe" || name === "pictureframetop": {
-      stage.pictureFrame = args[0] ?? null;
-      stage.touch();
-      return;
-    }
-
-    case name === "crimovie" || name === "movie": {
-      stage.movie = args[0] ?? null;
-      stage.touch();
-      return;
-    }
-
-    case EFFECT_TAGS.has(name): {
-      stage.setScreenEffect(args[0] ?? name);
-      return;
-    }
-
-    case EFFECT_STOP_TAGS.has(name): {
-      stage.setScreenEffect(null);
-      return;
-    }
-
-    case name === "overlayfadein": {
-      const layer = stage.getStageSlot(args[0]);
-      if (layer) stage.applyPlacement(layer, args[2], true);
-      return;
-    }
-
-    case name.startsWith("subrender"): {
-      if (name.includes("shake")) stage.requestShake();
-      return;
-    }
-
-    case name === "charaattack" || name === "cameramovereturn": {
-      stage.requestShake();
-      return;
-    }
-
-    case name === "se": {
-      // A handful of SE ids double as impact effects in the corpus.
-      if (args[0]?.toLowerCase().startsWith("ad9")) stage.requestShake();
-      return;
-    }
-
-    default: {
-      // Corpus heuristics kept from the previous pipeline: unknown names that
-      // clearly describe a shake still produce one; everything else is skipped.
-      const unknown = name;
-      if (
-        (unknown.includes("shake") && !unknown.endsWith("stop"))
-        || unknown.includes("quake")
-        || unknown.includes("vibrate")
-      ) {
-        stage.requestShake();
-        return;
-      }
-      ctx.onUnhandled(unknown);
-      return;
-    }
+    } else {
+      tweens.cancelByPrefix(`chara:${p[0]}:`);
+      for (const effect of stage.effects.values()) if (effect.container.startsWith(`chara:${p[0]}:`)) { tweens.cancelByPrefix(`effect:${effect.id}:`); stage.effects.delete(effect.id); }
+      const created = stage.setSlot(p[0], kind === "background" ? backgroundId(id) : id, kind, placement, p[master ? 4 : 3] ?? "", /verticalImage/i.test(tag) ? "vertical" : /horizontalImage/i.test(tag) ? "horizontal" : "normal");
+      if (!created) { ctx.diagnose(tag, "parameter error"); return true; }
+      if (kind !== "figure") created.fullScreenScale = p[master ? 4 : 3] ?? "0";
+      if (tag === "equipSet" || tag === "equipChange") created.mode = "equip";
+      // Four anomalous authored imageSet lines put an explicit coordinate in the mode field.
+      if (kind !== "figure" && p[2]?.includes(",")) stage.applyPlacement(created, p[2]);
+    }
+    if (tag.startsWith("equip")) { const equip = stage.slots.get(p[0]); if (equip) equip.mode = "equip"; ctx.diagnose(tag, "CharaGraph 以普通卡面显示，渐变和裁切为近似"); }
+    stage.touch(); return true;
   }
+  if (tag === "scene" || tag === "bScene" || tag === "masterScene") {
+    const master = tag === "masterScene";
+    const id = p[master && ctx.masterGender === "female" ? 1 : 0];
+    const duration = positive(p[master ? 2 : 1], 0);
+    stage.background = { current: id ? backgroundId(id) : null, previous: stage.background.current, crossfade: 0, seq: stage.background.seq + 1, mode: p[master ? 3 : 2] ?? "DEFAULT" };
+    animate(ctx, "scene", stage.background, { crossfade: 1 }, duration, undefined, () => { stage.background.previous = null; stage.touch(); });
+    return true;
+  }
+  if (tag === "charaTalk") {
+    if (p[0] === "depthOn" || p[0] === "depthOff") stage.talkDepth = p[0] === "depthOn";
+    else if (p[0] === "off" || p[0] === "on") stage.talkMask = p[0] === "on";
+    else stage.talkSlots = p.join(",").split(",").filter((part) => /^[A-Z]$/.test(part));
+    stage.touch(); return true;
+  }
+  if (tag === "charaClear") {
+    tweens.cancelByPrefix(`chara:${p[0]}:`); stage.slots.delete(p[0]);
+    for (const effect of stage.effects.values()) if (effect.container.startsWith(`chara:${p[0]}:`)) { tweens.cancelByPrefix(`effect:${effect.id}:`); stage.effects.delete(effect.id); }
+    stage.touch(); return true;
+  }
+  if (tag.startsWith("chara") || tag === "overlayFadein") {
+    if (!slot) return true;
+    const owner = `chara:${slot.slot}:`;
+    switch (base) {
+      case "charaFace": slot.face = Math.max(0, number(p[1])); break;
+      case "charaFaceFade": {
+        slot.change = { id: slot.id, face: slot.face, progress: 0 }; slot.face = Math.max(0, number(p[1]));
+        animate(ctx, owner + "change", slot.change, { progress: 1 }, positive(p[2]), undefined, () => { slot.change = null; stage.touch(); });
+        ctx.requestWait("charaChange", slot.slot); break;
+      }
+      case "charaPut": case "charaRelativePut": {
+        const point = withSide(resolvePlacement(p[1]), tag, ctx);
+        if (base === "charaRelativePut") { point.x += slot.x; point.y += slot.y; }
+        if (base === "charaPut") slot.visible = true;
+        tweens.cancel(owner + "move"); Object.assign(slot, point); slot.position = positionKind(slot.x); break;
+      }
+      case "charaFadein": case "overlayFadein":
+        slot.visible = true;
+        if (p[2] !== undefined) Object.assign(slot, withSide(resolvePlacement(p[2]), tag, ctx));
+        slot.position = positionKind(slot.x);
+        animate(ctx, owner + "alpha", slot, { alpha: 1 }, positive(p[1])); break;
+      case "charaFadeout":
+        animate(ctx, owner + "alpha", slot, { alpha: 0 }, positive(p[1]), undefined, () => { slot.visible = false; stage.touch(); }); break;
+      case "charaFadeTime": {
+        const alpha = Math.max(0, Math.min(1, number(p[2], 1)));
+        if (alpha > 0) slot.visible = true;
+        animate(ctx, owner + "alpha", slot, { alpha }, positive(p[1]), undefined, () => { if (alpha === 0) slot.visible = false; stage.touch(); }); break;
+      }
+      case "charaMove": case "charaMoveEase": case "charaMoveReturn": case "charaMoveReturnEase": {
+        const ease = base.includes("Ease"), returns = base.includes("Return");
+        const spacedPair = ease && !p[1]?.includes(",") && p.length >= 5;
+        const point = withSide(resolvePlacement(spacedPair ? `${p[1]},${p[2]}` : p[1]), tag, ctx);
+        const durationIndex = spacedPair ? 3 : 2;
+        const original = { x: slot.x, y: slot.y };
+        animate(ctx, owner + "move", slot, point, positive(p[durationIndex], 0), ease ? p[durationIndex + 1] : undefined, () => {
+          slot.position = positionKind(slot.x);
+          if (returns) animate(ctx, owner + "move", slot, original, positive(p[durationIndex + (ease ? 2 : 1)], positive(p[durationIndex], 0)), ease ? p[durationIndex + 3] : undefined);
+        }); break;
+      }
+      case "charaMoveScale": case "charaMoveScaleEase": animate(ctx, owner + "scale", slot, { scale: number(p[1], 1) }, positive(p[2]), p[3]); break;
+      case "charaScale": tweens.cancel(owner + "scale"); slot.scale = number(p[1], 1); break;
+      case "charaRoll": slot.rotation = number(p[1]); if (p[2]) { const point = resolvePlacement(p[2]); slot.pivot = { x: point.x, y: point.y }; } break;
+      case "charaRollMove": case "charaRollMoveEx": animate(ctx, owner + "roll", slot, { rotation: number(p[1]) }, positive(p[2])); break;
+      case "charaFilter": slot.filter = p[1] ?? null; slot.silhouette = p[1] === "silhouette"; slot.color = p[2] ? cssColor(p[2]) : null; break;
+      case "charaShadow": slot.shadow = p[1] === "true" || p[1] === "on"; break;
+      case "charaDepth": slot.depth = number(p[1]); break;
+      case "charaLayer": slot.layer = p[1] === "sub" ? "sub" : "main"; slot.group = p[2] ?? "#A"; if (slot.layer === "sub") stage.subLayer(slot.group); break;
+      case "charaRelativeLoopMove": case "charaRelativeLoopMoveEase": {
+        const point = resolvePlacement(p[1]);
+        const initial = { x: slot.x, y: slot.y };
+        tweens.add({ owner: owner + "move", duration: positive(p[2]), loop: true, easing: p[3], onUpdate: (t) => { slot.x = initial.x + point.x * Math.sin(t * Math.PI * 2); slot.y = initial.y + point.y * Math.sin(t * Math.PI * 2); stage.touch(); } }); break;
+      }
+      case "charaRelativeLoopMoveStop": tweens.cancel(owner + "move"); if (slot.relativeLoopOrigin) { Object.assign(slot, slot.relativeLoopOrigin); slot.relativeLoopOrigin = null; } break;
+      case "charaShake": {
+        const proxy = { get x() { return slot.shakeX; }, set x(value: number) { slot.shakeX = value; }, get y() { return slot.shakeY; }, set y(value: number) { slot.shakeY = value; } };
+        shake(ctx, owner + "shake", proxy, positive(p[1], 0), positive(p[2], 0.05), number(p[3]), number(p[4])); break;
+      }
+      case "charaShakeStop": tweens.cancel(owner + "shake"); slot.shakeX = 0; slot.shakeY = 0; break;
+      default: ctx.onUnhandled(tag); return false;
+    }
+    stage.touch(); return true;
+  }
+  if (/^(?:subCamera|subRender|subBlur)/.test(tag)) {
+    const group = stage.subLayer(subKey), a = subArgs, prefix = `sub:${subKey}:`;
+    const camera = tag.startsWith("subCamera") ? group.camera : group;
+    switch (base) {
+      case "subCameraOn": {
+        const count = Math.min(4, Math.max(1, number(a[0], 1)));
+        for (let i = 0; i < count; i++) stage.subLayer(`#${String.fromCharCode(65 + i)}`).cameraEnabled = true;
+        group.cameraEnabled = true; break;
+      }
+      case "subCameraOff": group.cameraEnabled = false; break;
+      case "subCameraHome": animate(ctx, prefix + "camera", group.camera, { ...homeTransform() }, positive(a[0], 0)); break;
+      case "subCameraMove": case "subCameraMoveEase": {
+        const ease = base.endsWith("Ease"), point = resolvePlacement(a[ease ? 0 : 1]);
+        animate(ctx, prefix + "camera", camera, { x: point.x, y: point.y, scale: number(a[ease ? 3 : 2], 1) }, positive(a[ease ? 1 : 0]), ease ? a[2] : undefined); break;
+      }
+      case "subCameraRoll": camera.rotation = number(a[0]); if (a[1]) { const point = resolvePlacement(a[1]); group.camera.pivot = { x: point.x, y: point.y }; } break;
+      case "subCameraRollMove": animate(ctx, prefix + "roll", camera, { rotation: number(a[0]) }, positive(a[1])); break;
+      case "subCameraFilter": {
+        group.camera.filter = a[0] === "through" || a[0] === "normal" ? null : a[0]; group.mask = a[1] ?? null;
+        const rgba = a[3]?.split(",").map(Number);
+        group.maskEdge = a[0] === "maskEdge" ? {
+          width: Math.max(0, number(a[2])),
+          color: rgba?.length === 4 && rgba.every(Number.isFinite) ? `rgba(${rgba.slice(0, 3).map(c => Math.max(0, Math.min(255, c))).join(",")},${Math.max(0, Math.min(255, rgba[3])) / 255})` : "#000",
+        } : null;
+        break;
+      }
+      case "subRenderFadein": group.visible = true; if (a[1]) Object.assign(group, withSide(resolvePlacement(a[1]), tag, ctx)); animate(ctx, prefix + "alpha", group, { alpha: 1 }, positive(a[0])); break;
+      case "subRenderFadeout": animate(ctx, prefix + "alpha", group, { alpha: 0 }, positive(a[0]), undefined, () => { group.visible = false; stage.touch(); }); break;
+      case "subRenderMove": case "subRenderMoveEase": animate(ctx, prefix + "move", group, withSide(resolvePlacement(a[0]), tag, ctx), positive(a[1]), a[2]); break;
+      case "subRenderScale": group.scale = number(a[0], 1); break;
+      case "subRenderMoveScale": case "subRenderMoveScaleEase": animate(ctx, prefix + "scale", group, { scale: number(a[0], 1) }, positive(a[1]), a[2]); break;
+      case "subRenderDepth": group.depth = Math.min(5, Math.max(1, number(a[0], 1))); break;
+      case "subBlur": case "subBlur2": group.blur = number(a[1]); group.blurKind = ({ lens: "GaussianBlurThrough", motion: "MotionBlurThrough", glass: "FrostedGlassThrough" }[a[0]] ?? "GaussianBlurThrough"); ctx.diagnose(tag, "自制 SVG/CSS 滤镜近似原生 shader"); break;
+      case "subBlurOff": case "subBlur2Off": group.blur = null; break;
+      case "subRenderShake": {
+        const proxy = { get x() { return group.shakeX; }, set x(value: number) { group.shakeX = value; }, get y() { return group.shakeY; }, set y(value: number) { group.shakeY = value; } };
+        shake(ctx, prefix + "shake", proxy, positive(a[0], 0), positive(a[1], 0.05), number(a[2]), number(a[3])); break;
+      }
+      case "subRenderShakeStop": tweens.cancel(prefix + "shake"); group.shakeX = 0; group.shakeY = 0; break;
+      default: ctx.onUnhandled(tag); return false;
+    }
+    stage.touch(); return true;
+  }
+  if (tag.startsWith("camera")) {
+    switch (tag) {
+      case "cameraHome": animate(ctx, "camera", stage.camera, { ...homeTransform() }, positive(p[0], 0)); break;
+      case "cameraMove": {
+        const values = pd.filter((_, index) => index % 2 === 0);
+        animate(ctx, "camera", stage.camera, { x: number(values[1]), y: number(values[2]), scale: number(values[3], stage.camera.scale) }, positive(values[0], 0)); break;
+      }
+      case "cameraMoveEase": {
+        const values = pd.filter((_, index) => index % 2 === 0);
+        animate(ctx, "camera", stage.camera, { x: number(values[0]), y: number(values[1]), scale: number(values[4], stage.camera.scale) }, positive(values[2], 0), values[3]); break;
+      }
+      case "cameraFilter": stage.camera.filter = p[0] === "normal" ? null : p[0] ?? null; break;
+      case "cameraRoll": stage.camera.rotation = number(p[0]); if (p[1]) { const point = resolvePlacement(p[1]); stage.camera.pivot = { x: point.x, y: point.y }; } break;
+      case "cameraRollMove": animate(ctx, "camera:roll", stage.camera, { rotation: number(p[1]) }, positive(p[0])); break;
+      default: ctx.onUnhandled(tag); return false;
+    }
+    stage.touch(); return true;
+  }
+  if (tag === "fadein" || tag === "fadeout" || tag === "fadeMove" || tag === "maskin" || tag === "maskout") {
+    const family = tag.startsWith("mask") ? "mask" : "fade", overlay = stage[family];
+    if (p[0] === "clear") { tweens.cancel(family); overlay.alpha = 0; stage.touch(); return true; }
+    overlay.color = cssColor(p[0]); overlay.seq++;
+    const incoming = tag.endsWith("in");
+    if (incoming && overlay.alpha === 0) overlay.alpha = 1;
+    animate(ctx, family, overlay, { alpha: tag === "fadeMove" ? number(p[2], 1) : incoming ? 0 : 1 }, positive(p[1]));
+    return true;
+  }
+  if (tag === "fadeOff" || tag === "maskOff") {
+    const family = tag === "fadeOff" ? "fade" : "mask";
+    tweens.cancel(family); stage[family].alpha = 0; stage.touch(); return true;
+  }
+  if (/^wipe(?:in|out|Filter)(?:Ex)?$/.test(tag)) {
+    stage.wipe = { color: "#000", alpha: tag.startsWith("wipein") ? 1 : 0, seq: stage.wipe.seq + 1, name: p[0] ?? "", kind: tag.startsWith("wipein") ? "in" : tag.startsWith("wipeout") ? "out" : "filter", progress: 0, level: number(p[2], 1) };
+    animate(ctx, "wipe", stage.wipe, { progress: 1, alpha: stage.wipe.kind === "in" ? 0 : 1 }, positive(p[1])); return true;
+  }
+  if (tag === "wipeOff") { tweens.cancel("wipe"); stage.wipe.alpha = 0; stage.touch(); return true; }
+  if (tag === "flashin" || tag === "flashinDep") {
+    const rgba = (value: string) => { const hex = cssColor(value).replace("#", ""); const expanded = hex.length === 3 ? hex.split("").map(c => c + c).join("") : hex; return [0, 2, 4].map(i => parseInt(expanded.slice(i, i + 2), 16)).concat(expanded.length === 8 ? parseInt(expanded.slice(6, 8), 16) / 255 : 1); };
+    const mode = p[0] ?? "once", first = positive(p[1], 0.1), second = positive(p[2], 0.1), total = first + second;
+    const a = rgba(p[3] ?? "white"), b = rgba(p[4] ?? "clear");
+    stage.flash = { color: cssColor(p[3] ?? "white"), alpha: 0, seq: stage.flash.seq + 1, mode, slot: tag === "flashinDep" ? p[5] : undefined };
+    tweens.add({ owner: "flash", duration: ctx.fastForward || ctx.reduceMotion ? 0 : Math.max(0.001, total) * (mode === "pingpong" ? 2 : 1), loop: mode !== "once" && !ctx.fastForward && !ctx.reduceMotion, onUpdate: progress => {
+      const time = (mode === "pingpong" ? 1 - Math.abs(progress * 2 - 1) : progress) * total;
+      const rate = time <= first ? first ? time / first : 1 : second ? (time - first) / second : 1;
+      const from = time <= first ? [a[0], a[1], a[2], 0] : a, to = time <= first ? a : b, color = from.map((value, i) => lerp(value, to[i], rate));
+      stage.flash.color = `rgb(${color.slice(0, 3).map(Math.round).join(" ")})`; stage.flash.alpha = color[3]; stage.touch();
+    }, onComplete: () => { stage.flash.alpha = 0; stage.touch(); } }); return true;
+  }
+  if (tag === "flashout" || tag === "flashoutDep" || tag === "flashOff" || tag === "flashOffDep") {
+    animate(ctx, "flash", stage.flash, { alpha: 0 }, tag.startsWith("flashout") ? positive(p[0]) : 0); return true;
+  }
+  if (tag === "shake") { stage.shake.seq++; shake(ctx, "shake", stage.shake, positive(p[0], 0), positive(p[1], 0.05), number(p[2]), number(p[3])); return true; }
+  if (tag === "shakeStop") { tweens.cancel("shake"); stage.shake.x = 0; stage.shake.y = 0; stage.touch(); return true; }
+  if (tag === "messageOff" || tag === "messageOn") { stage.messageVisible = tag === "messageOn"; stage.touch(); return true; }
+  if (tag === "f" || tag === "font" || tag === "fontSize") { stage.messageFont = FONT_SIZES[p[0] ?? "-"] ?? 29; stage.touch(); return true; }
+  if (tag === "blur" || tag === "blurOff") { stage.blur = tag === "blurOff" ? null : number(p[1]); stage.blurKind = ({ lens: "GaussianBlur", motion: "MotionBlur", glass: "FrostedGlass" }[p[0]] ?? "GaussianBlur"); if (tag === "blur") ctx.diagnose(tag, "自制 SVG/CSS 滤镜近似原生 shader"); stage.touch(); return true; }
+  if (tag === "pictureFrame" || tag === "pictureFrameTop") { stage.pictureFrame = p[0] ?? null; stage.pictureFrameTop = tag === "pictureFrameTop"; stage.touch(); return true; }
+  if (tag === "bgm" || tag === "subBgm") {
+    if (tag === "bgm") { stage.audio.bgm = p[0] ?? null; stage.audio.bgmVolume = p[1] === undefined ? null : Math.max(0, Math.min(1, number(p[1]))); stage.touch(); }
+    else ctx.emitAudio({ kind: "play", channel: "subBgm", name: p[0], loop: true, volume: number(p[1], 1) });
+    return true;
+  }
+  if (tag === "bgmStop" || tag === "bgmStopEnd" || tag === "subBgmStop") {
+    if (tag === "subBgmStop") ctx.emitAudio({ kind: "stop", channel: "subBgm" });
+    else { stage.audio.bgm = null; stage.touch(); }
+    return true;
+  }
+  if (/^soundStopAll/.test(tag)) { stage.audio.bgm = null; ctx.emitAudio({ kind: "stopAll" }); stage.touch(); return true; }
+  if (["se", "seLoop", "seContinue", "voice", "tVoice", "tVoiceUser", "jingle"].includes(tag)) {
+    const se = tag.startsWith("se");
+    ctx.emitAudio({ kind: "play", channel: tag === "jingle" ? "jingle" : /[vV]oice/.test(tag) ? "voice" : "se", name: p[0], loop: tag === "seLoop" || tag === "seContinue", volume: se ? p[2] === undefined ? undefined : number(p[2], 1) : p[1] === undefined ? undefined : number(p[1], 1), fadeIn: se ? positive(p[1], 0) : undefined }); return true;
+  }
+  if (["seStop", "seContinueStop", "voiceStop", "jingleStop"].includes(tag)) {
+    ctx.emitAudio({ kind: "stop", channel: tag === "jingleStop" ? "jingle" : tag === "voiceStop" ? "voice" : "se", name: p[0] }); return true;
+  }
+  if (["seVolume", "seContinueVolume", "voiceVolume"].includes(tag)) {
+    const channel = tag === "voiceVolume" ? "voice" : "se";
+    ctx.emitAudio({ kind: "volume", channel, name: p[0], volume: number(p[2], 1), duration: positive(p[1], 0) }); return true;
+  }
+  // Unity shaders, PlayMaker graphs and prefabs need original assets. Recognition
+  // remains exact; these commands have no fabricated browser visual equivalent.
+  ctx.onUnhandled(tag);
+  return false;
 }

@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  addChoiceDecision,
-  clearChoiceTrail,
   normalizeChoiceTrail,
   validateChoiceTrail,
 } from "./choiceTrail";
@@ -26,20 +24,11 @@ describe("choice trails", () => {
     ]);
   });
 
-  it("adds decisions immutably and dedupes by choice id", () => {
+  it("preserves repeated choice visits in their original order", () => {
     const first = { choiceId: "first", optionIndex: 0 };
-    const trail = addChoiceDecision([], first);
-
-    expect(addChoiceDecision(trail, { choiceId: "second", optionIndex: 1 })).toEqual([
-      first,
-      { choiceId: "second", optionIndex: 1 },
-    ]);
-    // A choice can only appear once in a path: re-adding is a no-op here —
-    // the executor replaces changed decisions before persisting.
-    expect(addChoiceDecision(trail, { choiceId: "first", optionIndex: 1 })).toEqual([
-      first,
-    ]);
-    expect(clearChoiceTrail()).toEqual([]);
-    expect(trail).toEqual([first]);
+    const trail = [first, { choiceId: "first", optionIndex: 1 }];
+    const normalized = normalizeChoiceTrail(trail);
+    expect(normalized).toEqual(trail);
+    expect(normalized).not.toBe(trail);
   });
 });

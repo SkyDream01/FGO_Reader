@@ -1,0 +1,89 @@
+{
+ "lines": [
+  {
+   "index": 0,
+   "raw": "bg field_001",
+   "kind": "message",
+   "tag": "bg",
+   "params": [
+    "field_001"
+   ],
+   "markup": [
+    {
+     "type": "text",
+     "value": "field_001"
+    }
+   ],
+   "text": "field_001"
+  },
+  {
+   "index": 1,
+   "raw": "mes keep=x 1 [r]a",
+   "kind": "message",
+   "tag": "mes",
+   "params": [
+    "keep=x",
+    "1",
+    "[r]a"
+   ],
+   "markup": [
+    {
+     "type": "text",
+     "value": "keep=x 1 "
+    },
+    {
+     "type": "tag",
+     "name": "r",
+     "arg": "",
+     "meaning": "line break"
+    },
+    {
+     "type": "text",
+     "value": "a"
+    }
+   ],
+   "text": "keep=x 1 [r]a"
+  },
+  {
+   "index": 2,
+   "raw": "unknownTag some text",
+   "kind": "message",
+   "tag": "unknownTag",
+   "params": [
+    "some",
+    "text"
+   ],
+   "markup": [
+    {
+     "type": "text",
+     "value": "some text"
+    }
+   ],
+   "text": "some text"
+  },
+  {
+   "index": 3,
+   "raw": "musicOn x=1",
+   "kind": "message",
+   "tag": "musicOn",
+   "params": [
+    "x=1"
+   ],
+   "markup": [
+    {
+     "type": "text",
+     "value": "x=1"
+    }
+   ],
+   "text": "x=1"
+  },
+  {
+   "index": 4,
+   "raw": "",
+   "kind": "empty",
+   "tag": null,
+   "params": []
+  }
+ ],
+ "labels": {}
+}

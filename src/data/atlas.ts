@@ -15,6 +15,16 @@ const STATIC_ROOT = "https://static.atlasacademy.io";
 const basicWarCache = new Map<Region, Promise<BasicWar[]>>();
 const bgmCache = new Map<Region, Promise<BgmEntry[]>>();
 const characterFigureMetadataCache = new Map<string, Promise<CharacterFigureMetadata | null>>();
+const equipmentGraphCache = new Map<string, Promise<string | null>>();
+
+/** Use the API's asset URL rather than guessing CharaGraph CDN filenames. */
+export function getEquipmentGraphUrl(region: Region, id: string): Promise<string | null> {
+  const key = `${region}:${id}`;
+  if (!equipmentGraphCache.has(key)) equipmentGraphCache.set(key, fetchJson<{ extraAssets?: { charaGraph?: { ascension?: Record<string, string>; costume?: Record<string, string> } } }>(`/atlas-api/nice/${region}/equip/${encodeURIComponent(id)}`)
+    .then(equip => Object.values(equip.extraAssets?.charaGraph?.ascension ?? {})[0] ?? Object.values(equip.extraAssets?.charaGraph?.costume ?? {})[0] ?? null)
+    .catch(() => null));
+  return equipmentGraphCache.get(key)!;
+}
 
 export interface CharacterFigureMetadata {
   id: number;
@@ -119,17 +129,30 @@ export function scriptUrlFromId(region: Region, scriptId: string) {
   return `/atlas-api/nice/${region}/script/${normalized}`;
 }
 
-export function backgroundUrl(region: Region, sceneId: string | null) {
+export function backgroundUrl(region: Region, sceneId: string | null, fullScreen = false) {
   if (!sceneId) return "";
-  return `${STATIC_ROOT}/${region}/Back/back${sceneId}.png`;
+  const id = sceneId.replace(/^(?:Back\/)?back/, "");
+  return `${STATIC_ROOT}/${region}/Back/back${id.padStart(5, "0")}${fullScreen ? "_1344_626" : ""}.png`;
+}
+
+export function imageUrl(region: Region, name: string) {
+  const asset = name.replace(/^Image\//, "");
+  if (asset.endsWith(".png")) return `${STATIC_ROOT}/${region}/Image/${asset}`;
+  return `${STATIC_ROOT}/${region}/Image/${asset}/${asset.split("/").at(-1)}.png`;
+}
+
+export function pictureFrameUrl(region: Region, name: string, fullScreen = false) {
+  return imageUrl(region, fullScreen && name === "cut063_cinema" ? "cut063_cinema_fs" : name);
 }
 
 export function characterUrl(region: Region, characterId: string) {
-  return `${STATIC_ROOT}/${region}/CharaFigure/${characterId}/${characterId}_merged.png`;
+  const filename = characterId.split("/").at(-1);
+  return `${STATIC_ROOT}/${region}/CharaFigure/${characterId}/${filename}_merged.png`;
 }
 
 export function characterTextureUrl(region: Region, characterId: string) {
-  return `${STATIC_ROOT}/${region}/CharaFigure/${characterId}/${characterId}.png`;
+  const filename = characterId.split("/").at(-1);
+  return `${STATIC_ROOT}/${region}/CharaFigure/${characterId}/${filename}.png`;
 }
 
 export function getCharacterFigureMetadata(region: Region, characterId: string) {

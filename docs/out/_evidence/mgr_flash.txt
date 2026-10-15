@@ -1,0 +1,1378 @@
+
+==============================================================================
+### ScriptManager$$StartFlash  0x31ba3d8..0x31ba490  (size 0xb8)
+0x31ba3d8  stp      d15, d14, [sp, #-0x60]!
+0x31ba3dc  stp      d13, d12, [sp, #0x10]
+0x31ba3e0  stp      d11, d10, [sp, #0x20]
+0x31ba3e4  stp      d9, d8, [sp, #0x30]
+0x31ba3e8  str      x30, [sp, #0x40]
+0x31ba3ec  stp      x20, x19, [sp, #0x50]
+0x31ba3f0  ldrb     w20, [x0, #0x520]
+0x31ba3f4  cbnz     w20, #0x31ba46c
+0x31ba3f8  fmov     s13, s0
+0x31ba3fc  ldp      s0, s6, [sp, #0x68]
+0x31ba400  ldp      s15, s14, [sp, #0x60]
+0x31ba404  mov      x19, x0
+0x31ba408  str      x1, [x0, #0x518]
+0x31ba40c  add      x0, x0, #0x518
+0x31ba410  fmov     s8, s5
+0x31ba414  fmov     s9, s4
+0x31ba418  fmov     s10, s3
+0x31ba41c  fmov     s11, s2
+0x31ba420  fmov     s12, s1
+0x31ba424  stp      s0, s6, [sp, #0x48]
+0x31ba428  bl       #0x2230448   CALL 0x2230448
+0x31ba42c  ldp      s6, s0, [sp, #0x48]
+0x31ba430  mov      w8, #1
+0x31ba434  mov      x0, x19
+0x31ba438  str      wzr, [x19, #0x524]
+0x31ba43c  strh     w8, [x19, #0x520]
+0x31ba440  str      s13, [x19, #0x528]
+0x31ba444  str      s12, [x19, #0x52c]
+0x31ba448  str      s11, [x19, #0x534]
+0x31ba44c  str      s10, [x19, #0x538]
+0x31ba450  str      s9, [x19, #0x53c]
+0x31ba454  str      s8, [x19, #0x540]
+0x31ba458  str      s15, [x19, #0x544]
+0x31ba45c  str      s14, [x19, #0x548]
+0x31ba460  str      s6, [x19, #0x54c]
+0x31ba464  str      s0, [x19, #0x550]
+0x31ba468  bl       #0x31ba490   CALL ScriptManager$$OnFlashRequest
+0x31ba46c  cmp      w20, #0
+0x31ba470  ldp      x20, x19, [sp, #0x50]
+0x31ba474  ldp      d9, d8, [sp, #0x30]
+0x31ba478  cset     w0, eq
+0x31ba47c  ldp      d11, d10, [sp, #0x20]
+0x31ba480  ldr      x30, [sp, #0x40]
+0x31ba484  ldp      d13, d12, [sp, #0x10]
+0x31ba488  ldp      d15, d14, [sp], #0x60
+0x31ba48c  ret      
+
+==============================================================================
+### ScriptManager$$StartFlashDep  0x31ba8c0..0x31ba988  (size 0xc8)
+0x31ba8c0  sub      sp, sp, #0x70
+0x31ba8c4  stp      d15, d14, [sp, #0x10]
+0x31ba8c8  stp      d13, d12, [sp, #0x20]
+0x31ba8cc  stp      d11, d10, [sp, #0x30]
+0x31ba8d0  stp      d9, d8, [sp, #0x40]
+0x31ba8d4  stp      x30, x21, [sp, #0x50]
+0x31ba8d8  stp      x20, x19, [sp, #0x60]
+0x31ba8dc  ldrb     w21, [x0, #0x560]
+0x31ba8e0  cbnz     w21, #0x31ba960
+0x31ba8e4  fmov     s13, s0
+0x31ba8e8  ldp      s0, s6, [sp, #0x78]
+0x31ba8ec  ldp      s15, s14, [sp, #0x70]
+0x31ba8f0  mov      x19, x0
+0x31ba8f4  str      x1, [x0, #0x558]
+0x31ba8f8  add      x0, x0, #0x558
+0x31ba8fc  fmov     s8, s5
+0x31ba900  fmov     s9, s4
+0x31ba904  fmov     s10, s3
+0x31ba908  fmov     s11, s2
+0x31ba90c  fmov     s12, s1
+0x31ba910  mov      w20, w2
+0x31ba914  stp      s0, s6, [sp, #8]
+0x31ba918  bl       #0x2230448   CALL 0x2230448
+0x31ba91c  ldp      s6, s0, [sp, #8]
+0x31ba920  mov      w8, #1
+0x31ba924  mov      x0, x19
+0x31ba928  str      wzr, [x19, #0x564]
+0x31ba92c  strh     w8, [x19, #0x560]
+0x31ba930  str      s13, [x19, #0x568]
+0x31ba934  str      s12, [x19, #0x56c]
+0x31ba938  str      s11, [x19, #0x574]
+0x31ba93c  str      s10, [x19, #0x578]
+0x31ba940  str      s9, [x19, #0x57c]
+0x31ba944  str      s8, [x19, #0x580]
+0x31ba948  str      s15, [x19, #0x584]
+0x31ba94c  str      s14, [x19, #0x588]
+0x31ba950  str      s6, [x19, #0x58c]
+0x31ba954  str      s0, [x19, #0x590]
+0x31ba958  str      w20, [x19, #0x594]
+0x31ba95c  bl       #0x31ba988   CALL ScriptManager$$OnFlashDepRequest
+0x31ba960  cmp      w21, #0
+0x31ba964  ldp      x20, x19, [sp, #0x60]
+0x31ba968  ldp      x30, x21, [sp, #0x50]
+0x31ba96c  cset     w0, eq
+0x31ba970  ldp      d9, d8, [sp, #0x40]
+0x31ba974  ldp      d11, d10, [sp, #0x30]
+0x31ba978  ldp      d13, d12, [sp, #0x20]
+0x31ba97c  ldp      d15, d14, [sp, #0x10]
+0x31ba980  add      sp, sp, #0x70
+0x31ba984  ret      
+
+==============================================================================
+### ScriptManager$$InitFlashCommand  0x31ba200..0x31ba2ec  (size 0xec)
+0x31ba200  str      x30, [sp, #-0x20]!
+0x31ba204  stp      x20, x19, [sp, #0x10]
+0x31ba208  adrp     x20, #0x59c5000
+0x31ba20c  mov      x19, x0
+0x31ba210  ldrb     w8, [x20, #0x1f2]
+0x31ba214  tbnz     w8, #0, #0x31ba238
+0x31ba218  adrp     x0, #0x55ca000
+0x31ba21c  ldr      x0, [x0, #0x850]
+0x31ba220  bl       #0x22304a4   CALL 0x22304a4
+0x31ba224  adrp     x0, #0x556f000
+0x31ba228  ldr      x0, [x0, #0xb90]
+0x31ba22c  bl       #0x22304a4   CALL 0x22304a4
+0x31ba230  mov      w8, #1
+0x31ba234  strb     w8, [x20, #0x1f2]
+0x31ba238  ldr      x0, [x19, #0xd0]
+0x31ba23c  cbz      x0, #0x31ba2e8
+0x31ba240  ldr      x8, [x0]
+0x31ba244  movi     d3, #0000000000000000
+0x31ba248  fmov     s0, #1.00000000
+0x31ba24c  fmov     s1, #1.00000000
+0x31ba250  fmov     s2, #1.00000000
+0x31ba254  ldr      x9, [x8, #0x3a8]
+0x31ba258  ldr      x1, [x8, #0x3b0]
+0x31ba25c  blr      x9   CALL 0x0
+0x31ba260  ldrb     w8, [x19, #0x520]
+0x31ba264  cbz      w8, #0x31ba2dc
+0x31ba268  ldr      x0, [x19, #0xd0]
+0x31ba26c  cbz      x0, #0x31ba2e8
+0x31ba270  adrp     x8, #0x55ca000
+0x31ba274  adrp     x20, #0x556f000
+0x31ba278  ldr      x8, [x8, #0x850]
+0x31ba27c  ldr      x20, [x20, #0xb90]
+0x31ba280  ldr      x1, [x8]
+0x31ba284  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x31ba288  ldr      x8, [x20]
+0x31ba28c  mov      x20, x0
+0x31ba290  ldr      w9, [x8, #0xe4]
+0x31ba294  cbnz     w9, #0x31ba2a0
+0x31ba298  mov      x0, x8
+0x31ba29c  bl       #0x22305f4   CALL 0x22305f4
+0x31ba2a0  mov      x0, x20
+0x31ba2a4  mov      x1, xzr
+0x31ba2a8  mov      x2, xzr
+0x31ba2ac  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31ba2b0  tbz      w0, #0, #0x31ba2c8
+0x31ba2b4  cbz      x20, #0x31ba2e8
+0x31ba2b8  mov      x0, x20
+0x31ba2bc  mov      w1, wzr
+0x31ba2c0  mov      x2, xzr
+0x31ba2c4  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31ba2c8  add      x0, x19, #0x518
+0x31ba2cc  mov      x1, xzr
+0x31ba2d0  str      xzr, [x19, #0x518]
+0x31ba2d4  bl       #0x2230448   CALL 0x2230448
+0x31ba2d8  strh     wzr, [x19, #0x520]
+0x31ba2dc  ldp      x20, x19, [sp, #0x10]
+0x31ba2e0  ldr      x30, [sp], #0x20
+0x31ba2e4  ret      
+0x31ba2e8  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$InitFlashDepCommand  0x31ba2ec..0x31ba3d8  (size 0xec)
+0x31ba2ec  str      x30, [sp, #-0x20]!
+0x31ba2f0  stp      x20, x19, [sp, #0x10]
+0x31ba2f4  adrp     x20, #0x59c5000
+0x31ba2f8  mov      x19, x0
+0x31ba2fc  ldrb     w8, [x20, #0x1f3]
+0x31ba300  tbnz     w8, #0, #0x31ba324
+0x31ba304  adrp     x0, #0x55ca000
+0x31ba308  ldr      x0, [x0, #0x850]
+0x31ba30c  bl       #0x22304a4   CALL 0x22304a4
+0x31ba310  adrp     x0, #0x556f000
+0x31ba314  ldr      x0, [x0, #0xb90]
+0x31ba318  bl       #0x22304a4   CALL 0x22304a4
+0x31ba31c  mov      w8, #1
+0x31ba320  strb     w8, [x20, #0x1f3]
+0x31ba324  ldr      x0, [x19, #0xf0]
+0x31ba328  cbz      x0, #0x31ba3d4
+0x31ba32c  ldr      x8, [x0]
+0x31ba330  movi     d3, #0000000000000000
+0x31ba334  fmov     s0, #1.00000000
+0x31ba338  fmov     s1, #1.00000000
+0x31ba33c  fmov     s2, #1.00000000
+0x31ba340  ldr      x9, [x8, #0x3a8]
+0x31ba344  ldr      x1, [x8, #0x3b0]
+0x31ba348  blr      x9   CALL 0x0
+0x31ba34c  ldrb     w8, [x19, #0x560]
+0x31ba350  cbz      w8, #0x31ba3c8
+0x31ba354  ldr      x0, [x19, #0xf0]
+0x31ba358  cbz      x0, #0x31ba3d4
+0x31ba35c  adrp     x8, #0x55ca000
+0x31ba360  adrp     x20, #0x556f000
+0x31ba364  ldr      x8, [x8, #0x850]
+0x31ba368  ldr      x20, [x20, #0xb90]
+0x31ba36c  ldr      x1, [x8]
+0x31ba370  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x31ba374  ldr      x8, [x20]
+0x31ba378  mov      x20, x0
+0x31ba37c  ldr      w9, [x8, #0xe4]
+0x31ba380  cbnz     w9, #0x31ba38c
+0x31ba384  mov      x0, x8
+0x31ba388  bl       #0x22305f4   CALL 0x22305f4
+0x31ba38c  mov      x0, x20
+0x31ba390  mov      x1, xzr
+0x31ba394  mov      x2, xzr
+0x31ba398  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31ba39c  tbz      w0, #0, #0x31ba3b4
+0x31ba3a0  cbz      x20, #0x31ba3d4
+0x31ba3a4  mov      x0, x20
+0x31ba3a8  mov      w1, wzr
+0x31ba3ac  mov      x2, xzr
+0x31ba3b0  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31ba3b4  add      x0, x19, #0x558
+0x31ba3b8  mov      x1, xzr
+0x31ba3bc  str      xzr, [x19, #0x558]
+0x31ba3c0  bl       #0x2230448   CALL 0x2230448
+0x31ba3c4  strh     wzr, [x19, #0x560]
+0x31ba3c8  ldp      x20, x19, [sp, #0x10]
+0x31ba3cc  ldr      x30, [sp], #0x20
+0x31ba3d0  ret      
+0x31ba3d4  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$InitFlash  0x31a1f3c..0x31a1f54  (size 0x18)
+0x31a1f3c  stp      x30, x19, [sp, #-0x10]!
+0x31a1f40  mov      x19, x0
+0x31a1f44  bl       #0x31ba200   CALL ScriptManager$$InitFlashCommand
+0x31a1f48  mov      x0, x19
+0x31a1f4c  ldp      x30, x19, [sp], #0x10
+0x31a1f50  b        #0x31ba2ec
+
+==============================================================================
+### ScriptManager$$InitWipe  0x31a1f54..0x31a2158  (size 0x204)
+0x31a1f54  str      x30, [sp, #-0x30]!
+0x31a1f58  stp      x22, x21, [sp, #0x10]
+0x31a1f5c  stp      x20, x19, [sp, #0x20]
+0x31a1f60  adrp     x20, #0x59c5000
+0x31a1f64  mov      x19, x0
+0x31a1f68  ldrb     w8, [x20, #0x1f6]
+0x31a1f6c  tbnz     w8, #0, #0x31a1f9c
+0x31a1f70  adrp     x0, #0x5573000
+0x31a1f74  ldr      x0, [x0, #0x90]
+0x31a1f78  bl       #0x22304a4   CALL 0x22304a4
+0x31a1f7c  adrp     x0, #0x55ca000
+0x31a1f80  ldr      x0, [x0, #0x848]
+0x31a1f84  bl       #0x22304a4   CALL 0x22304a4
+0x31a1f88  adrp     x0, #0x556f000
+0x31a1f8c  ldr      x0, [x0, #0xb90]
+0x31a1f90  bl       #0x22304a4   CALL 0x22304a4
+0x31a1f94  mov      w8, #1
+0x31a1f98  strb     w8, [x20, #0x1f6]
+0x31a1f9c  ldrb     w8, [x19, #0x5a8]
+0x31a1fa0  cbz      w8, #0x31a2054
+0x31a1fa4  ldr      x0, [x19, #0xd8]
+0x31a1fa8  cbz      x0, #0x31a2154
+0x31a1fac  adrp     x22, #0x55ca000
+0x31a1fb0  adrp     x21, #0x556f000
+0x31a1fb4  ldr      x22, [x22, #0x848]
+0x31a1fb8  ldr      x21, [x21, #0xb90]
+0x31a1fbc  ldr      x1, [x22]
+0x31a1fc0  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x31a1fc4  ldr      x8, [x21]
+0x31a1fc8  mov      x20, x0
+0x31a1fcc  ldr      w9, [x8, #0xe4]
+0x31a1fd0  cbnz     w9, #0x31a1fdc
+0x31a1fd4  mov      x0, x8
+0x31a1fd8  bl       #0x22305f4   CALL 0x22305f4
+0x31a1fdc  mov      x0, x20
+0x31a1fe0  mov      x1, xzr
+0x31a1fe4  mov      x2, xzr
+0x31a1fe8  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31a1fec  tbz      w0, #0, #0x31a2004
+0x31a1ff0  cbz      x20, #0x31a2154
+0x31a1ff4  mov      x0, x20
+0x31a1ff8  mov      w1, wzr
+0x31a1ffc  mov      x2, xzr
+0x31a2000  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31a2004  ldr      x0, [x19, #0xe0]
+0x31a2008  cbz      x0, #0x31a2154
+0x31a200c  ldr      x1, [x22]
+0x31a2010  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x31a2014  ldr      x8, [x21]
+0x31a2018  mov      x20, x0
+0x31a201c  ldr      w9, [x8, #0xe4]
+0x31a2020  cbnz     w9, #0x31a202c
+0x31a2024  mov      x0, x8
+0x31a2028  bl       #0x22305f4   CALL 0x22305f4
+0x31a202c  mov      x0, x20
+0x31a2030  mov      x1, xzr
+0x31a2034  mov      x2, xzr
+0x31a2038  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31a203c  tbz      w0, #0, #0x31a2054
+0x31a2040  cbz      x20, #0x31a2154
+0x31a2044  mov      x0, x20
+0x31a2048  mov      w1, wzr
+0x31a204c  mov      x2, xzr
+0x31a2050  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31a2054  ldr      x0, [x19, #0xd8]
+0x31a2058  cbz      x0, #0x31a2154
+0x31a205c  ldr      x8, [x0]
+0x31a2060  movi     d0, #0000000000000000
+0x31a2064  ldr      x9, [x8, #0x3c8]
+0x31a2068  ldr      x1, [x8, #0x3d0]
+0x31a206c  blr      x9   CALL 0x0
+0x31a2070  ldr      x0, [x19, #0xd8]
+0x31a2074  cbz      x0, #0x31a2154
+0x31a2078  mov      x1, xzr
+0x31a207c  bl       #0x2e0cabc   CALL ExUIMeshRenderer$$ClearImage
+0x31a2080  ldr      x0, [x19, #0xd8]
+0x31a2084  cbz      x0, #0x31a2154
+0x31a2088  mov      x1, xzr
+0x31a208c  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31a2090  cbz      x0, #0x31a2154
+0x31a2094  mov      w1, wzr
+0x31a2098  mov      x2, xzr
+0x31a209c  bl       #0x4fd4510   CALL UnityEngine.GameObject$$SetActive
+0x31a20a0  ldr      x0, [x19, #0xe0]
+0x31a20a4  cbz      x0, #0x31a2154
+0x31a20a8  ldr      x8, [x0]
+0x31a20ac  movi     d0, #0000000000000000
+0x31a20b0  ldr      x9, [x8, #0x3c8]
+0x31a20b4  ldr      x1, [x8, #0x3d0]
+0x31a20b8  blr      x9   CALL 0x0
+0x31a20bc  ldr      x0, [x19, #0xe0]
+0x31a20c0  cbz      x0, #0x31a2154
+0x31a20c4  mov      x1, xzr
+0x31a20c8  bl       #0x2e0cabc   CALL ExUIMeshRenderer$$ClearImage
+0x31a20cc  ldr      x0, [x19, #0xe0]
+0x31a20d0  cbz      x0, #0x31a2154
+0x31a20d4  mov      x1, xzr
+0x31a20d8  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31a20dc  cbz      x0, #0x31a2154
+0x31a20e0  mov      w1, wzr
+0x31a20e4  mov      x2, xzr
+0x31a20e8  bl       #0x4fd4510   CALL UnityEngine.GameObject$$SetActive
+0x31a20ec  ldr      x20, [x19, #0x5a0]
+0x31a20f0  cbz      x20, #0x31a212c
+0x31a20f4  adrp     x8, #0x5573000
+0x31a20f8  add      x21, x19, #0x5a0
+0x31a20fc  ldr      x8, [x8, #0x90]
+0x31a2100  ldr      x0, [x8]
+0x31a2104  ldr      w8, [x0, #0xe4]
+0x31a2108  cbnz     w8, #0x31a2110
+0x31a210c  bl       #0x22305f4   CALL 0x22305f4
+0x31a2110  mov      x0, x20
+0x31a2114  mov      x1, xzr
+0x31a2118  bl       #0x2da4628   CALL AssetManager$$releaseAsset
+0x31a211c  mov      x0, x21
+0x31a2120  mov      x1, xzr
+0x31a2124  str      xzr, [x21]
+0x31a2128  bl       #0x2230448   CALL 0x2230448
+0x31a212c  add      x0, x19, #0x598
+0x31a2130  mov      x1, xzr
+0x31a2134  str      xzr, [x19, #0x598]
+0x31a2138  bl       #0x2230448   CALL 0x2230448
+0x31a213c  strh     wzr, [x19, #0x5a8]
+0x31a2140  ldp      x22, x21, [sp, #0x10]
+0x31a2144  str      wzr, [x19, #0x5d4]
+0x31a2148  ldp      x20, x19, [sp, #0x20]
+0x31a214c  ldr      x30, [sp], #0x30
+0x31a2150  ret      
+0x31a2154  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### EventMaskFade$$SetMaskCollider  0x33a6e14..0x33a6e60  (size 0x4c)
+0x33a6e14  str      x30, [sp, #-0x20]!
+0x33a6e18  stp      x20, x19, [sp, #0x10]
+0x33a6e1c  mov      w19, w1
+0x33a6e20  mov      x1, xzr
+0x33a6e24  mov      x20, x0
+0x33a6e28  bl       #0x4fcfebc   CALL UnityEngine.Behaviour$$get_isActiveAndEnabled
+0x33a6e2c  tbz      w0, #0, #0x33a6e40
+0x33a6e30  tbnz     w19, #0, #0x33a6e40
+0x33a6e34  ldr      x0, [x20, #0x40]
+0x33a6e38  cbz      x0, #0x33a6e5c
+0x33a6e3c  bl       #0x33a6e60   CALL EventMaskFadeTouchBlockObject$$RemoveCallback
+0x33a6e40  ldr      x0, [x20, #0x28]
+0x33a6e44  cbz      x0, #0x33a6e5c
+0x33a6e48  and      w1, w19, #1
+0x33a6e4c  ldp      x20, x19, [sp, #0x10]
+0x33a6e50  mov      x2, xzr
+0x33a6e54  ldr      x30, [sp], #0x20
+0x33a6e58  b        #0x4fd4510
+0x33a6e5c  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### EventMaskFade$$SetCallback  0x33a6e98..0x33a6edc  (size 0x44)
+0x33a6e98  str      x30, [sp, #-0x20]!
+0x33a6e9c  stp      x20, x19, [sp, #0x10]
+0x33a6ea0  mov      x19, x1
+0x33a6ea4  mov      x1, xzr
+0x33a6ea8  mov      x20, x0
+0x33a6eac  bl       #0x4fcfebc   CALL UnityEngine.Behaviour$$get_isActiveAndEnabled
+0x33a6eb0  tbz      w0, #0, #0x33a6ecc
+0x33a6eb4  ldr      x0, [x20, #0x40]
+0x33a6eb8  cbz      x0, #0x33a6ed8
+0x33a6ebc  mov      x1, x19
+0x33a6ec0  ldp      x20, x19, [sp, #0x10]
+0x33a6ec4  ldr      x30, [sp], #0x20
+0x33a6ec8  b        #0x33a6edc
+0x33a6ecc  ldp      x20, x19, [sp, #0x10]
+0x33a6ed0  ldr      x30, [sp], #0x20
+0x33a6ed4  ret      
+0x33a6ed8  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### EventMaskFade$$.ctor  0x33a6f24..0x33a6f2c  (size 0x8)
+0x33a6f24  mov      x1, xzr
+0x33a6f28  b        #0x349da1c
+
+==============================================================================
+### MaskFade$$IsBusy  0x349cbd4..0x349cbdc  (size 0x8)
+0x349cbd4  ldrb     w0, [x0, #0x34]
+0x349cbd8  ret      
+
+==============================================================================
+### MaskFade$$IsOnTop  0x349cbdc..0x349cc1c  (size 0x40)
+0x349cbdc  str      x30, [sp, #-0x10]!
+0x349cbe0  ldrb     w8, [x0, #0x34]
+0x349cbe4  cbz      w8, #0x349cbf0
+0x349cbe8  mov      w0, wzr
+0x349cbec  b        #0x349cc10
+0x349cbf0  ldr      x0, [x0, #0x20]
+0x349cbf4  cbz      x0, #0x349cc18
+0x349cbf8  ldr      x8, [x0]
+0x349cbfc  ldp      x9, x1, [x8, #0x1a8]
+0x349cc00  blr      x9   CALL 0x0
+0x349cc04  fmov     s1, #1.00000000
+0x349cc08  fcmp     s0, s1
+0x349cc0c  cset     w0, ge
+0x349cc10  ldr      x30, [sp], #0x10
+0x349cc14  ret      
+0x349cc18  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$IsDisp  0x349cc1c..0x349cc48  (size 0x2c)
+0x349cc1c  str      x30, [sp, #-0x10]!
+0x349cc20  ldr      x0, [x0, #0x20]
+0x349cc24  cbz      x0, #0x349cc44
+0x349cc28  ldr      x8, [x0]
+0x349cc2c  ldp      x9, x1, [x8, #0x1a8]
+0x349cc30  blr      x9   CALL 0x0
+0x349cc34  fcmp     s0, #0.0
+0x349cc38  cset     w0, gt
+0x349cc3c  ldr      x30, [sp], #0x10
+0x349cc40  ret      
+0x349cc44  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$GetFadeoutKind  0x349cc48..0x349cc60  (size 0x18)
+0x349cc48  ldrb     w8, [x0, #0x34]
+0x349cc4c  cbz      w8, #0x349cc58
+0x349cc50  mov      w0, wzr
+0x349cc54  ret      
+0x349cc58  ldr      w0, [x0, #0x30]
+0x349cc5c  ret      
+
+==============================================================================
+### MaskFade$$Init  0x349cc60..0x349cd58  (size 0xf8)
+0x349cc60  str      x30, [sp, #-0x20]!
+0x349cc64  stp      x20, x19, [sp, #0x10]
+0x349cc68  adrp     x20, #0x59c6000
+0x349cc6c  mov      x19, x0
+0x349cc70  ldrb     w8, [x20, #0xbfe]
+0x349cc74  tbnz     w8, #0, #0x349cc98
+0x349cc78  adrp     x0, #0x55a2000
+0x349cc7c  ldr      x0, [x0, #0x998]
+0x349cc80  bl       #0x22304a4   CALL 0x22304a4
+0x349cc84  adrp     x0, #0x556f000
+0x349cc88  ldr      x0, [x0, #0xb90]
+0x349cc8c  bl       #0x22304a4   CALL 0x22304a4
+0x349cc90  mov      w8, #1
+0x349cc94  strb     w8, [x20, #0xbfe]
+0x349cc98  ldrb     w8, [x19, #0x34]
+0x349cc9c  cbz      w8, #0x349cd1c
+0x349cca0  ldr      x0, [x19, #0x20]
+0x349cca4  cbz      x0, #0x349cd54
+0x349cca8  adrp     x8, #0x55a2000
+0x349ccac  adrp     x20, #0x556f000
+0x349ccb0  ldr      x8, [x8, #0x998]
+0x349ccb4  ldr      x20, [x20, #0xb90]
+0x349ccb8  ldr      x1, [x8]
+0x349ccbc  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x349ccc0  ldr      x8, [x20]
+0x349ccc4  mov      x20, x0
+0x349ccc8  ldr      w9, [x8, #0xe4]
+0x349cccc  cbnz     w9, #0x349ccd8
+0x349ccd0  mov      x0, x8
+0x349ccd4  bl       #0x22305f4   CALL 0x22305f4
+0x349ccd8  mov      x0, x20
+0x349ccdc  mov      x1, xzr
+0x349cce0  mov      x2, xzr
+0x349cce4  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349cce8  tbz      w0, #0, #0x349cd18
+0x349ccec  cbz      x20, #0x349cd54
+0x349ccf0  ldr      x0, [x19, #0x20]
+0x349ccf4  cbz      x0, #0x349cd54
+0x349ccf8  ldp      s2, s3, [x20, #0x98]
+0x349ccfc  mov      x1, xzr
+0x349cd00  ldp      s0, s1, [x20, #0x90]
+0x349cd04  bl       #0x3612d2c   CALL UIWidget$$set_color
+0x349cd08  mov      x0, x20
+0x349cd0c  mov      w1, wzr
+0x349cd10  mov      x2, xzr
+0x349cd14  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x349cd18  strb     wzr, [x19, #0x34]
+0x349cd1c  ldr      x0, [x19, #0x20]
+0x349cd20  str      wzr, [x19, #0x30]
+0x349cd24  cbz      x0, #0x349cd54
+0x349cd28  ldr      x8, [x0]
+0x349cd2c  movi     d0, #0000000000000000
+0x349cd30  ldp      x9, x1, [x8, #0x1b8]
+0x349cd34  blr      x9   CALL 0x0
+0x349cd38  ldr      x0, [x19, #0x28]
+0x349cd3c  cbz      x0, #0x349cd54
+0x349cd40  ldp      x20, x19, [sp, #0x10]
+0x349cd44  mov      w1, wzr
+0x349cd48  mov      x2, xzr
+0x349cd4c  ldr      x30, [sp], #0x20
+0x349cd50  b        #0x4fd4510
+0x349cd54  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$Fadeout  0x349cd58..0x349d0f4  (size 0x39c)
+0x349cd58  str      d10, [sp, #-0x50]!
+0x349cd5c  stp      d9, d8, [sp, #8]
+0x349cd60  str      x30, [sp, #0x18]
+0x349cd64  stp      x24, x23, [sp, #0x20]
+0x349cd68  stp      x22, x21, [sp, #0x30]
+0x349cd6c  stp      x20, x19, [sp, #0x40]
+0x349cd70  fmov     s8, s0
+0x349cd74  adrp     x22, #0x59c6000
+0x349cd78  mov      x20, x2
+0x349cd7c  ldrb     w8, [x22, #0xbff]
+0x349cd80  mov      w21, w1
+0x349cd84  mov      x19, x0
+0x349cd88  tbnz     w8, #0, #0x349cdf4
+0x349cd8c  adrp     x0, #0x5572000
+0x349cd90  ldr      x0, [x0, #0xb48]
+0x349cd94  bl       #0x22304a4   CALL 0x22304a4
+0x349cd98  adrp     x0, #0x55a2000
+0x349cd9c  ldr      x0, [x0, #0x998]
+0x349cda0  bl       #0x22304a4   CALL 0x22304a4
+0x349cda4  adrp     x0, #0x55b1000
+0x349cda8  ldr      x0, [x0, #0x640]
+0x349cdac  bl       #0x22304a4   CALL 0x22304a4
+0x349cdb0  adrp     x0, #0x556f000
+0x349cdb4  ldr      x0, [x0, #0xb90]
+0x349cdb8  bl       #0x22304a4   CALL 0x22304a4
+0x349cdbc  adrp     x0, #0x559d000
+0x349cdc0  ldr      x0, [x0, #0xd8]   ; &slot for 'Fadeout'
+0x349cdc4  bl       #0x22304a4   CALL 0x22304a4
+0x349cdc8  adrp     x0, #0x55b1000
+0x349cdcc  ldr      x0, [x0, #0xcf0]   ; &slot for 'EndFadeout'
+0x349cdd0  bl       #0x22304a4   CALL 0x22304a4
+0x349cdd4  adrp     x0, #0x55db000
+0x349cdd8  ldr      x0, [x0, #0x20]   ; &slot for '実行中'
+0x349cddc  bl       #0x22304a4   CALL 0x22304a4
+0x349cde0  adrp     x0, #0x55db000
+0x349cde4  ldr      x0, [x0, #0x28]   ; &slot for '完了状態'
+0x349cde8  bl       #0x22304a4   CALL 0x22304a4
+0x349cdec  mov      w8, #1
+0x349cdf0  strb     w8, [x22, #0xbff]
+0x349cdf4  ldr      x0, [x19, #0x20]
+0x349cdf8  cbz      x0, #0x349d0f0
+0x349cdfc  adrp     x8, #0x55a2000
+0x349ce00  adrp     x23, #0x556f000
+0x349ce04  ldr      x8, [x8, #0x998]
+0x349ce08  ldr      x23, [x23, #0xb90]
+0x349ce0c  ldr      x1, [x8]
+0x349ce10  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x349ce14  ldrb     w8, [x19, #0x34]
+0x349ce18  mov      x22, x0
+0x349ce1c  cbz      w8, #0x349ce98
+0x349ce20  ldr      x0, [x23]
+0x349ce24  ldr      w8, [x0, #0xe4]
+0x349ce28  cbnz     w8, #0x349ce30
+0x349ce2c  bl       #0x22305f4   CALL 0x22305f4
+0x349ce30  mov      x0, x22
+0x349ce34  mov      x1, xzr
+0x349ce38  mov      x2, xzr
+0x349ce3c  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349ce40  tbz      w0, #0, #0x349cf00
+0x349ce44  cbz      x22, #0x349d0f0
+0x349ce48  fmov     s0, #1.00000000
+0x349ce4c  ldr      s1, [x22, #0x9c]
+0x349ce50  fcmp     s1, s0
+0x349ce54  b.ne     #0x349cf00
+0x349ce58  mov      x0, x19
+0x349ce5c  mov      x1, xzr
+0x349ce60  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349ce64  adrp     x8, #0x55b1000
+0x349ce68  mov      x19, x0
+0x349ce6c  ldr      x8, [x8, #0x640]
+0x349ce70  ldr      x8, [x8]   ; &slot for 'MiniProgressBar/CancelButton'
+0x349ce74  ldr      w9, [x8, #0xe4]
+0x349ce78  cbnz     w9, #0x349ce84
+0x349ce7c  mov      x0, x8
+0x349ce80  bl       #0x22305f4   CALL 0x22305f4
+0x349ce84  adrp     x8, #0x559d000
+0x349ce88  adrp     x9, #0x55db000
+0x349ce8c  ldr      x8, [x8, #0xd8]   ; &slot for 'Fadeout'
+0x349ce90  ldr      x9, [x9, #0x20]   ; &slot for '実行中'
+0x349ce94  b        #0x349d0a8
+0x349ce98  adrp     x24, #0x5572000
+0x349ce9c  ldr      x24, [x24, #0xb48]
+0x349cea0  ldr      x0, [x24]
+0x349cea4  ldr      w8, [x0, #0xe4]
+0x349cea8  cbnz     w8, #0x349ceb4
+0x349ceac  bl       #0x22305f4   CALL 0x22305f4
+0x349ceb0  ldr      x0, [x24]
+0x349ceb4  ldr      x8, [x0, #0xb8]
+0x349ceb8  ldrb     w8, [x8, #0x4a8]
+0x349cebc  cbz      w8, #0x349cf00
+0x349cec0  ldr      x0, [x23]
+0x349cec4  ldr      w8, [x0, #0xe4]
+0x349cec8  cbnz     w8, #0x349ced0
+0x349cecc  bl       #0x22305f4   CALL 0x22305f4
+0x349ced0  mov      x0, x22
+0x349ced4  mov      x1, xzr
+0x349ced8  mov      x2, xzr
+0x349cedc  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349cee0  tbz      w0, #0, #0x349cf00
+0x349cee4  cbz      x22, #0x349d0f0
+0x349cee8  mov      x0, x22
+0x349ceec  mov      x1, xzr
+0x349cef0  bl       #0x36181c8   CALL TweenColor$$get_value
+0x349cef4  fmov     s0, #1.00000000
+0x349cef8  fcmp     s3, s0
+0x349cefc  b.ge     #0x349d06c
+0x349cf00  mov      x0, x19
+0x349cf04  mov      x1, x20
+0x349cf08  str      x20, [x0, #0x38]!
+0x349cf0c  bl       #0x2230448   CALL 0x2230448
+0x349cf10  sub      w8, w21, #1
+0x349cf14  cmp      w8, #3
+0x349cf18  b.hs     #0x349d010
+0x349cf1c  adrp     x9, #0xee9000
+0x349cf20  add      x9, x9, #0x50c
+0x349cf24  ldr      x0, [x19, #0x28]
+0x349cf28  ldr      s9, [x9, w8, uxtw #2]
+0x349cf2c  adrp     x9, #0xee9000
+0x349cf30  add      x9, x9, #0x518
+0x349cf34  ldr      s10, [x9, w8, uxtw #2]
+0x349cf38  str      w21, [x19, #0x30]
+0x349cf3c  cbz      x0, #0x349d0f0
+0x349cf40  mov      w1, #1
+0x349cf44  mov      x2, xzr
+0x349cf48  bl       #0x4fd4510   CALL UnityEngine.GameObject$$SetActive
+0x349cf4c  fcmp     s8, #0.0
+0x349cf50  b.le     #0x349d03c
+0x349cf54  ldr      x0, [x19, #0x20]
+0x349cf58  cbz      x0, #0x349d0f0
+0x349cf5c  fmov     s0, s9
+0x349cf60  fmov     s1, s9
+0x349cf64  ldr      s3, [x0, #0xa0]
+0x349cf68  fmov     s2, s9
+0x349cf6c  mov      x1, xzr
+0x349cf70  bl       #0x3612d2c   CALL UIWidget$$set_color
+0x349cf74  ldr      x0, [x19, #0x20]
+0x349cf78  cbz      x0, #0x349d0f0
+0x349cf7c  mov      x1, xzr
+0x349cf80  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349cf84  fmov     s0, s8
+0x349cf88  fmov     s1, s9
+0x349cf8c  mov      x1, xzr
+0x349cf90  fmov     s2, s9
+0x349cf94  fmov     s3, s9
+0x349cf98  fmov     s4, s10
+0x349cf9c  bl       #0x361855c   CALL TweenColor$$Begin
+0x349cfa0  ldr      x8, [x23]
+0x349cfa4  mov      x20, x0
+0x349cfa8  ldr      w9, [x8, #0xe4]
+0x349cfac  cbnz     w9, #0x349cfb8
+0x349cfb0  mov      x0, x8
+0x349cfb4  bl       #0x22305f4   CALL 0x22305f4
+0x349cfb8  mov      x0, x20
+0x349cfbc  mov      x1, xzr
+0x349cfc0  mov      x2, xzr
+0x349cfc4  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349cfc8  tbz      w0, #0, #0x349d03c
+0x349cfcc  mov      w8, #1
+0x349cfd0  mov      x0, x19
+0x349cfd4  mov      x1, xzr
+0x349cfd8  strb     w8, [x19, #0x34]
+0x349cfdc  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349cfe0  cbz      x20, #0x349d0f0
+0x349cfe4  mov      x1, x0
+0x349cfe8  mov      x0, x20
+0x349cfec  str      x1, [x0, #0x50]!
+0x349cff0  bl       #0x2230448   CALL 0x2230448
+0x349cff4  adrp     x8, #0x55b1000
+0x349cff8  ldr      x8, [x8, #0xcf0]   ; &slot for 'EndFadeout'
+0x349cffc  ldr      x1, [x8]   ; 'EndFadeout'
+0x349d000  str      x1, [x20, #0x58]!
+0x349d004  mov      x0, x20
+0x349d008  bl       #0x2230448   CALL 0x2230448   args: x1='EndFadeout'
+0x349d00c  b        #0x349d064
+0x349d010  adrp     x19, #0x5572000
+0x349d014  ldr      x19, [x19, #0xb48]
+0x349d018  ldr      x0, [x19]
+0x349d01c  ldr      w8, [x0, #0xe4]
+0x349d020  cbnz     w8, #0x349d02c
+0x349d024  bl       #0x22305f4   CALL 0x22305f4
+0x349d028  ldr      x0, [x19]
+0x349d02c  ldr      x8, [x0, #0xb8]
+0x349d030  ldrb     w8, [x8, #0x4a8]
+0x349d034  cbnz     w8, #0x349d0c4
+0x349d038  b        #0x349d0d0
+0x349d03c  ldr      x0, [x19, #0x20]
+0x349d040  cbz      x0, #0x349d0f0
+0x349d044  fmov     s0, s9
+0x349d048  fmov     s1, s9
+0x349d04c  mov      x1, xzr
+0x349d050  fmov     s2, s9
+0x349d054  fmov     s3, s10
+0x349d058  bl       #0x3612d2c   CALL UIWidget$$set_color
+0x349d05c  mov      x0, x19
+0x349d060  bl       #0x349d148   CALL MaskFade$$EndFadeout
+0x349d064  mov      w0, #1
+0x349d068  b        #0x349d0d4
+0x349d06c  mov      x0, x19
+0x349d070  mov      x1, xzr
+0x349d074  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349d078  adrp     x8, #0x55b1000
+0x349d07c  mov      x19, x0
+0x349d080  ldr      x8, [x8, #0x640]
+0x349d084  ldr      x8, [x8]   ; &slot for 'MiniProgressBar/CancelButton'
+0x349d088  ldr      w9, [x8, #0xe4]
+0x349d08c  cbnz     w9, #0x349d098
+0x349d090  mov      x0, x8
+0x349d094  bl       #0x22305f4   CALL 0x22305f4
+0x349d098  adrp     x8, #0x559d000
+0x349d09c  adrp     x9, #0x55db000
+0x349d0a0  ldr      x8, [x8, #0xd8]   ; &slot for 'Fadeout'
+0x349d0a4  ldr      x9, [x9, #0x28]   ; &slot for '完了状態'
+0x349d0a8  fmov     s0, s8
+0x349d0ac  ldr      x0, [x8]   ; 'Fadeout'
+0x349d0b0  ldr      x2, [x9]   ; '完了状態'
+0x349d0b4  mov      w1, w21
+0x349d0b8  mov      x3, x19
+0x349d0bc  mov      x4, xzr
+0x349d0c0  bl       #0x2e0f084   CALL FadeLogger$$CreateFadeLogText   args: x0='Fadeout', x2='完了状態'
+0x349d0c4  mov      x0, x20
+0x349d0c8  mov      x1, xzr
+0x349d0cc  bl       #0x35b6de4   CALL ActionExtensions$$Call
+0x349d0d0  mov      w0, wzr
+0x349d0d4  ldp      x20, x19, [sp, #0x40]
+0x349d0d8  ldr      x30, [sp, #0x18]
+0x349d0dc  ldp      x22, x21, [sp, #0x30]
+0x349d0e0  ldp      x24, x23, [sp, #0x20]
+0x349d0e4  ldp      d9, d8, [sp, #8]
+0x349d0e8  ldr      d10, [sp], #0x50
+0x349d0ec  ret      
+0x349d0f0  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$TryGetColorByMaskFade  0x349d0f4..0x349d148  (size 0x54)
+0x349d0f4  cmp      w1, #1
+0x349d0f8  mov      x8, x0
+0x349d0fc  b.eq     #0x349d120
+0x349d100  cmp      w1, #3
+0x349d104  b.eq     #0x349d130
+0x349d108  cmp      w1, #2
+0x349d10c  b.ne     #0x349d138
+0x349d110  fmov     s0, #1.00000000
+0x349d114  fmov     s1, #1.00000000
+0x349d118  fmov     s2, #1.00000000
+0x349d11c  b        #0x349d12c
+0x349d120  movi     d0, #0000000000000000
+0x349d124  movi     d1, #0000000000000000
+0x349d128  movi     d2, #0000000000000000
+0x349d12c  fmov     s3, #1.00000000
+0x349d130  mov      w0, #1
+0x349d134  b        #0x349d13c
+0x349d138  mov      w0, wzr
+0x349d13c  stp      s0, s1, [x8]
+0x349d140  stp      s2, s3, [x8, #8]
+0x349d144  ret      
+
+==============================================================================
+### MaskFade$$EndFadeout  0x349d148..0x349d270  (size 0x128)
+0x349d148  stp      x30, x21, [sp, #-0x20]!
+0x349d14c  stp      x20, x19, [sp, #0x10]
+0x349d150  adrp     x21, #0x59c6000
+0x349d154  adrp     x20, #0x5572000
+0x349d158  mov      x19, x0
+0x349d15c  ldrb     w8, [x21, #0xc00]
+0x349d160  ldr      x20, [x20, #0xb48]
+0x349d164  tbnz     w8, #0, #0x349d194
+0x349d168  adrp     x0, #0x5572000
+0x349d16c  ldr      x0, [x0, #0xb48]
+0x349d170  bl       #0x22304a4   CALL 0x22304a4
+0x349d174  adrp     x0, #0x55a2000
+0x349d178  ldr      x0, [x0, #0x998]
+0x349d17c  bl       #0x22304a4   CALL 0x22304a4
+0x349d180  adrp     x0, #0x556f000
+0x349d184  ldr      x0, [x0, #0xb90]
+0x349d188  bl       #0x22304a4   CALL 0x22304a4
+0x349d18c  mov      w8, #1
+0x349d190  strb     w8, [x21, #0xc00]
+0x349d194  ldr      x0, [x20]
+0x349d198  ldr      w8, [x0, #0xe4]
+0x349d19c  cbnz     w8, #0x349d1a8
+0x349d1a0  bl       #0x22305f4   CALL 0x22305f4
+0x349d1a4  ldr      x0, [x20]
+0x349d1a8  ldr      x8, [x0, #0xb8]
+0x349d1ac  ldrb     w8, [x8, #0x4a8]
+0x349d1b0  cbz      w8, #0x349d214
+0x349d1b4  ldr      x0, [x19, #0x20]
+0x349d1b8  cbz      x0, #0x349d26c
+0x349d1bc  adrp     x8, #0x55a2000
+0x349d1c0  adrp     x20, #0x556f000
+0x349d1c4  ldr      x8, [x8, #0x998]
+0x349d1c8  ldr      x20, [x20, #0xb90]
+0x349d1cc  ldr      x1, [x8]
+0x349d1d0  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x349d1d4  ldr      x8, [x20]
+0x349d1d8  mov      x20, x0
+0x349d1dc  ldr      w9, [x8, #0xe4]
+0x349d1e0  cbnz     w9, #0x349d1ec
+0x349d1e4  mov      x0, x8
+0x349d1e8  bl       #0x22305f4   CALL 0x22305f4
+0x349d1ec  mov      x0, x20
+0x349d1f0  mov      x1, xzr
+0x349d1f4  mov      x2, xzr
+0x349d1f8  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349d1fc  tbz      w0, #0, #0x349d214
+0x349d200  cbz      x20, #0x349d26c
+0x349d204  mov      x0, x20
+0x349d208  mov      w1, wzr
+0x349d20c  mov      x2, xzr
+0x349d210  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x349d214  ldr      x0, [x19, #0x20]
+0x349d218  cbz      x0, #0x349d26c
+0x349d21c  ldr      x8, [x0]
+0x349d220  fmov     s0, #1.00000000
+0x349d224  ldp      x9, x1, [x8, #0x1b8]
+0x349d228  blr      x9   CALL 0x0
+0x349d22c  ldr      x20, [x19, #0x38]!
+0x349d230  sturb    wzr, [x19, #-4]
+0x349d234  cbz      x20, #0x349d260
+0x349d238  mov      x0, x19
+0x349d23c  mov      x1, xzr
+0x349d240  str      xzr, [x19]
+0x349d244  bl       #0x2230448   CALL 0x2230448
+0x349d248  ldr      x0, [x20, #0x40]
+0x349d24c  ldr      x1, [x20, #0x28]
+0x349d250  ldr      x2, [x20, #0x18]
+0x349d254  ldp      x20, x19, [sp, #0x10]
+0x349d258  ldp      x30, x21, [sp], #0x20
+0x349d25c  br       x2
+0x349d260  ldp      x20, x19, [sp, #0x10]
+0x349d264  ldp      x30, x21, [sp], #0x20
+0x349d268  ret      
+0x349d26c  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$FadeChangeColor  0x349d270..0x349d574  (size 0x304)
+0x349d270  str      d12, [sp, #-0x60]!
+0x349d274  stp      d11, d10, [sp, #0x10]
+0x349d278  stp      d9, d8, [sp, #0x20]
+0x349d27c  stp      x30, x23, [sp, #0x30]
+0x349d280  stp      x22, x21, [sp, #0x40]
+0x349d284  stp      x20, x19, [sp, #0x50]
+0x349d288  fmov     s11, s4
+0x349d28c  fmov     s10, s3
+0x349d290  adrp     x22, #0x59c6000
+0x349d294  fmov     s9, s2
+0x349d298  fmov     s8, s1
+0x349d29c  ldrb     w8, [x22, #0xc01]
+0x349d2a0  fmov     s12, s0
+0x349d2a4  mov      x21, x2
+0x349d2a8  mov      w20, w1
+0x349d2ac  mov      x19, x0
+0x349d2b0  tbnz     w8, #0, #0x349d310
+0x349d2b4  adrp     x0, #0x5572000
+0x349d2b8  ldr      x0, [x0, #0xb48]
+0x349d2bc  bl       #0x22304a4   CALL 0x22304a4
+0x349d2c0  adrp     x0, #0x55a2000
+0x349d2c4  ldr      x0, [x0, #0x998]
+0x349d2c8  bl       #0x22304a4   CALL 0x22304a4
+0x349d2cc  adrp     x0, #0x55b1000
+0x349d2d0  ldr      x0, [x0, #0x640]
+0x349d2d4  bl       #0x22304a4   CALL 0x22304a4
+0x349d2d8  adrp     x0, #0x556f000
+0x349d2dc  ldr      x0, [x0, #0xb90]
+0x349d2e0  bl       #0x22304a4   CALL 0x22304a4
+0x349d2e4  adrp     x0, #0x55b1000
+0x349d2e8  ldr      x0, [x0, #0xcf0]   ; &slot for 'EndFadeout'
+0x349d2ec  bl       #0x22304a4   CALL 0x22304a4
+0x349d2f0  adrp     x0, #0x55db000
+0x349d2f4  ldr      x0, [x0, #0x20]   ; &slot for '実行中'
+0x349d2f8  bl       #0x22304a4   CALL 0x22304a4
+0x349d2fc  adrp     x0, #0x55db000
+0x349d300  ldr      x0, [x0, #0x30]   ; &slot for 'FadeChangeColor'
+0x349d304  bl       #0x22304a4   CALL 0x22304a4
+0x349d308  mov      w8, #1
+0x349d30c  strb     w8, [x22, #0xc01]
+0x349d310  adrp     x23, #0x556f000
+0x349d314  ldrb     w8, [x19, #0x34]
+0x349d318  ldr      x23, [x23, #0xb90]
+0x349d31c  cbz      w8, #0x349d3d0
+0x349d320  ldr      x0, [x19, #0x20]
+0x349d324  cbz      x0, #0x349d570
+0x349d328  adrp     x8, #0x55a2000
+0x349d32c  ldr      x8, [x8, #0x998]
+0x349d330  ldr      x1, [x8]
+0x349d334  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x349d338  ldr      x8, [x23]
+0x349d33c  mov      x22, x0
+0x349d340  ldr      w9, [x8, #0xe4]
+0x349d344  cbnz     w9, #0x349d350
+0x349d348  mov      x0, x8
+0x349d34c  bl       #0x22305f4   CALL 0x22305f4
+0x349d350  mov      x0, x22
+0x349d354  mov      x1, xzr
+0x349d358  mov      x2, xzr
+0x349d35c  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349d360  tbz      w0, #0, #0x349d3d0
+0x349d364  cbz      x22, #0x349d570
+0x349d368  ldr      s0, [x22, #0x9c]
+0x349d36c  fcmp     s0, #0.0
+0x349d370  b.ne     #0x349d3d0
+0x349d374  mov      x0, x19
+0x349d378  mov      x1, xzr
+0x349d37c  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349d380  adrp     x8, #0x55b1000
+0x349d384  mov      x19, x0
+0x349d388  ldr      x8, [x8, #0x640]
+0x349d38c  ldr      x8, [x8]   ; &slot for 'MiniProgressBar/CancelButton'
+0x349d390  ldr      w9, [x8, #0xe4]
+0x349d394  cbnz     w9, #0x349d3a0
+0x349d398  mov      x0, x8
+0x349d39c  bl       #0x22305f4   CALL 0x22305f4
+0x349d3a0  adrp     x8, #0x55db000
+0x349d3a4  adrp     x9, #0x55db000
+0x349d3a8  fmov     s0, s12
+0x349d3ac  ldr      x8, [x8, #0x30]   ; &slot for 'FadeChangeColor'
+0x349d3b0  ldr      x9, [x9, #0x20]   ; &slot for '実行中'
+0x349d3b4  mov      w1, w20
+0x349d3b8  mov      x3, x19
+0x349d3bc  mov      x4, xzr
+0x349d3c0  ldr      x0, [x8]   ; 'FadeChangeColor'
+0x349d3c4  ldr      x2, [x9]   ; '実行中'
+0x349d3c8  bl       #0x2e0f084   CALL FadeLogger$$CreateFadeLogText   args: x0='FadeChangeColor', x2='実行中'
+0x349d3cc  b        #0x349d544
+0x349d3d0  mov      x0, x19
+0x349d3d4  mov      x1, x21
+0x349d3d8  str      x21, [x0, #0x38]!
+0x349d3dc  bl       #0x2230448   CALL 0x2230448
+0x349d3e0  cmp      w20, #1
+0x349d3e4  b.eq     #0x349d408
+0x349d3e8  cmp      w20, #3
+0x349d3ec  b.eq     #0x349d418
+0x349d3f0  cmp      w20, #2
+0x349d3f4  b.ne     #0x349d51c
+0x349d3f8  fmov     s8, #1.00000000
+0x349d3fc  fmov     s9, #1.00000000
+0x349d400  fmov     s10, #1.00000000
+0x349d404  b        #0x349d414
+0x349d408  movi     d8, #0000000000000000
+0x349d40c  movi     d9, #0000000000000000
+0x349d410  movi     d10, #0000000000000000
+0x349d414  fmov     s11, #1.00000000
+0x349d418  ldr      x0, [x19, #0x28]
+0x349d41c  str      w20, [x19, #0x30]
+0x349d420  cbz      x0, #0x349d570
+0x349d424  mov      w1, #1
+0x349d428  mov      x2, xzr
+0x349d42c  bl       #0x4fd4510   CALL UnityEngine.GameObject$$SetActive
+0x349d430  fcmp     s12, #0.0
+0x349d434  b.le     #0x349d4ec
+0x349d438  ldr      x0, [x19, #0x20]
+0x349d43c  cbz      x0, #0x349d570
+0x349d440  ldp      s0, s1, [x0, #0x94]
+0x349d444  mov      x1, xzr
+0x349d448  ldp      s2, s3, [x0, #0x9c]
+0x349d44c  bl       #0x3612d2c   CALL UIWidget$$set_color
+0x349d450  ldr      x0, [x19, #0x20]
+0x349d454  cbz      x0, #0x349d570
+0x349d458  mov      x1, xzr
+0x349d45c  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349d460  fmov     s0, s12
+0x349d464  fmov     s1, s8
+0x349d468  mov      x1, xzr
+0x349d46c  fmov     s2, s9
+0x349d470  fmov     s3, s10
+0x349d474  fmov     s4, s11
+0x349d478  bl       #0x361855c   CALL TweenColor$$Begin
+0x349d47c  ldr      x8, [x23]
+0x349d480  mov      x20, x0
+0x349d484  ldr      w9, [x8, #0xe4]
+0x349d488  cbnz     w9, #0x349d494
+0x349d48c  mov      x0, x8
+0x349d490  bl       #0x22305f4   CALL 0x22305f4
+0x349d494  mov      x0, x20
+0x349d498  mov      x1, xzr
+0x349d49c  mov      x2, xzr
+0x349d4a0  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349d4a4  tbz      w0, #0, #0x349d4ec
+0x349d4a8  mov      w8, #1
+0x349d4ac  mov      x0, x19
+0x349d4b0  mov      x1, xzr
+0x349d4b4  strb     w8, [x19, #0x34]
+0x349d4b8  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349d4bc  cbz      x20, #0x349d570
+0x349d4c0  mov      x1, x0
+0x349d4c4  mov      x0, x20
+0x349d4c8  str      x1, [x0, #0x50]!
+0x349d4cc  bl       #0x2230448   CALL 0x2230448
+0x349d4d0  adrp     x8, #0x55b1000
+0x349d4d4  ldr      x8, [x8, #0xcf0]   ; &slot for 'EndFadeout'
+0x349d4d8  ldr      x1, [x8]   ; 'EndFadeout'
+0x349d4dc  str      x1, [x20, #0x58]!
+0x349d4e0  mov      x0, x20
+0x349d4e4  bl       #0x2230448   CALL 0x2230448   args: x1='EndFadeout'
+0x349d4e8  b        #0x349d514
+0x349d4ec  ldr      x0, [x19, #0x20]
+0x349d4f0  cbz      x0, #0x349d570
+0x349d4f4  fmov     s0, s8
+0x349d4f8  fmov     s1, s9
+0x349d4fc  mov      x1, xzr
+0x349d500  fmov     s2, s10
+0x349d504  fmov     s3, s11
+0x349d508  bl       #0x3612d2c   CALL UIWidget$$set_color
+0x349d50c  mov      x0, x19
+0x349d510  bl       #0x349d148   CALL MaskFade$$EndFadeout
+0x349d514  mov      w0, #1
+0x349d518  b        #0x349d554
+0x349d51c  adrp     x19, #0x5572000
+0x349d520  ldr      x19, [x19, #0xb48]
+0x349d524  ldr      x0, [x19]
+0x349d528  ldr      w8, [x0, #0xe4]
+0x349d52c  cbnz     w8, #0x349d538
+0x349d530  bl       #0x22305f4   CALL 0x22305f4
+0x349d534  ldr      x0, [x19]
+0x349d538  ldr      x8, [x0, #0xb8]
+0x349d53c  ldrb     w8, [x8, #0x4a8]
+0x349d540  cbz      w8, #0x349d550
+0x349d544  mov      x0, x21
+0x349d548  mov      x1, xzr
+0x349d54c  bl       #0x35b6de4   CALL ActionExtensions$$Call
+0x349d550  mov      w0, wzr
+0x349d554  ldp      x20, x19, [sp, #0x50]
+0x349d558  ldp      x22, x21, [sp, #0x40]
+0x349d55c  ldp      x30, x23, [sp, #0x30]
+0x349d560  ldp      d9, d8, [sp, #0x20]
+0x349d564  ldp      d11, d10, [sp, #0x10]
+0x349d568  ldr      d12, [sp], #0x60
+0x349d56c  ret      
+0x349d570  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$Fadein  0x349d574..0x349d86c  (size 0x2f8)
+0x349d574  stp      d11, d10, [sp, #-0x50]!
+0x349d578  stp      d9, d8, [sp, #0x10]
+0x349d57c  stp      x30, x23, [sp, #0x20]
+0x349d580  stp      x22, x21, [sp, #0x30]
+0x349d584  stp      x20, x19, [sp, #0x40]
+0x349d588  fmov     s8, s0
+0x349d58c  adrp     x21, #0x59c6000
+0x349d590  mov      x20, x1
+0x349d594  ldrb     w8, [x21, #0xc02]
+0x349d598  mov      x19, x0
+0x349d59c  tbnz     w8, #0, #0x349d608
+0x349d5a0  adrp     x0, #0x5572000
+0x349d5a4  ldr      x0, [x0, #0xb48]
+0x349d5a8  bl       #0x22304a4   CALL 0x22304a4
+0x349d5ac  adrp     x0, #0x55a2000
+0x349d5b0  ldr      x0, [x0, #0x998]
+0x349d5b4  bl       #0x22304a4   CALL 0x22304a4
+0x349d5b8  adrp     x0, #0x55b1000
+0x349d5bc  ldr      x0, [x0, #0x640]
+0x349d5c0  bl       #0x22304a4   CALL 0x22304a4
+0x349d5c4  adrp     x0, #0x556f000
+0x349d5c8  ldr      x0, [x0, #0xb90]
+0x349d5cc  bl       #0x22304a4   CALL 0x22304a4
+0x349d5d0  adrp     x0, #0x559d000
+0x349d5d4  ldr      x0, [x0, #0xe8]   ; &slot for 'Fadein'
+0x349d5d8  bl       #0x22304a4   CALL 0x22304a4
+0x349d5dc  adrp     x0, #0x55db000
+0x349d5e0  ldr      x0, [x0, #0x20]   ; &slot for '実行中'
+0x349d5e4  bl       #0x22304a4   CALL 0x22304a4
+0x349d5e8  adrp     x0, #0x55b1000
+0x349d5ec  ldr      x0, [x0, #0xce8]   ; &slot for 'EndFadein'
+0x349d5f0  bl       #0x22304a4   CALL 0x22304a4
+0x349d5f4  adrp     x0, #0x55db000
+0x349d5f8  ldr      x0, [x0, #0x28]   ; &slot for '完了状態'
+0x349d5fc  bl       #0x22304a4   CALL 0x22304a4
+0x349d600  mov      w8, #1
+0x349d604  strb     w8, [x21, #0xc02]
+0x349d608  ldr      x0, [x19, #0x20]
+0x349d60c  cbz      x0, #0x349d868
+0x349d610  adrp     x8, #0x55a2000
+0x349d614  adrp     x22, #0x556f000
+0x349d618  ldr      x8, [x8, #0x998]
+0x349d61c  ldr      x22, [x22, #0xb90]
+0x349d620  ldr      x1, [x8]
+0x349d624  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x349d628  ldrb     w8, [x19, #0x34]
+0x349d62c  mov      x21, x0
+0x349d630  cbz      w8, #0x349d6ac
+0x349d634  ldr      x0, [x22]
+0x349d638  ldr      w8, [x0, #0xe4]
+0x349d63c  cbnz     w8, #0x349d644
+0x349d640  bl       #0x22305f4   CALL 0x22305f4
+0x349d644  mov      x0, x21
+0x349d648  mov      x1, xzr
+0x349d64c  mov      x2, xzr
+0x349d650  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349d654  tbz      w0, #0, #0x349d710
+0x349d658  cbz      x21, #0x349d868
+0x349d65c  ldr      s0, [x21, #0x9c]
+0x349d660  fcmp     s0, #0.0
+0x349d664  b.ne     #0x349d710
+0x349d668  ldr      w21, [x19, #0x30]
+0x349d66c  mov      x0, x19
+0x349d670  mov      x1, xzr
+0x349d674  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349d678  adrp     x8, #0x55b1000
+0x349d67c  mov      x19, x0
+0x349d680  ldr      x8, [x8, #0x640]
+0x349d684  ldr      x8, [x8]   ; &slot for 'MiniProgressBar/CancelButton'
+0x349d688  ldr      w9, [x8, #0xe4]
+0x349d68c  cbnz     w9, #0x349d698
+0x349d690  mov      x0, x8
+0x349d694  bl       #0x22305f4   CALL 0x22305f4
+0x349d698  adrp     x8, #0x559d000
+0x349d69c  adrp     x9, #0x55db000
+0x349d6a0  ldr      x8, [x8, #0xe8]   ; &slot for 'Fadein'
+0x349d6a4  ldr      x9, [x9, #0x20]   ; &slot for '実行中'
+0x349d6a8  b        #0x349d824
+0x349d6ac  adrp     x23, #0x5572000
+0x349d6b0  ldr      x23, [x23, #0xb48]
+0x349d6b4  ldr      x0, [x23]
+0x349d6b8  ldr      w8, [x0, #0xe4]
+0x349d6bc  cbnz     w8, #0x349d6c8
+0x349d6c0  bl       #0x22305f4   CALL 0x22305f4
+0x349d6c4  ldr      x0, [x23]
+0x349d6c8  ldr      x8, [x0, #0xb8]
+0x349d6cc  ldrb     w8, [x8, #0x4a8]
+0x349d6d0  cbz      w8, #0x349d710
+0x349d6d4  ldr      x0, [x22]
+0x349d6d8  ldr      w8, [x0, #0xe4]
+0x349d6dc  cbnz     w8, #0x349d6e4
+0x349d6e0  bl       #0x22305f4   CALL 0x22305f4
+0x349d6e4  mov      x0, x21
+0x349d6e8  mov      x1, xzr
+0x349d6ec  mov      x2, xzr
+0x349d6f0  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349d6f4  tbz      w0, #0, #0x349d710
+0x349d6f8  cbz      x21, #0x349d868
+0x349d6fc  mov      x0, x21
+0x349d700  mov      x1, xzr
+0x349d704  bl       #0x36181c8   CALL TweenColor$$get_value
+0x349d708  fcmp     s3, #0.0
+0x349d70c  b.ls     #0x349d7e4
+0x349d710  mov      x21, x19
+0x349d714  mov      x1, x20
+0x349d718  str      x20, [x21, #0x38]!
+0x349d71c  mov      x0, x21
+0x349d720  bl       #0x2230448   CALL 0x2230448
+0x349d724  fcmp     s8, #0.0
+0x349d728  stur     wzr, [x21, #-8]
+0x349d72c  b.le     #0x349d7d4
+0x349d730  ldr      x0, [x19, #0x20]
+0x349d734  cbz      x0, #0x349d868
+0x349d738  ldp      s9, s10, [x0, #0x94]
+0x349d73c  mov      x1, xzr
+0x349d740  ldr      s11, [x0, #0x9c]
+0x349d744  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349d748  movi     d4, #0000000000000000
+0x349d74c  fmov     s0, s8
+0x349d750  mov      x1, xzr
+0x349d754  fmov     s1, s9
+0x349d758  fmov     s2, s10
+0x349d75c  fmov     s3, s11
+0x349d760  bl       #0x361855c   CALL TweenColor$$Begin
+0x349d764  ldr      x8, [x22]
+0x349d768  mov      x20, x0
+0x349d76c  ldr      w9, [x8, #0xe4]
+0x349d770  cbnz     w9, #0x349d77c
+0x349d774  mov      x0, x8
+0x349d778  bl       #0x22305f4   CALL 0x22305f4
+0x349d77c  mov      x0, x20
+0x349d780  mov      x1, xzr
+0x349d784  mov      x2, xzr
+0x349d788  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349d78c  tbz      w0, #0, #0x349d7d4
+0x349d790  mov      x0, x19
+0x349d794  mov      x1, xzr
+0x349d798  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349d79c  cbz      x20, #0x349d868
+0x349d7a0  mov      x1, x0
+0x349d7a4  mov      x0, x20
+0x349d7a8  str      x1, [x0, #0x50]!
+0x349d7ac  bl       #0x2230448   CALL 0x2230448
+0x349d7b0  adrp     x8, #0x55b1000
+0x349d7b4  ldr      x8, [x8, #0xce8]   ; &slot for 'EndFadein'
+0x349d7b8  ldr      x1, [x8]   ; 'EndFadein'
+0x349d7bc  str      x1, [x20, #0x58]!
+0x349d7c0  mov      x0, x20
+0x349d7c4  bl       #0x2230448   CALL 0x2230448   args: x1='EndFadein'
+0x349d7c8  mov      w0, #1
+0x349d7cc  strb     w0, [x19, #0x34]
+0x349d7d0  b        #0x349d850
+0x349d7d4  mov      x0, x19
+0x349d7d8  bl       #0x349d86c   CALL MaskFade$$EndFadein
+0x349d7dc  mov      w0, #1
+0x349d7e0  b        #0x349d850
+0x349d7e4  ldr      w21, [x19, #0x30]
+0x349d7e8  mov      x0, x19
+0x349d7ec  mov      x1, xzr
+0x349d7f0  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x349d7f4  adrp     x8, #0x55b1000
+0x349d7f8  mov      x19, x0
+0x349d7fc  ldr      x8, [x8, #0x640]
+0x349d800  ldr      x8, [x8]   ; &slot for 'MiniProgressBar/CancelButton'
+0x349d804  ldr      w9, [x8, #0xe4]
+0x349d808  cbnz     w9, #0x349d814
+0x349d80c  mov      x0, x8
+0x349d810  bl       #0x22305f4   CALL 0x22305f4
+0x349d814  adrp     x8, #0x559d000
+0x349d818  adrp     x9, #0x55db000
+0x349d81c  ldr      x8, [x8, #0xe8]   ; &slot for 'Fadein'
+0x349d820  ldr      x9, [x9, #0x28]   ; &slot for '完了状態'
+0x349d824  fmov     s0, s8
+0x349d828  ldr      x0, [x8]   ; 'Fadein'
+0x349d82c  ldr      x2, [x9]   ; '完了状態'
+0x349d830  mov      w1, w21
+0x349d834  mov      x3, x19
+0x349d838  mov      x4, xzr
+0x349d83c  bl       #0x2e0f084   CALL FadeLogger$$CreateFadeLogText   args: x0='Fadein', x2='完了状態'
+0x349d840  mov      x0, x20
+0x349d844  mov      x1, xzr
+0x349d848  bl       #0x35b6de4   CALL ActionExtensions$$Call
+0x349d84c  mov      w0, wzr
+0x349d850  ldp      x20, x19, [sp, #0x40]
+0x349d854  ldp      x22, x21, [sp, #0x30]
+0x349d858  ldp      x30, x23, [sp, #0x20]
+0x349d85c  ldp      d9, d8, [sp, #0x10]
+0x349d860  ldp      d11, d10, [sp], #0x50
+0x349d864  ret      
+0x349d868  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$EndFadein  0x349d86c..0x349d978  (size 0x10c)
+0x349d86c  str      x30, [sp, #-0x20]!
+0x349d870  stp      x20, x19, [sp, #0x10]
+0x349d874  adrp     x20, #0x59c6000
+0x349d878  mov      x19, x0
+0x349d87c  ldrb     w8, [x20, #0xc03]
+0x349d880  tbnz     w8, #0, #0x349d8a4
+0x349d884  adrp     x0, #0x55a2000
+0x349d888  ldr      x0, [x0, #0x998]
+0x349d88c  bl       #0x22304a4   CALL 0x22304a4
+0x349d890  adrp     x0, #0x556f000
+0x349d894  ldr      x0, [x0, #0xb90]
+0x349d898  bl       #0x22304a4   CALL 0x22304a4
+0x349d89c  mov      w8, #1
+0x349d8a0  strb     w8, [x20, #0xc03]
+0x349d8a4  ldr      x0, [x19, #0x20]
+0x349d8a8  cbz      x0, #0x349d974
+0x349d8ac  adrp     x8, #0x55a2000
+0x349d8b0  adrp     x20, #0x556f000
+0x349d8b4  ldr      x8, [x8, #0x998]
+0x349d8b8  ldr      x20, [x20, #0xb90]
+0x349d8bc  ldr      x1, [x8]
+0x349d8c0  bl       #0x38558a8   CALL UnityEngine.Component$$GetComponent<object>
+0x349d8c4  ldr      x8, [x20]
+0x349d8c8  mov      x20, x0
+0x349d8cc  ldr      w9, [x8, #0xe4]
+0x349d8d0  cbnz     w9, #0x349d8dc
+0x349d8d4  mov      x0, x8
+0x349d8d8  bl       #0x22305f4   CALL 0x22305f4
+0x349d8dc  mov      x0, x20
+0x349d8e0  mov      x1, xzr
+0x349d8e4  mov      x2, xzr
+0x349d8e8  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x349d8ec  tbz      w0, #0, #0x349d904
+0x349d8f0  cbz      x20, #0x349d974
+0x349d8f4  mov      x0, x20
+0x349d8f8  mov      w1, wzr
+0x349d8fc  mov      x2, xzr
+0x349d900  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x349d904  ldr      x0, [x19, #0x20]
+0x349d908  str      wzr, [x19, #0x30]
+0x349d90c  cbz      x0, #0x349d974
+0x349d910  ldr      x8, [x0]
+0x349d914  movi     d0, #0000000000000000
+0x349d918  ldp      x9, x1, [x8, #0x1b8]
+0x349d91c  blr      x9   CALL 0x0
+0x349d920  ldr      x0, [x19, #0x28]
+0x349d924  cbz      x0, #0x349d974
+0x349d928  mov      w1, wzr
+0x349d92c  mov      x2, xzr
+0x349d930  bl       #0x4fd4510   CALL UnityEngine.GameObject$$SetActive
+0x349d934  ldr      x20, [x19, #0x38]!
+0x349d938  sturb    wzr, [x19, #-4]
+0x349d93c  cbz      x20, #0x349d968
+0x349d940  mov      x0, x19
+0x349d944  mov      x1, xzr
+0x349d948  str      xzr, [x19]
+0x349d94c  bl       #0x2230448   CALL 0x2230448
+0x349d950  ldr      x0, [x20, #0x40]
+0x349d954  ldr      x1, [x20, #0x28]
+0x349d958  ldr      x2, [x20, #0x18]
+0x349d95c  ldp      x20, x19, [sp, #0x10]
+0x349d960  ldr      x30, [sp], #0x20
+0x349d964  br       x2
+0x349d968  ldp      x20, x19, [sp, #0x10]
+0x349d96c  ldr      x30, [sp], #0x20
+0x349d970  ret      
+0x349d974  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$SetMaskCollider  0x349d978..0x349d994  (size 0x1c)
+0x349d978  ldr      x0, [x0, #0x28]
+0x349d97c  cbz      x0, #0x349d98c
+0x349d980  and      w1, w1, #1
+0x349d984  mov      x2, xzr
+0x349d988  b        #0x4fd4510
+0x349d98c  str      x30, [sp, #-0x10]!
+0x349d990  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$SetInitColor  0x349d994..0x349d9ec  (size 0x58)
+0x349d994  ldr      x0, [x0, #0x20]
+0x349d998  cbz      x0, #0x349d9e4
+0x349d99c  ldr      s3, [x0, #0xa0]
+0x349d9a0  cmp      w1, #1
+0x349d9a4  b.eq     #0x349d9d0
+0x349d9a8  ldp      s0, s1, [x0, #0x94]
+0x349d9ac  cmp      w1, #3
+0x349d9b0  ldr      s2, [x0, #0x9c]
+0x349d9b4  b.eq     #0x349d9dc
+0x349d9b8  cmp      w1, #2
+0x349d9bc  b.ne     #0x349d9dc
+0x349d9c0  fmov     s0, #1.00000000
+0x349d9c4  fmov     s1, #1.00000000
+0x349d9c8  fmov     s2, #1.00000000
+0x349d9cc  b        #0x349d9dc
+0x349d9d0  movi     d0, #0000000000000000
+0x349d9d4  movi     d1, #0000000000000000
+0x349d9d8  movi     d2, #0000000000000000
+0x349d9dc  mov      x1, xzr
+0x349d9e0  b        #0x3612d2c
+0x349d9e4  str      x30, [sp, #-0x10]!
+0x349d9e8  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$set_Depth  0x349d9ec..0x349da04  (size 0x18)
+0x349d9ec  ldr      x0, [x0, #0x20]
+0x349d9f0  cbz      x0, #0x349d9fc
+0x349d9f4  mov      x2, xzr
+0x349d9f8  b        #0x361310c
+0x349d9fc  str      x30, [sp, #-0x10]!
+0x349da00  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$get_Depth  0x349da04..0x349da1c  (size 0x18)
+0x349da04  ldr      x8, [x0, #0x20]
+0x349da08  cbz      x8, #0x349da14
+0x349da0c  ldr      w0, [x8, #0xb0]
+0x349da10  ret      
+0x349da14  str      x30, [sp, #-0x10]!
+0x349da18  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### MaskFade$$.ctor  0x349da1c..0x349da24  (size 0x8)
+0x349da1c  mov      x1, xzr
+0x349da20  b        #0x2e43818

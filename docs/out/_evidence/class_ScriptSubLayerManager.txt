@@ -1,0 +1,69 @@
+==============================================================================
+// ScriptSubLayerManager  (dump.cs line 171488)
+public class ScriptSubLayerManager : BaseMonoBehaviour // TypeDefIndex: 4911
+{
+	// Fields
+	private const string DEFAULT_SUB_LAYER_GROUP_NAME = "#A";
+	[SerializeField]
+	private Camera subLayerCamera; // 0x20
+	[SerializeField]
+	private Transform subLayerInstanceRoot; // 0x28
+	[SerializeField]
+	private GameObject subLayerPrefab; // 0x30
+	[SerializeField]
+	private GameObject stretchObj; // 0x38
+	private List<ScriptSubLayer> listSubLayer; // 0x40
+	private bool isInvalidStretch; // 0x48
+
+	// Methods
+
+	// RVA: 0x31DEF10 Offset: 0x31DAF10 VA: 0x31DEF10
+	private void Awake() { }
+
+	// RVA: 0x31DEF64 Offset: 0x31DAF64 VA: 0x31DEF64
+	private void LateUpdate() { }
+
+	// RVA: 0x31DF610 Offset: 0x31DB610 VA: 0x31DF610
+	public void InitSubLayer() { }
+
+	// RVA: 0x31DF614 Offset: 0x31DB614 VA: 0x31DF614
+	public void StartSubLayer(Camera targetCamera, int count) { }
+
+	// RVA: 0x31DF7CC Offset: 0x31DB7CC VA: 0x31DF7CC
+	public ScriptSubLayer GetScriptSubLayer(string layerKey) { }
+
+	// RVA: 0x31DFA00 Offset: 0x31DBA00 VA: 0x31DFA00
+	public void RemoveCharaData(ScriptCharaData charaData) { }
+
+	// RVA: 0x31DFA98 Offset: 0x31DBA98 VA: 0x31DFA98
+	public void RegistCharaData(string layerKey, ScriptCharaData charaData) { }
+
+	// RVA: 0x31DFADC Offset: 0x31DBADC VA: 0x31DFADC
+	public void SetDepth(string layerKey, float depth) { }
+
+	// RVA: 0x31DFB08 Offset: 0x31DBB08 VA: 0x31DFB08
+	public void QuitSubLayer() { }
+
+	// RVA: 0x31DFB10 Offset: 0x31DBB10 VA: 0x31DFB10
+	public void SetSubStretch(bool invalidStretch) { }
+
+	// RVA: 0x31DEF14 Offset: 0x31DAF14 VA: 0x31DEF14
+	private void Init() { }
+
+	// RVA: 0x31DFB0C Offset: 0x31DBB0C VA: 0x31DFB0C
+	private void Quit() { }
+
+	// RVA: 0x31DF6B4 Offset: 0x31DB6B4 VA: 0x31DF6B4
+	private void CreateSubLayer(int count) { }
+
+	// RVA: 0x31DFCAC Offset: 0x31DBCAC VA: 0x31DFCAC
+	private void ClearSubLayer() { }
+
+	// RVA: 0x31DF7D4 Offset: 0x31DB7D4 VA: 0x31DF7D4
+	private ScriptSubLayer GetSubLayer(string layerKey, bool isRegist = True) { }
+
+	// RVA: 0x31DEF68 Offset: 0x31DAF68 VA: 0x31DEF68
+	private void RenderingSubLayer() { }
+
+	// RVA: 0x31DFE50 Offset: 0x31DBE50 VA: 0x31DFE50
+	public void .ctor() { }

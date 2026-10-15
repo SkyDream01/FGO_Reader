@@ -1,0 +1,5553 @@
+{
+ "advActorHide": {
+  "cmp": 51900712,
+  "handler": 51900728,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptActionAdvPrefabController$$SetHide",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ModifyPlaySpeed"
+  ]
+ },
+ "advActorShow": {
+  "cmp": 51923088,
+  "handler": 51923100,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptActionAdvPrefabController$$SetShow",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$InitWipe",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed"
+  ]
+ },
+ "advPlayAnimator": {
+  "cmp": 51914352,
+  "handler": 51914364,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "tdelay"
+  ],
+  "first_mgr_call": "ScriptManager$$IsJumpLine",
+  "calls": [
+   "ScriptManager$$IsJumpLine",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$ConvertNameString",
+   "ScriptActionAdvPrefabController$$PlayAnimator",
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$SetForcedDisableTurnPage",
+   "System.String$$op_Equality",
+   "ScriptManager$$GetNextDelayEnd"
+  ]
+ },
+ "advPrepare": {
+  "cmp": 51892540,
+  "handler": 51892556,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "ScriptActionAdvPrefabController$$Prepare",
+   "UnityEngine.Component$$get_gameObject",
+   "UnityEngine.GameObject$$SetActive",
+   "UnityEngine.Component$$get_gameObject",
+   "UnityEngine.GameObject$$SetActive",
+   "ExUIMeshRenderer$$SetImage"
+  ]
+ },
+ "advRelease": {
+  "cmp": 51919308,
+  "handler": 51919320,
+  "arity": 6,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager.<>c__DisplayClass808_5$$.ctor",
+  "calls": [
+   "ExUIMeshRenderer$$ClearImage",
+   "UnityEngine.Component$$get_gameObject",
+   "UnityEngine.GameObject$$SetActive",
+   "UnityEngine.Component$$get_gameObject",
+   "UnityEngine.GameObject$$SetActive",
+   "ScriptActionAdvPrefabController$$Release",
+   "System.String$$op_Equality",
+   "0x2230710",
+   "ScriptManager.<>c__DisplayClass808_5$$.ctor",
+   "0x2230448"
+  ]
+ },
+ "advSet": {
+  "cmp": 51899380,
+  "handler": 51899396,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "fsmObjSetString"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptActionAdvPrefabController$$GetAssetName",
+   "ScriptActionAdvPrefabController$$Setup",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "System.String$$op_Equality"
+  ]
+ },
+ "autoAndBackLog": {
+  "cmp": 51876396,
+  "handler": 51876412,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ModifyPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$ResetLongPress",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptMessageCommonManager$$SetActiveAutoMessageButton",
+   "ScriptMessageCommonManager$$SetActiveBackLogButton"
+  ]
+ },
+ "bScene": {
+  "cmp": 51889548,
+  "handler": 51889564,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$InitFlashDepCommand",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$InitFlashDepCommand"
+  ]
+ },
+ "backCameraColor": {
+  "cmp": 51891036,
+  "handler": 51891052,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "System.String$$op_Equality",
+   "UnityEngine.Camera$$set_clearFlags",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString"
+  ]
+ },
+ "backEffect": {
+  "cmp": 51889076,
+  "handler": 51889088,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "backEffectPause"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$GetEffectParameter",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "backEffectDestroy": {
+  "cmp": 51923652,
+  "handler": 51923664,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "charaSpecialEffect"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality",
+   "ScriptManager$$InitFade",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "backEffectStart": {
+  "cmp": 51913828,
+  "handler": 51913840,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "subBgm"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "0x22305f4",
+   "CommonEffectManager$$Resume",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "backEffectStop": {
+  "cmp": 51899292,
+  "handler": 51899308,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "fsmObjSetString"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "System.String$$op_Equality",
+   "ScriptActionAdvPrefabController$$GetAssetName",
+   "ScriptActionAdvPrefabController$$Setup",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "backlogEnd": {
+  "cmp": 51888604,
+  "handler": 51888620,
+  "arity": 5,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptFsmObjectData$$Destroy",
+   "0x2019c04"
+  ]
+ },
+ "backlogStart": {
+  "cmp": 51909588,
+  "handler": 51909600,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "System.String$$op_Equality",
+   "UnityEngine.Camera$$get_targetTexture",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed"
+  ]
+ },
+ "blur": {
+  "cmp": 51912468,
+  "handler": 51912480,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$StopMoveRelativePositionLoop",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "BgmManager$$Enable_KeepSubBgm",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "blurOff": {
+  "cmp": 51935624,
+  "handler": 51935636,
+  "arity": 2,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "lens",
+   "charaEffectPause"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "0x2230710",
+   "ScriptActionRenderEffectController.StopFunction$$.ctor",
+   "ScriptActionRenderEffectController$$StopGaussianBlur",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "branch": {
+  "cmp": 51885192,
+  "handler": 51885208,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$SearchFlag",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$SearchFlag",
+   "System.String$$op_Equality",
+   "ScriptFlagData$$Comp"
+  ]
+ },
+ "branchHaveSvtEquip": {
+  "cmp": 51922324,
+  "handler": 51922332,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   "branchHaveSvtEquip"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "CondType$$IsOpen",
+   "CondType$$IsOpen"
+  ]
+ },
+ "branchNotMaterial": {
+  "cmp": 51905188,
+  "handler": 51905200,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "branchQuestClear": {
+  "cmp": 51887552,
+  "handler": 51887568,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$GetQuestId",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$GetQuestId",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "branchRouteSelect": {
+  "cmp": 51918044,
+  "handler": 51918052,
+  "arity": 5,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   " ",
+   "branchRouteSelect"
+  ],
+  "first_mgr_call": "ScriptManager$$GetQuestId",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$GetQuestId",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "CondType$$IsRouteSelect",
+   "0x22305f4"
+  ]
+ },
+ "branchRouteSelectCount": {
+  "cmp": 51890256,
+  "handler": 51890268,
+  "arity": 9,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "?",
+    "System.Enum$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "System.Type$$GetTypeFromHandle",
+   "0x22305f4"
+  ]
+ },
+ "branchSetGrandSvtCount": {
+  "cmp": 51896828,
+  "handler": 51896844,
+  "arity": 5,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "?",
+    "System.Enum$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "System.Type$$GetTypeFromHandle",
+   "0x22305f4",
+   "0x22305f4"
+  ]
+ },
+ "cameraFilter": {
+  "cmp": 51911980,
+  "handler": 51911992,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "cameraHome": {
+  "cmp": 51939316,
+  "handler": 51939328,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ApRecoverConfirmDlgComponent$$.ctor",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "cameraMove": {
+  "cmp": 51931184,
+  "handler": 51931196,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ApRecoverConfirmDlgComponent$$.ctor",
+   "System.String$$get_Chars",
+   "0x22305f4",
+   "ScriptPosition$$GetPosition"
+  ]
+ },
+ "cameraMoveEase": {
+  "cmp": 51881528,
+  "handler": 51881544,
+  "arity": 7,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "cameraRoll": {
+  "cmp": 51937836,
+  "handler": 51937848,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "ApRecoverConfirmDlgComponent$$.ctor",
+   "System.String$$get_Chars",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "ScriptPosition$$GetPosition"
+  ]
+ },
+ "cameraRollMove": {
+  "cmp": 51895756,
+  "handler": 51895772,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality"
+  ]
+ },
+ "capture": {
+  "cmp": 51909704,
+  "handler": 51909716,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "UnityEngine.Camera$$get_targetTexture",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$OffScreen",
+   "ScriptMessageCommonManager$$ClearText",
+   "ScriptLoop$$ShouldAddLogMessage"
+  ]
+ },
+ "captureRelease": {
+  "cmp": 51913624,
+  "handler": 51913636,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "0x22305f4",
+   "UnityEngine.Object$$op_Inequality",
+   "ExUIMeshRenderer$$ClearImage",
+   "UnityEngine.RenderTexture$$Release",
+   "0x22305f4",
+   "UnityEngine.Object$$Destroy",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed"
+  ]
+ },
+ "charaAttack": {
+  "cmp": 51929700,
+  "handler": 51929712,
+  "arity": 5,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$get_Chars",
+   "System.String$$get_Chars",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "charaBackEffect": {
+  "cmp": 51910232,
+  "handler": 51910244,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "charaBackEffectPause",
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaBackEffectDestroy": {
+  "cmp": 51884752,
+  "handler": 51884768,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptCharaData$$StopBackEffect",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaBackEffectStart": {
+  "cmp": 51937192,
+  "handler": 51937204,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptCharaData$$ResumeBackEffect",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "charaBackEffectStop": {
+  "cmp": 51897640,
+  "handler": 51897656,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptCharaData$$StopBackEffect"
+  ]
+ },
+ "charaChange": {
+  "cmp": 51899532,
+  "handler": 51899548,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaClear": {
+  "cmp": 51915100,
+  "handler": 51915112,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "sub"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$Destroy",
+   "0x2019c04",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsExistTargetSubLayerGroup"
+  ]
+ },
+ "charaCrossFade": {
+  "cmp": 51882688,
+  "handler": 51882704,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptFsmObjectData$$Destroy"
+  ]
+ },
+ "charaCutStop": {
+  "cmp": 51926940,
+  "handler": 51926952,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$StopCut",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertWipeName"
+  ]
+ },
+ "charaCutin": {
+  "cmp": 51926516,
+  "handler": 51926524,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ConvertNameString"
+  ]
+ },
+ "charaCutinStart": {
+  "cmp": 51894712,
+  "handler": 51894728,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$ResumeCutin",
+   "System.String$$op_Equality",
+   "ScriptSubLayerManager$$GetScriptSubLayer"
+  ]
+ },
+ "charaCutout": {
+  "cmp": 51895420,
+  "handler": 51895436,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$SetCutout"
+  ]
+ },
+ "charaDepth": {
+  "cmp": 51917076,
+  "handler": 51917088,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$SetDepth",
+   "System.String$$op_Equality",
+   "ScriptManager$$InitMask",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaEffectDestroy": {
+  "cmp": 51901320,
+  "handler": 51901336,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptCharaData$$StopEffect",
+   "System.String$$op_Equality",
+   "SingletonMonoBehaviour<object>$$get_Instance"
+  ]
+ },
+ "charaEffectEdgeBlur": {
+  "cmp": 51938184,
+  "handler": 51938192,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "charaEffectEdgeBlurPause",
+   "horizontalImageChange"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaEffectEdgeBlurDestroy": {
+  "cmp": 51930540,
+  "handler": 51930552,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$StopEffect",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "SingletonMonoBehaviour<object>$$get_Instance"
+  ]
+ },
+ "charaEffectEdgeBlurStart": {
+  "cmp": 51885856,
+  "handler": 51885872,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ModifyPlaySpeed",
+   "0x2230710"
+  ]
+ },
+ "charaEffectEdgeBlurStop": {
+  "cmp": 51899052,
+  "handler": 51899068,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptManager$$IsFastPlaySpeed",
+   "0x22305f4",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName"
+  ]
+ },
+ "charaEffectPause": {
+  "cmp": 51935828,
+  "handler": 51935836,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "charaEffectPause"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$Contains"
+  ]
+ },
+ "charaEffectStart": {
+  "cmp": 51937412,
+  "handler": 51937424,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "insertionAnimationSet"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptCharaData$$ResumeEffect",
+   "System.String$$op_Equality",
+   "0x2230448"
+  ]
+ },
+ "charaEffectStop": {
+  "cmp": 51881152,
+  "handler": 51881168,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "0x22305f4",
+   "ScriptCharaData$$StopEffect"
+  ]
+ },
+ "charaFace": {
+  "cmp": 51922868,
+  "handler": 51922880,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$SetFace",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "ScriptActionAdvPrefabController$$SetShow"
+  ]
+ },
+ "charaFaceFade": {
+  "cmp": 51917444,
+  "handler": 51917456,
+  "arity": 5,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "0x2230448",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaFaceIcon": {
+  "cmp": 51916280,
+  "handler": 51916292,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsMoveAlpha",
+   "ScriptCharaData$$SetFace",
+   "0x22305f4",
+   "DataManager$$GetMaster<object>",
+   "WarBoardMessageScriptMaster$$GetMessageEntity"
+  ]
+ },
+ "charaFadeSpeed": {
+  "cmp": 51908152,
+  "handler": 51908164,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptCharaData$$MoveAlphaSpeed"
+  ]
+ },
+ "charaFadeTime": {
+  "cmp": 51938676,
+  "handler": 51938688,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaFadeTimeLoop": {
+  "cmp": 51916692,
+  "handler": 51916704,
+  "arity": 9,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Inequality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaFadeTimeLoopStop": {
+  "cmp": 51939788,
+  "handler": 51939800,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$StopMoveAlphaLoop",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$SearchFlag",
+   "ScriptFlagData$$Set",
+   "System.String$$Contains"
+  ]
+ },
+ "charaFadein": {
+  "cmp": 51924892,
+  "handler": 51924900,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "charaMove"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsMoveAlpha",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "charaFadeout": {
+  "cmp": 51936836,
+  "handler": 51936848,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "charaFade",
+   "flashDep"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsMoveAlpha",
+   "System.String$$op_Equality",
+   "ScriptManager$$EndFlash",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaFilter": {
+  "cmp": 51935268,
+  "handler": 51935280,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   " ",
+   "fontSize"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertColor",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaLayer": {
+  "cmp": 51915232,
+  "handler": 51915244,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "sub",
+   "",
+   "fsmObjSetBool"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "ScriptSubLayerManager$$RegistCharaData",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaMask": {
+  "cmp": 51920764,
+  "handler": 51920776,
+  "arity": 2,
+  "parses": [],
+  "lits": [
+   "inside",
+   "wipeoutEx",
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaMove": {
+  "cmp": 51925076,
+  "handler": 51925084,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$get_Chars",
+   "System.String$$get_Chars",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "charaMoveEaseFSSideL": {
+  "cmp": 51920384,
+  "handler": 51920392,
+  "arity": 9,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$GetFSCommandOffsetX"
+  ]
+ },
+ "charaMoveReturnEaseFSR": {
+  "cmp": 51911248,
+  "handler": 51911256,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$get_Chars",
+   "System.String$$get_Chars",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "charaMoveReturnFSL": {
+  "cmp": 51924112,
+  "handler": 51924120,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$get_Chars",
+   "System.String$$get_Chars",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "charaMoveScale": {
+  "cmp": 51914052,
+  "handler": 51914064,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptCharaData$$MoveScale"
+  ]
+ },
+ "charaMoveScaleEase": {
+  "cmp": 51913344,
+  "handler": 51913356,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptCharaData$$MoveScaleEase",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaPutFSLNotNotch": {
+  "cmp": 51932792,
+  "handler": 51932800,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$get_Chars",
+   "ScriptManager$$GetFSCommandOffsetX"
+  ]
+ },
+ "charaRelativeLoopMove": {
+  "cmp": 51908996,
+  "handler": 51909008,
+  "arity": 2,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "0x2230564",
+   "0x2230564",
+   "System.String$$get_Chars"
+  ]
+ },
+ "charaRelativeLoopMoveEase": {
+  "cmp": 51933624,
+  "handler": 51933636,
+  "arity": 2,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "0x2230564",
+   "0x2230564",
+   "System.String$$get_Chars"
+  ]
+ },
+ "charaRelativeLoopMoveStop": {
+  "cmp": 51912540,
+  "handler": 51912552,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "clear"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$StopMoveRelativePositionLoop",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "BgmManager$$Enable_KeepSubBgm",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaRelativePut": {
+  "cmp": 51910596,
+  "handler": 51910608,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$get_Chars",
+   "ScriptCharaData$$SetRelativePosition"
+  ]
+ },
+ "charaReturn": {
+  "cmp": 51880860,
+  "handler": 51880876,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$get_Chars",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaRoll": {
+  "cmp": 51931588,
+  "handler": 51931600,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ApRecoverConfirmDlgComponent$$.ctor",
+   "System.String$$op_Equality",
+   "System.String$$get_Chars"
+  ]
+ },
+ "charaRollAxis": {
+  "cmp": 51877976,
+  "handler": 51877992,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "charaRollAxisLoopStop": {
+  "cmp": 51927388,
+  "handler": 51927400,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$StopRollAxisLoop",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaRollMove": {
+  "cmp": 51901660,
+  "handler": 51901676,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptCharaData$$StartRoll"
+  ]
+ },
+ "charaRollMoveEx": {
+  "cmp": 51918496,
+  "handler": 51918508,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ApRecoverConfirmDlgComponent$$.ctor",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaScale": {
+  "cmp": 51910040,
+  "handler": 51910052,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$SetScale",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaSet": {
+  "cmp": 51933144,
+  "handler": 51933152,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$TryParse"
+   ]
+  ],
+  "lits": [
+   "equipSet"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "ScriptCharaData$$Destroy",
+   "0x2019c04",
+   "ScriptManager$$ConvertNameString",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaShadow": {
+  "cmp": 51898060,
+  "handler": 51898076,
+  "arity": 3,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$SetShadow"
+  ]
+ },
+ "charaShake": {
+  "cmp": 51927516,
+  "handler": 51927528,
+  "arity": 9,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "charaShakeStop": {
+  "cmp": 51924572,
+  "handler": 51924584,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$ShakeStop",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$SearchFlag",
+   "ScriptFlagData$$SetRahdom"
+  ]
+ },
+ "charaSpecialEffect": {
+  "cmp": 51923836,
+  "handler": 51923844,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "charaMoveReturnFSL"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$ScriptCommandExecute",
+   "ScriptManager$$IsContinueSilhouette",
+   "ScriptManager$$GetCharaSpecialEffectSubParam",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaSpecialEffectStart": {
+  "cmp": 51930952,
+  "handler": 51930964,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$ResumeSpecialEffect",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "charaSpecialEffectStop": {
+  "cmp": 51911040,
+  "handler": 51911052,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "charaMoveReturnEaseFSR"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$StopSpecialEffect",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "charaTalk": {
+  "cmp": 51923444,
+  "handler": 51923456,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsWaitTalk",
+  "calls": [
+   "ScriptManager$$IsWaitTalk",
+   "0x2230448",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "clear": {
+  "cmp": 51912748,
+  "handler": 51912760,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "communicationChara": {
+  "cmp": 51900172,
+  "handler": 51900184,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "ApRecoverConfirmDlgComponent$$.ctor",
+   "System.String$$op_Equality",
+   "System.String$$get_Chars",
+   "0x22305f4",
+   "ScriptPosition$$GetPosition"
+  ]
+ },
+ "communicationCharaClear": {
+  "cmp": 51930880,
+  "handler": 51930892,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "0x22305f4",
+   "CommonEffectManager$$Destroy",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$ResumeSpecialEffect"
+  ]
+ },
+ "communicationCharaFace": {
+  "cmp": 51892276,
+  "handler": 51892292,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "0x22305f4",
+   "CommonEffectManager$$Get",
+   "CommunicationCharaEffectComponent$$SetFace",
+   "System.String$$op_Equality"
+  ]
+ },
+ "communicationCharaStop": {
+  "cmp": 51912048,
+  "handler": 51912060,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4"
+  ]
+ },
+ "criMovie": {
+  "cmp": 51919920,
+  "handler": 51919928,
+  "arity": 9,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsFastPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptManager$$IsJumpLine",
+   "0x2230710",
+   "System.Func<object, bool>$$.ctor",
+   "BasicHelper$$Any<object>",
+   "0x2230710",
+   "System.Func<object, bool>$$.ctor",
+   "BasicHelper$$Any<object>",
+   "0x2230710",
+   "System.Func<object, bool>$$.ctor",
+   "BasicHelper$$Any<object>"
+  ]
+ },
+ "cueSe": {
+  "cmp": 51930152,
+  "handler": 51930164,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "0x201a774",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$ConvertNameString"
+  ]
+ },
+ "cueSeContinue": {
+  "cmp": 51904404,
+  "handler": 51904420,
+  "arity": 9,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$CheckSameIdSeContinue",
+   "0x201a774"
+  ]
+ },
+ "cueSeContinueStop": {
+  "cmp": 51919040,
+  "handler": 51919048,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "BasicHelper$$GetValue<int, object>",
+   "SePlayer$$StopSe",
+   "System.String$$op_Equality"
+  ]
+ },
+ "cueSeContinueVolume": {
+  "cmp": 51939468,
+  "handler": 51939480,
+  "arity": 7,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "BasicHelper$$GetValue<int, object>",
+   "SePlayer$$ChangeVolume"
+  ]
+ },
+ "cueSeStop": {
+  "cmp": 51940260,
+  "handler": 51940272,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "message"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "0x201a774",
+   "System.String$$op_Equality",
+   "0x2230448",
+   "ScriptMessageCommonManager$$SetFontSize"
+  ]
+ },
+ "cueSeVolume": {
+  "cmp": 51921920,
+  "handler": 51921932,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "SoundManager$$changeVolumeSe",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName"
+  ]
+ },
+ "cueVoice": {
+  "cmp": 51891944,
+  "handler": 51891960,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString"
+  ]
+ },
+ "cueVoiceStop": {
+  "cmp": 51879616,
+  "handler": 51879632,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "0x22305f4",
+   "System.String$$op_Equality"
+  ]
+ },
+ "cueVoiceVolume": {
+  "cmp": 51886404,
+  "handler": 51886420,
+  "arity": 5,
+  "parses": [],
+  "lits": [
+   " ",
+   ","
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "delayStop": {
+  "cmp": 51938964,
+  "handler": 51938976,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   "masterImageSet"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "delayStopAll": {
+  "cmp": 51903660,
+  "handler": 51903676,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "0x2230564"
+  ]
+ },
+ "distortionloop": {
+  "cmp": 51900880,
+  "handler": 51900896,
+  "arity": 2,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ModifyPlaySpeed",
+  "calls": [
+   "ScriptManager$$ModifyPlaySpeed"
+  ]
+ },
+ "distortionstart": {
+  "cmp": 51884312,
+  "handler": 51884328,
+  "arity": 2,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ModifyPlaySpeed",
+  "calls": [
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptManager$$SetCameraFilter"
+  ]
+ },
+ "distortionstop": {
+  "cmp": 51886044,
+  "handler": 51886060,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ModifyPlaySpeed",
+  "calls": [
+   "ScriptManager$$ModifyPlaySpeed",
+   "0x2230710",
+   "ScriptActionRenderEffectController.StopFunction$$.ctor",
+   "ScriptActionRenderEffectController$$StopDistortion",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipDistortion"
+  ]
+ },
+ "dontResetPress": {
+  "cmp": 51887180,
+  "handler": 51887192,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "ScriptMessageCommonManager$$OffScreen",
+   "ScriptMessageCommonManager$$ClearText",
+   "ScriptLoop$$ShouldAddLogMessage",
+   "ScriptLogMessage$$ReturnText",
+   "0x2230448"
+  ]
+ },
+ "effect": {
+  "cmp": 51907424,
+  "handler": 51907440,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$GetEffectParameter",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$Contains",
+   "System.String$$op_Equality",
+   "0x2230448",
+   "0x2230710",
+   "CommonEffectLoadComponent.LoadEndHandler$$.ctor",
+   "0x2230448"
+  ]
+ },
+ "effectDestroy": {
+  "cmp": 51921516,
+  "handler": 51921528,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsMoveAlpha"
+  ]
+ },
+ "effectForceStop": {
+  "cmp": 51922172,
+  "handler": 51922184,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   "branchHaveSvtEquip"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "0x22305f4",
+   "CommonEffectManager$$ForceStop",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "effectStart": {
+  "cmp": 51891352,
+  "handler": 51891368,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$GetMessageBackSprite",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Inequality",
+   "0x22305f4"
+  ]
+ },
+ "effectStop": {
+  "cmp": 51913196,
+  "handler": 51913208,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "effectmessageDestroy": {
+  "cmp": 51911896,
+  "handler": 51911908,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "effectmessageStop": {
+  "cmp": 51909816,
+  "handler": 51909828,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$OffScreen",
+   "ScriptMessageCommonManager$$ClearText",
+   "ScriptLoop$$ShouldAddLogMessage",
+   "ScriptLogMessage$$ReturnText",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "else": {
+  "cmp": 51888332,
+  "handler": 51888348,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "enableFullScreen": {
+  "cmp": 51912716,
+  "handler": 51912728,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "clear",
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "end": {
+  "cmp": 51902904,
+  "handler": 51902916,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "k"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$Equals",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x2230710",
+   "System.Collections.Generic.List<object>$$.ctor",
+   "0x2230710",
+   "System.Collections.Generic.List<object>$$.ctor"
+  ]
+ },
+ "endFade": {
+  "cmp": 51921832,
+  "handler": 51921844,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "clear",
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4"
+  ]
+ },
+ "endIf": {
+  "cmp": 51895268,
+  "handler": 51895284,
+  "arity": 3,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "faceTalkScreen": {
+  "cmp": 51891536,
+  "handler": 51891552,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "ScriptMessageCommonManager$$GetMessageBackSprite",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Inequality",
+   "0x22305f4",
+   "AtlasManager$$SetWarBoardImage",
+   "ScriptMessageCommonManager$$GetTalkNameBackSprite",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Inequality",
+   "0x22305f4",
+   "AtlasManager$$SetWarBoardImage",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Inequality"
+  ]
+ },
+ "fadeMove": {
+  "cmp": 51912420,
+  "handler": 51912432,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "blur"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$StopMoveRelativePositionLoop",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "BgmManager$$Enable_KeepSubBgm"
+  ]
+ },
+ "fadeOff": {
+  "cmp": 51923788,
+  "handler": 51923800,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "charaSpecialEffect"
+  ],
+  "first_mgr_call": "ScriptManager$$InitFade",
+  "calls": [
+   "ScriptManager$$InitFade",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$ScriptCommandExecute",
+   "ScriptManager$$IsContinueSilhouette",
+   "ScriptManager$$GetCharaSpecialEffectSubParam"
+  ]
+ },
+ "fadein": {
+  "cmp": 51907336,
+  "handler": 51907348,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$GetEffectParameter",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$Contains",
+   "System.String$$op_Equality",
+   "0x2230448"
+  ]
+ },
+ "flag": {
+  "cmp": 51939896,
+  "handler": 51939908,
+  "arity": 3,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$SearchFlag",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$SearchFlag",
+   "ScriptFlagData$$Set",
+   "System.String$$Contains",
+   "System.String$$op_Equality",
+   "System.String$$Contains"
+  ]
+ },
+ "flagRandom": {
+  "cmp": 51924680,
+  "handler": 51924692,
+  "arity": 5,
+  "parses": [],
+  "lits": [
+   " ",
+   "charaFadein"
+  ],
+  "first_mgr_call": "ScriptManager$$SearchFlag",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$SearchFlag",
+   "ScriptFlagData$$SetRahdom",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "flashOff": {
+  "cmp": 51894360,
+  "handler": 51894376,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$InitFlashCommand",
+  "calls": [
+   "ScriptManager$$InitFlashCommand",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "0x22305f4"
+  ]
+ },
+ "flashOffDep": {
+  "cmp": 51889648,
+  "handler": 51889664,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$InitFlashDepCommand",
+  "calls": [
+   "ScriptManager$$InitFlashDepCommand",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "ProgramEffectManager$$Stop"
+  ]
+ },
+ "flashin": {
+  "cmp": 51896076,
+  "handler": 51896092,
+  "arity": 2,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$EndFlash",
+  "calls": [
+   "ScriptManager$$EndFlash",
+   "System.String$$op_Equality"
+  ]
+ },
+ "flashinDep": {
+  "cmp": 51937028,
+  "handler": 51937040,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "flashDep"
+  ],
+  "first_mgr_call": "ScriptManager$$EndFlash",
+  "calls": [
+   "ScriptManager$$EndFlash",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsFastPlaySpeed"
+  ]
+ },
+ "flashout": {
+  "cmp": 51906988,
+  "handler": 51907004,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "bgmStopEnd"
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$EndFlash",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x201a774"
+  ]
+ },
+ "flashoutDep": {
+  "cmp": 51928804,
+  "handler": 51928816,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   "subRenderFadein",
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$EndFlashDep",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "ScriptSubLayerManager$$GetScriptSubLayer"
+  ]
+ },
+ "fontSize": {
+  "cmp": 51935520,
+  "handler": 51935528,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "lens"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "ScriptMessageCommonManager$$SetFontSize",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x2230710",
+   "ScriptActionRenderEffectController.StopFunction$$.ctor",
+   "ScriptActionRenderEffectController$$StopGaussianBlur"
+  ]
+ },
+ "fontType": {
+  "cmp": 51877352,
+  "handler": 51877368,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertFontName",
+  "calls": [
+   "System.String$$IsNullOrEmpty",
+   "System.String$$op_Inequality",
+   "ScriptManager$$ConvertFontName",
+   "0x22305f4",
+   "AssetManager$$getAssetStorage",
+   "AssetData$$GetObject<object>",
+   "UnityEngine.GameObject$$GetComponent<object>",
+   "UILabel$$get_trueTypeFont"
+  ]
+ },
+ "fowardEffectDestroy": {
+  "cmp": 51895132,
+  "handler": 51895148,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "fowardEffectPause": {
+  "cmp": 51906672,
+  "handler": 51906684,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "fowardEffectPause"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$GetEffectParameter",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "0x2230448",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "fowardEffectStart": {
+  "cmp": 51909632,
+  "handler": 51909644,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "System.String$$op_Equality",
+   "UnityEngine.Camera$$get_targetTexture",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality"
+  ]
+ },
+ "fowardEffectStop": {
+  "cmp": 51923296,
+  "handler": 51923308,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "charaTalk"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsWaitTalk",
+   "0x2230448",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "fsmObjDestroy": {
+  "cmp": 51882896,
+  "handler": 51882912,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptFsmObjectData$$Destroy",
+   "0x2019c04",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsMoveAlpha"
+  ]
+ },
+ "fsmObjLayer": {
+  "cmp": 51901992,
+  "handler": 51902008,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "UnityEngine.Component$$get_gameObject",
+   "ScriptFsmObjectData$$SetParent",
+   "System.String$$get_Chars"
+  ]
+ },
+ "fsmObjSet": {
+  "cmp": 51888696,
+  "handler": 51888712,
+  "arity": 5,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptFsmObjectData$$Destroy",
+   "0x2019c04",
+   "0x2230710",
+   "ScriptFsmObjectData$$.ctor",
+   "0x201b5c8",
+   "0x2019c04",
+   "0x2230448"
+  ]
+ },
+ "fsmObjSetBool": {
+  "cmp": 51915476,
+  "handler": 51915484,
+  "arity": 5,
+  "parses": [],
+  "lits": [
+   "fsmObjSetString",
+   "talkStart"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptFsmObjectData$$SetString",
+   "System.String$$op_Equality",
+   "0x2230448"
+  ]
+ },
+ "fsmObjSetState": {
+  "cmp": 51928576,
+  "handler": 51928584,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "fsmObjSetState"
+  ],
+  "first_mgr_call": "ScriptManager$$ModifyPlaySpeed",
+  "calls": [
+   "ScriptManager$$ModifyPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality",
+   "ScriptFsmObjectData$$SetState",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "horizontalImageChange": {
+  "cmp": 51938476,
+  "handler": 51938484,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "0x2230448",
+   "System.String$$op_Equality",
+   "ScriptManager$$SoundStopAll",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "ifClear": {
+  "cmp": 51876848,
+  "handler": 51876864,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality"
+  ]
+ },
+ "input": {
+  "cmp": 51881968,
+  "handler": 51881984,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "selectBranch"
+  ],
+  "first_mgr_call": "ScriptManager$$ResumePlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptSkipDialog$$Close",
+   "ScriptManager$$ResumePlaySpeed",
+   "System.String$$op_Equality",
+   "System.Collections.Generic.List<int>$$get_Item"
+  ]
+ },
+ "insertionAnimationEnd": {
+  "cmp": 51902472,
+  "handler": 51902488,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsFastPlaySpeed",
+  "calls": [
+   "UnityEngine.GameObject$$Find",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Implicit",
+   "UnityEngine.GameObject$$GetComponent<object>",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Implicit",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality"
+  ]
+ },
+ "insertionAnimationSet": {
+  "cmp": 51937636,
+  "handler": 51937644,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertInsertionAnimationName",
+  "calls": [
+   "0x2230448",
+   "ScriptManager$$ConvertInsertionAnimationName",
+   "0x2230710",
+   "AssetLoader.LoadEndDataHandler$$.ctor",
+   "0x22305f4",
+   "AssetManager$$loadAssetStorage",
+   "System.String$$op_Equality",
+   "ApRecoverConfirmDlgComponent$$.ctor"
+  ]
+ },
+ "insertionAnimationStart": {
+  "cmp": 51907840,
+  "handler": 51907852,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsFastPlaySpeed",
+  "calls": [
+   "UnityEngine.GameObject$$Find",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Implicit",
+   "UnityEngine.GameObject$$GetComponent<object>",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Implicit",
+   "EventPlayAnimationInsertionComponent$$ChangeAnimationSprite",
+   "ScriptManager$$IsFastPlaySpeed",
+   "EventPlayAnimationInsertionComponent$$PlayAnimation",
+   "System.String$$op_Equality"
+  ]
+ },
+ "jingle": {
+  "cmp": 51932004,
+  "handler": 51932016,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "subRenderMoveEase",
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "0x22305f4",
+   "SoundManager$$playJingle",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsExistTargetSubLayerGroup"
+  ]
+ },
+ "jingleStop": {
+  "cmp": 51922612,
+  "handler": 51922624,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "0x22305f4",
+   "SoundManager$$isPlayJingle",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$SetBetweenLineHeight",
+   "System.String$$op_Equality"
+  ]
+ },
+ "jump": {
+  "cmp": 51904916,
+  "handler": 51904932,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "talkEnd",
+   "branchNotMaterial"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$LoadExecuteScript",
+   "System.String$$op_Equality",
+   "0x2230448",
+   "System.String$$op_Equality"
+  ]
+ },
+ "k": {
+  "cmp": 51903000,
+  "handler": 51903016,
+  "arity": null,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "0x2230710",
+   "System.Collections.Generic.List<object>$$.ctor",
+   "0x2230710",
+   "System.Collections.Generic.List<object>$$.ctor",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "keepSubBgmOff": {
+  "cmp": 51877824,
+  "handler": 51877840,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "0x22305f4",
+   "BgmManager$$Enable_KeepSubBgm",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "keepSubBgmOn": {
+  "cmp": 51912648,
+  "handler": 51912660,
+  "arity": 7,
+  "parses": [],
+  "lits": [
+   "clear",
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "0x22305f4",
+   "BgmManager$$Enable_KeepSubBgm",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "l": {
+  "cmp": 51922720,
+  "handler": 51922732,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$SetBetweenLineHeight",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "label": {
+  "cmp": 51885552,
+  "handler": 51885568,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$Equals",
+   "0x2230448",
+   "ScriptMessageCommonManager$$SetTapSkip",
+   "System.String$$Equals"
+  ]
+ },
+ "maskOff": {
+  "cmp": 51917308,
+  "handler": 51917320,
+  "arity": 5,
+  "parses": [],
+  "lits": [
+   "",
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$InitMask",
+  "calls": [
+   "ScriptManager$$InitMask",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "maskout": {
+  "cmp": 51938424,
+  "handler": 51938436,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "horizontalImageChange"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "0x2230448",
+   "System.String$$op_Equality",
+   "ScriptManager$$SoundStopAll",
+   "System.String$$op_Equality"
+  ]
+ },
+ "masterBranch": {
+  "cmp": 51878824,
+  "handler": 51878840,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ScriptCommandExecute",
+  "calls": [
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "ScriptManager$$ScriptCommandExecute",
+   "System.String$$op_Equality"
+  ]
+ },
+ "masterChange": {
+  "cmp": 51936272,
+  "handler": 51936284,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "charaChange",
+   "stretchin"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "0x2230448",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "masterImageChange": {
+  "cmp": 51904024,
+  "handler": 51904036,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "masterImageSet": {
+  "cmp": 51939072,
+  "handler": 51939080,
+  "arity": 5,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "0x2230448",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "masterNameWidth": {
+  "cmp": 51928020,
+  "handler": 51928032,
+  "arity": 7,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "ScriptReplaceString$$GetString",
+   "0x22305f4",
+   "LocalizationManager$$ReplaceNameTag",
+   "LocalizationManager$$ReplaceNameTag"
+  ]
+ },
+ "masterScene": {
+  "cmp": 51907108,
+  "handler": 51907124,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "bgmStopEnd",
+   "fadein"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x201a774",
+   "System.String$$op_Equality",
+   "SingletonMonoBehaviour<object>$$get_Instance"
+  ]
+ },
+ "menu": {
+  "cmp": 51903076,
+  "handler": 51903092,
+  "arity": null,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "0x2230710",
+   "System.Collections.Generic.List<object>$$.ctor",
+   "0x2230710",
+   "System.Collections.Generic.List<object>$$.ctor",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "0x201abc4"
+  ]
+ },
+ "messageAlign": {
+  "cmp": 51932732,
+  "handler": 51932744,
+  "arity": 3,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   "charaPutFSLNotNotch"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$get_Chars"
+  ]
+ },
+ "messageChange": {
+  "cmp": 51925676,
+  "handler": 51925688,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ModifyPlaySpeed",
+  "calls": [
+   "ScriptMessageCommonManager$$ResetLongPress",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptManager$$ConvertMessageWindowName",
+   "0x22305f4",
+   "AssetManager$$getAssetStorage",
+   "AssetData$$GetObject",
+   "UnityEngine.GameObject$$GetComponent<object>",
+   "ScriptMessageCommonManager$$ChangeMessageWindow",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "messageOff": {
+  "cmp": 51909920,
+  "handler": 51909932,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptMessageCommonManager$$OffScreen",
+   "ScriptMessageCommonManager$$ClearText",
+   "ScriptLoop$$ShouldAddLogMessage",
+   "ScriptLogMessage$$ReturnText",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$SetScale"
+  ]
+ },
+ "messageOn": {
+  "cmp": 51887176,
+  "handler": 51887192,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "ScriptMessageCommonManager$$OffScreen",
+   "ScriptMessageCommonManager$$ClearText",
+   "ScriptLoop$$ShouldAddLogMessage",
+   "ScriptLogMessage$$ReturnText",
+   "0x2230448"
+  ]
+ },
+ "messageShake": {
+  "cmp": 51912808,
+  "handler": 51912820,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsFastPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsFastPlaySpeed"
+  ]
+ },
+ "messageShakeStop": {
+  "cmp": 51898508,
+  "handler": 51898524,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "wipein"
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "ScriptMessageCommonManager$$Shake",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality"
+  ]
+ },
+ "messageSpeedForcedNormal": {
+  "cmp": 51921400,
+  "handler": 51921412,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality"
+  ]
+ },
+ "messageStart": {
+  "cmp": 51902844,
+  "handler": 51902860,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "end",
+   "k"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "ScriptMessageCommonManager$$CalcMessageVerticalAlign",
+   "System.String$$op_Equality",
+   "System.String$$Equals",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x2230710",
+   "System.Collections.Generic.List<object>$$.ctor",
+   "0x2230710",
+   "System.Collections.Generic.List<object>$$.ctor"
+  ]
+ },
+ "notification": {
+  "cmp": 51883880,
+  "handler": 51883896,
+  "arity": 3,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "System.String$$IsNullOrEmpty",
+   "0x2230448",
+   "ScriptManager$$ConvertNameString"
+  ]
+ },
+ "overlayFadein": {
+  "cmp": 51921652,
+  "handler": 51921664,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "clear"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsMoveAlpha",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "page": {
+  "cmp": 51888448,
+  "handler": 51912760,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "pictureFrame": {
+  "cmp": 51898408,
+  "handler": 51898424,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "wipein"
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$Shake",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "q": {
+  "cmp": 51930656,
+  "handler": 51930668,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "WarBoardManager$$PlayEffectPosScript",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "CommonEffectManager$$Destroy"
+  ]
+ },
+ "questMessageOverwrite": {
+  "cmp": 51894016,
+  "handler": 51894032,
+  "arity": 3,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$GetOverwriteText",
+  "calls": [
+   "0x2230448",
+   "System.String$$Concat",
+   "0x22305f4",
+   "ScriptManager$$GetOverwriteText",
+   "System.String$$IsNullOrEmpty",
+   "0x22305f4"
+  ]
+ },
+ "revivalBranch": {
+  "cmp": 51925912,
+  "handler": 51925924,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "f",
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "rewardSwitch": {
+  "cmp": 51925536,
+  "handler": 51925548,
+  "arity": 2,
+  "parses": [],
+  "lits": [
+   "true"
+  ],
+  "first_mgr_call": "ScriptManager$$ModifyPlaySpeed",
+  "calls": [
+   "0x2230448",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$ResetLongPress",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptManager$$ConvertMessageWindowName",
+   "0x22305f4",
+   "AssetManager$$getAssetStorage",
+   "AssetData$$GetObject"
+  ]
+ },
+ "s": {
+  "cmp": 51923532,
+  "handler": 51923544,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality"
+  ]
+ },
+ "scene": {
+  "cmp": 51908104,
+  "handler": 51908116,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "screen": {
+  "cmp": 51905720,
+  "handler": 51905736,
+  "arity": 9,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "scrollStop": {
+  "cmp": 51900816,
+  "handler": 51900832,
+  "arity": 2,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ModifyPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ModifyPlaySpeed"
+  ]
+ },
+ "se": {
+  "cmp": 51906384,
+  "handler": 51906400,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " ",
+   "fowardEffectPause"
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "0x201a774",
+   "System.String$$op_Equality"
+  ]
+ },
+ "seContinue": {
+  "cmp": 51905280,
+  "handler": 51905296,
+  "arity": 7,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$CheckSameIdSeContinue",
+   "0x201a774"
+  ]
+ },
+ "seLoop": {
+  "cmp": 51917780,
+  "handler": 51917792,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " ",
+   "branchRouteSelect"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x201a774",
+   "System.String$$op_Equality"
+  ]
+ },
+ "seStop": {
+  "cmp": 51907184,
+  "handler": 51907200,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "fadein"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertTalkEffectName",
+  "calls": [
+   "System.String$$op_Equality",
+   "0x201a774",
+   "System.String$$op_Equality",
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName"
+  ]
+ },
+ "seVolume": {
+  "cmp": 51912132,
+  "handler": 51912144,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "SoundManager$$changeVolumeSe",
+   "System.String$$op_Equality"
+  ]
+ },
+ "selectionCentering": {
+  "cmp": 51902716,
+  "handler": 51902732,
+  "arity": 1,
+  "parses": [
+   [
+    "?",
+    "System.Boolean$$TryParse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "0x22305f4"
+  ]
+ },
+ "selectionUse": {
+  "cmp": 51892860,
+  "handler": 51892876,
+  "arity": null,
+  "parses": [],
+  "lits": [
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$CheckSwitchType",
+  "calls": [
+   "ScriptManager$$CheckSwitchType",
+   "ScriptManager$$JumpScriptCommand",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "System.String$$op_Equality"
+  ]
+ },
+ "shake": {
+  "cmp": 51926144,
+  "handler": 51926156,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsFastPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsFastPlaySpeed"
+  ]
+ },
+ "shakeStop": {
+  "cmp": 51896520,
+  "handler": 51896536,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$Shake",
+  "calls": [
+   "ScriptManager$$Shake"
+  ]
+ },
+ "skip": {
+  "cmp": 51885028,
+  "handler": 51885044,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$SearchFlag",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$SearchFlag"
+  ]
+ },
+ "soundStopAll": {
+  "cmp": 51938632,
+  "handler": 51938644,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$SoundStopAll",
+  "calls": [
+   "ScriptManager$$SoundStopAll",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "soundStopAllEnd": {
+  "cmp": 51934344,
+  "handler": 51934356,
+  "arity": 0,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$GetNonStopEndBgm",
+  "calls": [
+   "0x22305f4",
+   "ScriptManager$$GetNonStopEndBgm",
+   "ScriptManager$$SoundStopAllEnd",
+   "System.String$$op_Equality",
+   "0x2230448",
+   "<PrivateImplementationDetails>$$ComputeStringHash"
+  ]
+ },
+ "soundStopAllFade": {
+  "cmp": 51911820,
+  "handler": 51911832,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$SoundStopAllFade",
+  "calls": [
+   "ScriptManager$$SoundStopAllFade",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "CommonEffectManager$$Stop"
+  ]
+ },
+ "specialEffectPuase": {
+  "cmp": 51934712,
+  "handler": 51934724,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$ScriptCommandExecute",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "ScriptPosition$$GetPosition"
+  ]
+ },
+ "specialEffectStart": {
+  "cmp": 51915008,
+  "handler": 51915020,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "ScriptManager$$ConvertNameString",
+   "ProgramEffectManager$$Resume",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$Destroy",
+   "0x2019c04",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "specialEffectStop": {
+  "cmp": 51889864,
+  "handler": 51889880,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "ScriptManager$$ConvertNameString",
+   "ProgramEffectManager$$Stop"
+  ]
+ },
+ "spriteMaskOff": {
+  "cmp": 51934260,
+  "handler": 51934272,
+  "arity": 0,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$GetNonStopEndBgm",
+  "calls": [
+   "UnityEngine.SpriteMask$$set_sprite",
+   "UnityEngine.Component$$get_gameObject",
+   "UnityEngine.GameObject$$SetActive",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "ScriptManager$$GetNonStopEndBgm",
+   "ScriptManager$$SoundStopAllEnd",
+   "System.String$$op_Equality",
+   "0x2230448",
+   "<PrivateImplementationDetails>$$ComputeStringHash"
+  ]
+ },
+ "spriteMaskSet": {
+  "cmp": 51879904,
+  "handler": 51879920,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertSpriteMaskName",
+  "calls": [
+   "0x2230448",
+   "ScriptManager$$ConvertSpriteMaskName",
+   "0x2230710",
+   "AssetLoader.LoadEndDataHandler$$.ctor",
+   "0x22305f4",
+   "AssetManager$$loadAssetStorage",
+   "ScriptManager$$ConvertSpriteMaskName",
+   "System.String$$Concat"
+  ]
+ },
+ "stretchOff": {
+  "cmp": 51911764,
+  "handler": 51911776,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$InitStretch",
+  "calls": [
+   "ScriptManager$$InitStretch",
+   "System.String$$op_Equality",
+   "ScriptManager$$SoundStopAllFade",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "stretchin": {
+  "cmp": 51936436,
+  "handler": 51936444,
+  "arity": 2,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "0x2230564"
+  ]
+ },
+ "subBgm": {
+  "cmp": 51913972,
+  "handler": 51913980,
+  "arity": 5,
+  "parses": [],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "ScriptManager$$ConvertNameString",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "subBgmStop": {
+  "cmp": 51910904,
+  "handler": 51910912,
+  "arity": 3,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$GetNonStopEndBgm",
+  "calls": [
+   "0x22305f4",
+   "ScriptManager$$GetNonStopEndBgm",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "System.String$$op_Equality"
+  ]
+ },
+ "subBlur2": {
+  "cmp": 51906148,
+  "handler": 51906164,
+  "arity": 5,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager.<>c__DisplayClass808_4$$.ctor",
+  "calls": [
+   "0x2230710",
+   "ScriptManager.<>c__DisplayClass808_4$$.ctor",
+   "0x2230448",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "0x2230448",
+   "0x2230448",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "subBlurOff": {
+  "cmp": 51919504,
+  "handler": 51919516,
+  "arity": 6,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager.<>c__DisplayClass808_5$$.ctor",
+  "calls": [
+   "0x2230710",
+   "ScriptManager.<>c__DisplayClass808_5$$.ctor",
+   "0x2230448",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "0x2230448",
+   "0x2230448",
+   "0x2230448"
+  ]
+ },
+ "subCameraFilter": {
+  "cmp": 51917352,
+  "handler": 51917364,
+  "arity": 5,
+  "parses": [],
+  "lits": [
+   "",
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad"
+  ]
+ },
+ "subCameraHome": {
+  "cmp": 51894960,
+  "handler": 51894976,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$InitCamera",
+  "calls": [
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptManager$$InitCamera",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName"
+  ]
+ },
+ "subCameraMove": {
+  "cmp": 51915872,
+  "handler": 51915884,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ApRecoverConfirmDlgComponent$$.ctor",
+   "System.String$$get_Chars",
+   "0x22305f4",
+   "ScriptPosition$$GetPosition"
+  ]
+ },
+ "subCameraMoveEase": {
+  "cmp": 51926052,
+  "handler": 51926064,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "",
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "subCameraOff": {
+  "cmp": 51877696,
+  "handler": 51877712,
+  "arity": null,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$RenderCameraSubQuit",
+  "calls": [
+   "ScriptManager$$RenderCameraSubQuit",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "BgmManager$$Enable_KeepSubBgm",
+   "System.String$$op_Equality"
+  ]
+ },
+ "subCameraOn": {
+  "cmp": 51917712,
+  "handler": 51917724,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x201a774"
+  ]
+ },
+ "subCameraRoll": {
+  "cmp": 51880656,
+  "handler": 51880672,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$InitCameraRoll",
+  "calls": [
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptManager$$InitCameraRoll",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "subCameraRollMove": {
+  "cmp": 51879420,
+  "handler": 51879436,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "subRenderDepth": {
+  "cmp": 51915784,
+  "handler": 51915796,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "ScriptSubLayerManager$$SetDepth",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "subRenderFadein": {
+  "cmp": 51928924,
+  "handler": 51928932,
+  "arity": null,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptManager$$GetFSCommandOffsetX",
+   "ScriptSubLayer$$SetRendering"
+  ]
+ },
+ "subRenderFadeout": {
+  "cmp": 51892992,
+  "handler": 51893008,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality"
+  ]
+ },
+ "subRenderMoveEase": {
+  "cmp": 51932244,
+  "handler": 51932252,
+  "arity": null,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "subRenderMoveFSSideL": {
+  "cmp": 51908472,
+  "handler": 51908480,
+  "arity": null,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptManager$$IsNormalPlaySpeed"
+  ]
+ },
+ "subRenderMoveScale": {
+  "cmp": 51889400,
+  "handler": 51889416,
+  "arity": null,
+  "parses": [],
+  "lits": [
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$InitFlashDepCommand"
+  ]
+ },
+ "subRenderMoveScaleEase": {
+  "cmp": 51902372,
+  "handler": 51902388,
+  "arity": null,
+  "parses": [],
+  "lits": [
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "System.String$$op_Equality",
+   "UnityEngine.GameObject$$Find",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Implicit",
+   "UnityEngine.GameObject$$GetComponent<object>",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Implicit"
+  ]
+ },
+ "subRenderScale": {
+  "cmp": 51890888,
+  "handler": 51890904,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   ""
+  ],
+  "first_mgr_call": "ScriptManager$$IsExistTargetSubLayerGroup",
+  "calls": [
+   "ScriptManager$$IsExistTargetSubLayerGroup",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "UnityEngine.Camera$$set_clearFlags"
+  ]
+ },
+ "subRenderShake": {
+  "cmp": 51879052,
+  "handler": 51879068,
+  "arity": 8,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsFastPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptSubLayer$$Shake"
+  ]
+ },
+ "subRenderShakeStop": {
+  "cmp": 51903472,
+  "handler": 51903488,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptSubLayer$$ShakeStop",
+   "System.String$$op_Equality",
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "WarBoardManager$$StopEffectScript",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "subStretch": {
+  "cmp": 51937100,
+  "handler": 51937112,
+  "arity": 1,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$IsFastPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptCharaData$$ResumeBackEffect"
+  ]
+ },
+ "subStretchout": {
+  "cmp": 51893140,
+  "handler": 51893156,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "0x22305f4",
+   "UnityEngine.Object$$op_Inequality"
+  ]
+ },
+ "switchCase": {
+  "cmp": 51934648,
+  "handler": 51934660,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$JumpScriptCommand",
+  "calls": [
+   "ScriptManager$$JumpScriptCommand",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$ScriptCommandExecute",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "switchCaseEnd": {
+  "cmp": 51940428,
+  "handler": 51940440,
+  "arity": 3,
+  "parses": [],
+  "lits": [
+   "message",
+   "wipe"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "0x2230448",
+   "ScriptMessageCommonManager$$SetFontSize",
+   "UnityEngine.GameObject$$get_transform",
+   "UnityEngine.GameObject$$get_transform",
+   "UnityEngine.Transform$$get_localPosition",
+   "UnityEngine.Transform$$set_localPosition"
+  ]
+ },
+ "tVoice": {
+  "cmp": 51891192,
+  "handler": 51891208,
+  "arity": 3,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "ScriptManager$$ConvertNameString",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName"
+  ]
+ },
+ "tVoiceUser": {
+  "cmp": 51883660,
+  "handler": 51883676,
+  "arity": 7,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ScriptCommandExecute",
+  "calls": [
+   "0x22305f4",
+   "ScriptManager$$ScriptCommandExecute",
+   "ScriptManager$$ConvertNameString",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "talkEnd": {
+  "cmp": 51905112,
+  "handler": 51905128,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "branchNotMaterial",
+   " "
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "0x2230448",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "talkName": {
+  "cmp": 51936228,
+  "handler": 51936240,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   "charaChange",
+   "stretchin"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsLoad",
+   "0x2230448",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "talkNameBack": {
+  "cmp": 51923188,
+  "handler": 51923200,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "charaTalk"
+  ],
+  "first_mgr_call": "ScriptManager$$InitWipe",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$InitWipe",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsWaitTalk"
+  ]
+ },
+ "talkStart": {
+  "cmp": 51915704,
+  "handler": 51915716,
+  "arity": 3,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "0x2230448",
+   "System.String$$op_Equality",
+   "ScriptSubLayerManager$$SetDepth",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "tapSkip": {
+  "cmp": 51886992,
+  "handler": 51887008,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "dontResetPress"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "0x2230448",
+   "System.String$$op_Equality",
+   "ScriptMessageCommonManager$$OffScreen",
+   "ScriptMessageCommonManager$$ClearText",
+   "ScriptLoop$$ShouldAddLogMessage",
+   "ScriptLogMessage$$ReturnText"
+  ]
+ },
+ "tdelay": {
+  "cmp": 51914592,
+  "handler": 51914600,
+  "arity": 5,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   "tdelay"
+  ],
+  "first_mgr_call": "ScriptManager$$GetNextDelayEnd",
+  "calls": [
+   "ScriptManager$$GetNextDelayEnd",
+   "System.String$$op_Inequality"
+  ]
+ },
+ "turnPageOff": {
+  "cmp": 51914516,
+  "handler": 51914528,
+  "arity": 5,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   "tdelay"
+  ],
+  "first_mgr_call": "ScriptManager$$GetNextDelayEnd",
+  "calls": [
+   "ScriptMessageCommonManager$$SetForcedDisableTurnPage",
+   "System.String$$op_Equality",
+   "ScriptManager$$GetNextDelayEnd",
+   "System.String$$op_Inequality"
+  ]
+ },
+ "turnPageOn": {
+  "cmp": 51893464,
+  "handler": 51893480,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "subRenderMoveEaseFSL"
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "System.Linq.Enumerable$$Contains<object>",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality"
+  ]
+ },
+ "useSimpleMeshFigure": {
+  "cmp": 51886596,
+  "handler": 51886612,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   ","
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "0x201abc4"
+  ]
+ },
+ "voice": {
+  "cmp": 51893664,
+  "handler": 51893680,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "0x22305f4",
+   "SoundManager$$playCharaVoice"
+  ]
+ },
+ "voiceStop": {
+  "cmp": 51894456,
+  "handler": 51894472,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "0x22305f4",
+   "System.String$$op_Equality"
+  ]
+ },
+ "voiceVolume": {
+  "cmp": 51897308,
+  "handler": 51897324,
+  "arity": 5,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertNameString",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertNameString",
+   "0x22305f4",
+   "SoundManager$$changeVolumeVoice"
+  ]
+ },
+ "wait": {
+  "cmp": 51934440,
+  "handler": 51934452,
+  "arity": 0,
+  "parses": [],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$JumpScriptCommand",
+  "calls": [
+   "0x2230448",
+   "<PrivateImplementationDetails>$$ComputeStringHash",
+   "System.String$$op_Equality",
+   "ScriptManager$$JumpScriptCommand",
+   "System.String$$op_Equality"
+  ]
+ },
+ "warCharaFadein": {
+  "cmp": 51883096,
+  "handler": 51883112,
+  "arity": 2,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsMoveAlpha",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "0x2230564"
+  ]
+ },
+ "warEffectOff": {
+  "cmp": 51903568,
+  "handler": 51903584,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "WarBoardManager$$StopEffectScript",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "0x2230564"
+  ]
+ },
+ "warEffectPiece": {
+  "cmp": 51903748,
+  "handler": 51903764,
+  "arity": 9,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [
+   "masterImageChange"
+  ],
+  "first_mgr_call": null,
+  "calls": [
+   "0x2230564",
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "WarBoardManager$$PlayEffectPieceScript",
+   "System.String$$op_Equality"
+  ]
+ },
+ "warEffectPos": {
+  "cmp": 51930712,
+  "handler": 51930724,
+  "arity": 7,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertCharaIndex",
+  "calls": [
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "WarBoardManager$$PlayEffectPosScript",
+   "System.String$$op_Equality",
+   "0x22305f4",
+   "CommonEffectManager$$Destroy",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "warEffectSquare": {
+  "cmp": 51901536,
+  "handler": 51901552,
+  "arity": 5,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "WarBoardManager$$PlayEffectSquareScript",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "warEventScript": {
+  "cmp": 51880364,
+  "handler": 51880380,
+  "arity": 1,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "WarBoardManager$$AddEventScript",
+   "System.String$$op_Equality"
+  ]
+ },
+ "warMoveCameraPiece": {
+  "cmp": 51936480,
+  "handler": 51936492,
+  "arity": 2,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "0x2230564"
+  ]
+ },
+ "warMoveCameraPos": {
+  "cmp": 51896192,
+  "handler": 51896208,
+  "arity": 2,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "WarBoardManager$$MoveCameraPosScript"
+  ]
+ },
+ "warMoveCameraSquare": {
+  "cmp": 51916836,
+  "handler": 51916848,
+  "arity": 9,
+  "parses": [
+   [
+    "int",
+    "System.Int32$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "int",
+    "System.Int32$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": null,
+  "calls": [
+   "SingletonMonoBehaviour<object>$$get_Instance",
+   "WarBoardManager$$MoveCameraSquareScript",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "wipeFilter": {
+  "cmp": 51927048,
+  "handler": 51927060,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [],
+  "first_mgr_call": "ScriptManager$$ConvertWipeName",
+  "calls": [
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertWipeName",
+   "System.String$$op_Equality",
+   "ScriptManager$$SetWipeFilter"
+  ]
+ },
+ "wipeFilterEx": {
+  "cmp": 51887824,
+  "handler": 51887840,
+  "arity": 2,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " "
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertWipeName",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertWipeName"
+  ]
+ },
+ "wipeOff": {
+  "cmp": 51923252,
+  "handler": 51923264,
+  "arity": 1,
+  "parses": [],
+  "lits": [
+   "charaTalk"
+  ],
+  "first_mgr_call": "ScriptManager$$InitWipe",
+  "calls": [
+   "ScriptManager$$InitWipe",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "0x22305f4",
+   "CommonEffectManager$$Stop",
+   "System.String$$op_Equality",
+   "ScriptManager$$IsWaitTalk",
+   "0x2230448",
+   "System.String$$op_Equality"
+  ]
+ },
+ "wipein": {
+  "cmp": 51898628,
+  "handler": 51898640,
+  "arity": 1,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   "wipein"
+  ],
+  "first_mgr_call": "ScriptManager$$IsNormalPlaySpeed",
+  "calls": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertWipeName",
+   "System.String$$op_Equality",
+   "System.String$$op_Equality"
+  ]
+ },
+ "wipeoutEx": {
+  "cmp": 51920932,
+  "handler": 51920940,
+  "arity": 2,
+  "parses": [
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ],
+   [
+    "float",
+    "System.Single$$Parse"
+   ]
+  ],
+  "lits": [
+   " ",
+   "wipeinEx"
+  ],
+  "first_mgr_call": "ScriptManager$$ConvertWipeName",
+  "calls": [
+   "System.String$$op_Equality",
+   "System.String$$op_Equality",
+   "ScriptManager$$ConvertWipeName",
+   "System.String$$op_Equality"
+  ]
+ }
+}

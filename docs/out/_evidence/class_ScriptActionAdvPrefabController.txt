@@ -1,0 +1,77 @@
+==============================================================================
+// ScriptActionAdvPrefabController  (dump.cs line 164950)
+public class ScriptActionAdvPrefabController : MonoBehaviour // TypeDefIndex: 4779
+{
+	// Fields
+	[CompilerGenerated]
+	private RenderTexture <renderTexture>k__BackingField; // 0x20
+	private GameObject demoRootObject; // 0x28
+	private Dictionary<string, ScriptActionAdvPrefabActorController> actorDict; // 0x30
+	[CompilerGenerated]
+	private bool <isSetup>k__BackingField; // 0x38
+	private AssetData assetData; // 0x40
+	private bool isPaused; // 0x48
+
+	// Properties
+	public RenderTexture renderTexture { get; set; }
+	public bool isSetup { get; set; }
+	public bool IsGoNext { get; }
+
+	// Methods
+
+	[CompilerGenerated]
+	// RVA: 0x3169A28 Offset: 0x3165A28 VA: 0x3169A28
+	public RenderTexture get_renderTexture() { }
+
+	[CompilerGenerated]
+	// RVA: 0x3169A30 Offset: 0x3165A30 VA: 0x3169A30
+	private void set_renderTexture(RenderTexture value) { }
+
+	[CompilerGenerated]
+	// RVA: 0x3169A38 Offset: 0x3165A38 VA: 0x3169A38
+	public bool get_isSetup() { }
+
+	[CompilerGenerated]
+	// RVA: 0x3169A40 Offset: 0x3165A40 VA: 0x3169A40
+	private void set_isSetup(bool value) { }
+
+	// RVA: 0x3169A48 Offset: 0x3165A48 VA: 0x3169A48
+	public bool get_IsGoNext() { }
+
+	// RVA: 0x3169B74 Offset: 0x3165B74 VA: 0x3169B74
+	public static string GetAssetName(string baseName) { }
+
+	// RVA: 0x3169BC0 Offset: 0x3165BC0 VA: 0x3169BC0
+	public void Setup(string assetName) { }
+
+	// RVA: 0x3169C80 Offset: 0x3165C80 VA: 0x3169C80
+	public void Prepare(string objectName) { }
+
+	// RVA: 0x316A0B4 Offset: 0x31660B4 VA: 0x316A0B4
+	public void PlayAnimator(string actorName, string trigger) { }
+
+	// RVA: 0x316A138 Offset: 0x3166138 VA: 0x316A138
+	public bool CheckGoNext(string actorName) { }
+
+	// RVA: 0x3169654 Offset: 0x3165654 VA: 0x3169654
+	public void SetShow(string actorName) { }
+
+	// RVA: 0x3169788 Offset: 0x3165788 VA: 0x3169788
+	public void SetHide(string actorName) { }
+
+	// RVA: 0x316A1C4 Offset: 0x31661C4 VA: 0x316A1C4
+	public void Release() { }
+
+	// RVA: 0x316A2CC Offset: 0x31662CC VA: 0x316A2CC
+	public void Pause(bool pause) { }
+
+	// RVA: 0x316A3A8 Offset: 0x31663A8 VA: 0x316A3A8
+	public void .ctor() { }
+
+	[CompilerGenerated]
+	// RVA: 0x316A3B0 Offset: 0x31663B0 VA: 0x316A3B0
+	private void <Setup>b__16_0(AssetData asset) { }
+
+	[CompilerGenerated]
+	// RVA: 0x316A3C0 Offset: 0x31663C0 VA: 0x316A3C0
+	private void <Pause>b__23_0(ScriptActionAdvPrefabActorController x) { }

@@ -1,0 +1,400 @@
+{
+  "meta": {
+    "task": "presentation.md / composition.md 覆盖度核查与补遗",
+    "corpus": {
+      "root": "F:\\Project\\fgo\\scripts",
+      "files": 2583,
+      "lines": 1867761,
+      "bracket_tag_uses": 973594,
+      "distinct_tags": 399,
+      "scanner": "F:\\Project\\fgo\\work\\scratch\\supp_scan.py",
+      "scan_output": "F:\\Project\\fgo\\work\\scratch\\supp_scan.json"
+    },
+    "binary": "extract/lib/arm64-v8a/libil2cpp.so",
+    "confidence_levels": {
+      "verified": "有反汇编/字面量/字段直证",
+      "corpus": "仅语料统计可复现(次数)",
+      "inferred": "由调用链或形态推断"
+    },
+    "outputs": [
+      "work/out/supplement-presentation-composition.md",
+      "work/out/_evidence/supplement-presentation-composition.findings.json"
+    ],
+    "extra": {
+      "hashkey": {
+        "#A": 8026,
+        "#B": 4107,
+        "#C": 1902,
+        "#D": 760,
+        "#MASK": 44
+      },
+      "mask_usage": {
+        "charaLayer": 29,
+        "subCameraFilter": 14,
+        "subRenderDepth": 1
+      }
+    }
+  },
+  "claims": [
+    {
+      "id": "A-01",
+      "claim": "presentation.md §2 覆盖主相机命令(cameraMove/cameraMoveEase/cameraHome/cameraRoll/cameraRollMove 共 3153 次),但 subCamera* 命令族(908/603/54/12/56/4/11 共 2148 次)只有名字出现在 §7.2 的 tag 名单,无参数说明。",
+      "evidence": [
+        "语料统计:subCameraOn 908 subCameraOff 603 subCameraMove 54 subCameraHome 12 subCameraRoll 56 subCameraRollMove 4 subCameraMoveEase 11",
+        "presentation.md 无 'subCameraOn' 字样(词边界检索)"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "A-02",
+      "claim": "presentation.md §2.5 覆盖 shake/charaShake/messageShake,但四个 Stop 命令未列:shakeStop 330 / charaShakeStop 199 / messageShakeStop 26 / subRenderShakeStop 2。 语料形态:shakeStop/messageShakeStop 无参,charaShakeStop <slot>(199 次)。",
+      "evidence": [
+        "语料统计",
+        "presentation.md 中 'shakeStop' 0 命中"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "A-03",
+      "claim": "overlayFadein 不是 fade 族:语料 649 次形状为 <槽位> <时间> <坐标>,如 [overlayFadein I 0.1 0,734];handler region 归属 overlayFadein(branch_map 0x3184300-0x31843ac),cmd_sig 的 calls 含 ScriptCharaData$$IsMoveAlpha。",
+      "evidence": [
+        "语料形状 str float pos 581 次 + str int pos 57 次;样例 [overlayFadein I 0.1 0,734]",
+        "work/il2cpp_out/branch_map.json region 0x3184300 names=['overlayFadein']",
+        "work/out/_evidence/cmd_sig.json overlayFadein.calls 含 'ScriptCharaData$$IsMoveAlpha'、lits=['clear']"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "A-04",
+      "claim": "presentation.md §8.3 描述的 tdelay/delayEnd/delayStop/delayStopAll 在语料 0 次;二进制确有该机制(ProcessDelayScript 是 ScriptCommandExecute 的两个 caller 之一)。",
+      "evidence": [
+        "grep -rF '[tdelay' / '[delayEnd' / '[delayStop' scripts → 0 命中",
+        "python work/tools/find_callers.py 0x3177290 → 0x31b6598 in ScriptManager$$ProcessDelayScript",
+        "presentation.md §8.3 GetNextDelayEnd 0x31b2710"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "A-05",
+      "claim": "wait 不是纯阻塞命令,而是 pd[0] 关键字分派:fade/se/charaSpecialEffect/fastPlayDraw;真正的「等待点击」是整行标记 k(184799)。",
+      "evidence": [
+        "python work/coverage/win.py 0x31874f4:0x3187514 ldr x1,[x8,#0x20](pd[0]) → 0x3187530 bl ComputeStringHash",
+        "语料 wait 形状 str=25299('fade') / str str=1437('se <name>') / str str str=40 / str float=5"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "A-06",
+      "claim": "wt(整行 114251 + 行内 1815)与 twt(行内 27)在两文档中完全没有出现;它们不是命令树里的 tag,由 AnalysText 改写为 wait time / wait rtime(详见 work/out/supplement-script-format.md §B.2)。",
+      "evidence": [
+        "语料统计 wt/twt",
+        "grep 'wt' presentation.md composition.md → 0 命中",
+        "补遗文档 supplement-script-format.md:0x31ad6d8/0x31ac500"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "A-07",
+      "claim": "以下命令族在 2583 个 adv 脚本中 0 次,两文档对它们(尤其 presentation §4.4/§6.3)应标注「语料未使用」:spriteMaskSet/spriteMaskOff/charaMask、adv* 全族、flashDep 全族、wipeinEx/wipeoutEx/wipeFilterEx、fadeOff/maskOff/stretchOff/subStretchout、figureSet/figureChange/bScene/bSceneLoad/sceneLoad/pictureFrameLoad、distortionloop、charaFaceIcon、messageOn、fontType、fsmObjSetBool/Float/String、tdelay 族、insertionAnimationSet(仅 1 次 FSSideR 变体)。",
+      "evidence": [
+        "grep -rF '[<tag' scripts → 0 命中(逐条验证)",
+        "work/scratch/supp_scan.py 输出 'missing from corpus' 列表"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "A-08",
+      "claim": "特效生命周期四件套里真正被使用的是 Stop/Destroy:effectStop 773 / effectDestroy 652 vs effectStart 1 / effectPause 1;fowardEffectStop 191 / Destroy 212 vs Start 4 / Pause 4;charaEffectStop 1824 / Destroy 1005 vs Start 8 / Pause 8。presentation.md §4.1 只给字段,未给这些命令的参数形态。",
+      "evidence": [
+        "语料统计(work/coverage/census.json + supp_scan.json)",
+        "presentation.md 未出现 effectStop/effectDestroy 等字样"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "A-09",
+      "claim": "presentation.md §5 遗漏下列高频角色命令的参数形态:charaPut 11521、charaMove 8914、charaMoveEase 2559、charaMoveScale 1406、charaMoveScaleEase 433、charaMoveReturn 1255、charaRelativeLoopMove(Stop) 39/31、charaRollMove(Ex) 28/8、charaTalk 70640、charaFadein 74211 / charaFadeout 76752 参数形态、charaEffectEdgeBlur{Start,Stop,Pause,Destroy} 7/65/7/118、charaBackEffectStop/Destroy 27/10、charaSpecialEffectStop 7、charaAttack 50、charaShadow 49、charaClear 6。",
+      "evidence": [
+        "语料统计",
+        "presentation.md 词边界检索:charaMoveEase/charaMoveScale/charaRelativeLoopMove/charaPut/charaMoveReturn/charaTalk 均 0 命中"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "A-10",
+      "claim": "语料存在 [charaMove <slot> <x,y> <t> <ease>] 四参形态 13 次,但 charaMove 的 handler region(0x318505c,归属 charaMove/charaMoveFSL/FSR/FSSideL/R)只调用 ScriptCharaData.MovePosition(0x316feb8 @0x3185208),无 ease 分支 → 第 4 参被忽略(脚本笔误/遗留)。",
+      "evidence": [
+        "语料 13 行: [charaMove C 40,57 2.5 easeOutCubic] 等",
+        "python work/coverage/win.py 0x318505c 4 320 → CALL ScriptCharaData$$MovePosition",
+        "branch_map region 0x318505c names=['charaMove','charaMoveFSL','charaMoveFSR','charaMoveFSSideL','charaMoveFSSideR']"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "A-11",
+      "claim": "修正 presentation.md §1:pd[0] 是第一个参数而非 tag,分隔符(' '、',')本身占 pd 的奇数下标。",
+      "evidence": [
+        "dump.cs:169490 ScriptCommandExecute(string tag, string[] pd, ...) —— tag 与 pd 是两个参数",
+        "wait handler 0x3187514 ldr x1,[x8,#0x20](pd[0]) → 0x3187530 ComputeStringHash:pd[0]='fade'",
+        "charaScale handler 0x31815ac cmp w9,#3;b.ne(长度必须恰 3)+ 0x31815c4 pd[1]==' ' + 0x31815e8 pd[0]→ConvertCharaIndex;语料 [charaScale A 1.0] 仅 3 词",
+        "charaMove handler 0x31850e4 pd[3] 首字符与 0x2c(',')比较(0x31850f4/0x3185100)→ 逗号是独立元素;[charaMove A 0,0 0.5] 展开为 7 元素"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "A-12",
+      "claim": "修正 composition.md §2.2:ScriptPosition.GetPosition(float,float) @0x31d8e3c 不是返回 (0,0,0),而是只把 z(d2) 清零后返回,即 Vector3(x,y,0)(presentation §2.6 的表述正确)。",
+      "evidence": [
+        "python work/coverage/win.py 0x31d8e3c 6 8 → 0x31d8e3c movi d2,#0 ; 0x31d8e40 ret"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "A-13",
+      "claim": "角色槽位字母表 = A–Z 全 26 个(charaSet/charaPut/charaDepth 均为 26 种);charaSet 另有 1 次 '?';charaTalk 支持逗号多槽(A,B 48 次、I,J,K 5 次,最长 8 槽)与 on/off/depthOn/depthOff(含 Off/DepthOff/DepthOn/dpthOn 混杂大小写)。",
+      "evidence": [
+        "语料 charaSet/charaPut/charaDepth/charaTalk pos0 取值 Counter",
+        "composition.md §1.1 ConvertCharaIndexTalk 0x31b356c 只处理单词比较"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "A-14",
+      "claim": "charaLayer 第 2 参语料含非规范值 NORMAL(8)/nomal(7)/nnormal(3)/main(4);按 'sub' 精确比较(0x3182a5c)它们都走正常层分支,阅读器应按原样容错。",
+      "evidence": [
+        "语料 charaLayer pos1 取值",
+        "composition.md §4 charaLayer 行(lits=['sub',''])",
+        "work/out/_evidence/cmd_sig.json charaLayer"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "A-15",
+      "claim": "charaDepth 第 2 参语料域为 -1..50(-1=恢复、0 常见、最大 50),composition.md §3.2 未给取值范围。",
+      "evidence": [
+        "语料 charaDepth pos1 Counter(min -1, max 50, 32 种)"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "B-01",
+      "claim": "语料缓动名共 21 个(去重),出现次数:easeOutSine 1762 / easeOutCubic 667 / easeOutQuad 357 / easeOutQuint 287 / easeInOutSine 245 / easeOutQuart 214 / easeOutExpo 182 / easeOutBack 37 / easeOutCirc 32 / easeInOutQuint 26 / easeInOutCubic 20 / easeInSine 15 / easeInOutBack 14 / easeInBack 13 / easeInExpo 13 / easeInOutQuart 13 / easeInOutQuad 13 / easeOutElastic 10 / easeInQuad 9 / easeInOutExpo 2 / easeInCubic 1。",
+      "evidence": [
+        "work/scratch/ease_corpus.json(由 supp_scan.py 的 posval 对 17 个 *Ease 命令抽取 ^ease[A-Z] token)"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "B-02",
+      "claim": "二进制侧缓动名域 = iTween.EaseType 的 33 个成员(dump.cs:1102178-1102216);WarBoardManager$$GetEaseTypeScript 的 33 条字面量(0x2b22d8c-0x2b2320c)与其完全同集合(双向差集为 0)。",
+      "evidence": [
+        "dump.cs:1102178 public enum iTween.EaseType(33 成员:21 个 ease* + linear/spring/bounce*3/back*3/elastic*3/punch)",
+        "work/il2cpp_out/lit_methods.json WarBoardManager$$GetEaseTypeScript 33 条 distinct 字面量(0x2b22d8c easeOutQuad、0x2b22e64 linear、0x2b22ef4 spring、0x2b22ea0 punch ...)",
+        "集合运算:iTween.EaseType - wb = [] ; wb - iTween.EaseType = []"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "B-03",
+      "claim": "adv 命令的缓动名以字符串进入 iTween 的 'easetype' 键,由 iTween$$RetrieveArgs 用 Enum.Parse(..., ignoreCase:true) 转枚举(4 个 Enum.Parse 站点:0x482db60/0x482dce8/0x482de90/0x482e038,w2=1 @0x482db58),失败回退并警告 'iTween: Unsupported easeType supplied! Default will be used.'(0x482e3a0)。",
+      "evidence": [
+        "ScriptManager$$MainCameraMoveEase 'easetype'@0x31b9068;UIScriptChara$$MovePositionEase@0x31e121c;MoveReturnPositionEase 两段@0x31e17ac/0x31e1ac4",
+        "python work/coverage/win.py 0x482db60 → CALL System.Enum$$Parse;0x482e3a0 警告字面量"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "B-04",
+      "claim": "语料用到的 21 个缓动名是 iTween.EaseType 的真子集;差集(二进制有、语料未用)12 个:easeInBounce/easeOutBounce/easeInOutBounce/easeInCirc/easeInOutCirc/easeInElastic/easeInOutElastic/easeInQuart/easeInQuint/linear/spring/punch。",
+      "evidence": [
+        "work/scratch/ease_binary.json 的 diff 计算"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "B-05",
+      "claim": "presentation.md 与 composition.md 都没有任何具体缓动名清单(0 个缓动名出现),这是两份文档的硬缺口。",
+      "evidence": [
+        "词边界检索 'easeOutSine'/'easeOutQuad' 等在两文档 0 命中"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "B-06",
+      "claim": "PlayMaker 侧另有一套枚举 EaseFsmAction.EaseType(dump.cs:831671,29 成员,bounce/elastic/punch 为裸名),adv 的 *Ease 命令不经过它。",
+      "evidence": [
+        "dump.cs:831671 起成员表",
+        "lit_methods.json 中 easeOutQuad 等只被 WarBoardManager$$GetEaseTypeScript 与 MainMenuBarBase$$SwitchMenu 引用,无 FSM action 引用"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "C-01",
+      "claim": "wipe 名字是纯资产名(45 个去重),不进枚举:高频 rectangleStripLeftToRight 1002 / rectangleStripRightToLeft 996 / rightToLeft 794 / leftToRight 701 / openEye 600 / rectangleStripDownToUp 456 / rectangleStripUpToDown 452 / circleIn 325 / rollLeft 188 / rollRight 173,尾部到单次名(damage/rectangleLeftToRight 等)。",
+      "evidence": [
+        "语料 wipein+wipeout pos0 合并 Counter(work/scratch/supp_scan.json)",
+        "composition/presentation:ConvertWipeName 产出 Wipe/{name};字面量 'Wipe/'、'Wipe/cutVer' 存在"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "C-02",
+      "claim": "fadein/fadeout/fadeMove 的首参域 = black(14024) / white(3470) / 19 种十六进制色(56 次,含 8 位带 alpha,如 FF000080);所谓「数字首参 800000」是十六进制颜色。clear 关键字语料未使用。",
+      "evidence": [
+        "语料 pos0 Counter",
+        "StartFade 的 'clear'@0x319ee64 / 'black'@0x319ee70 / 'white'@0x319eea0;StartFadeMove 'black'@0x31bb9d8"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "C-03",
+      "claim": "maskin/maskout 域 = black|white(119/36、37/37);flashin 域 = once(1081)|loop(133),pingpong 未用;字面量证据 OnFlashRequest 0x31ba4b4('pingpong')/0x31ba4d8('once')/0x31ba4e4('loop');flashin = <once|loop> <时间1> <时间2> <色1> <色2>,色为 8 位十六进制(如 FFFFFFAF);flashout 只接 1 个时长。",
+      "evidence": [
+        "语料 pos0/pos3 Counter",
+        "work/il2cpp_out/lit_methods.json 字面量→方法索引"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "C-04",
+      "claim": "stretch 方向名 7 个字面量在 StartStretch(0x31b9c70 horizontally/0x31b9c88 horizontallyLeft/0x31b9c94 full/0x31b9ca0 verticalUp/0x31b9cac verticalDown/0x31b9cb8 vertical/0x31b9cc4 horizontallyRight)与 ScriptSubLayer.StartSubStretch(0x31dea64-0x31deab8)各一份;语料只用 full(5 次),另有 [subStretch on](1 次)不在该域内。",
+      "evidence": [
+        "lit_methods.json 字面量索引",
+        "语料 stretchin/stretchout/subStretch 统计"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "C-05",
+      "claim": "cameraFilter 域 = gray(181)/normal(169)/darkred(3)/aberration(1),名字在二进制中无字面量 → shader 名运行时拼接(Custom/Sprite-ScriptActionRender @0x31a0628 + GetStringWithFirstLetterChangedToUpperCase @0x31a0578),与 presentation §4.2 一致。",
+      "evidence": [
+        "语料 pos0 Counter",
+        "lit_methods: 'Custom/Sprite-ScriptActionRender' 仅 GetSpriteScriptActionRenderShader@0x31a0628;'gray'/'darkred'/'aberration' 在剧情代码中无字面量"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "C-06",
+      "claim": "charaFilter 域 = silhouette(820)|normal(70) + 颜色 hex;名字在渲染类里比较(UIImageRender$$SetCharacterRender 'silhouette'@0x30fb06c 一带,UIEquipGraphRender@0x30f1f80),对应 shader 字面量 Custom/Sprite-ScriptActionFigureSilhouette@0x30fb018 / ...FigureNormal@0x30fb048。",
+      "evidence": [
+        "语料 pos1/pos2 Counter",
+        "lit_methods.json 字面量引用点"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "C-07",
+      "claim": "subCameraFilter 域(1948 次):第2参 maskEdge 1290 / normal 336 / through 248 / mask 28 / maskEdge&gray 9 / gray 9 / mask&gray 3 / inversion 2;第3参 cut359_mask01..42(32 种,编号不连续)或 #MASK(14 次);第4参 3/4/5/30..;第5参 RGB(A);第6参 0(693)/1(115)。关键字比较点:'mask'@0x3188490/0x318ca38、'maskEdge'@0x318ca54;'through' 字面量只在 RenderCameraInit@0x319f9d0(直通/无滤镜)。",
+      "evidence": [
+        "语料 pos0..pos5 Counter",
+        "work/coverage/win.py 0x318ca38 / 0x318ca54 / 0x319f9d0;lit_methods 索引"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "C-08",
+      "claim": "blur/blurOff 第1参域 = lens(285/260)|motion(235/194)|glass(1/1);glass 不是命令(独立 0 次)。blur 有 4 参与 8 参两种形态(274/231)。",
+      "evidence": [
+        "语料形状与 pos0 Counter",
+        "lit_methods: 'lens'@0x31779f4、'motion'@0x3178894、'glass'@0x3178534(均在 ScriptCommandExecute);'glass'@0x31a9d5c 另见 AnalysText"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "D-01",
+      "claim": "scene 形状 = int(8855)/int float(1062)/int int(488)/int float str(28) → 「scene <backId> [<fadeTime> [<SCENE_MODE>]]」;SCENE_MODE 直证 dump.cs:167278-167283(DEFAULT=0, FULLSCREEN_IMAGE_DEVICE_WIDTH=1),SetbSceneParam dump.cs:169418。",
+      "evidence": [
+        "语料形状统计(含 [scene 55600 0.4 FULLSCREEN_IMAGE_DEVICE_WIDTH])",
+        "dump.cs:167278 enum ScriptManager.SCENE_MODE"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "D-02",
+      "claim": "imageSet 第3参只有 1(2006)/2(15),第4参 528 次恒为 1 → composition.md §4「位置/缩放由参数控制」需修正为「模式/标志位」,位置来自随后的 charaPut/charaMove。",
+      "evidence": [
+        "语料 imageSet pos2: 1=2006, 2=15, 0,0=4;pos3: 1=528",
+        "composition.md §4 imageSet 行"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "D-03",
+      "claim": "master* 家族是性别双资源:masterSet <slot> <maleId> <femaleId> 1(masterSet 50/masterScene 50/masterImageSet 18/masterBranch 137),例 [masterBranch _Male _Female]、[masterScene 246802 246806 0.5]。",
+      "evidence": [
+        "语料 pos0/pos1 取值(全部成对:1098348300/1098348310 等)"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "D-04",
+      "claim": "charaPut(11521)在两文档均未描述;两种形态:[charaPut <slot> 1200,1200](缩放百分比 2366+次)与 [charaPut <slot> 1](站位 index 3884 次)。",
+      "evidence": [
+        "语料形状 str pos 7499 / str int 4018 与取值 Top",
+        "词边界检索:presentation.md 无 charaPut"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "D-05",
+      "claim": "子层 '#' 键域 = #A 8026 / #B 4107 / #C 1902 / #D 760 / #MASK 44;解析点 IsExistTargetSubLayerGroup 0x31c6e54(len)→0x31c6e5c(pd[0])→0x31c6e6c('#' 字面量 slot 0x5579000+0xae0);默认组名 '#A' 在 ScriptSubLayerManager$$GetSubLayer 0x31df7d4(0x31df8b0 IsNullOrEmpty → 0x31df858/0x31df8c0 载入 '#A',slot 0x55cb320)。",
+      "evidence": [
+        "python work/coverage/win.py 0x31c6e54 0 20",
+        "python work/coverage/win.py 0x31df858 0 20",
+        "语料 hashkey Counter"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "D-06",
+      "claim": "IsExistTargetSubLayerGroup 内按 tag 分派层 key 位置,含 44 条命令名字面量(0x31c6a14 subCameraMoveEase … 0x31c6e34 subRenderMoveFSSideL);#MASK 不是二进制字面量,只是普通 # 前缀键;ScriptSubLayer.SetMaskLayer(0x31ddc60)写字段 0xb0(SubLayerMask)。",
+      "evidence": [
+        "lit_methods.json ScriptManager$$IsExistTargetSubLayerGroup 44 条字面量",
+        "python work/coverage/win.py 0x31ddc60 → str x1,[x0,#0xb0]! ; b 0x2230448"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "D-07",
+      "claim": "pictureFrame 常量直证:dump.cs:167799/167800(PICTURE_FRAME_Z_POS_NORMAL/TOP)、167820/167821(PICTURE_FRAME_SPRITE_WIDTH_16_9/21_9);语料 pictureFrame 只 3 种名字(cut063_cinema 425、cut049_frame01 2、cut197_savastacinema 1),pictureFrameTop 只用 cut063_cinema。",
+      "evidence": [
+        "dump.cs 行号",
+        "语料 pos0 Counter"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": "D-08",
+      "claim": "坐标分布与 composition §2 的分辨率/站位结论自洽:charaMove 98.6% |x|≤700、97.2% |y|≤800(范围 -1500..2000 / -2500..2500);cameraMove 恒在 x∈[-350,300]、y∈[-200,200];极端值(±2000/±2500)是屏外起终点。",
+      "evidence": [
+        "work/scratch/supp_scan.json coord 直方图(COORD 集合包含 charaMove/charaMoveEase/cameraMove 等 13 个 tag)"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "D-09",
+      "claim": "语料存在 8 行以制表符分隔参数的脚本(如 [scene \\t260400]),分词应把 \\t 视作空格;否则该行参数会变成 str 形状被误判。",
+      "evidence": [
+        "语料 scene 形状统计中出现 'str' 6 次与 'str float' 2 次,样例 [scene \\t260400]"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "D-10",
+      "claim": "composition §1.2 表格中 bScene/bSceneLoad/sceneLoad/figureSet/figureChange/masterImageChange/pictureFrameLoad 在语料 0 次;presentation §6 的 fsmObjSetBool/Float/String 与 §6.3 的 adv* 全族同样 0 次。",
+      "evidence": [
+        "grep -rF 逐条验证 0 命中",
+        "supp_scan.py missing 列表"
+      ],
+      "confidence": "corpus"
+    },
+    {
+      "id": "E-01",
+      "claim": "未决(INFERRED):subCameraOn 的 n=1..4 与 #A..#D 一一对应;imageSet 第3参 1/2 位义;subStretch 'on' 语义;charaTalk 多槽展开点;subCameraFilter 第4/6参位义。",
+      "evidence": [
+        "见 work/out/supplement-presentation-composition.md §E"
+      ],
+      "confidence": "inferred"
+    }
+  ]
+}

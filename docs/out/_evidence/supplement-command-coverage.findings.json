@@ -1,0 +1,435 @@
+{
+ "meta": {
+  "title": "supplement-command-coverage findings",
+  "binary": "libil2cpp.so (FGO 2.139.3, arm64-v8a)",
+  "dispatcher": "ScriptManager$$ScriptCommandExecute @0x3177290..0x319402c",
+  "hash": "FNV-1a 32-bit over UTF-16 code units (offset=2166136261, prime=16777619)",
+  "corpus": "2583 个剧本 .txt(33 章),全部按 [tag args] 整行括号解析",
+  "conventions": "VA=libil2cpp.so 虚拟地址;confidence: high(指令级双证据)/ medium(单点证据或样本偏少)/ low(样本极少)/ INFERRED(推断,未证实)",
+  "md": "F:/Project/fgo/work/out/supplement-command-coverage.md",
+  "scripts": [
+   "work/scratch/unnamed.py", "work/scratch/allcmps.py", "work/scratch/walktree.py",
+   "work/scratch/litsites.py", "work/scratch/leafwin.py", "work/scratch/dfinal.py",
+   "work/scratch/crosscheck2.py", "work/scratch/devidence.py"
+  ]
+ },
+ "A_hash_constants": {
+  "summary": "383 个常量实为 384 个:366 = tag 树叶子(= 命令表),13 = wait 关键字叶子,5 = 判定树边界(fnv(命令名)+1)。17 个'无名常量'= 13 个 wait 关键字 + 4 个边界,没有一个是独立命令。",
+  "claims": [
+   {
+    "id": "A0-two-trees",
+    "claim": "ScriptCommandExecute 内有两个 ComputeStringHash 调用:tag 树(哈希 tag)与 waitType 树(哈希 this.waitType)。tag 树结构化遍历得 366 个叶子键,与 commands.json 的 366 个名字一一对应;waitType 树有 72 个关键字(= _evidence/wait_keys.json)。",
+    "evidence": [
+     {"va": "0x3178ffc", "insn": "bl #0x2cdf448 ComputeStringHash", "note": "x0 = x25 = tag(经 <>c__DisplayClass808_0.tag @0x3178fc4)"},
+     {"va": "0x3179000", "insn": "mov w8,#0x40dd (tag 树 root 第一条)", "note": "结构化遍历:366 叶子 / 366 键,全部命名字面量"},
+     {"va": "0x3187524", "insn": "ldr x22,[x19,#0x3d8]", "note": "0x3d8 = ScriptManager.waitType (dump.cs)"},
+     {"va": "0x3187530", "insn": "bl #0x2cdf448 ComputeStringHash", "note": "x0 = waitType"},
+     {"va": "0x3187544", "insn": "mov w8,#0x4b6b (waitType 树 root 第一条)", "note": "72 键"},
+     {"va": "0x3187514", "insn": "ldr x1,[x8,#0x20]", "note": "wait 命令体读 pd[0]"},
+     {"va": "0x318751c", "insn": "str x1,[x19,#0x3d8]", "note": "waitType = pd[0]"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "A1-thirteen-wait-keywords",
+    "claim": "13 个'无名常量'是 waitType 树的叶子(wait 的 pd[0] 关键字),每个都有 op_Equality 字面量校验:charaCut / charaCutStart / charaFade / communicatioChara / effectmessage / effectmessageStart / fastPlayDraw / frame / fsmObjFinished / masterverticalImageSet / rtime / skippableTime / time。",
+    "evidence": [
+     {"hash": "0x8714dc7c", "name": "charaCut", "va": "0x318b74c b.eq -> 0x3193080", "literal_load": "0x3193084 ldr x8,[x8,#0x9e8] ; &'charaCut'", "eq": "0x3193094 bl op_Equality"},
+     {"hash": "0x3365dc30", "name": "charaCutStart", "va": "0x318f200 b.ne", "literal_load": "0x318f20c ; &'charaCutStart'", "eq": "共享校验尾 b 0x3193088"},
+     {"hash": "0x1322c812", "name": "charaFade", "va": "0x31920c4 b.eq -> 0x3193710", "literal_load": "0x3193714 ; &'charaFade'", "eq": "-"},
+     {"hash": "0x0ca51292", "name": "communicatioChara", "va": "0x31907a8 b.ne", "literal_load": "0x31907bc ; &'communicatioChara'", "eq": "0x31907c4 bl op_Equality"},
+     {"hash": "0xf8e02873", "name": "effectmessage", "va": "0x31920a8 b.ne", "literal_load": "0x31920b4 ; &'effectmessage' -> b 0x319350c", "eq": "0x3193518 bl op_Equality"},
+     {"hash": "0x46720de1", "name": "effectmessageStart", "va": "0x319222c b.eq -> 0x3193504", "literal_load": "0x3193508 ; &'effectmessageStart'", "eq": "0x3193518(共享)"},
+     {"hash": "0x83be074b", "name": "fastPlayDraw", "va": "0x31923d0 b.eq -> 0x31935ac", "literal_load": "0x31935b8 ; &'fastPlayDraw'", "eq": "0x31935c0"},
+     {"hash": "0xd20a71a6", "name": "frame", "va": "0x31921e0 b.eq -> 0x31937dc", "literal_load": "0x31937e0 ; &'frame'", "eq": "0x31937f0"},
+     {"hash": "0x4e57d930", "name": "fsmObjFinished", "va": "0x318d948 b.ne", "literal_load": "0x318d954 ; &'fsmObjFinished'", "eq": "-"},
+     {"hash": "0xc7630faa", "name": "masterverticalImageSet", "va": "0x318d9a4 b.ne", "literal_load": "0x318d9b0 ; &'masterverticalImageSet'", "eq": "-"},
+     {"hash": "0x58666514", "name": "rtime", "va": "0x3191fbc b.ne", "literal_load": "0x3191fc8 ; &'rtime'", "eq": "-"},
+     {"hash": "0x828e5c3b", "name": "skippableTime", "va": "0x3190924 b.hi + 0x319092c b.eq -> 0x3193184", "literal_load": "0x3193188 ; &'skippableTime'", "eq": "-"},
+     {"hash": "0x5d3c9be4", "name": "time", "va": "0x31921a4 b.eq -> 0x3193728", "literal_load": "0x319372c ; &'time'", "eq": "0x319373c bl op_Equality"}
+    ],
+    "cross_check": "13 个名字同时出现在 work/out/_evidence/wait_keys.json 的 72 关键字表;语料侧 [wait charaCut/fsmObjFinished/fastPlayDraw/insertionAnimation*] 等用法存在",
+    "confidence": "high"
+   },
+   {
+    "id": "A2-five-bst-bounds",
+    "claim": "另有 5 个常量只是判定树边界:值 = fnv(已收录命令名) + 1(cmp;b.hs 形式),不是命令:0x22da84bb=fnv('charaMoveEaseFSR')+1,0x4a6c6c30=fnv('backEffect')+1,0xe6ad339f=fnv('masterVerticalImageChange')+1,0xae20810e=fnv('fowardEffect')+1,0x8643a3f7=fnv('fsmObjSet')+1。",
+    "evidence": [
+     {"hash": "0x22da84bb", "va": "0x3179020-0x317902c", "insn": "mov w8,#0x84bb / movk w8,#0x22da,lsl#16 / cmp w0,w8 / b.hs 0x3179314", "second_site": "0x318754c-0x3187558 b.hs 0x318f1c8(waitType 树)"},
+     {"hash": "0x4a6c6c30", "va": "0x3179164-0x3179168", "insn": "movk w8,#0x4a6c,lsl#16 / cmp w0,w8 / b.hs 0x317aa24", "second_site": "0x3187544-0x3187548"},
+     {"hash": "0xe6ad339f", "va": "0x31794e8-0x31794ec", "insn": "movk w8,#0xe6ad,lsl#16 / b.hs 0x317c64c", "second_site": "0x318d960-0x318d964"},
+     {"hash": "0xae20810e", "va": "0x317baac-0x317bab0", "insn": "movk w8,#0xae20,lsl#16 / b.hs 0x317e39c", "second_site": "0x31908e4-0x31908e8"},
+     {"hash": "0x8643a3f7", "va": "0x31790dc-0x31790e8", "insn": "mov w26,#0xa3f7 / movk w26,#0x8643,lsl#16 / cmp w0,w26 / b.hs 0x317a9d8", "note": "不在 il2cpp_out/hash_constants.json(383)中 —— 旧脚本 4 指令窗口漏读,本次全量复扫 595 站点补齐;真实总数 384"}
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ "B_effectmessage": {
+  "summary": "effectmessage 不在 tag 树的 366 键内。它有三处归属:wait 关键字(命令体设 waitName)、AnalysText 行分类特判(资产校验)、ProcessScript 特判(等待消息窗特效播完)。",
+  "claims": [
+   {
+    "id": "B1-wait-keyword-body",
+    "claim": "wait 关键字形态 [wait effectmessage <名>] 的命令体:pd.Length>=3 且 pd[1]==' ' 时 waitName(0x3e8)=ConvertTalkEffectName(pd[2]),isRequestEffect(0x3c0)=false,返回 Continue;否则 waitName=null。",
+    "evidence": [
+     {"va": "0x3193520", "insn": "ldr x8,[x20]", "note": "命令体入口(x20 = pd 数组槽)"},
+     {"va": "0x319352c", "insn": "cmp w9,#3", "note": "pd.Length>=3"},
+     {"va": "0x3193540", "insn": "ldr x0,[x8,#0x28] ; pd[1]", "note": "与 ' ' 比较(0x3193544-0x319354c)"},
+     {"va": "0x3193564", "insn": "ldr x1,[x8,#0x30] ; pd[2]", "note": "名"},
+     {"va": "0x3193570", "insn": "bl #0x31b37c8 ScriptManager$$ConvertTalkEffectName"},
+     {"va": "0x3193578", "insn": "str x0,[x19,#0x3e8]", "note": "waitName = 结果"},
+     {"va": "0x3193598", "insn": "strb wzr,[x19,#0x3c0]", "note": "isRequestEffect=false"},
+     {"va": "0x319359c", "insn": "b #0x3193f04", "note": "返回 Continue(1)"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "B2-analys-text-tag",
+    "claim": "AnalysText 的行分类哈希树把 'effectmessage' 当 tag 处理:取 pd[0] 经 ConvertTalkEffectName → CommonEffectManager.GetAssetName 做特效资产存在性校验。",
+    "evidence": [
+     {"va": "0x31aeca8", "insn": "movz/movk -> 0xf8e02873 ; cmp w0,w8 ; b.ne 0x31ae83c", "note": "AnalysText 树叶子"},
+     {"va": "0x31aecb8", "insn": "ldr x8,[x8,#0x4f0] ; &'effectmessage'"},
+     {"va": "0x31af31c", "insn": "bl op_Equality", "note": "共享校验尾 0x31af310"},
+     {"va": "0x31af330", "insn": "ldr x1,[x20,#0x20] ; pd[0]"},
+     {"va": "0x31af74c", "insn": "bl ScriptManager$$ConvertTalkEffectName"},
+     {"va": "0x31afd04", "insn": "bl CommonEffectManager$$GetAssetName"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "B3-process-script-tag",
+    "claim": "ProcessScript 执行循环对 tag=='effectmessage' 特判:用 waitName(0x3e8) 调 ScriptMessageCommonManager.MessageEffectIsBusy,不忙继续下一行、忙则等待。",
+    "evidence": [
+     {"va": "0x31c02f4", "insn": "ldr x8,[x8,#0x4f0] ; &'effectmessage'"},
+     {"va": "0x31c02fc", "insn": "bl op_Equality", "note": "x0 = x25(tag)"},
+     {"va": "0x31c0300", "insn": "tbz w0,#0,0x31c2848"},
+     {"va": "0x31c030c", "insn": "ldr x1,[x19,#0x3e8] ; waitName"},
+     {"va": "0x31c0314", "insn": "bl #0x31d4f58 ScriptMessageCommonManager$$MessageEffectIsBusy"},
+     {"va": "0x31c0318", "insn": "tbz w0,#0,0x31bd0d4"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "B4-effectmessage-params",
+    "claim": "顶层 tag 形态 [effectmessage <名> <x>,<y> <时长> <整数>] 的参数:pd[0]=特效名(high),pd[2]/pd[4]=x,y,pd[6]=时长(秒),pd[8]=未知整数(13–48 浮动)。x/y/时长/整数的消费点在消息窗侧(AnalysText 只做资产校验),未逐条回读 → medium/low。",
+    "evidence": [
+     {"va": "0x31af330", "insn": "pd[0] -> ConvertTalkEffectName (0x31af74c)", "note": "name 路径"},
+     {"corpus": "12 次全部形如 [effectmessage bit_talk_hknf_text 440,179 1.5 48] / [effectmessage bit_talk_pencilanim_text 440,177 6.2 20] / [effectmessage bit_talk_change_text01 440,177 4.7 19],每次后随 [effectmessageStop <同名>]"},
+     {"va": "0x31814d8", "insn": "ldr x1,[x8,#0x20] ; pd[0] -> 0x31814e4 ConvertTalkEffectName", "note": "对照:effectmessageStop 自己的 handler 用 pd[0] 当名"}
+    ],
+    "confidence": "pd[0] high;其余 medium;pd[8] low INFERRED"
+   },
+   {
+    "id": "B5-effectmessage-not-in-table-why",
+    "claim": "commands.json 缺 effectmessage/effectmessageStart 的原因:表只收 tag 树的 366 个叶子,而这两个是 waitType 树关键字 + 由 AnalysText/ProcessScript 特判的'消息窗特效'行。",
+    "evidence": [
+     {"va": "0x3179000", "insn": "tag 树结构化遍历 = 366 键(等于 commands.json 的名字集合,effectmessage 不在其中)"},
+     {"va": "0x31920a8", "insn": "effectmessage 的唯一叶子站点位于 waitType 树"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "B6-neighbours",
+    "claim": "顺带核对:effectmessageStop(min=1,pd[0]→ConvertTalkEffectName)与语料 12 次 [effectmessageStop <名>] 一致;charaCutin 表里 params=[] 但实际读 pd[0..6](slot/方向/时长/第 4 值);insertionAnimationStart/End 表里 params=[],语料各 1 次带 2/1 个值;specialEffect 表 min=9 与实际首检 #1 矛盾。",
+    "evidence": [
+     {"va": "0x31814d0", "insn": "cmp w9,#1 (effectmessageStop)", "note": "min=1"},
+     {"va": "0x318561c", "insn": "pd[1] vs ' ' (charaCutin)", "note": "0x31855fc 起"},
+     {"va": "0x3185678", "insn": "ConvertCharaIndex (pd[0]) / 0x31856bc ConvertNameString (pd[2]) / 0x31856e0+0x3185708 Single::Parse (pd[4],pd[6])"},
+     {"va": "0x3185608", "insn": "cmp w9,#5 ; b.lt #0x3191820", "note": "charaCutin min=5"},
+     {"va": "0x3187610", "insn": "cmp w9,#1 ; 0x3187614 b.lt #0x3193e80", "note": "specialEffect 首检=1,后续 0x318764c #3 / 0x318767c #5"}
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ "C_k_wt_twt": {
+  "summary": "k = 等消息推进(0 参,state=WAIT + waitType='k');q = 取消输入等待;wt/twt = AnalysText 行改写宏(wait time / wait rtime)。",
+  "claims": [
+   {
+    "id": "C1-k",
+    "claim": "[k] 无参合法(带参报 'parameter be unnecessary'):设 state=WAIT(4),waitType='k',返回 Normal,语义=等玩家点击推进消息。",
+    "evidence": [
+     {"va": "0x317fa28", "insn": "ldr x8,[x20] (handler)", "note": "commands.json handler=0x317fa28"},
+     {"va": "0x317fa30", "insn": "ldr x8,[x8,#0x18]", "note": "pd.Length"},
+     {"va": "0x317fa34", "insn": "cbnz x8,#0x318663c", "note": "有参走错误路径"},
+     {"va": "0x3186640", "insn": "ldr x8,[x8,#0x68] ; &'parameter be unnecessary'"},
+     {"va": "0x317fa40", "insn": "str w8,#4 -> [x19,#0x288]", "note": "State.WAIT = 4 (dump.cs enum)"},
+     {"va": "0x317fa14", "insn": "ldr x23,[x23,#0xf98] ; &'k'", "note": "x23 指向字面量槽"},
+     {"va": "0x318f014", "insn": "str x1,[x19,#0x3d8]", "note": "waitType = 'k'"},
+     {"va": "0x3193e94", "insn": "bl 0x2230448 (wbarrier) -> b 0x3193f00", "note": "返回 Normal(0)"},
+     {"corpus": "184,799 次 [k] 全部紧跟消息行后,例:0300110110.txt:80-81 台词 -> [k] -> 下一条台词"},
+     {"va": "0x31ab55c", "insn": "AnalysText 树 k 叶子(&'k')", "note": "旁证"},
+     {"va": "0x31c24fc", "insn": "ProcessScript 树 k 叶子(&'k')", "note": "旁证"}
+    ],
+    "confidence": "high(min=0 由 cbnz 反证;语义由语料上下文)"
+   },
+   {
+    "id": "C2-q",
+    "claim": "[q] 无参 → isCancelInput(0x375)=true 并返回 Continue;带参同报 'parameter be unnecessary'。",
+    "evidence": [
+     {"va": "0x318662c", "insn": "handler(q)"},
+     {"va": "0x3186638", "insn": "cbz x8,#0x318b290", "note": "无参分支"},
+     {"va": "0x318b298", "insn": "strb w8,#1 -> [x19,#0x375]", "note": "isCancelInput=true(dump.cs 字段 0x375)"},
+     {"va": "0x318663c", "insn": "&'parameter be unnecessary'", "note": "有参分支"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "C3-wt-rewrite",
+    "claim": "[wt <t>] 由 AnalysText 改写成 [wait time <t>](字面量 'wait' + 'time '(带尾空格));秒数最终写入 waitCount(0x3e4) = Single::Parse(pd[2]),0 秒直接跳过。",
+    "evidence": [
+     {"va": "0x31aca24", "insn": "movz/movk -> 0x4b4794e6 (=fnv('wt')) ; b.eq 0x31ad6cc"},
+     {"va": "0x31ad6e0", "insn": "bl op_Equality (x1='wt')"},
+     {"va": "0x31ad6f8", "insn": "ldr x8,[x8,#0x648] ; &'wait'"},
+     {"va": "0x31ad724", "insn": "ldr x8,[x8,#0x8] ; &'time '", "note": "带尾空格 = 分隔符"},
+     {"va": "0x31ad704", "insn": "bl #0x201abc4 (String.Concat 系)"},
+     {"va": "0x3193728", "insn": "time 关键字校验块(&'time')"},
+     {"va": "0x3193750", "insn": "cmp w9,#3 ; b.lt #0x3193e80", "note": "缺 pd[2] = 参数错误"},
+     {"va": "0x3193788", "insn": "ldr x0,[x8,#0x30] ; pd[2]"},
+     {"va": "0x3193790", "insn": "bl System.Single$$Parse"},
+     {"va": "0x3193798", "insn": "str s0,[x19,#0x3e4]", "note": "waitCount"},
+     {"va": "0x3193794", "insn": "fcmp s0,#0.0 ; 0x319379c b.eq #0x3193854", "note": "0 秒跳过"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "C4-twt-rewrite",
+    "claim": "[twt <t>] 改写成 [wait rtime <t>](字面量 'wait' + 'rtime ');语料 0 次。rtime/frame 与 time 共享校验尾与命令体(pd[2] → Single::Parse @0x3193844),解析层等价,差别在 ProcessScript 的 waitType 分支。",
+    "evidence": [
+     {"va": "0x31ac4f4", "insn": "movz/movk -> 0xb32476d8 (=fnv('twt')) ; b.ne"},
+     {"va": "0x31ac518", "insn": "bl op_Equality (x1='twt')"},
+     {"va": "0x31ac530", "insn": "&'wait'"},
+     {"va": "0x31ac55c", "insn": "ldr x8,[x8,#0x9b0] ; &'rtime '"},
+     {"va": "0x3191fc8", "insn": "rtime 叶子字面量 ; b 0x31937e4(与 frame 共享)"},
+     {"va": "0x3193844", "insn": "bl Single::Parse", "note": "rtime/frame 同形"},
+     {"va": "0x31bce60", "insn": "ProcessScript 引用 'rtime' 字面量", "note": "倒计时差异处 INFERRED"}
+    ],
+    "confidence": "high(改写)/ INFERRED(倒计时差异)"
+   },
+   {
+    "id": "C5-wt-corpus-shapes",
+    "claim": "语料形态核对:[wt 1.0] 114,016 次(float)、[wt 2] 231 次(int 文本,Single::Parse 同样接受)、[wt 1.] 1 次(被 usage 归为 str,实为 float 写法)、[wt 0,3] 3 次 = 改写后 wait time 0,3 → 只取 pd[2]='0' ⇒ 等 0 秒立即继续,',3' 被忽略,疑似作者把 0.3 写成 0,3。",
+    "evidence": [
+     {"corpus": "work/coverage/usage.json: wt -> float 114016 / int 231 / pos 3 / str 1"},
+     {"va": "0x3193788", "insn": "pd[2] -> Single::Parse", "note": "只读 pd[2]"},
+     {"va": "0x3193794", "insn": "fcmp s0,#0.0 -> b.eq 0x3193854", "note": "0 秒跳过"}
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ "D_param_crosscheck": {
+  "summary": "前 60 tag 对拍:39 条一致;6 处文档漏参;3 处文档与语料/自身矛盾。方法:直接解析 2583 个剧本行,按值+分隔符算 pd 元素数;不一致处回读 handler 的 cmp w9,#N 边界与 pd[N] 读取点。",
+  "consistent_examples": [
+   {"tag": "charaFace", "table_min": 3, "corpus": "3(全部 114682)"},
+   {"tag": "charaFadeout", "table_min": 3, "corpus": "3(全部 76752)"},
+   {"tag": "charaFadein/FSR/FSL", "table_min": 3, "corpus": "3 / 5 / 7;pd[4]=位置下标或 X、pd[6]=Y 与 params-visual.md 一致", "evidence_va": "0x3189790 pd[3] 守卫;0x31897bc get_Chars(pd[5]);0x31897f0 pd[4] -> Int32::Parse 0x31897f8"},
+   {"tag": "charaSet/sceneSet/imageSet", "table_min": 3, "corpus": "5 / 7"},
+   {"tag": "charaShake", "table_min": 9, "corpus": "9(全部 2661)"},
+   {"tag": "shake", "table_min": 7, "corpus": "7(全部 2402)"},
+   {"tag": "charaMoveEase", "table_min": 9, "corpus": "9(全部 2559)"},
+   {"tag": "seVolume", "table_min": 5, "corpus": "5(全部 10187);守卫 0x3181ddc cmp w9,#5 + 0x3181de0 b.ne #0x3193e80(=必须 5 元素),与 params 表的 optional_pd=[2,4] 表述不一致(建议改为'2 个值必须')"},
+   {"tag": "wipein/wipeout", "table_min": 5, "corpus": "5(3095/3118);第 3 值 int/float 皆可(0x317ea34 Single::Parse)"},
+   {"tag": "cueSe", "table_min": 7, "corpus": "7 为主(590),另有 3/5"},
+   {"tag": "charaFadeTime/charaFaceFade/charaMoveScale/cueSeVolume", "table_min": 5, "corpus": "5"},
+   {"tag": "bgmStop/subRenderDepth/charaFilter/charaDepth/charaScale/label/charaTalk/wait", "table_min": "1–3", "corpus": "表内区间"}
+  ],
+  "missing_params": [
+   {
+    "id": "D-m1",
+    "tag": "cameraMove",
+    "missing_pd": [6],
+    "claim": "第 4 个值(缩放)不在表内;可写成空格形式或第二个逗号形式 x,y,z。",
+    "corpus": "2505/2507 次:[cameraMove 0.1 0,-30 1.2] / [cameraMove 0.1 0,30,1.4]",
+    "evidence": [
+     {"va": "0x3186964", "insn": "cmp w9,#7 ; b.lt #0x318f964", "note": "元素 >=7 才读第 4 值"},
+     {"va": "0x3186988", "insn": "bl System.String$$get_Chars (pd[5]) ; 0x3186990 cmp w8,#0x20 ; b.ne 0x318f964", "note": "pd[5] 首字符判空格,否则走逗号分支"},
+     {"va": "0x318f95c", "insn": "bl System.Single$$Parse", "note": "第 4 值按 float 解析(缩放)"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "D-m2",
+    "tag": "bgm",
+    "missing_pd": [4],
+    "claim": "第 3 个值(第二个 float)不在表内,按 float 解析。",
+    "corpus": "3,260 次:[bgm BGM_MAP_57 0.1 0.9]",
+    "evidence": [
+     {"va": "0x3182610", "insn": "cmp w9,#4"},
+     {"va": "0x3182618", "insn": "ldr x0,[x8,#0x40] ; pd[4]"},
+     {"va": "0x3182620", "insn": "bl System.Single$$Parse"}
+    ],
+    "confidence": "high(读取点)/ INFERRED(参数名,疑为淡入时间)"
+   },
+   {
+    "id": "D-m3",
+    "tag": "effect",
+    "missing_pd": [2, 4],
+    "claim": "语料 [effect <名> <x>,<y>] 的坐标值未在 handler 内被直接读取;handler 只读 pd[0](ConvertTalkEffectName)并按名调用 GetEffectParameter,坐标消费点待定位。",
+    "corpus": "486 次:[effect bit_talk_explosion_triple02 -450,100]",
+    "evidence": [
+     {"va": "0x3180b84", "insn": "ldr x1,[x8,#0x20] ; pd[0]"},
+     {"va": "0x3180b90", "insn": "bl ScriptManager$$ConvertTalkEffectName"},
+     {"va": "0x3180ba4", "insn": "bl ScriptManager$$GetEffectParameter"},
+     {"va": "0x3180c8c", "insn": "pd[1] vs ' ' / 0x3180cc0 pd[3] vs ' '", "note": "仅分隔符守卫"},
+     {"va": "0x3180c74", "insn": "cmp w9,#5 ; b.lt #0x318b514"}
+    ],
+    "confidence": "medium"
+   },
+   {
+    "id": "D-m4",
+    "tag": "subCameraFilter",
+    "missing_pd": [2, 4, 6, 8, 10],
+    "claim": "表只到 pd[0](+optional 2/4),语料 6 token / 11 元素形态。",
+    "corpus": "818 次:[subCameraFilter #A maskEdge cut359_mask05 3 255,255,255,255];604 次 [subCameraFilter #A through]",
+    "evidence": [
+     {"va": "0x3183268", "insn": "pd[0] 组 op_Equality"},
+     {"va": "0x318330c", "insn": "bl ScriptManager$$ConvertCharaIndex"},
+     {"va": "0x31833b8", "insn": "bl System.Int32$$Parse"},
+     {"va": "0x31832b0/0x31832d8/0x3183400/0x3183428", "insn": "多个偶数下标 pd 读取与 op_Equality"}
+    ],
+    "confidence": "medium(下标未逐一闭环)"
+   },
+   {
+    "id": "D-m5",
+    "tag": "subRenderFadein/subRenderFadeout",
+    "missing_pd": [2, 4, 6],
+    "claim": "表只有 pd[0](或 optional 2/4),语料 7 元素形态(位置/二维坐标)。",
+    "corpus": "1863 / 2346 次:[subRenderFadein #A 1.0 -200,0] / [subRenderFadeout #A 0.4]",
+    "evidence": [
+     {"va": "0x3185fac", "insn": "cmp w9,w8 ; b.gt #0x3191820"},
+     {"va": "0x3185fdc/0x3186008", "insn": "cmp w9,w10 ; b.hs #0x3193cd4"},
+     {"va": "0x3186098", "insn": "cmp w24,w9 ; b.hs #0x3193cd4"}
+    ],
+    "confidence": "medium"
+   },
+   {
+    "id": "D-m6",
+    "tag": "charaEffect/charaEffectStop/charaEffectDestroy/charaSpecialEffect/charaMove",
+    "missing_pd": [4, 6, 8],
+    "claim": "坐标 Y / 追加值等下标在语料出现(9/11 元素形态),表的覆盖不全。",
+    "corpus": "charaEffect 157 次 11 元素、14 次 9 元素;charaSpecialEffect 121 次 9 元素、49 次 11 元素;charaMove 13 次 9 元素",
+    "evidence": [
+     {"va": "0x3187a64", "insn": "cmp w9,#3 ; 0x3187b68 #7 ; 0x3187b90 #5 ; 0x3187bc0 #9; b.ge 0x3192558", "note": "charaEffect 链式分级守卫"},
+     {"va": "0x3185064/0x31850d8", "insn": "cmp w9,#5 / #7", "note": "charaMove 分级守卫"}
+    ],
+    "confidence": "medium"
+   },
+   {
+    "id": "D-m7",
+    "tag": "charaPut/seStop/cueSeStop/flashin/fowardEffect",
+    "missing_pd": [6, 4, 4, 2, 4],
+    "claim": "少量样本的下标(pd[6]/pd[4])与 flashin 的 pd[2]/pd[4] 未闭环;fowardEffect 表内出现异常下标 27(疑旧脚本偏移错误,建议弃用该行)。",
+    "corpus": "charaPut 2 次 7 元素;seStop 3 次 5 元素;cueSeStop 3 次 5 元素;flashin 1214 次 9 元素 [flashin loop 0.7 0.7 FF000080 FF000000]",
+    "evidence": [
+     {"va": "0x3186efc", "insn": "cmp w9,#5 ; b.lt #0x318bbcc (charaPut)"},
+     {"va": "0x3180a88", "insn": "cmp w9,#1 ; b.lt #0x3191820 (seStop)"}
+    ],
+    "confidence": "low(样本少/未回读)"
+   }
+  ],
+  "contradictions": [
+   {
+    "id": "D-c1",
+    "object": "specialEffect.min_token_count = 9",
+    "truth": "处理器首检是 1(#1 @0x3187610 + b.lt 0x3193e80),9 只是全参形态;按表实现会拒绝语料全部 8 次 [specialEffect cutting]",
+    "evidence": [
+     {"va": "0x3187610", "insn": "cmp w9,#1"},
+     {"va": "0x3187614", "insn": "b.lt #0x3193e80"},
+     {"va": "0x318764c", "insn": "cmp w9,#3 ; b.lt #0x3188dd0"},
+     {"va": "0x318767c", "insn": "cmp w9,#5 ; b.lt #0x318f364"},
+     {"corpus": "8/8 次 [specialEffect cutting]"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "D-c2",
+    "object": "se.min_token_count = 5",
+    "truth": "0x318076c cmp w9,#5 ; b.ne 0x318df84 是'是否为 5 值形态'的分支,≠5 走 3 值形态;语料 23,183 次 [se <名>](1 元素)合法 ⇒ 建议记 min=1",
+    "evidence": [
+     {"va": "0x318076c", "insn": "cmp w9,#5"},
+     {"va": "0x3180770", "insn": "b.ne #0x318df84"},
+     {"corpus": "se: 1 元素 23183 次 / 3 元素 489 次 / 5 元素 171 次"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "D-c3",
+    "object": "commands.json 的若干 pd 类型与 command_params.json/语料矛盾",
+    "items": [
+     {"tag": "charaLayer", "commands_json": "pd[0]=int", "truth": "string 槽位([charaLayer T sub #A]);证据 0x3182a0c ConvertCharaIndex / 0x3182a5c op_Equality 'sub' / 0x3182ab8 RegistCharaData", "confidence": "high"},
+     {"tag": "charaEffect", "commands_json": "pd[0]=int", "truth": "string 槽位([charaEffect B bit_talk_noise])", "confidence": "medium"},
+     {"tag": "charaFadeTime", "commands_json": "pd[0]=int", "truth": "string 槽位", "confidence": "medium"},
+     {"tag": "seStop", "commands_json": "pd[0]=float", "truth": "pd[0]=SE 名 string([seStop ad59]);pd[2] 才是 float", "confidence": "medium"}
+    ]
+   },
+   {
+    "id": "D-c4",
+    "object": "charaTalk pd[0] 的取值域",
+    "truth": "除槽位字母外还有 on / off / depthOff —— ConvertCharaIndexTalk 内部比较 'on'(0x31b35ac)/'off'(0x31b3594)/'depthOff'(0x31b35b8);SetTalkName 0x31b7474/0x31b748c 同。语料:on 2913 / off 3549 / depthOff 2238",
+    "evidence": [
+     {"va": "0x31b35ac", "insn": "'on' 比较(ConvertCharaIndexTalk)"},
+     {"va": "0x31b35b8", "insn": "'depthOff' 比较"},
+     {"va": "0x3184a08", "insn": "bl ScriptManager$$IsWaitTalk + 0x3184a20 str x1,[x19,#0x3d8](waitType)"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "D-c5",
+    "object": "scene 第 3 参语义",
+    "truth": "不是'透明度 0-1',而是 ScriptManager.SCENE_MODE 枚举名(dump.cs: FULLSCREEN_IMAGE_DEVICE_WIDTH = 1);解析在 SetbSceneParam,用 System.Enum.Parse ⇒ 名字不必以字面量出现(解释了语料 token 查不到字符串)",
+    "evidence": [
+     {"va": "0x31c7d6c", "insn": "SetbSceneParam 入口"},
+     {"va": "0x31c7dc4", "insn": "bl System.String$$Split"},
+     {"va": "0x31c7e04", "insn": "cmp w8,#3 (3 段形态)/ 0x31c7e0c cmp w8,#2"},
+     {"va": "0x31c7e38", "insn": "bl System.Single$$Parse"},
+     {"va": "0x31c7ef8", "insn": "bl System.Enum$$Parse"},
+     {"dump_cs": "line 167283: public const ScriptManager.SCENE_MODE FULLSCREEN_IMAGE_DEVICE_WIDTH = 1;"},
+     {"corpus": "31 次 [scene <id> <时间> FULLSCREEN_IMAGE_DEVICE_WIDTH]"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "D-c6",
+    "object": "wt / effectmessage 不在 366 表",
+    "truth": "wt 语料 114,251 次(第 2 高频)、effectmessage 12 次,均需在'非分派命令'章节补条目",
+    "evidence": [
+     {"va": "0x31ad6f8/0x31ad724", "insn": "wt 改写点"},
+     {"va": "0x31920a8", "insn": "effectmessage 的 waitType 叶子"}
+    ],
+    "confidence": "high"
+   },
+   {
+    "id": "D-c7",
+    "object": "[wt 0,3] 3 次",
+    "truth": "可解析,语义为 0 秒(立即继续),疑似 0.3 笔误;不是解析错误",
+    "evidence": [
+     {"va": "0x3193788", "insn": "只取 pd[2] 作秒数"},
+     {"va": "0x3193794", "insn": "0 秒跳过"}
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ "E_zero_occurrence": {
+  "summary": "366 条命令中 118 条在 2583 个剧本里 0 次出现;语料可观察括号 tag 共 273 个(= 248 表内 + 25 表外,其中 23 个是消息内联标记、2 个是 effectmessage/wt)。标注:语料未观察到 ≠ 不存在。",
+  "counts": {"commands_total": 366, "zero": 118, "observed_bracket_tags": 273, "observed_in_table": 248},
+  "non_command_bracket_tags": [
+   "消息内联标记(23):[line N](3777+)、[align center|right]、[image <名>]、[i <名>]、[#base:ruby](105+)、[&base:ruby](63+)、[#RRGGBB](7 种色值)",
+   "改写宏/特判(2):wt(114251)、effectmessage(12)"
+  ],
+  "groups": {
+   "战棋/战线 war*(10)": ["warBoardTalkScreen", "warCharaFadein", "warEffectOff", "warEffectPiece", "warEffectPos", "warEffectSquare", "warEventScript", "warMoveCameraPiece", "warMoveCameraPos", "warMoveCameraSquare"],
+   "御主立绘/场景(7)": ["bScene", "masterChange", "masterHorizontalImageChange", "masterHorizontalImageSet", "masterImageChange", "masterVerticalImageChange", "masterVerticalImageSet"],
+   "信息窗/插入动画/FSM/CRI 音频(11)": ["cueVoice", "cueVoiceStop", "cueVoiceVolume", "effectmessageDestroy", "fsmObjSetBool", "fsmObjSetFloat", "fsmObjSetString", "insertionAnimationSet", "insertionAnimationSetFSL", "insertionAnimationSetFSR", "insertionAnimationSetFSSideL"],
+   "角色演出族(22)": ["charaBackEffectPause", "charaBackEffectStart", "charaCutStop", "charaCutinPause", "charaCutinStart", "charaFaceIcon", "charaFadeSpeed", "charaFadeTimeLoop", "charaFadeTimeLoopStop", "charaMask", "charaMoveReturnEaseFSSideL", "charaMoveReturnEaseFSSideR", "charaPutFSLNotNotch", "charaPutFSRNotNotch", "charaRelativeLoopMoveEase", "charaRelativePut", "charaReturn", "charaRollAxisLoopStop", "charaSpecialEffectPause", "charaSpecialEffectStart", "figureChange", "figureSet"],
+   "流程/消息/UI(18)": ["advPlayAnimator", "advPrepare", "advRelease", "advSet", "flagRandom", "jump", "menu", "messageOn", "messageStart", "notification", "page", "questMessageOverwrite", "revivalBranch", "rewardSwitch", "screen", "selectionCentering", "switchCase", "switchCaseEnd"],
+   "音频/特效/流程判定/其他(50)": ["advActorHide", "advActorShow", "advSoundSet", "backEffectPause", "backEffectStart", "betweenHeight", "branchHaveSvtEquip", "branchNotHaveSvtEquip", "branchNotMaterial", "branchNotRouteSelectCount", "delay", "delayEnd", "delayStop", "delayStopAll", "distortionloop", "equipChange", "faceTalkScreen", "fadeOff", "flashOffDep", "flashinDep", "flashoutDep", "font", "fontType", "horizontalImageChange", "jingleStop", "keepSubBgmOff", "keepSubBgmOn", "l", "maskOff", "scrollStop", "specialEffectPuase", "specialEffectStart", "specialEffectStop", "spriteMaskOff", "spriteMaskSet", "stretchOff", "subBgm", "subBgmStop", "subStretchin", "subStretchout", "tVoiceUser", "talkEnd", "talkName", "talkStart", "tdelay", "verticalImageChange", "voiceVolume", "wipeFilterEx", "wipeinEx", "wipeoutEx"]
+  },
+  "evidence": [
+   {"method": "commands.json 的 366 个名字 × work/coverage/usage.json 的出现计数(2583 文件全量)= 零出现集合"},
+   {"spot_check": "grep -c '\\[advActorHide' / '\\[advActorShow' / '\\[branchHaveSvtEquip' scripts/*/*.txt 全部 0 命中"}
+  ],
+  "confidence": "high(计数)/ 结论按'语料未观察到'表述"
+ }
+}

@@ -1,192 +1,60 @@
 import { describe, expect, it } from "vitest";
-import { parseScriptDocument } from "../lib/scriptSyntax";
-import { compileScriptDocument, renderTokensPlain } from "./compiler";
+import { compileFgoScript } from "../lib/scriptParser";
+import { SCRIPT_PARSER_VERSION } from "../lib/scriptParserVersion";
+import { parseMarkup, renderTokensPlain } from "./markup";
 
-function compile(source: string, scriptId = "test") {
-  const document = parseScriptDocument(source, { region: "JP" });
-  return {
-    document,
-    program: compileScriptDocument(document, {
-      scriptId,
-      masterName: "御主",
-      masterGender: "male",
-    }),
-  };
-}
-
-const tags = (program: ReturnType<typeof compile>["program"]) =>
-  program.instructions.map((instruction) => instruction.tag);
-
-describe("compileScriptDocument", () => {
-  it("lowers the S-P8 prologue walkthrough into commands, talkName and message", () => {
-    const { program } = compile(`＄01-00-00-00-1-0
-
-[soundStopAll]
-[bgm BGM_EVENT_2 0.1]
-[scene 10110]
-[charaSet A 98001000 0 マシュ]
-[charaSet B 98003000 2 Dr.ロマン]
-[fadein black 1]
-[wait fade]
-
-＠[51d4ff]アナウンス[-]
-[51d4ff][line 3]塩基配列　　ヒトゲノムと確認[-][r][51d4ff][line 3]霊器属性　　善性・中立と確認[-]
-[k]
-`);
-
-    expect(tags(program)).toEqual([
-      "soundstopall",
-      "bgm",
-      "scene",
-      "charaset",
-      "charaset",
-      "fadein",
-      "wait",
-      "talkname",
-      "message",
-    ]);
-
-    const charaSet = program.instructions[3];
-    expect(charaSet.params).toEqual(["A", "98001000", "0", "マシュ"]);
-
-    const talkName = program.instructions[7];
-    expect(talkName.speaker?.name).toBe("アナウンス");
-    expect(talkName.isMessage).toBe(true);
-    expect(talkName.messageKey).toBeTruthy();
-
-    const message = program.instructions[8];
-    expect(message.isMessage).toBe(true);
-    expect(message.messageKey).toBe(talkName.messageKey);
-    // Inline color/line/newline markup survives as a rich token stream.
-    expect(message.tokens?.some((token) => token.type === "color")).toBe(true);
-    expect(message.tokens?.some((token) => token.type === "line")).toBe(true);
-    expect(message.tokens?.some((token) => token.type === "newline")).toBe(true);
-
-    expect(program.messageCatalog).toHaveLength(1);
-    expect(program.sceneIds).toContain("10110");
-    expect(program.characterIds).toContain("98001000");
-    expect(program.bgmNames).toContain("BGM_EVENT_2");
+const options = { scriptId: "test", masterName: "藤丸[x]", masterGender: "male" as const, variables: { 5: "123" } };
+const compile = (source: string) => compileFgoScript(source, "test", options);
+describe("evidence-based compiler", () => {
+  it("resolves entry and internal labels without relocating choice branches", () => {
+    const program = compile('＄entry\n[branch "later"]\n＠旁白\n跳过\n[k]\n＄"later"\n＠玛修\n到达\n[k]');
+    expect(program.instructions[0].tag).toBe("label");
+    expect(program.instructions[1].targetIndex).toBe(program.labels.get("later"));
+    expect(program.messageCatalog[0].key).toContain(`@v${SCRIPT_PARSER_VERSION}:m:`);
   });
-
-  it("keeps source line numbers on instructions", () => {
-    const { program } = compile(`[bgm BGM_EVENT_2 0.1]
-
-[scene 10110]
-`);
-    expect(program.instructions.map((instruction) => instruction.line)).toEqual([1, 3]);
+  it("lowers timing macros using native values including the authored 0,3 typo", () => {
+    const program = compile("[wt 0,3]\n[twt 0.5]\n[wait frame 3]");
+    expect(program.instructions.map((item) => item.params)).toEqual([["time", "0"], ["rtime", "0.5"], ["frame", "3"]]);
   });
-
-  it("resolves forward label jumps", () => {
-    const { program } = compile(`[jump lblEnd]
-[bgm BGM_EVENT_2 0.1]
-[label lblEnd]
-[k]
-＠テスト
-本文[k]
-`);
-    const jump = program.instructions[0];
-    expect(jump.tag).toBe("jump");
-    expect(jump.targetIndex).toBe(program.instructions.findIndex((entry) => entry.tag === "label"));
+  it("keeps inline actions at glyph offsets instead of hoisting them", () => {
+    const program = compile("＠玛修\n前[charaFace A 3][wt 0.2]后\n[k]");
+    expect(program.instructions.map((item) => item.tag)).toEqual(["$speaker", "$message", "k"]);
+    expect(program.instructions[1].tokens).toMatchObject([{ type: "text", value: "前" }, { type: "command", tag: "charaFace" }, { type: "wait" }, { type: "text", value: "后" }]);
   });
-
-  it("degrades unresolved jumps to linear playback with a diagnostic", () => {
-    const { program } = compile("[jump missing]\n[scene 100]");
-    expect(program.instructions[0].targetIndex).toBe(1);
-    expect(program.diagnostics.some((entry) => entry.code === "unresolved_label")).toBe(true);
+  it("retains choice ordinals, hidden flags, resources and a shared exit", () => {
+    const program = compile("？1,1000,saveMaterial：第一；asked\n[scene 10110]\n？2：第二\n[scene 95202]\n？！\n[end]");
+    const choice = program.instructions[0];
+    expect(choice.options).toMatchObject([{ id: 1, label: "第一", hiddenFlag: "asked", routeInfo: { route: 1000, saveMaterial: true } }, { id: 2, label: "第二" }]);
+    expect(program.instructions[2]).toMatchObject({ tag: "$choiceExit", targetIndex: choice.endIndex });
+    expect(program.sceneIds).toEqual(["10110", "95202"]);
   });
-
-  it("lowers a choice block into inline bodies with a shared exit", () => {
-    const { program } = compile(`＠選択
-どれにする？
-？1:一つ目
-＠一つ目
-一番[k]
-？2:二つ目
-＠二つ目
-二番[k]
-？！
-＠後
-共通[k]
-`);
-    const choiceIndex = program.instructions.findIndex((entry) => entry.tag === "choice");
-    const choice = program.instructions[choiceIndex];
-    expect(choice.options).toHaveLength(2);
-
-    const firstBody = choice.options![0].bodyIndex;
-    expect(program.instructions[firstBody].tag).toBe("talkname");
-    expect(program.instructions[firstBody + 1].tag).toBe("message");
-    const firstExit = program.instructions[firstBody + 2];
-    expect(firstExit.tag).toBe("jump");
-    // The shared exit is where main flow continues: the ＠後 talkName below.
-    expect(firstExit.targetIndex).toBe(program.instructions.length - 2);
-
-    const secondBody = choice.options![1].bodyIndex;
-    expect(secondBody).toBeGreaterThan(firstBody);
-    expect(program.instructions[secondBody].tag).toBe("talkname");
-    expect(program.choiceCatalog).toHaveLength(1);
-    expect(program.choiceCatalog[0].options.map((option) => option.label)).toEqual([
-      "一つ目",
-      "二つ目",
-    ]);
+  it("selects gender-dependent resources and keeps image assets separate from backgrounds", () => {
+    const program = compileFgoScript("[masterSet L 111 222 1]\n[masterScene 10110 95202]\n[imageSet D back10000 2]\n[sceneSet Q 142200 1]", "test", { masterGender: "female" });
+    expect(program.characterIds).toEqual(["222"]);
+    expect(program.sceneIds).toEqual(["95202", "142200"]);
+    expect(program.assets).toContainEqual({ kind: "image", name: "back10000", path: "Image/back10000" });
   });
-
-  it("lowers ifClear/else/endIf into conditional branches", () => {
-    const { program } = compile(`[ifClear 60152100]
-[bgm BGM_EVENT_1 1]
-[else]
-[bgm BGM_EVENT_2 1]
-[endIf]
-[scene 100]
-`);
-    const branch = program.instructions.find((entry) => entry.tag === "branch");
-    expect(branch?.branch).toEqual({ kind: "questNotClear", questId: "60152100" });
-    // Branch target = first instruction after [else] → the second bgm.
-    const bgmIndexes = program.instructions
-      .map((entry, index) => (entry.tag === "bgm" ? index : -1))
-      .filter((index) => index >= 0);
-    expect(branch?.targetIndex).toBe(bgmIndexes[1]);
-    // The else-jump lands after [endIf] → the scene command.
-    const elseJump = program.instructions[bgmIndexes[0] + 1];
-    expect(elseJump.tag).toBe("jump");
-    expect(elseJump.targetIndex).toBe(program.instructions.length);
+  it("diagnoses incomplete structures and missing jump targets", () => {
+    const program = compile("[branch missing]\n[ifClear flag]\n？1：选择");
+    expect(program.diagnostics.map((item) => item.code)).toEqual(expect.arrayContaining(["unresolved_label", "unclosed_if", "unclosed_choice"]));
   });
-
-  it("captures flags with normalized boolean values", () => {
-    const { program } = compile("[flag smn 1]\n[flag kda 0]");
-    expect(program.instructions[0].params).toEqual(["smn", "true"]);
-    expect(program.instructions[1].params).toEqual(["kda", "false"]);
+});
+describe("supplement-markup", () => {
+  it("implements ruby, emphasis and recursive gender selection", () => {
+    const tokens = parseMarkup("[&女の[#躯:からだ]:男性][r][#强调]", options);
+    expect(renderTokensPlain(tokens)).toBe("女の躯\n强调");
+    expect(tokens).toContainEqual({ type: "ruby", base: "躯", ruby: "からだ" });
+    expect(tokens).toContainEqual({ type: "emphasis", value: "强调" });
   });
-
-  it("resolves master name, gender branches and ruby text in the catalog", () => {
-    const { program } = compile("＠マシュ\n[%1]です[#業:カルマ][&兄:姉][r]二行目[k]", "id1");
-    const record = program.messageCatalog[0];
-    expect(record.speaker).toBe("マシュ");
-    expect(record.text).toBe("御主です業兄\n二行目");
-    const message = program.instructions[1];
-    expect(message.tokens).toEqual([
-      { type: "text", value: "御主です" },
-      { type: "ruby", base: "業", ruby: "カルマ" },
-      { type: "text", value: "兄" },
-      { type: "newline" },
-      { type: "text", value: "二行目" },
-    ]);
+  it("resolves replacement variables with sanitization and color reset", () => {
+    expect(renderTokensPlain(parseMarkup("[%1]/[%5]/[%99]", options))).toBe("藤丸［x］/123/");
   });
-
-  it("hoists inline commands inside dialogue bodies before the message", () => {
-    const { program } = compile("＠ロマン\n前[charaFace A 3]後[k]");
-    expect(tags(program)).toEqual(["charaface", "talkname", "message"]);
+  it("preserves unknown tags, literal punctuation, quotes and unmatched brackets", () => {
+    const source = '[line3]・■［］"[#literal]"[unfinished';
+    expect(renderTokensPlain(parseMarkup(source, options))).toBe(source);
   });
-
-  it("renders plain text through the token stream helper", () => {
-    expect(renderTokensPlain([
-      { type: "text", value: "あ" },
-      { type: "color", color: "#51d4ff" },
-      { type: "text", value: "い" },
-      { type: "color", color: null },
-      { type: "line", length: 3 },
-      { type: "newline" },
-      { type: "ruby", base: "漢", ruby: "かん" },
-      { type: "text", value: "じ" },
-    ])).toBe("あい———\n漢じ");
+  it("preserves rich colors, font sizes, image alternate text and speed resets", () => {
+    const tokens = parseMarkup("[51d4ff][f large]甲[-][s 0][image npc_language_5:文字][speed -]", options);
+    expect(tokens).toEqual(expect.arrayContaining([{ type: "color", color: "#51d4ff" }, { type: "font", size: 48 }, { type: "speed", charsPerSecond: 0 }, { type: "image", name: "npc_language_5", alt: "文字", icon: false }, { type: "speed", charsPerSecond: null }]));
   });
 });

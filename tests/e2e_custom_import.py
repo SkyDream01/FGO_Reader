@@ -39,6 +39,7 @@ def make_package() -> bytes:
 [scene 1]
 [charaSet A 900001 0 本地角色]
 [charaPut A 1]
+[charaFadein A 0 1]
 ＠A：本地角色
 本地资源已经载入。
 [k]

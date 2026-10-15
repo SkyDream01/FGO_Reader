@@ -1,0 +1,478 @@
+{
+ "lines": [
+  {
+   "index": 0,
+   "raw": "# SYNTHETIC SAMPLE - only uses tag names recovered from the binary. NOT a real game script.",
+   "kind": "comment",
+   "tag": null,
+   "params": []
+  },
+  {
+   "index": 1,
+   "raw": "label start",
+   "kind": "command",
+   "tag": "label",
+   "params": [
+    "start"
+   ],
+   "pd": [
+    "start"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "start",
+     "omitted": false,
+     "meaning": "标签名；特殊值 'skip'（=跳转时跳过标记）",
+     "type": "string",
+     "confidence": "high",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "raw": "bScene field_001",
+   "kind": "command",
+   "tag": "bScene",
+   "params": [
+    "field_001"
+   ],
+   "pd": [
+    "field_001"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "field_001",
+     "omitted": false,
+     "meaning": "背景资源名(ConvertNameString→B 场景加载)",
+     "type": "string",
+     "confidence": "high",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "raw": "bgm BGM_001 0",
+   "kind": "command",
+   "tag": "bgm",
+   "params": [
+    "BGM_001",
+    "0"
+   ],
+   "pd": [
+    "BGM_001",
+    " ",
+    "0"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "BGM_001",
+     "omitted": false,
+     "meaning": "BGM 名（字符串名，可被 ConvertNameString 改写成资源名）",
+     "type": "string",
+     "confidence": "high",
+     "documented": true
+    },
+    {
+     "pd": 2,
+     "value": "0",
+     "omitted": false,
+     "meaning": "音量(volume)；省略时按 0（默认音量）处理",
+     "type": "float",
+     "confidence": "medium",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "raw": "charaSet 100100 0 0 0",
+   "kind": "command",
+   "tag": "charaSet",
+   "params": [
+    "100100",
+    "0",
+    "0",
+    "0"
+   ],
+   "pd": [
+    "100100",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "100100",
+     "omitted": false,
+     "meaning": "角色槽位(A-Z/数字)",
+     "type": "string",
+     "confidence": "high",
+     "documented": true
+    },
+    {
+     "pd": 2,
+     "value": "0",
+     "omitted": false,
+     "meaning": "立绘/图片资源名(ConvertNameString)",
+     "type": "string",
+     "confidence": "high",
+     "documented": true
+    },
+    {
+     "pd": 4,
+     "value": "0",
+     "omitted": false,
+     "meaning": "位置(pd[4]=下标 或 X 坐标);其后可选参数原样保留在 ScriptCharaData.afterParam(GetAfterParam)",
+     "type": "int",
+     "confidence": "high",
+     "documented": true
+    },
+    {
+     "pd": 6,
+     "value": "0",
+     "omitted": false,
+     "meaning": "Y 坐标(仅 pd[5]==',' 时)",
+     "type": "int",
+     "confidence": "high",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 5,
+   "raw": "talkName マシュ・キリエライト",
+   "kind": "structural",
+   "tag": "talkName",
+   "params": [
+    "マシュ・キリエライト"
+   ],
+   "pd": [
+    "マシュ・キリエライト"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "マシュ・キリエライト",
+     "omitted": false,
+     "meaning": "说话人显示文本（含 [image]/[#ruby]/称号等标记，由 GetTalkName 解析）",
+     "type": "string",
+     "confidence": "medium",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 6,
+   "raw": "talkStart",
+   "kind": "command",
+   "tag": "talkStart",
+   "params": [],
+   "pd": [],
+   "param_info": []
+  },
+  {
+   "index": 7,
+   "raw": "message2 0 0 0 0 0 0 0 1 1 1 先輩、[#ff0000]赤い[-]です。[r]改行もできます。",
+   "kind": "message",
+   "tag": "message2",
+   "params": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1",
+    "1",
+    "先輩、[#ff0000]赤い[-]です。[r]改行もできます。"
+   ],
+   "pd": [
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "1",
+    " ",
+    "1",
+    " ",
+    "1",
+    " ",
+    "先輩、[#ff0000]赤い[-]です。[r]改行もできます。"
+   ],
+   "body": "先輩、[#ff0000]赤い[-]です。[r]改行もできます。",
+   "markup": [
+    {
+     "type": "text",
+     "value": "先輩、"
+    },
+    {
+     "type": "color",
+     "value": "ff0000"
+    },
+    {
+     "type": "text",
+     "value": "赤い"
+    },
+    {
+     "type": "tag",
+     "name": "-",
+     "arg": "",
+     "meaning": "end of colour span"
+    },
+    {
+     "type": "text",
+     "value": "です。"
+    },
+    {
+     "type": "tag",
+     "name": "r",
+     "arg": "",
+     "meaning": "line break"
+    },
+    {
+     "type": "text",
+     "value": "改行もできます。"
+    }
+   ]
+  },
+  {
+   "index": 8,
+   "raw": "message2 0 0 0 0 0 0 0 1 1 1 「[#ふりがな:漢字]」テスト",
+   "kind": "message",
+   "tag": "message2",
+   "params": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1",
+    "1",
+    "「[#ふりがな:漢字]」テスト"
+   ],
+   "pd": [
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "1",
+    " ",
+    "1",
+    " ",
+    "1",
+    " ",
+    "「[#ふりがな:漢字]」テスト"
+   ],
+   "body": "「[#ふりがな:漢字]」テスト",
+   "markup": [
+    {
+     "type": "text",
+     "value": "「"
+    },
+    {
+     "type": "ruby",
+     "ruby": "ふりがな",
+     "text": "漢字"
+    },
+    {
+     "type": "text",
+     "value": "」テスト"
+    }
+   ]
+  },
+  {
+   "index": 9,
+   "raw": "talkEnd",
+   "kind": "command",
+   "tag": "talkEnd",
+   "params": [],
+   "pd": [],
+   "param_info": []
+  },
+  {
+   "index": 10,
+   "raw": "charaFadeout 0 0.5",
+   "kind": "command",
+   "tag": "charaFadeout",
+   "params": [
+    "0",
+    "0.5"
+   ],
+   "pd": [
+    "0",
+    " ",
+    "0.5"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "0",
+     "omitted": false,
+     "meaning": "角色槽位(A-Z/数字)",
+     "type": "string",
+     "confidence": "high",
+     "documented": true
+    },
+    {
+     "pd": 2,
+     "value": "0.5",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    }
+   ]
+  },
+  {
+   "index": 11,
+   "raw": "wait 0.5",
+   "kind": "command",
+   "tag": "wait",
+   "params": [
+    "0.5"
+   ],
+   "pd": [
+    "0.5"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "0.5",
+     "omitted": false,
+     "meaning": "等待类型 waitType（写入 ScriptManager.waitType）",
+     "type": "string",
+     "confidence": "high",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 12,
+   "raw": "selectBranch 0 選択肢A 選択肢B",
+   "kind": "structural",
+   "tag": "selectBranch",
+   "params": [
+    "0",
+    "選択肢A",
+    "選択肢B"
+   ],
+   "pd": [
+    "0",
+    " ",
+    "選択肢A",
+    " ",
+    "選択肢B"
+   ]
+  },
+  {
+   "index": 13,
+   "raw": "branch 1",
+   "kind": "command",
+   "tag": "branch",
+   "params": [
+    "1"
+   ],
+   "pd": [
+    "1"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "1",
+     "omitted": false,
+     "meaning": "flag 名",
+     "type": "string",
+     "confidence": "high",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 14,
+   "raw": "label routeA",
+   "kind": "command",
+   "tag": "label",
+   "params": [
+    "routeA"
+   ],
+   "pd": [
+    "routeA"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "routeA",
+     "omitted": false,
+     "meaning": "标签名；特殊值 'skip'（=跳转时跳过标记）",
+     "type": "string",
+     "confidence": "high",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 15,
+   "raw": "clear",
+   "kind": "command",
+   "tag": "clear",
+   "params": [],
+   "pd": [],
+   "param_info": []
+  },
+  {
+   "index": 16,
+   "raw": "end",
+   "kind": "command",
+   "tag": "end",
+   "params": [],
+   "pd": [],
+   "param_info": []
+  },
+  {
+   "index": 17,
+   "raw": "",
+   "kind": "empty",
+   "tag": null,
+   "params": []
+  }
+ ],
+ "labels": {
+  "start": 1,
+  "routeA": 14
+ }
+}

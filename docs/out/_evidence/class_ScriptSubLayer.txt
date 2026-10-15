@@ -1,0 +1,241 @@
+==============================================================================
+// ScriptSubLayer  (dump.cs line 171209)
+public class ScriptSubLayer : MonoBehaviour // TypeDefIndex: 4908
+{
+	// Fields
+	private const string SUB_LAYER_NAME = "ScriptRenderSub";
+	[CompilerGenerated]
+	private string <layerKey>k__BackingField; // 0x20
+	[CompilerGenerated]
+	private bool <isRendering>k__BackingField; // 0x28
+	[CompilerGenerated]
+	private Color <backgroundColor>k__BackingField; // 0x2C
+	[CompilerGenerated]
+	private RenderTexture <renderTexture>k__BackingField; // 0x40
+	[CompilerGenerated]
+	private ScriptActionRenderEffectController <effectController>k__BackingField; // 0x48
+	[CompilerGenerated]
+	private Material <edgeMaskSubMaterial>k__BackingField; // 0x50
+	[CompilerGenerated]
+	private float[] <edgeMaskSubMaterialParams>k__BackingField; // 0x58
+	[CompilerGenerated]
+	private bool <IsExecuteStretch>k__BackingField; // 0x60
+	[SerializeField]
+	private GameObject renderRoot; // 0x68
+	[SerializeField]
+	private ExUIMeshRenderer meshRender; // 0x70
+	[SerializeField]
+	private GameObject shakeRoot; // 0x78
+	[SerializeField]
+	private UIWidget subStretchBase; // 0x80
+	[Header("Camera")]
+	[SerializeField]
+	private GameObject scaleCamera; // 0x88
+	[SerializeField]
+	private GameObject positionCamera; // 0x90
+	[SerializeField]
+	private GameObject rollCamera1; // 0x98
+	[SerializeField]
+	private GameObject rollCamera2; // 0xA0
+	private List<ScriptCharaData> listCharaData; // 0xA8
+	private ScriptSubLayer subLayerMask; // 0xB0
+	private ScriptSubLayer.ShakeParam shakeParam; // 0xB8
+
+	// Properties
+	public string layerKey { get; set; }
+	public bool isRendering { get; set; }
+	public Color backgroundColor { get; set; }
+	public RenderTexture renderTexture { get; set; }
+	public ScriptActionRenderEffectController effectController { get; set; }
+	public Material edgeMaskSubMaterial { get; set; }
+	public float[] edgeMaskSubMaterialParams { get; set; }
+	public GameObject SubStretchBase { get; }
+	public bool IsExecuteStretch { get; set; }
+	public GameObject root { get; }
+	public ExUIMeshRenderer mesh { get; }
+	public GameObject cameraScale { get; }
+	public GameObject cameraPosition { get; }
+	public GameObject cameraRoll1 { get; }
+	public GameObject cameraRoll2 { get; }
+	public ScriptSubLayer SubLayerMask { get; }
+	public IReadOnlyList<ScriptCharaData> ListCharaData { get; }
+
+	// Methods
+
+	[CompilerGenerated]
+	// RVA: 0x31DD828 Offset: 0x31D9828 VA: 0x31DD828
+	public string get_layerKey() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD830 Offset: 0x31D9830 VA: 0x31DD830
+	private void set_layerKey(string value) { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD838 Offset: 0x31D9838 VA: 0x31DD838
+	public bool get_isRendering() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD840 Offset: 0x31D9840 VA: 0x31DD840
+	private void set_isRendering(bool value) { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD848 Offset: 0x31D9848 VA: 0x31DD848
+	public Color get_backgroundColor() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD854 Offset: 0x31D9854 VA: 0x31DD854
+	private void set_backgroundColor(Color value) { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD860 Offset: 0x31D9860 VA: 0x31DD860
+	public RenderTexture get_renderTexture() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD868 Offset: 0x31D9868 VA: 0x31DD868
+	private void set_renderTexture(RenderTexture value) { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD870 Offset: 0x31D9870 VA: 0x31DD870
+	public ScriptActionRenderEffectController get_effectController() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD878 Offset: 0x31D9878 VA: 0x31DD878
+	private void set_effectController(ScriptActionRenderEffectController value) { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD880 Offset: 0x31D9880 VA: 0x31DD880
+	public Material get_edgeMaskSubMaterial() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD888 Offset: 0x31D9888 VA: 0x31DD888
+	private void set_edgeMaskSubMaterial(Material value) { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD890 Offset: 0x31D9890 VA: 0x31DD890
+	public float[] get_edgeMaskSubMaterialParams() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD898 Offset: 0x31D9898 VA: 0x31DD898
+	private void set_edgeMaskSubMaterialParams(float[] value) { }
+
+	// RVA: 0x31DD8A0 Offset: 0x31D98A0 VA: 0x31DD8A0
+	public GameObject get_SubStretchBase() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD8B8 Offset: 0x31D98B8 VA: 0x31DD8B8
+	public bool get_IsExecuteStretch() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31DD8C0 Offset: 0x31D98C0 VA: 0x31DD8C0
+	private void set_IsExecuteStretch(bool value) { }
+
+	// RVA: 0x31DD8C8 Offset: 0x31D98C8 VA: 0x31DD8C8
+	public GameObject get_root() { }
+
+	// RVA: 0x31DD8D0 Offset: 0x31D98D0 VA: 0x31DD8D0
+	public ExUIMeshRenderer get_mesh() { }
+
+	// RVA: 0x31DD8D8 Offset: 0x31D98D8 VA: 0x31DD8D8
+	public GameObject get_cameraScale() { }
+
+	// RVA: 0x31DD8E0 Offset: 0x31D98E0 VA: 0x31DD8E0
+	public GameObject get_cameraPosition() { }
+
+	// RVA: 0x31DD8E8 Offset: 0x31D98E8 VA: 0x31DD8E8
+	public GameObject get_cameraRoll1() { }
+
+	// RVA: 0x31DD8F0 Offset: 0x31D98F0 VA: 0x31DD8F0
+	public GameObject get_cameraRoll2() { }
+
+	// RVA: 0x31DD8F8 Offset: 0x31D98F8 VA: 0x31DD8F8
+	public ScriptSubLayer get_SubLayerMask() { }
+
+	// RVA: 0x31DD900 Offset: 0x31D9900 VA: 0x31DD900
+	public IReadOnlyList<ScriptCharaData> get_ListCharaData() { }
+
+	// RVA: 0x31DD908 Offset: 0x31D9908 VA: 0x31DD908
+	private void Awake() { }
+
+	// RVA: 0x31DDA6C Offset: 0x31D9A6C VA: 0x31DDA6C
+	private void OnDestroy() { }
+
+	// RVA: 0x31DDA70 Offset: 0x31D9A70 VA: 0x31DDA70
+	private void Update() { }
+
+	// RVA: 0x31DDA9C Offset: 0x31D9A9C VA: 0x31DDA9C
+	public void StartSubLayer() { }
+
+	// RVA: 0x31DDBD0 Offset: 0x31D9BD0 VA: 0x31DDBD0
+	public void SetLayerKey(string key) { }
+
+	// RVA: 0x31DDBD8 Offset: 0x31D9BD8 VA: 0x31DDBD8
+	public void SetRendering(bool rendering) { }
+
+	// RVA: 0x31DDC60 Offset: 0x31D9C60 VA: 0x31DDC60
+	public void SetMaskLayer(ScriptSubLayer maskLayer) { }
+
+	// RVA: 0x31DDC68 Offset: 0x31D9C68 VA: 0x31DDC68
+	public void RemoveCharaData(ScriptCharaData charaData) { }
+
+	// RVA: 0x31DDCC0 Offset: 0x31D9CC0 VA: 0x31DDCC0
+	public void RegistCharaData(ScriptCharaData charaData) { }
+
+	// RVA: 0x31DDD9C Offset: 0x31D9D9C VA: 0x31DDD9C
+	public void RemoveInvalidCharaData() { }
+
+	// RVA: 0x31DE084 Offset: 0x31DA084 VA: 0x31DE084
+	public void SetLayerActive() { }
+
+	// RVA: 0x31DE260 Offset: 0x31DA260 VA: 0x31DE260
+	public void SwapLayer() { }
+
+	// RVA: 0x31DE268 Offset: 0x31DA268 VA: 0x31DE268
+	public void MoveAlphaCharaData(float duration, float alpha, bool isHideSkip = False) { }
+
+	// RVA: 0x31DE420 Offset: 0x31DA420 VA: 0x31DE420
+	public void SetFilterCharaData(string filterName) { }
+
+	// RVA: 0x31DE5B8 Offset: 0x31DA5B8 VA: 0x31DE5B8
+	public void SetDepth(float depth) { }
+
+	// RVA: 0x31DE628 Offset: 0x31DA628 VA: 0x31DE628
+	public void SetBackgroundColor(Color color) { }
+
+	// RVA: 0x31DE634 Offset: 0x31DA634 VA: 0x31DE634
+	public void SetEdgeMaskSubMaterial(Material mat, float[] paramsFloat) { }
+
+	// RVA: 0x31DE730 Offset: 0x31DA730 VA: 0x31DE730
+	public void Shake(float duration, float cycle, float x, float y) { }
+
+	// RVA: 0x31DE8C0 Offset: 0x31DA8C0 VA: 0x31DE8C0
+	public void ShakeStop() { }
+
+	// RVA: 0x31DE978 Offset: 0x31DA978 VA: 0x31DE978
+	public void SetStretchObj(GameObject stretchObj) { }
+
+	// RVA: 0x31DEA10 Offset: 0x31DAA10 VA: 0x31DEA10
+	public void StartSubStretch(string name, bool isIn, float duration, float scale, Vector2 stretchBaseRange) { }
+
+	// RVA: 0x31DD90C Offset: 0x31D990C VA: 0x31DD90C
+	private void Init() { }
+
+	// RVA: 0x31DDABC Offset: 0x31D9ABC VA: 0x31DDABC
+	private void CreateRenderTexture() { }
+
+	// RVA: 0x31DDB50 Offset: 0x31D9B50 VA: 0x31DDB50
+	private void CreateEffectController() { }
+
+	// RVA: 0x31DE0D8 Offset: 0x31DA0D8 VA: 0x31DE0D8
+	private void SetLayer(int layer) { }
+
+	// RVA: 0x31DE8C4 Offset: 0x31DA8C4 VA: 0x31DE8C4
+	private void ResetShake() { }
+
+	// RVA: 0x31DE784 Offset: 0x31DA784 VA: 0x31DE784
+	private void OnShake() { }
+
+	// RVA: 0x31DEE70 Offset: 0x31DAE70 VA: 0x31DEE70
+	private void EndExecuteStretch() { }
+
+	// RVA: 0x31DEE78 Offset: 0x31DAE78 VA: 0x31DEE78
+	public void .ctor() { }

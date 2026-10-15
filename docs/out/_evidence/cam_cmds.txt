@@ -1,0 +1,575 @@
+
+============================================================================
+### cameraMove  cmp@0x3186830 slot@0x55c9810 handler@0x318683c
+0x3186858  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x3186860  ldr      x1, [x9]   ; ' '
+0x3186864  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3186878  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x318689c  bl       #0x49e8728   CALL System.Single$$Parse
+0x31868a8  bl       #0x24d0c2c   CALL ApRecoverConfirmDlgComponent$$.ctor
+0x31868d0  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31868fc  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3186920  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3186930  ldr      x8, [x8]   ; &slot for 'l'
+0x3186940  bl       #0x22305f4   CALL 0x22305f4
+0x3186950  bl       #0x31d8e3c   CALL ScriptPosition$$GetPosition
+0x3186988  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31869c0  ldr      x8, [x8, #0x978]   ; &slot for 'charaRoll'
+0x31869c4  ldr      x1, [x8]   ; 'charaRoll'
+0x31869c8  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaRoll'
+0x31869f0  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x3186a18  bl       #0x24d0c2c   CALL ApRecoverConfirmDlgComponent$$.ctor
+0x3186a48  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x3186a50  ldr      x1, [x9]   ; ' '
+0x3186a54  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3186a78  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3186aa4  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x3186ad0  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3186af4  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3186b04  ldr      x8, [x8]   ; &slot for 'l'
+0x3186b14  bl       #0x22305f4   CALL 0x22305f4
+0x3186b24  bl       #0x31d8e3c   CALL ScriptPosition$$GetPosition
+0x3186b4c  bl       #0x3170420   CALL ScriptCharaData$$SetRoll
+0x3186b60  ldr      x8, [x8, #0xff8]   ; &slot for 'jingle'
+0x3186b64  ldr      x1, [x8]   ; 'jingle'
+0x3186b68  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='jingle'
+0x3186b8c  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x3186bb4  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x3186bbc  ldr      x1, [x9]   ; ' '
+0x3186bc0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3186be8  bl       #0x31b1530   CALL ScriptManager$$ConvertNameString
+0x3186c0c  bl       #0x49e8728   CALL System.Single$$Parse
+0x3186c28  bl       #0x22305f4   CALL 0x22305f4
+0x3186c38  bl       #0x2e99df0   CALL SoundManager$$playJingle
+
+============================================================================
+### cameraMoveEase  cmp@0x317a638 slot@0x55c98d8 handler@0x317a648
+0x317a664  ldr      x9, [x9, #0x4b8]   ; &slot for ','
+0x317a66c  ldr      x1, [x9]   ; ','
+0x317a670  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=','
+0x317a694  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x317a6b8  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x317a6d8  bl       #0x22305f4   CALL 0x22305f4
+0x317a6e8  bl       #0x31d8e3c   CALL ScriptPosition$$GetPosition
+0x317a700  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x317a728  bl       #0x49e8728   CALL System.Single$$Parse
+0x317a75c  bl       #0x49e8728   CALL System.Single$$Parse
+0x317a788  bl       #0x31b8ff0   CALL ScriptManager$$MainCameraMoveEase
+0x317a7ec  ldr      x23, [x23, #0x830]   ; &slot for 'input'
+0x317a7f0  ldr      x1, [x23]   ; 'input'
+0x317a7f4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='input'
+0x317a81c  ldr      x22, [x22, #0xc00]   ; &slot for 'selectBranch'
+0x317a824  ldr      x1, [x22]   ; 'selectBranch'
+0x317a82c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='selectBranch'
+0x317a840  ldr      x8, [x8, #0xc30]   ; &slot for 'selectBranchSkipTrueColor'
+0x317a844  ldr      x1, [x8]   ; 'selectBranchSkipTrueColor'
+0x317a848  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='selectBranchSkipTrueColor'
+0x317a870  bl       #0x31dcc88   CALL ScriptSkipDialog$$Close
+0x317a87c  bl       #0x31b53d8   CALL ScriptManager$$ResumePlaySpeed
+0x317a89c  ldr      x1, [x22]   ; 'selectBranch'
+0x317a8a4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='selectBranch'
+0x317a8c8  blr      x9   CALL 0x0
+0x317a8f0  bl       #0x44ab708   CALL System.Collections.Generic.List<int>$$get_Item
+0x317a918  ldr      x1, [x22]   ; 'selectBranch'
+0x317a920  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='selectBranch'
+0x317a944  ldr      x9, [x9, #0xf78]   ; &slot for 'skipStop'
+0x317a94c  ldr      x1, [x9]   ; 'skipStop'
+0x317a950  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='skipStop'
+0x317a978  bl       #0x31c6524   CALL ScriptManager$$IsWithInScriptCondition
+0x317a984  ldr      x1, [x22]   ; 'selectBranch'
+0x317a9d0  ldr      x8, [x8, #0x260]   ; &slot for 'charaMoveEaseFSL'
+0x317aa1c  ldr      x8, [x8, #0xc58]   ; &slot for 'interruption'
+
+============================================================================
+### cameraHome  cmp@0x31887f4 slot@0x55c9a18 handler@0x3188800
+0x318881c  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x3188840  bl       #0x49e8728   CALL System.Single$$Parse
+0x318884c  bl       #0x24d0c2c   CALL ApRecoverConfirmDlgComponent$$.ctor
+0x3188888  ldr      x8, [x8, #0x7b8]   ; &slot for 'cueSeContinueVolume'
+0x318888c  ldr      x1, [x8]   ; 'cueSeContinueVolume'
+0x3188890  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='cueSeContinueVolume'
+0x31888b4  ldr      x22, [x22, #0x9b0]   ; &slot for ' '
+0x31888bc  ldr      x1, [x22]   ; ' '
+0x31888c0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x31888e0  ldr      x1, [x22]   ; ' '
+0x31888e8  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3188908  ldr      x1, [x22]   ; ' '
+0x3188910  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3188938  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3188954  bl       #0x384907c   CALL BasicHelper$$GetValue<int, object>
+0x318897c  bl       #0x49e8728   CALL System.Single$$Parse
+0x31889a0  bl       #0x49e8728   CALL System.Single$$Parse
+0x31889b4  bl       #0x2e949cc   CALL SePlayer$$ChangeVolume
+0x31889c8  ldr      x8, [x8, #0x330]   ; &slot for 'charaFadeTimeLoopStop'
+0x31889cc  ldr      x1, [x8]   ; 'charaFadeTimeLoopStop'
+0x31889d0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaFadeTimeLoopStop'
+0x31889f8  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x3188a20  bl       #0x316fdd0   CALL ScriptCharaData$$StopMoveAlphaLoop
+0x3188a34  ldr      x8, [x8, #0xa68]   ; &slot for 'flag'
+0x3188a38  ldr      x1, [x8]   ; 'flag'
+0x3188a3c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='flag'
+0x3188a60  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x3188a68  ldr      x1, [x9]   ; ' '
+0x3188a6c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3188a90  bl       #0x31a8f0c   CALL ScriptManager$$SearchFlag
+0x3188ab4  bl       #0x3171a44   CALL ScriptFlagData$$Set
+0x3188ad8  ldr      x8, [x8, #0x268]   ; &slot for 'Loop'
+0x3188adc  ldr      x1, [x8]   ; 'Loop'
+0x3188ae0  bl       #0x4877124   CALL System.String$$Contains   args: x1='Loop'
+0x3188b04  ldr      x9, [x9, #0x210]   ; &slot for 'true'
+0x3188b0c  ldr      x1, [x9]   ; 'true'
+0x3188b10  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='true'
+0x3188b40  ldr      x8, [x8, #0x928]   ; &slot for 'isEnableLoopLogLaterErase'
+0x3188b44  ldr      x1, [x8]   ; 'isEnableLoopLogLaterErase'
+0x3188b48  bl       #0x4877124   CALL System.String$$Contains   args: x1='isEnableLoopLogLaterErase'
+0x3188b6c  ldr      x9, [x9, #0x210]   ; &slot for 'true'
+0x3188b74  ldr      x1, [x9]   ; 'true'
+0x3188b78  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='true'
+0x3188ba0  ldr      x8, [x8, #0xcc0]   ; &slot for 'cueSeStop'
+0x3188ba4  ldr      x1, [x8]   ; 'cueSeStop'
+0x3188ba8  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='cueSeStop'
+0x3188be0  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x3188be8  ldr      x1, [x9]   ; ' '
+0x3188bec  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+
+============================================================================
+### cameraRoll  cmp@0x318822c slot@0x55c99c0 handler@0x3188238
+0x3188254  bl       #0x49e8728   CALL System.Single$$Parse
+0x3188260  bl       #0x24d0c2c   CALL ApRecoverConfirmDlgComponent$$.ctor
+0x3188294  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31882c0  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x31882c8  ldr      x1, [x9]   ; ' '
+0x31882cc  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x31882f0  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3188314  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3188324  ldr      x8, [x8]   ; &slot for 'l'
+0x3188334  bl       #0x22305f4   CALL 0x22305f4
+0x3188344  bl       #0x31d8e3c   CALL ScriptPosition$$GetPosition
+0x318836c  bl       #0x31b99d0   CALL ScriptManager$$SetCameraRoll
+0x3188378  ldr      x8, [x8, #0xbd8]   ; &slot for 'charaEffectEdgeBlur'
+0x318837c  ldr      x1, [x8]   ; 'charaEffectEdgeBlur'
+0x3188388  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaEffectEdgeBlur'
+0x31883b0  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x31883e0  ldr      x8, [x8, #0xe28]   ; &slot for 'bit_talk_edgeblur_light'
+0x31883e4  ldr      x1, [x8]   ; 'bit_talk_edgeblur_light'
+0x31883e8  bl       #0x31b37c8   CALL ScriptManager$$ConvertTalkEffectName   args: x1='bit_talk_edgeblur_light'
+0x31883f8  bl       #0x31b5344   CALL ScriptManager$$IsFastPlaySpeed
+0x3188404  ldr      x9, [x9, #0xec0]   ; &slot for 'charaEffectEdgeBlurPause'
+0x3188410  ldr      x1, [x9]   ; 'charaEffectEdgeBlurPause'
+0x3188418  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaEffectEdgeBlurPause'
+0x3188474  ldr      x8, [x8, #0xb48]   ; &slot for 'maskout'
+0x3188478  ldr      x1, [x8]   ; 'maskout'
+0x318847c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='maskout'
+0x3188490  ldr      x8, [x8, #0x970]   ; &slot for 'mask'
+0x318849c  ldr      x8, [x8, #0xc8]   ; &slot for 'horizontalImageChange'
+0x31884a0  ldr      x1, [x8]   ; 'horizontalImageChange'
+0x31884ac  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='horizontalImageChange'
+0x31884d4  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x3188504  bl       #0x316f36c   CALL ScriptCharaData$$IsLoad
+0x3188518  ldr      x8, [x8, #0xa80]   ; &slot for 'charaChange'
+0x3188520  ldr      x1, [x8]   ; 'charaChange'
+0x3188528  bl       #0x2230448   CALL 0x2230448
+0x3188544  ldr      x8, [x8, #0x30]   ; &slot for 'soundStopAll'
+0x3188548  ldr      x1, [x8]   ; 'soundStopAll'
+0x318854c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='soundStopAll'
+0x318855c  bl       #0x31b4c84   CALL ScriptManager$$SoundStopAll
+0x3188570  ldr      x8, [x8, #0x950]   ; &slot for 'charaFadeTime'
+0x3188574  ldr      x1, [x8]   ; 'charaFadeTime'
+0x3188578  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaFadeTime'
+0x318859c  ldr      x22, [x22, #0x9b0]   ; &slot for ' '
+0x31885a4  ldr      x1, [x22]   ; ' '
+0x31885a8  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x31885c8  ldr      x1, [x22]   ; ' '
+0x31885d0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x31885f4  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x3188620  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+
+============================================================================
+### cameraRollMove  cmp@0x317ddcc slot@0x55c9a58 handler@0x317dddc
+0x317ddf8  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x317de1c  bl       #0x49e8728   CALL System.Single$$Parse
+0x317de44  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x317de4c  ldr      x1, [x9]   ; ' '
+0x317de50  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x317de74  bl       #0x49e8728   CALL System.Single$$Parse
+0x317dec4  ldr      x8, [x8, #0x7b0]   ; &slot for 'effectPause'
+0x317df08  ldr      x8, [x8, #0x900]   ; &slot for 'flashin'
+0x317df0c  ldr      x1, [x8]   ; 'flashin'
+0x317df10  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='flashin'
+0x317df30  bl       #0x31ba8a8   CALL ScriptManager$$EndFlash
+0x317df38  ldr      x8, [x8, #0x2a8]   ; &slot for 'flash'
+0x317df7c  ldr      x8, [x8, #0xfb8]   ; &slot for 'warMoveCameraPos'
+0x317df80  ldr      x1, [x8]   ; 'warMoveCameraPos'
+0x317df84  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='warMoveCameraPos'
+0x317dfac  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x317dfd0  bl       #0x49e8728   CALL System.Single$$Parse
+0x317dff4  bl       #0x49e8728   CALL System.Single$$Parse
+0x317e024  bl       #0x49e8728   CALL System.Single$$Parse
+0x317e048  bl       #0x49e8728   CALL System.Single$$Parse
+0x317e05c  bl       #0x47e721c   CALL SingletonMonoBehaviour<object>$$get_Instance
+0x317e080  bl       #0x2b337d0   CALL WarBoardManager$$MoveCameraPosScript
+0x317e0c4  ldr      x8, [x8, #0xc98]   ; &slot for 'shakeStop'
+0x317e0c8  ldr      x1, [x8]   ; 'shakeStop'
+0x317e0cc  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='shakeStop'
+0x317e0f0  bl       #0x31a1c80   CALL ScriptManager$$Shake
+0x317e12c  ldr      x8, [x8, #0xba0]   ; &slot for 'masterHorizontalImageChange'
+0x317e170  ldr      x8, [x8, #0xf48]   ; &slot for 'charaBackEffectPause'
+0x317e1b4  ldr      x8, [x8, #0x818]   ; &slot for 'figureChange'
+
+============================================================================
+### subCameraMove  cmp@0x3182c60 slot@0x55c99a0 handler@0x3182c6c
+0x3182c88  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x3182c90  ldr      x1, [x9]   ; ' '
+0x3182c94  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3182ca8  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x3182cd0  bl       #0x49e8728   CALL System.Single$$Parse
+0x3182cdc  bl       #0x24d0c2c   CALL ApRecoverConfirmDlgComponent$$.ctor
+0x3182d04  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x3182d30  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3182d54  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3182d64  ldr      x8, [x8]   ; &slot for 'l'
+0x3182d74  bl       #0x22305f4   CALL 0x22305f4
+0x3182d84  bl       #0x31d8e3c   CALL ScriptPosition$$GetPosition
+0x3182dbc  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x3182df4  ldr      x8, [x8, #0x2d8]   ; &slot for 'charaFaceIcon'
+0x3182df8  ldr      x1, [x8]   ; 'charaFaceIcon'
+0x3182dfc  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaFaceIcon'
+0x3182e20  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x3182e28  ldr      x1, [x9]   ; ' '
+0x3182e2c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3182e54  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x3182e84  bl       #0x316fcc4   CALL ScriptCharaData$$IsMoveAlpha
+0x3182ea8  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3182ebc  bl       #0x316fa54   CALL ScriptCharaData$$SetFace
+0x3182ed4  bl       #0x22305f4   CALL 0x22305f4
+0x3182ee4  bl       #0x388b208   CALL DataManager$$GetMaster<object>
+0x3182ef4  bl       #0x306e8c0   CALL WarBoardMessageScriptMaster$$GetMessageEntity
+0x3182f1c  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3182f40  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3182f58  bl       #0x316fbcc   CALL ScriptCharaData$$SetPosition
+0x3182f6c  bl       #0x3170e78   CALL ScriptCharaData$$SetMaskData
+0x3182f90  ldr      x8, [x8, #0xdd0]   ; &slot for 'charaFadeTimeLoop'
+0x3182f94  ldr      x1, [x8]   ; 'charaFadeTimeLoop'
+0x3182f98  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaFadeTimeLoop'
+0x3182fbc  ldr      x22, [x22, #0x9b0]   ; &slot for ' '
+0x3182fd4  ldr      x1, [x22]   ; ' '
+0x3182fe0  bl       #0x4870cc4   CALL System.String$$op_Inequality   args: x1=' '
+0x3183000  ldr      x8, [x8, #0x18]   ; &slot for 'charaMoveFSR'
+0x318300c  ldr      x8, [x8, #0xd90]   ; &slot for 'charaMoveReturnFSSideR'
+0x3183020  ldr      x8, [x8, #0xc0]   ; &slot for 'warMoveCameraSquare'
+0x3183024  ldr      x1, [x8]   ; 'warMoveCameraSquare'
+0x3183028  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='warMoveCameraSquare'
+0x318304c  bl       #0x49d31f4   CALL System.Int32$$Parse
+
+============================================================================
+### subCameraMoveEase  cmp@0x3185424 slot@0x55c9748 handler@0x3185430
+0x318543c  ldr      x8, [x8, #0x458]   ; &slot for ''
+0x3185448  ldr      x23, [x8]   ; ''
+0x318544c  bl       #0x31c69f8   CALL ScriptManager$$IsExistTargetSubLayerGroup
+0x318547c  ldr      x8, [x8, #0xaa8]   ; &slot for 'shake'
+0x3185480  ldr      x1, [x8]   ; 'shake'
+0x3185484  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='shake'
+0x31854a8  ldr      x22, [x22, #0x9b0]   ; &slot for ' '
+0x31854b0  ldr      x1, [x22]   ; ' '
+0x31854b4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x31854d4  ldr      x1, [x22]   ; ' '
+0x31854dc  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x31854fc  ldr      x1, [x22]   ; ' '
+0x3185504  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3185524  bl       #0x49e8728   CALL System.Single$$Parse
+0x3185554  bl       #0x49e8728   CALL System.Single$$Parse
+0x3185564  bl       #0x31b5344   CALL ScriptManager$$IsFastPlaySpeed
+0x3185598  bl       #0x49e8728   CALL System.Single$$Parse
+0x31855bc  bl       #0x49e8728   CALL System.Single$$Parse
+0x31855d8  bl       #0x31a1c80   CALL ScriptManager$$Shake
+0x31855e4  ldr      x8, [x8, #0xc10]   ; &slot for 'charaCutin'
+0x31855e8  ldr      x1, [x8]   ; 'charaCutin'
+0x31855f4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaCutin'
+0x3185618  ldr      x23, [x23, #0x9b0]   ; &slot for ' '
+0x3185620  ldr      x1, [x23]   ; ' '
+0x3185624  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3185648  ldr      x1, [x23]   ; ' '
+0x3185650  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3185678  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x31856bc  bl       #0x31b1530   CALL ScriptManager$$ConvertNameString
+0x31856e0  bl       #0x49e8728   CALL System.Single$$Parse
+0x3185708  bl       #0x49e8728   CALL System.Single$$Parse
+0x3185720  bl       #0x31b5344   CALL ScriptManager$$IsFastPlaySpeed
+0x3185730  ldr      x9, [x9, #0x188]   ; &slot for 'charaCutinPause'
+0x3185734  ldr      x8, [x22]   ; ' '
+0x3185738  ldr      x1, [x9]   ; 'charaCutinPause'
+0x3185740  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaCutinPause'
+0x3185760  bl       #0x317052c   CALL ScriptCharaData$$SetCutin
+0x318576c  ldr      x8, [x8, #0x988]   ; &slot for 'charaEffect'
+0x3185778  ldr      x8, [x8, #0x930]   ; &slot for 'verticalImageSet'
+0x3185784  ldr      x8, [x8, #0x40]   ; &slot for 'subRenderMoveEaseFSSideL'
+0x3185798  ldr      x8, [x8, #0xa00]   ; &slot for 'charaCutStop'
+0x318579c  ldr      x1, [x8]   ; 'charaCutStop'
+0x31857a0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaCutStop'
+0x31857c8  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x31857f0  bl       #0x317059c   CALL ScriptCharaData$$StopCut
+0x3185804  ldr      x8, [x8, #0x8c0]   ; &slot for 'wipeFilter'
+0x3185808  ldr      x1, [x8]   ; 'wipeFilter'
+0x318580c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='wipeFilter'
+
+============================================================================
+### subCameraHome  cmp@0x317dab0 slot@0x55c9da0 handler@0x317dac0
+0x317dae4  bl       #0x31df7cc   CALL ScriptSubLayerManager$$GetScriptSubLayer
+0x317db14  bl       #0x31b83dc   CALL ScriptManager$$InitCamera
+0x317db58  ldr      x8, [x8, #0x960]   ; &slot for 'fowardEffectDestroy'
+0x317db5c  ldr      x1, [x8]   ; 'fowardEffectDestroy'
+0x317db60  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='fowardEffectDestroy'
+0x317db8c  bl       #0x31b37c8   CALL ScriptManager$$ConvertTalkEffectName
+0x317dbe0  ldr      x8, [x8, #0xae0]   ; &slot for 'endIf'
+0x317dbe4  ldr      x1, [x8]   ; 'endIf'
+0x317dbe8  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='endIf'
+0x317dc34  ldr      x8, [x8, #0x90]   ; &slot for 'insertionAnimationSetFSSideR'
+0x317dc78  ldr      x8, [x8, #0x840]   ; &slot for 'charaCutout'
+0x317dc7c  ldr      x1, [x8]   ; 'charaCutout'
+0x317dc80  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaCutout'
+0x317dca8  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x317dcb0  ldr      x1, [x9]   ; ' '
+0x317dcb4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x317dcdc  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x317dd1c  bl       #0x49e8728   CALL System.Single$$Parse
+0x317dd34  bl       #0x31b5344   CALL ScriptManager$$IsFastPlaySpeed
+0x317dd48  bl       #0x3170578   CALL ScriptCharaData$$SetCutout
+0x317dd84  ldr      x8, [x8, #0xfe8]   ; &slot for 'communicationCharaLoop'
+0x317ddc8  ldr      x8, [x8, #0xa58]   ; &slot for 'cameraRollMove'
+0x317ddcc  ldr      x1, [x8]   ; 'cameraRollMove'
+0x317ddd0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='cameraRollMove'
+0x317ddf8  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x317de1c  bl       #0x49e8728   CALL System.Single$$Parse
+0x317de44  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x317de4c  ldr      x1, [x9]   ; ' '
+0x317de50  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x317de74  bl       #0x49e8728   CALL System.Single$$Parse
+
+============================================================================
+### subCameraRoll  cmp@0x317a2d0 slot@0x55c9b18 handler@0x317a2e0
+0x317a304  bl       #0x31df7cc   CALL ScriptSubLayerManager$$GetScriptSubLayer
+0x317a334  bl       #0x31b97b8   CALL ScriptManager$$InitCameraRoll
+0x317a398  ldr      x8, [x8, #0x1e0]   ; &slot for 'charaReturn'
+0x317a39c  ldr      x1, [x8]   ; 'charaReturn'
+0x317a3a0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaReturn'
+0x317a3cc  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x317a414  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x317a42c  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x317a458  bl       #0x49e8728   CALL System.Single$$Parse
+0x317a4bc  ldr      x8, [x8, #0x50]   ; &slot for 'charaEffectStop'
+0x317a4c0  ldr      x1, [x8]   ; 'charaEffectStop'
+0x317a4c4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaEffectStop'
+0x317a4f0  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x317a520  bl       #0x31a8220   CALL ScriptManager$$ModifyPlaySpeed
+0x317a52c  bl       #0x31b5344   CALL ScriptManager$$IsFastPlaySpeed
+0x317a550  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x317a558  ldr      x1, [x9]   ; ' '
+0x317a55c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x317a588  bl       #0x31b37c8   CALL ScriptManager$$ConvertTalkEffectName
+0x317a5a8  bl       #0x22305f4   CALL 0x22305f4
+0x317a5c8  bl       #0x31708a4   CALL ScriptCharaData$$StopEffect
+0x317a634  ldr      x8, [x8, #0x8d8]   ; &slot for 'cameraMoveEase'
+0x317a638  ldr      x1, [x8]   ; 'cameraMoveEase'
+0x317a63c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='cameraMoveEase'
+0x317a664  ldr      x9, [x9, #0x4b8]   ; &slot for ','
+0x317a66c  ldr      x1, [x9]   ; ','
+0x317a670  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=','
+0x317a694  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x317a6b8  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x317a6d8  bl       #0x22305f4   CALL 0x22305f4
+
+============================================================================
+### subCameraRollMove  cmp@0x3179dfc slot@0x55c9750 handler@0x3179e0c
+0x3179e30  bl       #0x31df7cc   CALL ScriptSubLayerManager$$GetScriptSubLayer
+0x3179ebc  ldr      x8, [x8, #0x1a8]   ; &slot for 'cueVoiceStop'
+0x3179ec0  ldr      x1, [x8]   ; 'cueVoiceStop'
+0x3179ec4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='cueVoiceStop'
+0x3179f00  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x3179f08  ldr      x1, [x9]   ; ' '
+0x3179f0c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3179f34  bl       #0x31b1530   CALL ScriptManager$$ConvertNameString
+0x3179f58  bl       #0x49e8728   CALL System.Single$$Parse
+0x3179f74  bl       #0x22305f4   CALL 0x22305f4
+0x3179fdc  ldr      x23, [x23, #0xbb8]   ; &slot for 'spriteMaskSet'
+0x3179fe0  ldr      x1, [x23]   ; 'spriteMaskSet'
+0x3179fe4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='spriteMaskSet'
+0x317a000  ldr      x1, [x23]   ; 'spriteMaskSet'
+0x317a014  bl       #0x2230448   CALL 0x2230448
+0x317a03c  bl       #0x31b39b4   CALL ScriptManager$$ConvertSpriteMaskName
+0x317a054  bl       #0x2230710   CALL 0x2230710
+0x317a070  bl       #0x2da0564   CALL AssetLoader.LoadEndDataHandler$$.ctor
+0x317a088  bl       #0x22305f4   CALL 0x22305f4
+0x317a0a0  bl       #0x2da59ac   CALL AssetManager$$loadAssetStorage
+0x317a0cc  bl       #0x31b39b4   CALL ScriptManager$$ConvertSpriteMaskName
+0x317a0d8  ldr      x8, [x8, #0x828]   ; &slot for ' is not found'
+0x317a0dc  ldr      x1, [x8]   ; ' is not found'
+0x317a0e0  bl       #0x4867ef8   CALL System.String$$Concat   args: x1=' is not found'
+0x317a144  ldr      x8, [x8, #0x868]   ; &slot for 'charaFadeinFSL'
+0x317a1a8  ldr      x8, [x8, #0x160]   ; &slot for 'warEventScript'
+0x317a1ac  ldr      x1, [x8]   ; 'warEventScript'
+0x317a1b0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='warEventScript'
+0x317a1d8  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x317a1e8  ldr      x8, [x8]   ; &slot for 'TAKEOVER_OVERRIDE_WARNING'
+0x317a1f0  bl       #0x47e721c   CALL SingletonMonoBehaviour<object>$$get_Instance
+0x317a204  bl       #0x2b33edc   CALL WarBoardManager$$AddEventScript
+
+============================================================================
+### subCameraOn  cmp@0x3183390 slot@0x55c9f58 handler@0x318339c
+0x31833b8  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x31833d0  ldr      x8, [x8, #0x18]   ; &slot for 'seLoop'
+0x31833d4  ldr      x1, [x8]   ; 'seLoop'
+0x31833d8  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='seLoop'
+0x31833fc  ldr      x22, [x22, #0x9b0]   ; &slot for ' '
+0x3183404  ldr      x1, [x22]   ; ' '
+0x3183408  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x318342c  ldr      x1, [x22]   ; ' '
+0x3183434  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x318344c  bl       #0x201a774   CALL 0x201a774
+0x3183478  bl       #0x49e8728   CALL System.Single$$Parse
+0x318349c  bl       #0x49e8728   CALL System.Single$$Parse
+0x31834c0  ldr      x8, [x8, #0x838]   ; &slot for 'maskin'
+0x31834cc  ldr      x8, [x8, #0xdd8]   ; &slot for 'branchRouteSelect'
+0x31834d0  ldr      x1, [x8]   ; 'branchRouteSelect'
+0x31834dc  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='branchRouteSelect'
+0x3183500  ldr      x24, [x24, #0x9b0]   ; &slot for ' '
+0x3183508  ldr      x1, [x24]   ; ' '
+0x318350c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3183530  ldr      x1, [x24]   ; ' '
+0x3183538  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3183564  bl       #0x31b3f6c   CALL ScriptManager$$GetQuestId
+0x3183588  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x3183594  ldr      x9, [x9, #0xdd8]   ; &slot for 'branchRouteSelect'
+0x31835a0  ldr      x1, [x9]   ; 'branchRouteSelect'
+0x31835a8  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='branchRouteSelect'
+0x31835c8  bl       #0x22305f4   CALL 0x22305f4
+0x31835d8  bl       #0x2d72f88   CALL CondType$$IsRouteSelect
+0x31835f8  bl       #0x22305f4   CALL 0x22305f4
+0x318360c  bl       #0x307af34   CALL MaterialBranchRouteManager$$IsMaterialSelectedRouteId
+0x3183628  bl       #0x47e721c   CALL SingletonMonoBehaviour<object>$$get_Instance
+0x318363c  bl       #0x388b25c   CALL DataManager$$GetMasterData<object>
+0x318365c  bl       #0x22305f4   CALL 0x22305f4
+0x318367c  bl       #0x2f9b260   CALL QuestPhaseMaster$$IsEnableMaterialPlayUseUserQuestRoute
+0x318369c  ldr      x8, [x8, #0x768]   ; &slot for 'charaRollMoveEx'
+0x31836a0  ldr      x1, [x8]   ; 'charaRollMoveEx'
+0x31836a4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaRollMoveEx'
+0x31836c8  ldr      x22, [x22, #0x9b0]   ; &slot for ' '
+0x31836d0  ldr      x1, [x22]   ; ' '
+0x31836d4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x31836fc  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x3183728  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x3183750  bl       #0x49e8728   CALL System.Single$$Parse
+0x318375c  bl       #0x24d0c2c   CALL ApRecoverConfirmDlgComponent$$.ctor
+0x3183788  ldr      x1, [x22]   ; ' '
+0x3183790  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+
+============================================================================
+### subCameraOff  cmp@0x3179740 slot@0x55c9a40 handler@0x3179750
+0x3179758  bl       #0x31a00d0   CALL ScriptManager$$RenderCameraSubQuit
+0x31797bc  ldr      x8, [x8, #0xbe0]   ; &slot for 'keepSubBgmOff'
+0x31797c0  ldr      x1, [x8]   ; 'keepSubBgmOff'
+0x31797c4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='keepSubBgmOff'
+0x31797e4  bl       #0x22305f4   CALL 0x22305f4
+0x31797f0  bl       #0x2e45d20   CALL BgmManager$$Enable_KeepSubBgm
+0x3179854  ldr      x8, [x8, #0xd10]   ; &slot for 'charaRollAxis'
+0x3179858  ldr      x1, [x8]   ; 'charaRollAxis'
+0x317985c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaRollAxis'
+0x3179888  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x31798d4  bl       #0x49e8728   CALL System.Single$$Parse
+0x31798e4  bl       #0x31b5324   CALL ScriptManager$$IsNormalPlaySpeed
+0x317990c  bl       #0x49e8728   CALL System.Single$$Parse
+0x317998c  ldr      x8, [x8, #0x888]   ; &slot for 'subRenderMoveEaseFSR'
+0x31799e8  ldr      x8, [x8, #0x340]   ; &slot for 'fsmObjSendEvent'
+0x3179a44  ldr      x8, [x8, #0xe20]   ; &slot for 'branchNotRouteSelectCount'
+0x3179a90  ldr      x8, [x8, #0x850]   ; &slot for 'subRenderMoveFSL'
+0x3179adc  ldr      x8, [x8, #0xc50]   ; &slot for 'charaSpecialEffectPause'
+0x3179b40  ldr      x8, [x8, #0xf38]   ; &slot for 'subBlur2Off'
+
+============================================================================
+### shake  cmp@0x3185480 slot@0x55c9aa8 handler@0x318548c
+0x31854a8  ldr      x22, [x22, #0x9b0]   ; &slot for ' '
+0x31854b0  ldr      x1, [x22]   ; ' '
+0x31854b4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x31854d4  ldr      x1, [x22]   ; ' '
+0x31854dc  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x31854fc  ldr      x1, [x22]   ; ' '
+0x3185504  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3185524  bl       #0x49e8728   CALL System.Single$$Parse
+0x3185554  bl       #0x49e8728   CALL System.Single$$Parse
+0x3185564  bl       #0x31b5344   CALL ScriptManager$$IsFastPlaySpeed
+0x3185598  bl       #0x49e8728   CALL System.Single$$Parse
+0x31855bc  bl       #0x49e8728   CALL System.Single$$Parse
+0x31855d8  bl       #0x31a1c80   CALL ScriptManager$$Shake
+0x31855e4  ldr      x8, [x8, #0xc10]   ; &slot for 'charaCutin'
+0x31855e8  ldr      x1, [x8]   ; 'charaCutin'
+0x31855f4  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaCutin'
+0x3185618  ldr      x23, [x23, #0x9b0]   ; &slot for ' '
+0x3185620  ldr      x1, [x23]   ; ' '
+0x3185624  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3185648  ldr      x1, [x23]   ; ' '
+0x3185650  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3185678  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x31856bc  bl       #0x31b1530   CALL ScriptManager$$ConvertNameString
+0x31856e0  bl       #0x49e8728   CALL System.Single$$Parse
+0x3185708  bl       #0x49e8728   CALL System.Single$$Parse
+0x3185720  bl       #0x31b5344   CALL ScriptManager$$IsFastPlaySpeed
+0x3185730  ldr      x9, [x9, #0x188]   ; &slot for 'charaCutinPause'
+0x3185734  ldr      x8, [x22]   ; ' '
+0x3185738  ldr      x1, [x9]   ; 'charaCutinPause'
+0x3185740  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaCutinPause'
+0x3185760  bl       #0x317052c   CALL ScriptCharaData$$SetCutin
+0x318576c  ldr      x8, [x8, #0x988]   ; &slot for 'charaEffect'
+0x3185778  ldr      x8, [x8, #0x930]   ; &slot for 'verticalImageSet'
+0x3185784  ldr      x8, [x8, #0x40]   ; &slot for 'subRenderMoveEaseFSSideL'
+0x3185798  ldr      x8, [x8, #0xa00]   ; &slot for 'charaCutStop'
+0x318579c  ldr      x1, [x8]   ; 'charaCutStop'
+0x31857a0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaCutStop'
+0x31857c8  bl       #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+0x31857f0  bl       #0x317059c   CALL ScriptCharaData$$StopCut
+0x3185804  ldr      x8, [x8, #0x8c0]   ; &slot for 'wipeFilter'
+0x3185808  ldr      x1, [x8]   ; 'wipeFilter'
+0x318580c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='wipeFilter'
+0x318584c  ldr      x9, [x9, #0x9b0]   ; &slot for ' '
+0x3185854  ldr      x1, [x9]   ; ' '
+0x3185858  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x3185880  bl       #0x49e8728   CALL System.Single$$Parse
+
+============================================================================
+### shakeStop  cmp@0x317e0c8 slot@0x55c9c98 handler@0x317e0d8
+0x317e0f0  bl       #0x31a1c80   CALL ScriptManager$$Shake
+0x317e12c  ldr      x8, [x8, #0xba0]   ; &slot for 'masterHorizontalImageChange'
+0x317e170  ldr      x8, [x8, #0xf48]   ; &slot for 'charaBackEffectPause'
+0x317e1b4  ldr      x8, [x8, #0x818]   ; &slot for 'figureChange'
+0x317e1f8  ldr      x8, [x8, #0xd08]   ; &slot for 'branchSetGrandSvtCount'
+0x317e1fc  ldr      x1, [x8]   ; 'branchSetGrandSvtCount'
+0x317e200  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='branchSetGrandSvtCount'
+0x317e228  ldr      x22, [x22, #0x9b0]   ; &slot for ' '
+0x317e230  ldr      x1, [x22]   ; ' '
+0x317e234  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x317e258  ldr      x1, [x22]   ; ' '
+0x317e260  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x317e288  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x317e2b4  bl       #0x22305f4   CALL 0x22305f4
+0x317e2c0  bl       #0x49e4bdc   CALL System.Type$$GetTypeFromHandle
+0x317e2ec  bl       #0x22305f4   CALL 0x22305f4
+0x317e2fc  bl       #0x4a08f3c   CALL System.Enum$$Parse
+0x317e30c  ldr      x8, [x8]   ; &slot for 'io.repro.android.tracking.LeadProperties'
+0x317e31c  bl       #0x22305f4   CALL 0x22305f4
+0x317e32c  bl       #0x388b208   CALL DataManager$$GetMaster<object>
+0x317e338  bl       #0x304155c   CALL UserServantGrandMaster$$GetUserServantEntities
+0x317e348  bl       #0x38ae6f4   CALL System.Linq.Enumerable$$Count<object>
+0x317e368  bl       #0x22305f4   CALL 0x22305f4
+0x317e37c  bl       #0x2019bd8   CALL 0x2019bd8
+0x317e390  bl       #0x2d6c3e4   CALL CondType$$GetCompareCheckType
+0x317e3d8  ldr      x8, [x8, #0xcb8]   ; &slot for 'voiceVolume'
+0x317e3dc  ldr      x1, [x8]   ; 'voiceVolume'
+0x317e3e0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='voiceVolume'
+0x317e408  ldr      x22, [x22, #0x9b0]   ; &slot for ' '
+0x317e410  ldr      x1, [x22]   ; ' '
+0x317e414  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x317e438  ldr      x1, [x22]   ; ' '
+0x317e440  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+0x317e468  bl       #0x31b1530   CALL ScriptManager$$ConvertNameString
+0x317e48c  bl       #0x49e8728   CALL System.Single$$Parse
+0x317e4b0  bl       #0x49e8728   CALL System.Single$$Parse
+0x317e4cc  bl       #0x22305f4   CALL 0x22305f4
+### UNKNOWN bl

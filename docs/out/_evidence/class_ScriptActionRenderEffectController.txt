@@ -1,0 +1,84 @@
+==============================================================================
+// ScriptActionRenderEffectController  (dump.cs line 165399)
+public class ScriptActionRenderEffectController // TypeDefIndex: 4796
+{
+	// Fields
+	private float timerCount; // 0x10
+	private float timerMax; // 0x14
+	private float loopCount; // 0x18
+	private ScriptActionRenderEffectController.ReflectionFunction reflectionFunction; // 0x20
+	private ScriptActionRenderEffectController.StopFunction stopFunction; // 0x28
+	private bool isEnable; // 0x30
+	private bool requestStop; // 0x31
+	private Material material_; // 0x38
+
+	// Methods
+
+	// RVA: 0x316A5F8 Offset: 0x31665F8 VA: 0x316A5F8
+	private static float FloatLinear(float src, float dest, float rate) { }
+
+	// RVA: 0x316A608 Offset: 0x3166608 VA: 0x316A608
+	public void .ctor(Material material) { }
+
+	// RVA: 0x316A640 Offset: 0x3166640 VA: 0x316A640
+	public void Update(float delta) { }
+
+	// RVA: 0x316A7AC Offset: 0x31667AC VA: 0x316A7AC
+	private void OnStop(bool isRequest) { }
+
+	// RVA: 0x316A854 Offset: 0x3166854 VA: 0x316A854
+	private void Start(float sec, int count, bool isStop, ScriptActionRenderEffectController.ReflectionFunction func, ScriptActionRenderEffectController.StopFunction stopfunc) { }
+
+	// RVA: 0x316A8E8 Offset: 0x31668E8 VA: 0x316A8E8
+	private void Skip() { }
+
+	// RVA: 0x316A820 Offset: 0x3166820 VA: 0x316A820
+	private void Reflection(float rate) { }
+
+	// RVA: 0x316A910 Offset: 0x3166910 VA: 0x316A910
+	public bool IsBusy() { }
+
+	// RVA: 0x316A918 Offset: 0x3166918 VA: 0x316A918
+	public void SetDisable() { }
+
+	// RVA: 0x316A920 Offset: 0x3166920 VA: 0x316A920
+	public void StartDistortion(float sec, int count, float centerX, float centerY, float strength, float range, float coefficient) { }
+
+	// RVA: 0x316ACE0 Offset: 0x3166CE0 VA: 0x316ACE0
+	public void StopDistortion(float sec, ScriptActionRenderEffectController.StopFunction stopFunc) { }
+
+	// RVA: 0x316AEE4 Offset: 0x3166EE4 VA: 0x316AEE4
+	public void StartGaussianBlur(float sec, int sampleRange, float sigma) { }
+
+	// RVA: 0x316B10C Offset: 0x316710C VA: 0x316B10C
+	public void StopGaussianBlur(float sec, ScriptActionRenderEffectController.StopFunction stopFunc) { }
+
+	// RVA: 0x316B29C Offset: 0x316729C VA: 0x316B29C
+	public void StartMotionBlur(float sec, int sampleRange, float sigma, float centerX, float centerY, float range, float coefficient) { }
+
+	// RVA: 0x316B5E4 Offset: 0x31675E4 VA: 0x316B5E4
+	public void StopMotionBlur(float sec, ScriptActionRenderEffectController.StopFunction stopFunc) { }
+
+	// RVA: 0x316B7D4 Offset: 0x31677D4 VA: 0x316B7D4
+	public void StartFrostedGlass(float sec, int sampleRange, float sigma, float tiling, float scatter) { }
+
+	// RVA: 0x316BA90 Offset: 0x3167A90 VA: 0x316BA90
+	public void StopFrostedGlass(float sec, ScriptActionRenderEffectController.StopFunction stopFunc) { }
+
+	// RVA: 0x316BC4C Offset: 0x3167C4C VA: 0x316BC4C
+	public void SetGaussianBlur(int sampleRange, float sigma) { }
+
+	// RVA: 0x316C0F4 Offset: 0x31680F4 VA: 0x316C0F4
+	public void SetMotionBlur(int sampleRange, float sigma) { }
+
+	// RVA: 0x316C378 Offset: 0x3168378 VA: 0x316C378
+	public void SetFrostedGlass(int sampleRange, float sigma, float tiling, float scatter) { }
+
+	// RVA: 0x316C4D8 Offset: 0x31684D8 VA: 0x316C4D8
+	public void SetFrostedTexture(Texture glassTex) { }
+
+	// RVA: 0x316C548 Offset: 0x3168548 VA: 0x316C548
+	public void SkipDistortion() { }
+
+	// RVA: 0x316C54C Offset: 0x316854C VA: 0x316C54C
+	public void SkipBlur() { }

@@ -1,0 +1,297 @@
+
+==============================================================================
+### ScriptManager$$.cctor  0x31c9484..0x31c991c  (size 0x498)
+0x31c9484  stp      x29, x30, [sp, #-0x60]!
+0x31c9488  stp      x28, x27, [sp, #0x10]
+0x31c948c  stp      x26, x25, [sp, #0x20]
+0x31c9490  stp      x24, x23, [sp, #0x30]
+0x31c9494  stp      x22, x21, [sp, #0x40]
+0x31c9498  stp      x20, x19, [sp, #0x50]
+0x31c949c  adrp     x20, #0x557a000
+0x31c94a0  adrp     x28, #0x55ca000
+0x31c94a4  adrp     x27, #0x55ca000
+0x31c94a8  adrp     x26, #0x55ca000
+0x31c94ac  adrp     x19, #0x55ca000
+0x31c94b0  adrp     x24, #0x55ca000
+0x31c94b4  adrp     x22, #0x55ca000
+0x31c94b8  adrp     x21, #0x55ca000
+0x31c94bc  adrp     x29, #0x55ca000
+0x31c94c0  adrp     x25, #0x5570000
+0x31c94c4  adrp     x23, #0x59c5000
+0x31c94c8  ldr      x20, [x20, #0xc8]
+0x31c94cc  ldr      x28, [x28, #0xec0]   ; &slot for 'ScriptAction/'
+0x31c94d0  ldr      x27, [x27, #0xec8]   ; &slot for 'ScriptActionEncrypt/'
+0x31c94d4  ldr      x26, [x26, #0xed0]   ; &slot for 'TalkResume'
+0x31c94d8  ldr      x19, [x19, #0xed8]   ; &slot for 'TalkResumeV2'
+0x31c94dc  ldr      x24, [x24, #0xee0]   ; &slot for 'SwitchSelections'
+0x31c94e0  ldr      x22, [x22, #0xee8]   ; &slot for 'routeTypes'
+0x31c94e4  ldr      x21, [x21, #0xef0]   ; &slot for 'LastScriptLine'
+0x31c94e8  ldr      x29, [x29, #0xef8]   ; &slot for 'TalkFlagDataInfo'
+0x31c94ec  ldr      x25, [x25, #0x458]   ; &slot for ''
+0x31c94f0  ldrb     w8, [x23, #0x24f]
+0x31c94f4  tbnz     w8, #0, #0x31c95d8
+0x31c94f8  adrp     x0, #0x55ca000
+0x31c94fc  ldr      x0, [x0, #0x408]
+0x31c9500  bl       #0x22304a4   CALL 0x22304a4
+0x31c9504  adrp     x0, #0x55ca000
+0x31c9508  ldr      x0, [x0, #0x410]
+0x31c950c  bl       #0x22304a4   CALL 0x22304a4
+0x31c9510  adrp     x0, #0x55ca000
+0x31c9514  ldr      x0, [x0, #0xf00]
+0x31c9518  bl       #0x22304a4   CALL 0x22304a4
+0x31c951c  adrp     x0, #0x557a000
+0x31c9520  ldr      x0, [x0, #0xc8]
+0x31c9524  bl       #0x22304a4   CALL 0x22304a4
+0x31c9528  adrp     x0, #0x55ca000
+0x31c952c  ldr      x0, [x0, #0xec8]   ; &slot for 'ScriptActionEncrypt/'
+0x31c9530  bl       #0x22304a4   CALL 0x22304a4
+0x31c9534  adrp     x0, #0x55b0000
+0x31c9538  ldr      x0, [x0, #0x360]   ; &slot for 'Dummy'
+0x31c953c  bl       #0x22304a4   CALL 0x22304a4
+0x31c9540  adrp     x0, #0x55ca000
+0x31c9544  ldr      x0, [x0, #0xee0]   ; &slot for 'SwitchSelections'
+0x31c9548  bl       #0x22304a4   CALL 0x22304a4
+0x31c954c  adrp     x0, #0x55ca000
+0x31c9550  ldr      x0, [x0, #0xf08]   ; &slot for 'StoppedCharaEffect'
+0x31c9554  bl       #0x22304a4   CALL 0x22304a4
+0x31c9558  adrp     x0, #0x55ca000
+0x31c955c  ldr      x0, [x0, #0xef0]   ; &slot for 'LastScriptLine'
+0x31c9560  bl       #0x22304a4   CALL 0x22304a4
+0x31c9564  adrp     x0, #0x55ca000
+0x31c9568  ldr      x0, [x0, #0xf10]   ; &slot for 'MovieResume'
+0x31c956c  bl       #0x22304a4   CALL 0x22304a4
+0x31c9570  adrp     x0, #0x55ca000
+0x31c9574  ldr      x0, [x0, #0xf18]   ; &slot for 'PlayedLastMovie'
+0x31c9578  bl       #0x22304a4   CALL 0x22304a4
+0x31c957c  adrp     x0, #0x55ca000
+0x31c9580  ldr      x0, [x0, #0xf20]   ; &slot for 'SAVE_ROUTE_SELECT_IN_COLLECTION'
+0x31c9584  bl       #0x22304a4   CALL 0x22304a4
+0x31c9588  adrp     x0, #0x55ca000
+0x31c958c  ldr      x0, [x0, #0xed0]   ; &slot for 'TalkResume'
+0x31c9590  bl       #0x22304a4   CALL 0x22304a4
+0x31c9594  adrp     x0, #0x55ca000
+0x31c9598  ldr      x0, [x0, #0xef8]   ; &slot for 'TalkFlagDataInfo'
+0x31c959c  bl       #0x22304a4   CALL 0x22304a4
+0x31c95a0  adrp     x0, #0x5570000
+0x31c95a4  ldr      x0, [x0, #0x458]   ; &slot for ''
+0x31c95a8  bl       #0x22304a4   CALL 0x22304a4
+0x31c95ac  adrp     x0, #0x55ca000
+0x31c95b0  ldr      x0, [x0, #0xec0]   ; &slot for 'ScriptAction/'
+0x31c95b4  bl       #0x22304a4   CALL 0x22304a4
+0x31c95b8  adrp     x0, #0x55ca000
+0x31c95bc  ldr      x0, [x0, #0xed8]   ; &slot for 'TalkResumeV2'
+0x31c95c0  bl       #0x22304a4   CALL 0x22304a4
+0x31c95c4  adrp     x0, #0x55ca000
+0x31c95c8  ldr      x0, [x0, #0xee8]   ; &slot for 'routeTypes'
+0x31c95cc  bl       #0x22304a4   CALL 0x22304a4
+0x31c95d0  mov      w8, #1
+0x31c95d4  strb     w8, [x23, #0x24f]
+0x31c95d8  ldr      x8, [x20]
+0x31c95dc  adrp     x9, #0xea7000
+0x31c95e0  ldr      x1, [x28]   ; 'ScriptAction/'
+0x31c95e4  ldr      d0, [x9, #0x150]
+0x31c95e8  mov      w9, #0x10
+0x31c95ec  mov      w23, #1
+0x31c95f0  ldr      x0, [x8, #0xb8]
+0x31c95f4  mov      w8, #0x3f000000
+0x31c95f8  str      w8, [x0]
+0x31c95fc  adrp     x8, #0xea7000
+0x31c9600  ldr      d1, [x8, #0xa70]
+0x31c9604  adrp     x8, #0xea7000
+0x31c9608  stur     d0, [x0, #4]
+0x31c960c  ldr      d0, [x8, #0x158]
+0x31c9610  str      w9, [x0, #0xc]
+0x31c9614  strb     w23, [x0, #0x20]
+0x31c9618  stp      d1, d0, [x0, #0x10]
+0x31c961c  str      x1, [x0, #0x28]!
+0x31c9620  bl       #0x2230448   CALL 0x2230448   args: x1='ScriptAction/'
+0x31c9624  ldr      x8, [x20]
+0x31c9628  ldr      x1, [x27]   ; 'ScriptActionEncrypt/'
+0x31c962c  ldr      x0, [x8, #0xb8]
+0x31c9630  str      x1, [x0, #0x30]!
+0x31c9634  bl       #0x2230448   CALL 0x2230448   args: x1='ScriptActionEncrypt/'
+0x31c9638  ldr      x8, [x20]
+0x31c963c  ldr      x1, [x26]   ; 'TalkResume'
+0x31c9640  ldr      x0, [x8, #0xb8]
+0x31c9644  str      x1, [x0, #0x38]!
+0x31c9648  bl       #0x2230448   CALL 0x2230448   args: x1='TalkResume'
+0x31c964c  ldr      x8, [x20]
+0x31c9650  ldr      x1, [x19]   ; 'TalkResumeV2'
+0x31c9654  ldr      x0, [x8, #0xb8]
+0x31c9658  str      x1, [x0, #0x40]!
+0x31c965c  bl       #0x2230448   CALL 0x2230448   args: x1='TalkResumeV2'
+0x31c9660  ldr      x8, [x20]
+0x31c9664  ldr      x1, [x24]   ; 'SwitchSelections'
+0x31c9668  ldr      x0, [x8, #0xb8]
+0x31c966c  str      x1, [x0, #0x48]!
+0x31c9670  bl       #0x2230448   CALL 0x2230448   args: x1='SwitchSelections'
+0x31c9674  ldr      x8, [x20]
+0x31c9678  ldr      x1, [x22]   ; 'routeTypes'
+0x31c967c  ldr      x0, [x8, #0xb8]
+0x31c9680  str      x1, [x0, #0x50]!
+0x31c9684  bl       #0x2230448   CALL 0x2230448   args: x1='routeTypes'
+0x31c9688  ldr      x8, [x20]
+0x31c968c  ldr      x1, [x21]   ; 'LastScriptLine'
+0x31c9690  ldr      x0, [x8, #0xb8]
+0x31c9694  str      x1, [x0, #0x58]!
+0x31c9698  bl       #0x2230448   CALL 0x2230448   args: x1='LastScriptLine'
+0x31c969c  ldr      x8, [x20]
+0x31c96a0  ldr      x1, [x29]
+0x31c96a4  ldr      x0, [x8, #0xb8]
+0x31c96a8  str      x1, [x0, #0x60]!
+0x31c96ac  bl       #0x2230448   CALL 0x2230448
+0x31c96b0  adrp     x9, #0x55ca000
+0x31c96b4  ldr      x8, [x20]
+0x31c96b8  ldr      x9, [x9, #0xf10]   ; &slot for 'MovieResume'
+0x31c96bc  ldr      x0, [x8, #0xb8]
+0x31c96c0  ldr      x1, [x9]   ; 'MovieResume'
+0x31c96c4  str      x1, [x0, #0x68]!
+0x31c96c8  bl       #0x2230448   CALL 0x2230448   args: x1='MovieResume'
+0x31c96cc  adrp     x9, #0x55ca000
+0x31c96d0  ldr      x8, [x20]
+0x31c96d4  ldr      x9, [x9, #0xf18]   ; &slot for 'PlayedLastMovie'
+0x31c96d8  ldr      x0, [x8, #0xb8]
+0x31c96dc  ldr      x1, [x9]   ; 'PlayedLastMovie'
+0x31c96e0  str      x1, [x0, #0x70]!
+0x31c96e4  bl       #0x2230448   CALL 0x2230448   args: x1='PlayedLastMovie'
+0x31c96e8  adrp     x9, #0x55b0000
+0x31c96ec  ldr      x8, [x20]
+0x31c96f0  ldr      x9, [x9, #0x360]   ; &slot for 'Dummy'
+0x31c96f4  ldr      x0, [x8, #0xb8]
+0x31c96f8  ldr      x1, [x9]   ; 'Dummy'
+0x31c96fc  str      x1, [x0, #0x78]!
+0x31c9700  bl       #0x2230448   CALL 0x2230448   args: x1='Dummy'
+0x31c9704  ldr      x8, [x20]
+0x31c9708  ldr      x1, [x25]   ; ''
+0x31c970c  ldr      x0, [x8, #0xb8]
+0x31c9710  str      x1, [x0, #0x88]!
+0x31c9714  sturh    wzr, [x0, #-8]
+0x31c9718  bl       #0x2230448   CALL 0x2230448   args: x1=''
+0x31c971c  ldr      x8, [x20]
+0x31c9720  ldr      x1, [x25]   ; ''
+0x31c9724  ldr      x0, [x8, #0xb8]
+0x31c9728  str      x1, [x0, #0x90]!
+0x31c972c  bl       #0x2230448   CALL 0x2230448   args: x1=''
+0x31c9730  ldr      x8, [x20]
+0x31c9734  ldr      x1, [x25]   ; ''
+0x31c9738  ldr      x0, [x8, #0xb8]
+0x31c973c  str      x1, [x0, #0x98]!
+0x31c9740  bl       #0x2230448   CALL 0x2230448   args: x1=''
+0x31c9744  ldr      x8, [x20]
+0x31c9748  ldr      x1, [x25]   ; ''
+0x31c974c  ldr      x0, [x8, #0xb8]
+0x31c9750  str      x1, [x0, #0xa0]!
+0x31c9754  bl       #0x2230448   CALL 0x2230448   args: x1=''
+0x31c9758  ldr      x8, [x20]
+0x31c975c  ldr      x1, [x25]   ; ''
+0x31c9760  ldr      x0, [x8, #0xb8]
+0x31c9764  str      x1, [x0, #0xb0]!
+0x31c9768  stur     w23, [x0, #-8]
+0x31c976c  bl       #0x2230448   CALL 0x2230448   args: x1=''
+0x31c9770  ldr      x8, [x20]
+0x31c9774  ldr      x1, [x25]   ; ''
+0x31c9778  ldr      x0, [x8, #0xb8]
+0x31c977c  str      x1, [x0, #0xc0]!
+0x31c9780  sturh    w23, [x0, #-8]
+0x31c9784  bl       #0x2230448   CALL 0x2230448   args: x1=''
+0x31c9788  ldr      x8, [x20]
+0x31c978c  ldr      x0, [x8, #0xb8]
+0x31c9790  mov      w8, #5
+0x31c9794  ldr      x1, [x0, #0x78]
+0x31c9798  str      x1, [x0, #0xf0]!
+0x31c979c  stur     w8, [x0, #-0x28]
+0x31c97a0  stur     xzr, [x0, #-0x24]
+0x31c97a4  stur     xzr, [x0, #-0x14]
+0x31c97a8  stur     xzr, [x0, #-0x1c]
+0x31c97ac  stur     wzr, [x0, #-0xc]
+0x31c97b0  bl       #0x2230448   CALL 0x2230448
+0x31c97b4  ldr      x8, [x20]
+0x31c97b8  ldr      x0, [x8, #0xb8]
+0x31c97bc  ldr      x1, [x0, #0x78]
+0x31c97c0  str      x1, [x0, #0xf8]!
+0x31c97c4  bl       #0x2230448   CALL 0x2230448
+0x31c97c8  ldr      x8, [x20]
+0x31c97cc  ldr      x8, [x8, #0xb8]
+0x31c97d0  ldr      x1, [x8, #0x78]
+0x31c97d4  add      x0, x8, #0x100
+0x31c97d8  str      x1, [x8, #0x100]
+0x31c97dc  bl       #0x2230448   CALL 0x2230448
+0x31c97e0  ldr      x8, [x20]
+0x31c97e4  mov      x1, xzr
+0x31c97e8  ldr      x8, [x8, #0xb8]
+0x31c97ec  add      x0, x8, #0x110
+0x31c97f0  str      wzr, [x8, #0x108]
+0x31c97f4  str      xzr, [x8, #0x110]
+0x31c97f8  bl       #0x2230448   CALL 0x2230448
+0x31c97fc  ldr      x8, [x20]
+0x31c9800  mov      x1, xzr
+0x31c9804  ldr      x8, [x8, #0xb8]
+0x31c9808  add      x9, x8, #0x118
+0x31c980c  add      x0, x8, #0x128
+0x31c9810  str      xzr, [x8, #0x128]
+0x31c9814  str      xzr, [x8, #0x118]
+0x31c9818  stur     xzr, [x9, #5]
+0x31c981c  bl       #0x2230448   CALL 0x2230448
+0x31c9820  ldr      x8, [x20]
+0x31c9824  mov      x1, xzr
+0x31c9828  ldr      x8, [x8, #0xb8]
+0x31c982c  add      x0, x8, #0x138
+0x31c9830  strb     wzr, [x8, #0x130]
+0x31c9834  str      xzr, [x8, #0x138]
+0x31c9838  bl       #0x2230448   CALL 0x2230448
+0x31c983c  ldr      x8, [x20]
+0x31c9840  adrp     x9, #0x55ca000
+0x31c9844  ldr      x8, [x8, #0xb8]
+0x31c9848  ldr      x9, [x9, #0xf00]
+0x31c984c  ldr      x0, [x9]
+0x31c9850  strb     wzr, [x8, #0x140]
+0x31c9854  bl       #0x2230710   CALL 0x2230710
+0x31c9858  mov      x1, xzr
+0x31c985c  mov      x19, x0
+0x31c9860  bl       #0x31ca490   CALL ScriptManager.NotificationInfoManager$$.ctor
+0x31c9864  ldr      x8, [x20]
+0x31c9868  mov      x1, x19
+0x31c986c  ldr      x8, [x8, #0xb8]
+0x31c9870  add      x0, x8, #0x148
+0x31c9874  str      x19, [x8, #0x148]
+0x31c9878  bl       #0x2230448   CALL 0x2230448
+0x31c987c  ldr      x8, [x20]
+0x31c9880  adrp     x9, #0x55ca000
+0x31c9884  ldr      x9, [x9, #0xf20]   ; &slot for 'SAVE_ROUTE_SELECT_IN_COLLECTION'
+0x31c9888  ldr      x8, [x8, #0xb8]
+0x31c988c  ldr      x1, [x9]   ; 'SAVE_ROUTE_SELECT_IN_COLLECTION'
+0x31c9890  add      x0, x8, #0x150
+0x31c9894  str      x1, [x8, #0x150]
+0x31c9898  bl       #0x2230448   CALL 0x2230448
+0x31c989c  ldr      x8, [x20]
+0x31c98a0  adrp     x9, #0x55ca000
+0x31c98a4  ldr      x9, [x9, #0xf08]   ; &slot for 'StoppedCharaEffect'
+0x31c98a8  ldr      x8, [x8, #0xb8]
+0x31c98ac  ldr      x1, [x9]   ; 'StoppedCharaEffect'
+0x31c98b0  add      x0, x8, #0x158
+0x31c98b4  str      x1, [x8, #0x158]
+0x31c98b8  bl       #0x2230448   CALL 0x2230448
+0x31c98bc  ldr      x8, [x20]
+0x31c98c0  adrp     x9, #0x55ca000
+0x31c98c4  ldr      x8, [x8, #0xb8]
+0x31c98c8  ldr      x9, [x9, #0x410]
+0x31c98cc  ldr      x0, [x9]
+0x31c98d0  str      xzr, [x8, #0x160]
+0x31c98d4  bl       #0x2230710   CALL 0x2230710
+0x31c98d8  adrp     x8, #0x55ca000
+0x31c98dc  mov      x19, x0
+0x31c98e0  ldr      x8, [x8, #0x408]
+0x31c98e4  ldr      x1, [x8]
+0x31c98e8  bl       #0x44c7b8c   CALL System.Collections.Generic.List<object>$$.ctor
+0x31c98ec  ldr      x8, [x20]
+0x31c98f0  mov      x1, x19
+0x31c98f4  ldp      x22, x21, [sp, #0x40]
+0x31c98f8  ldr      x8, [x8, #0xb8]
+0x31c98fc  ldp      x24, x23, [sp, #0x30]
+0x31c9900  ldp      x26, x25, [sp, #0x20]
+0x31c9904  str      x19, [x8, #0x168]
+0x31c9908  ldp      x20, x19, [sp, #0x50]
+0x31c990c  ldp      x28, x27, [sp, #0x10]
+0x31c9910  add      x0, x8, #0x168
+0x31c9914  ldp      x29, x30, [sp], #0x60
+0x31c9918  b        #0x2230448

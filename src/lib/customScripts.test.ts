@@ -116,6 +116,13 @@ afterEach(() => {
 });
 
 describe("custom script package parser", () => {
+  it("accepts local video and cue mappings while enforcing the video extension", async () => {
+    const archive = { "manifest.json": manifest({ assets: { movies: { talk_mov: "assets/movie.webm" }, sounds: { "Se/bank/cue": "assets/cue.wav" } } }), "story.txt": "[criMovie talk_mov bgmPlay false]\n[cueSe bank cue]\n" + playableScript, "assets/movie.webm": new Uint8Array([1, 2, 3]), "assets/cue.wav": new Uint8Array([4, 5]) };
+    const preview = await parseCustomScriptArchive(storedZip(archive));
+    expect(preview.record.assets.movies).toEqual({ talk_mov: "assets/movie.webm" });
+    expect(preview.record.assets.sounds).toEqual({ "Se/bank/cue": "assets/cue.wav" });
+    await expect(parseCustomScriptArchive(storedZip({ ...archive, "manifest.json": manifest({ assets: { movies: { talk_mov: "assets/picture.png" } } }), "assets/picture.png": new Uint8Array([1]) }))).rejects.toThrow(/incompatible file extension/);
+  });
   it("parses a root package, validates mappings, and generates a stable custom URL", async () => {
     const preview = await parseCustomScriptArchive(storedZip({
       "manifest.json": manifest({
@@ -137,7 +144,7 @@ describe("custom script package parser", () => {
       title: "测试剧本",
       region: "JP",
       translationAllowed: false,
-      preview: { parserVersion: 6, frameCount: 1, characterCount: 0 },
+      preview: { parserVersion: 7, frameCount: 1, characterCount: 0 },
     });
     expect(preview.assets.map((asset) => asset.path).sort()).toEqual([
       "assets/background.png",
@@ -161,6 +168,16 @@ describe("custom script package parser", () => {
       "story.txt": playableScript,
     }))).rejects.toMatchObject({ code: "invalid_path" });
   });
+  it("imports explicit image and sound mappings using the existing path validation", async () => {
+    const preview = await parseCustomScriptArchive(storedZip({
+      "manifest.json": manifest({ assets: { images: { panel: "assets/panel.png" }, sounds: { se1: "assets/se1.wav" } } }),
+      "story.txt": "[imageSet A panel 1]\n[charaFadein A 0 1]\n[se se1]\n＠旁白\n本文\n[k]",
+      "assets/panel.png": new Uint8Array([1]), "assets/se1.wav": new Uint8Array([2]),
+    }));
+    expect(preview.record.assets.images).toEqual({ panel: "assets/panel.png" });
+    expect(preview.record.assets.sounds).toEqual({ se1: "assets/se1.wav" });
+    expect(preview.assets).toHaveLength(2);
+  });
 
   it("rejects a script that defines too many character slots", async () => {
     const slots = Array.from(
@@ -176,32 +193,32 @@ describe("custom script package parser", () => {
   it("uses parser diagnostics as import validation and counts branch resources recursively", async () => {
     await expect(parseCustomScriptArchive(storedZip({
       "manifest.json": manifest({ region: "KR" }),
-      "story.txt": "?1:Outer\n?1:Nested\n@N\nText[q]\n?!\n?!",
+      "story.txt": "？1：Outer\n？1：Nested\n＠N\nText[q]\n？！\n？！",
     }))).rejects.toMatchObject({ code: "invalid_script" });
 
     const preview = await parseCustomScriptArchive(storedZip({
       "manifest.json": manifest({ region: "KR" }),
       "story.txt": [
-        "?1:A",
+        "？1：A",
         "[scene 101]",
         "[bgm A]",
         "[charaSet A 1001 0 A]",
         "[charaPut A 0]",
-        "@A:A",
+        "＠A：A",
         "Branch A[q]",
-        "?2:B",
+        "？2：B",
         "[scene 202]",
         "[bgm B]",
         "[charaSet B 2002 0 B]",
         "[charaPut B 2]",
-        "@B:B",
+        "＠B：B",
         "Branch B[q]",
-        "?!",
+        "？！",
       ].join("\n"),
     }));
 
     expect(preview.record.preview).toEqual({
-      parserVersion: 6,
+      parserVersion: 7,
       frameCount: 2,
       choiceCount: 1,
       characterCount: 2,
@@ -215,7 +232,7 @@ describe("custom script package parser", () => {
     }));
     // The shared continuation after the choice block stays addressable in the
     // compiled program: a choice instruction plus the follow-up message.
-    expect(sharedContinuation.program.instructions.some((instruction) => instruction.tag === "choice")).toBe(true);
+    expect(sharedContinuation.program.instructions.some((instruction) => instruction.tag === "$choice")).toBe(true);
     expect(sharedContinuation.program.messageCatalog.map((record) => record.text)).toEqual([
       "Shared continuation",
     ]);
@@ -308,7 +325,7 @@ describe("custom script package persistence facade", () => {
     setCustomScriptPackageStorageForTesting(storage);
 
     expect((await listCustomScriptPackages())[0].preview).toMatchObject({
-      parserVersion: 6,
+      parserVersion: 7,
       frameCount: 1,
     });
     expect(updateCount).toBe(1);

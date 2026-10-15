@@ -1,0 +1,131 @@
+
+==============================================================================
+### ScriptManager$$InitCamera  0x31a1ce4..0x31a1cf0  (size 0xc)
+
+==============================================================================
+### ScriptManager$$InitCamera  0x31b83dc..0x31b85fc  (size 0x220)
+0x31b8410  bl       #0x22304a4   CALL 0x22304a4
+0x31b841c  bl       #0x22304a4   CALL 0x22304a4
+0x31b8428  bl       #0x22304a4   CALL 0x22304a4
+0x31b8434  bl       #0x22304a4   CALL 0x22304a4
+0x31b845c  bl       #0x38ebe30   CALL UnityEngine.GameObject$$GetComponent<object>
+0x31b8474  bl       #0x22305f4   CALL 0x22305f4
+0x31b8484  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b849c  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31b84b4  bl       #0x38ebe30   CALL UnityEngine.GameObject$$GetComponent<object>
+0x31b84cc  bl       #0x22305f4   CALL 0x22305f4
+0x31b84dc  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b84f4  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31b850c  bl       #0x22305f4   CALL 0x22305f4
+0x31b8518  bl       #0x482b314   CALL iTween$$Stop
+0x31b8524  bl       #0x482b314   CALL iTween$$Stop
+0x31b8530  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b854c  bl       #0x22304a4   CALL 0x22304a4
+0x31b857c  bl       #0x4fe21f8   CALL UnityEngine.Transform$$set_localScale
+0x31b8588  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b85a4  bl       #0x22304a4   CALL 0x22304a4
+0x31b85cc  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b85f8  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$StartCamera  0x31b94fc..0x31b9518  (size 0x1c)
+0x31b9508  bl       #0x31b9518   CALL ScriptManager$$StartCamera
+
+==============================================================================
+### ScriptManager$$StartCamera  0x31b9518..0x31b97a8  (size 0x290)
+0x31b956c  bl       #0x22304a4   CALL 0x22304a4
+0x31b9574  ldr      x0, [x0, #0xb50]   ; &slot for 'EndExecuteCamera'
+0x31b9578  bl       #0x22304a4   CALL 0x22304a4
+0x31b9580  ldr      x0, [x0, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b9584  bl       #0x22304a4   CALL 0x22304a4
+0x31b9594  bl       #0x31b85fc   CALL ScriptManager$$StopMoveTween
+0x31b959c  bl       #0x31b86f4   CALL ScriptManager$$StopMoveScaleTween
+0x31b95c8  bl       #0x3619af0   CALL TweenScale$$Begin
+0x31b95e8  bl       #0x3619114   CALL TweenPosition$$Begin
+0x31b9600  bl       #0x22305f4   CALL 0x22305f4
+0x31b9610  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b9624  bl       #0x4fcfd44   CALL UnityEngine.Behaviour$$get_enabled
+0x31b9634  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b9644  bl       #0x2230448   CALL 0x2230448
+0x31b9654  ldr      x8, [x8, #0xb50]   ; &slot for 'EndExecuteCamera'
+0x31b9658  ldr      x1, [x8]   ; 'EndExecuteCamera'
+0x31b9670  bl       #0x22305f4   CALL 0x22305f4
+0x31b9680  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b9694  bl       #0x4fcfd44   CALL UnityEngine.Behaviour$$get_enabled
+0x31b96a4  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b96b4  bl       #0x2230448   CALL 0x2230448
+0x31b96c0  ldr      x8, [x8, #0xb50]   ; &slot for 'EndExecuteCamera'
+0x31b96c4  ldr      x1, [x8]   ; 'EndExecuteCamera'
+0x31b96d0  bl       #0x2230448   CALL 0x2230448   args: x1='EndExecuteCamera'
+0x31b96ec  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9704  bl       #0x4fe21f8   CALL UnityEngine.Transform$$set_localScale
+0x31b9714  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b972c  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b974c  ldr      x8, [x8, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b9750  ldr      x1, [x8]   ; 'EndExecuteSubCamera'
+0x31b9764  ldr      x8, [x8, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b9768  ldr      x1, [x8]   ; 'EndExecuteSubCamera'
+0x31b9774  bl       #0x2230448   CALL 0x2230448   args: x1='EndExecuteSubCamera'
+0x31b97a4  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$StartCameraRoll  0x31b99ec..0x31b9a08  (size 0x1c)
+0x31b99f8  bl       #0x31b9a08   CALL ScriptManager$$StartCameraRoll
+
+==============================================================================
+### ScriptManager$$StartCameraRoll  0x31b9a08..0x31b9c18  (size 0x210)
+0x31b9a48  bl       #0x22304a4   CALL 0x22304a4
+0x31b9a54  bl       #0x22304a4   CALL 0x22304a4
+0x31b9a5c  ldr      x0, [x0, #0xb60]   ; &slot for 'EndExecuteSubCameraRoll'
+0x31b9a60  bl       #0x22304a4   CALL 0x22304a4
+0x31b9a68  ldr      x0, [x0, #0xb68]   ; &slot for 'EndExecuteCameraRoll'
+0x31b9a6c  bl       #0x22304a4   CALL 0x22304a4
+0x31b9a90  bl       #0x4fc47a0   CALL UnityEngine.Quaternion$$Internal_FromEulerRad
+0x31b9ac0  bl       #0x38ebe30   CALL UnityEngine.GameObject$$GetComponent<object>
+0x31b9ad8  bl       #0x22305f4   CALL 0x22305f4
+0x31b9ae8  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b9b00  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31b9b20  bl       #0x3619654   CALL TweenRotation$$Begin
+0x31b9b38  bl       #0x22305f4   CALL 0x22305f4
+0x31b9b48  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b9b5c  bl       #0x4fcfd44   CALL UnityEngine.Behaviour$$get_enabled
+0x31b9b6c  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b9b7c  bl       #0x2230448   CALL 0x2230448
+0x31b9b8c  ldr      x8, [x8, #0xb68]   ; &slot for 'EndExecuteCameraRoll'
+0x31b9b90  ldr      x1, [x8]   ; 'EndExecuteCameraRoll'
+0x31b9b98  bl       #0x2230448   CALL 0x2230448
+0x31b9bb0  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9bcc  bl       #0x4fe1e08   CALL UnityEngine.Transform$$set_localRotation
+0x31b9bf8  ldr      x8, [x8, #0xb60]   ; &slot for 'EndExecuteSubCameraRoll'
+0x31b9bfc  ldr      x1, [x8]   ; 'EndExecuteSubCameraRoll'
+0x31b9c04  bl       #0x2230448   CALL 0x2230448
+0x31b9c14  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$SetCameraRoll  0x31b9830..0x31b99d0  (size 0x1a0)
+0x31b9880  bl       #0x22304a4   CALL 0x22304a4
+0x31b988c  bl       #0x22304a4   CALL 0x22304a4
+0x31b98b0  bl       #0x4fc47a0   CALL UnityEngine.Quaternion$$Internal_FromEulerRad
+0x31b98e0  bl       #0x38ebe30   CALL UnityEngine.GameObject$$GetComponent<object>
+0x31b98f8  bl       #0x22305f4   CALL 0x22305f4
+0x31b9908  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b9920  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31b992c  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9948  bl       #0x4fe1e08   CALL UnityEngine.Transform$$set_localRotation
+0x31b9954  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b996c  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b997c  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9994  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b99cc  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$SetCameraRoll  0x31b99d0..0x31b99ec  (size 0x1c)
+0x31b99dc  bl       #0x31b9830   CALL ScriptManager$$SetCameraRoll
+
+==============================================================================
+### ScriptManager$$InitCameraRoll  0x31a1cf0..0x31a1cfc  (size 0xc)
+
+==============================================================================
+### ScriptManager$$InitCameraRoll  0x31b97b8..0x31b9830  (size 0x78)
+0x31b97e8  bl       #0x22304a4   CALL 0x22304a4
+0x31b981c  ldr      x8, [x8, #0xb8]   ; &slot for '[CRIWARE] Internal: Duplicated object GUID'

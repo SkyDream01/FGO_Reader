@@ -1,0 +1,22 @@
+==============================================================================
+// ScriptEffectSizeAdjustComponent  (dump.cs line 57545)
+public class ScriptEffectSizeAdjustComponent : MonoBehaviour // TypeDefIndex: 1489
+{
+	// Fields
+	private Vector3 defaultScale; // 0x20
+	private Transform effectObjectTransform; // 0x30
+	private int oldUiRootActiveHeight; // 0x38
+
+	// Methods
+
+	// RVA: 0x2D63304 Offset: 0x2D5F304 VA: 0x2D63304
+	private void Start() { }
+
+	// RVA: 0x2D63524 Offset: 0x2D5F524 VA: 0x2D63524
+	private void Update() { }
+
+	// RVA: 0x2D6336C Offset: 0x2D5F36C VA: 0x2D6336C
+	private void SetEffectSize() { }
+
+	// RVA: 0x2D63528 Offset: 0x2D5F528 VA: 0x2D63528
+	public void .ctor() { }

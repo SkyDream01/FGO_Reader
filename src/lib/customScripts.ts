@@ -15,7 +15,7 @@ const MAX_SCRIPT_BYTES = 2 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 12 * 1024 * 1024;
 const MAX_AUDIO_BYTES = 24 * 1024 * 1024;
 const MAX_CHOICE_OPTIONS = 9;
-const MAX_CHARACTER_SLOTS = 64;
+const MAX_CHARACTER_SLOTS = 26;
 
 const PACKAGE_ID_PATTERN = /^custom-v1-[0-9a-f]{24}$/;
 const PACKAGE_DB_NAME = "fgo-reader-custom-scripts";
@@ -30,12 +30,16 @@ const IMAGE_EXTENSIONS = new Set(["png", "jpeg", "jpg", "webp"]);
 const AUDIO_EXTENSIONS = new Set(["mp3", "ogg", "wav"]);
 
 export type CustomScriptArchiveInput = File | Blob | ArrayBuffer;
-export type CustomScriptAssetKind = "backgrounds" | "characters" | "bgm";
+export type CustomScriptAssetKind = "backgrounds" | "characters" | "bgm" | "images" | "sounds" | "movies";
+const ASSET_KINDS: readonly CustomScriptAssetKind[] = ["backgrounds", "characters", "bgm", "images", "sounds", "movies"];
 
 export interface CustomScriptAssetMappings {
   backgrounds: Record<string, string>;
   characters: Record<string, string>;
   bgm: Record<string, string>;
+  images?: Record<string, string>;
+  sounds?: Record<string, string>;
+  movies?: Record<string, string>;
 }
 
 export interface CustomScriptPreviewCounts {
@@ -202,6 +206,8 @@ function mimeTypeForPath(path: string) {
     case "mp3": return "audio/mpeg";
     case "ogg": return "audio/ogg";
     case "wav": return "audio/wav";
+    case "mp4": return "video/mp4";
+    case "webm": return "video/webm";
     default: return "application/octet-stream";
   }
 }
@@ -211,6 +217,9 @@ function cloneAssets(assets: CustomScriptAssetMappings): CustomScriptAssetMappin
     backgrounds: { ...assets.backgrounds },
     characters: { ...assets.characters },
     bgm: { ...assets.bgm },
+    ...(assets.images ? { images: { ...assets.images } } : {}),
+    ...(assets.sounds ? { sounds: { ...assets.sounds } } : {}),
+    ...(assets.movies ? { movies: { ...assets.movies } } : {}),
   };
 }
 
@@ -223,8 +232,8 @@ function parseAssetMappings(value: unknown): CustomScriptAssetMappings {
   if (value === undefined) return mappings;
   if (!isObject(value)) packageError("manifest.assets must be an object", "invalid_manifest");
 
-  assertOnlyKeys(value, ["backgrounds", "characters", "bgm"], "manifest.assets");
-  for (const kind of ["backgrounds", "characters", "bgm"] as const) {
+  assertOnlyKeys(value, [...ASSET_KINDS], "manifest.assets");
+  for (const kind of ASSET_KINDS) {
     const rawMapping = value[kind];
     if (rawMapping === undefined) continue;
     if (!isObject(rawMapping)) {
@@ -235,7 +244,7 @@ function parseAssetMappings(value: unknown): CustomScriptAssetMappings {
         packageError(`manifest.assets.${kind}.${key} must be a string path`, "invalid_manifest");
       }
       assertSafeArchivePath(path, `manifest.assets.${kind}.${key}`);
-      mappings[kind][key] = path;
+      (mappings[kind] ??= {})[key] = path;
     }
   }
   return mappings;
@@ -529,10 +538,11 @@ function findRequiredEntry(entries: Map<string, ZipEntry>, prefix: string, path:
 }
 
 function validateAssetEntries(entries: Map<string, ZipEntry>, prefix: string, assets: CustomScriptAssetMappings) {
-  for (const kind of ["backgrounds", "characters", "bgm"] as const) {
-    const extensions = kind === "bgm" ? AUDIO_EXTENSIONS : IMAGE_EXTENSIONS;
-    const byteLimit = kind === "bgm" ? MAX_AUDIO_BYTES : MAX_IMAGE_BYTES;
-    for (const [key, path] of Object.entries(assets[kind])) {
+  for (const kind of ASSET_KINDS) {
+    const audio = kind === "bgm" || kind === "sounds";
+    const extensions = kind === "movies" ? new Set(["mp4", "webm"]) : audio ? AUDIO_EXTENSIONS : IMAGE_EXTENSIONS;
+    const byteLimit = kind === "movies" ? MAX_ARCHIVE_BYTES : audio ? MAX_AUDIO_BYTES : MAX_IMAGE_BYTES;
+    for (const [key, path] of Object.entries(assets[kind] ?? {})) {
       if (!extensions.has(fileExtension(path))) {
         packageError(`manifest.assets.${kind}.${key} has an incompatible file extension`, "invalid_resource");
       }
@@ -632,8 +642,8 @@ export async function parseCustomScriptArchive(input: CustomScriptArchiveInput):
   const parsedProgram = parseCustomScript(scriptText, id, manifest.region);
 
   const assetByPath = new Map<string, CustomScriptAssetBlob>();
-  for (const kind of ["backgrounds", "characters", "bgm"] as const) {
-    for (const path of Object.values(manifest.assets[kind])) {
+  for (const kind of ASSET_KINDS) {
+    for (const path of Object.values(manifest.assets[kind] ?? {})) {
       if (assetByPath.has(path)) continue;
       const entry = findRequiredEntry(entries, prefix, path, `manifest.assets.${kind}`);
       const bytes = await extractZipEntry(archive, entry);

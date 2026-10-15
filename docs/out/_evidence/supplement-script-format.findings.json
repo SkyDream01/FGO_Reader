@@ -1,0 +1,255 @@
+[
+ {
+  "claim": "行分类规则:一行是命令,当且仅当整行恰为一个 [..] 括号组且组内首个 token(tag)的 FNV-1a 命中 ScriptCommandExecute 哈希树;否则是消息行。AnalysText 用字符扫描实现:token 非空时再遇 '[' 即置 messageLine=true。",
+  "evidence": [
+   "0x31aa624: cmp w8, #0x22 ; 引号分支",
+   "0x31aa62c: cmp w8, #0x5b ; '[' 分支",
+   "0x31aa634: ldr x1,[x26] ; 0x31aa640: bl #0x4870cc4 CALL System.String$$op_Inequality ; x20 != \"\" ?",
+   "0x31aa644: tbz w0,#0,#0x31aaac8 ; token 为空(行首括号)走组扫描",
+   "0x31aaab8: bl #0x44aba00 CALL System.Collections.Generic.List<int>$$AddWithResize ; lineDataList.Add(line)",
+   "0x31aaabc: ldr x8,[sp,#0x18] ; 0x31aaac0: mov w9,#1 ; 0x31aaac4: strb w9,[x8] ; *messageLine = true",
+   "0x31aab1c: cmp w8,#0x20 ; 0x31aab24: ccmp x21,#0,#0,eq ; 0x31aab28: csel x21,x20,x21,eq ; 记录首个空格前的子串",
+   "0x31aac0c: csel x26,x20,x21,eq ; x26 = tag",
+   "0x31aac14: bl #0x2cdf448 CALL <PrivateImplementationDetails>$$ComputeStringHash ; FNV-1a(tag)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "全量语料统计(1,867,761 行):命令 857,520;以 '[' 开头但有尾随文本(消息行)11,423;以 '[' 开头但 tag 不在哈希树 114,315(其中 wt 114,251);纯文本 203,209;＠ 行 184,792;＄ 行 2,582;空行 493,920。",
+  "evidence": [
+   "work/scratch/classify2.py 输出(与 work/coverage/classify.py 逐项一致)",
+   "work/coverage/census.json tagcount:k=184799, charaFace=114682, wt=114251, charaFadeout=76752, charaFadein=74211, charaTalk=70640, wait=26781"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "边界案例 [f small]  [f -]白紙化…[line 3]” 不是命令,尽管 f 是命令 tag(0xe30c2799 在 hash_constants.json):因为整行不是单一括号组;扫描完第一个组后回到 0x31aa608 继续,再次遇到 '[' 时 token 非空 → messageLine=true。同理 [font large][messageShake …]ホロボス… 与 [s 16]/[fontSize x-large]/[speed 32]/[charaTalk B]。",
+  "evidence": [
+   "0x31aaabc-0x31aaac4: *messageLine = true(见上条)",
+   "0x31aac04: 括号组结束后回到主循环(0x31aac10 起为 tag 处理,处理完继续扫行)",
+   "work/scratch/classify2.py:leadknown 统计 f=453, s=19, fontSize=18, font=16, speed=5, charaTalk=4"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[51d4ff][line 3]塩基配列… 是消息行:51d4ff 不是命令 tag,line/image/i/align 也不在 ScriptCommandExecute 哈希树(fnv1a('line')=0x17db1627、fnv1a('image')=0xb35135fa、fnv1a('i')=0xec0c35c4、fnv1a('align')=0x602c63de 均不在 hash_constants.json);tag 未命中哈希树 → 默认路径。",
+  "evidence": [
+   "work/scratch/classify2.py:leadunknown top = line(4875), %1(783), 51ffff(475), FFFFFF(414), align(227), image(139)",
+   "0x31ae064: 默认路径(先判 talkName / lastMessageIndex)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[k] 是命令(184,799 行,恒为无参数 [k]),fnv1a('k')=0xee0c38ea 在 ScriptCommandExecute 哈希树中,分派点 0x3179fb8/0x3179fbc b.eq 0x317fa08。",
+  "evidence": [
+   "work/il2cpp_out/hash_constants.json: '0xee0c38ea' -> [[0x3179fb4,'b.eq',0x317fa08]]",
+   "0x3179fb0: mov w8,#0x38ea ; 0x3179fb4: movk w8,#0xee0c,lsl#16 ; 0x3179fbc: b.eq #0x317fa08",
+   "语料:scripts\\**\\*.txt 中 '[k]' 行 184,799 条,无其它形态"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[k] 的语义(1/3,解析期):AnalysText 的 k 分支先关闭当前说话人块 —— 若 lastMessageIndex>=0 且 talkName!=\"\" 则向 tagDataList 追加 'talkEnd'、scriptDataList 追加 \"\"、line/orgLine 追加,然后把 lastMessageIndex 置 -1,再追加 null tag 条目与 \"[r]\"。",
+  "evidence": [
+   "0x31ab554: cmp w0,w8(#0xee0c38ea) ; 0x31ab558: b.ne #0x31ae064 ; 0x31ab55c: ldr x8,[x8,#0xf98] ; &'k' ; 0x31ab564: b #0x31ad4d8",
+   "0x31ad4e4: bl #0x4870cc0 CALL System.String$$op_Equality ; tag==\"k\" 防碰撞",
+   "0x31ad4ec: ldr w8,[x8](&lastMessageIndex) ; 0x31ad4fc: tbnz w8,#0x1f,#0x31ad5a0",
+   "0x31ad518: bl #0x4870cc4 CALL System.String$$op_Inequality ; talkName != \"\"",
+   "0x31ad534: ldr x8,[x8,#0xce0] ; &'talkEnd' ; 0x31ad540: bl #0x201abc4 CALL List<string>.Add",
+   "0x31ad560: bl #0x201abc4 ; scriptDataList.Add(\"\")",
+   "0x31ad594: ldr x8,[sp,#0x48] ; 0x31ad598: mov w9,#-1 ; 0x31ad59c: str w9,[x8] ; *lastMessageIndex=-1",
+   "0x31ad5e4: str xzr,[x8,#0x20]! ; 0x31ad5ec: bl #0x2230448 ; tagDataList.Add(null)",
+   "0x31b0420: ldr x9,[x9,#0xfb0] ; &'[r]' ; 0x31b0454: str x1,[x8,#0x20]! ; scriptDataList.Add(\"[r]\")"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[k] 的语义(2/3,命令执行):ScriptCommandExecute 中 k 要求 pd.Length==0(有参数时报 'parameter be unnecessary'),设 ScriptManager.state=4(State.WAIT)、waitType=\"k\",返回 Normal。",
+  "evidence": [
+   "0x317fa30: ldr x8,[x8,#0x18] ; pd.Length ; 0x317fa34: cbnz x8,#0x318663c",
+   "0x3186640: ldr x8,[x8,#0x68] ; &'parameter be unnecessary'",
+   "0x317fa3c: mov w8,#4 ; 0x317fa40: str w8,[x19,#0x288] ; state=WAIT",
+   "0x318f014: str x1,[x19,#0x3d8] ; waitType=\"k\" ; 0x318f01c: b #0x3193e94 → 0x3193f00(Normal)",
+   "dump.cs ScriptManager: protected ScriptManager.State state; // 0x288 ; protected string waitType; // 0x3D8"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[k] 的语义(3/3,玩家交互):ProcessScript 的 k 分支调用 ScriptMessageCommonManager$$WaitNextTouch(isShowNextTouchObject=true) —— 即等待玩家点击并显示'下一句'指示。",
+  "evidence": [
+   "0x31c24e0: mov w8,#0x38ea ; 0x31c24e4: movk w8,#0xee0c,lsl#16 ; 0x31c24ec: b.ne #0x31c2848",
+   "0x31c2500: ldr x1,[x8] ; 'k' ; 0x31c2504: bl #0x4870cc0 CALL System.String$$op_Equality",
+   "0x31c250c: ldr x0,[x19,#0x28] ; ScriptManager.messageCommonManager",
+   "0x31c2548: mov w1,#1 ; 0x31c2550: bl #0x31d4708 CALL ScriptMessageCommonManager$$WaitNextTouch"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[wt X] 是 [wait time X] 的语法糖:AnalysText 的 wt 分支把 tag 改写为 'wait',把余下文本(Substring(3))拼到 'time ' 之后。",
+  "evidence": [
+   "0x31aca18: movk w8,#0x4b3c,lsl#16 ; 0x31aca1c: cmp w0,w8 ; 0x31aca20: b.eq #0x31adca4 ; (0x4b3c4b6b=fnv1a('charaMoveEase'))",
+   "0x31aca2c: cmp w0,w8(#0x4b4794e6=fnv1a('wt')) ; 目标 0x31ad6cc",
+   "0x31ad6d8: ldr x8,[x8,#0xfe0] ; &'wt' ; 0x31ad6e0: bl op_Equality",
+   "0x31ad6f8: ldr x8,[x8,#0x648] ; &'wait' ; 0x31ad704: bl #0x201abc4 ; tagDataList.Add(\"wait\")",
+   "0x31ad714: add w1,w8,#1(=3) ; 0x31ad724: ldr x8,[x8,#8] ; &'time ' ; 0x31ad73c: bl #0x4876934 CALL System.String$$Substring",
+   "0x31b03bc: bl #0x4867ef8 CALL System.String$$Concat ; \"time \"+值 → scriptDataList"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[twt X] 是 [wait rtime X] 的语法糖:twt 叶子 0x31ac4fc,块 0x31ac500,装载 'rtime ' 后与 wt 共用尾部。",
+  "evidence": [
+   "0x31ac4f4: mov w8,#0x76d8 ; 0x31ac4f8: movk w8,#0xb324,lsl#16 ; 0x31ac4fc: cmp w0,w8 ; 0x31ac500: b.ne #0x31ae064",
+   "0x31ac510: ldr x8,[x8,#0x9b8] ; &'twt' ; 0x31ac518: bl op_Equality",
+   "0x31ac530: ldr x8,[x8,#0x648] ; &'wait' ; 0x31ac53c: bl #0x201abc4",
+   "0x31ac55c: ldr x8,[x8,#0x9b0] ; &'rtime ' ; 0x31ac560: b #0x31ad728"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "wait 的子关键字是哈希树分派,键 = pd[0];time 叶子 0x319219c→0x3193728,rtime 叶子 0x3191fb4→0x3191fc4,frame 叶子 0x31921d8→0x31937dc,且 rtime/frame 共用处理块 0x31937e4。",
+  "evidence": [
+   "0x31874f8: str w8,[x19,#0x288] ; state=WAIT ; 0x3187510: b.le #0x3193e80 ; pd.Length<=0 报错",
+   "0x318751c: str x1,[x19,#0x3d8] ; waitType = pd[0]",
+   "0x3187530: bl #0x2cdf448 CALL ComputeStringHash ; 0x318753c 起为二叉哈希树(比较寄存器 x22)",
+   "work/scratch/hscan.py 0x31874d8 0x3193920: 0x3191fb4 hash=0x58666514 b.ne；0x319219c hash=0x5d3c9be4 b.eq 0x3193728；0x31921d8 hash=0xd20a71a6 b.eq 0x31937dc",
+   "0x3191fc4: ldr x8,[x8,#0x2a0] ; &'rtime' ; 0x3191fcc: b #0x31937e4",
+   "0x31937dc: ldr x8,[x8,#0x8d0] ; &'frame' ; 0x31937e4 共用",
+   "0x3193788: ldr x0,[x8,#0x30](pd[2]) ; 0x3193790: bl #0x49e8728 CALL System.Single$$Parse ; 0x3193798: str s0,[x19,#0x3e4] ; waitCount"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "time 与 rtime 的区别:ScriptManager.Update 中 waitType==\"time\" 时使用 UnityEngine.Time.deltaTime(受 timeScale 影响),否则使用 RealTime.get_deltaTime = Time.unscaledDeltaTime(实时间)。frame 同解析块,仅 waitType 不同(帧计数)。",
+  "evidence": [
+   "0x31bc2a8: bl #0x36072f8 CALL RealTime$$get_deltaTime",
+   "0x36072f8: mov x0,xzr ; b #0x4fde5c8 ; (0x4fde5c8 = UnityEngine.Time$$get_unscaledDeltaTime)",
+   "0x31bc2b8: bl #0x4fde578 CALL UnityEngine.Time$$get_deltaTime",
+   "0x31bc2cc: ldr w8,[x19,#0x288] ; 0x31bc2d0: cmp w8,#4 ; state==WAIT",
+   "0x31bc2d8: ldr x0,[x19,#0x3d8] ; 0x31bc2ec: ldr x1,[x8] ; 'time' ; 0x31bc2f0: bl #0x48706e4 CALL System.String$$Equals",
+   "0x31bc2f4: tbnz w0,#0,#0x31bc2b8 ; waitType==\"time\" → 换成 UnityEngine.Time.deltaTime"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "＠/＄ 之谜已解:引擎比较的不是字符,而是 ScriptManager 的实例字段 codeTalkString/codeSceneString/codeLabelString,它们由 LocalizationManager.Get(\"SCRIPT_ACTION_CODE_*\") 在 Initialize 中赋值。",
+  "evidence": [
+   "dump.cs ScriptManager: protected string codeCommentString; // 0x658 ; codeLabelString 0x660 ; codeSceneString 0x668 ; codeTalkString 0x670 ; codeSwitchCaseString 0x678 ; codeSwitchCaseSplitString 0x680 ; codeSwitchCaseHiddenString 0x688 ; codeSwitchEndString 0x690 ; codeInsertString 0x698 ; codeVoiceString 0x6A0 ; codeReturnString 0x6A8",
+   "0x31a1170: bl #0x2e58030 CALL LocalizationManager$$Get ; 0x31a1174: mov x1,x0 ; 0x31a1178: str x0,[x19,#0x670] ; codeTalkString = Get(\"SCRIPT_ACTION_CODE_TALK\")(键字面量 @0x31a1168)",
+   "0x31a1154: bl LocalizationManager$$Get ; 0x31a115c: str x0,[x19,#0x668] ; codeSceneString = Get(\"SCRIPT_ACTION_CODE_SCENE\")",
+   "0x31a1138: bl LocalizationManager$$Get ; 0x31a1140: str x0,[x19,#0x660] ; codeLabelString = Get(\"SCRIPT_ACTION_CODE_LABEL\")"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "ScriptManager$$AnalysScript 用 StartsWith(codeLabelString/codeSceneString/codeTalkString) 识别行首标记,标记后 Substring(1) 得到数据;talk 分支把结果写入 talkName([sp+0x60])。⇒ ＠ 行 → tag \"talkName\",＄ 行 → tag \"scene\",标记恰好 1 字符。",
+  "evidence": [
+   "0x31a5c6c: ldr x1,[x21,#0x660] ; 0x31a5c78: bl #0x4870d34 CALL String.StartsWith ; label",
+   "0x31a5c8c: ldr x1,[x21,#0x668] ; 0x31a5c98: bl #0x4870d34 ; scene ; 0x31a5ca4: ldr x8,[x8,#0xbb8] ; &'scene'",
+   "0x31a5cac: ldr x1,[x21,#0x670] ; 0x31a5cb8: bl #0x4870d34 ; talk ; 0x31a5cc4: ldr x8,[x8,#0xfb8] ; &'talkName'",
+   "0x31a5cd8: bl #0x4876934 CALL System.String$$Substring(line,1)",
+   "0x31a5ee8: ldr x8,[x8,#0xfb8] ; &'talkName' ; 0x31a5ef0: bl op_Equality ; 0x31a5efc: csel x8,x25,x8,ne ; 0x31a5f00: str x8,[sp,#0x60] ; talkName"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "codeTalkString==\"＠\"、codeSceneString==\"＄\" 属于推断(本地化表不在二进制内):依据是标记长度为 1(Substring(1))、语料中该位置的字符恰为全角 ＠(184,792 行)/＄(2,582 行)、以及 ＠ 行必须变成 talkName 才能显示说话人。",
+  "evidence": [
+   "0x31a5cd8: bl #0x4876934 CALL System.String$$Substring(line,1)",
+   "work/scratch/classify2.py: ＠ 行 184,792,＄ 行 2,582(每文件首行)",
+   "work/il2cpp_out/stringliteral.json: \"＠\" 字面量存在(0x5831FD0);\"＄\" 无字面量"
+  ],
+  "confidence": "inferred"
+ },
+ {
+  "claim": "全代码段扫描证实:字面量\"＠\"的使用槽(0x557b708)在整个 .so 只被 0x24f3c38 一处装载(BoxGachaResultEffectComponent 的类型初始化),没有任何比较/解析代码读取它 —— 是残留字面量。",
+  "evidence": [
+   "0x24f3c38: adrp x0,#0x557b000 ; 0x24f3c3c: ldr x0,[x0,#0x708] ; &'＠' ; 0x24f3c40: bl #0x22304a4",
+   "0x24f3c2c: ldr x0,[x0,#0x700] ; &'[k]' ; 0x24f3c44: ldr x0,[x0,#0x710] ; &'SCRIPT_ACTION_CODE_TALK'",
+   "work/scratch/xref2.py(全代码段 adrp/ldr 扫描,允许 rd!=rn):0x557b708 → 1 处;0x557b700 → 1 处;对照 0x55c8f98('k') → 12 处"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "CommonMessageManager(消息文本管线)使用同机制:字段 codeCommentString(0x240)/codeTalkString(0x248)/codeVoiceString(0x250)/codeReturnString(0x258) 由 LocalizationManager.Get 赋值;AnalysScript 以 StartsWith(codeTalkString)+Substring(1) 识别说话人行。",
+  "evidence": [
+   "dump.cs CommonMessageManager: protected string codeCommentString; // 0x240 ; codeTalkString 0x248 ; codeVoiceString 0x250 ; codeReturnString 0x258",
+   "0x3165c30: bl #0x2e58030 CALL LocalizationManager$$Get ; 0x3165c38: str x0,[x19,#0x240]",
+   "0x3165c4c: bl LocalizationManager$$Get ; 0x3165c54: str x0,[x19,#0x248] ; codeTalkString",
+   "0x3166110: ldr x1,[x27,#0x240] ; 0x3166114: bl #0x4870d34 CALL String.StartsWith",
+   "0x316611c: ldr x1,[x27,#0x248] ; 0x3166128: bl #0x4870d34 CALL String.StartsWith ; 0x316612c: tbz w0,#0,#0x31661dc",
+   "0x3166148: bl #0x4876934 CALL System.String$$Substring(line,1)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "任务给出的 '=spot'/GetTalkName/SetTalkName 路径属于命令 talkName 的参数解析,与 ＠ 无关:pd[0] 按 \"=spot\" 分割,后半段 TrimStart('[')/TrimEnd(']')/Split(',') 作为立绘参数,前半段(名字文本)传入 GetTalkName。",
+  "evidence": [
+   "0x31c0870: ldr x26,[x21] ; x26 = pd[0]",
+   "0x31c0890: bl #0x4877124 CALL System.String$$Contains ; \"=spot\"",
+   "0x31c08d0: bl #0x4876250 CALL System.String$$Split ; 0x31c08f0: ldr x26,[x0,#0x20] ; parts[0]=名字",
+   "0x31c0900: bl #0x4877050 CALL System.String$$TrimStart('[') ; 0x31c0910: bl #0x48770a4 CALL System.String$$TrimEnd(']')",
+   "0x31c0924: bl #0x4874f2c CALL System.String$$Split(',')",
+   "0x31c095c: mov x4,x26 ; 0x31c0964: bl #0x31d6be0 CALL ScriptMessageLabel$$GetTalkName",
+   "0x31c099c: bl #0x31d3b4c CALL ScriptMessageCommonManager$$SetTalkName"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "引号 \" 的语义是'整体保护'且不剥离:AnalysText(0x31aa624/0x31aa6c8-0x31aa79c)、括号组扫描(0x31aab60-0x31aabdc)、ScriptMessageLabel$$AnalysTagParam(0x31d10c8/0x31d10f4/0x31d1124)、CommonMessageManager$$AnalysText(0x3166eb0/0x3166f90) 四处实现一致:遇一个引号后逐字符复制到下一个引号(其间不识别 [ ] 空格),闭引号同样被追加。",
+  "evidence": [
+   "0x31aa6c8-0x31aa6f0: Char.ToString + String.Concat ; x20 = x20 + '\"'",
+   "0x31aa70c: add w21,w19,#1 ; 0x31aa710: bl #0x486c8a8 CALL String$$get_Chars ; 0x31aa71c: cmp w8,#0x22 ; 0x31aa720: b.eq #0x31aa78c",
+   "0x31aa790: ldr x1,[x27] ; &'\"' ; 0x31aa79c: bl #0x4867ef8 CALL String$$Concat ; 闭引号被追加",
+   "0x31aab60-0x31aabd8: 括号组扫描内的同一引号循环",
+   "0x31d10c8: cmp w8,#0x22 ; 0x31d1120: mov x0,x22 ; 0x31d1124: mov w1,#0x22 ; 0x31d112c: bl #0x487cda8 CALL StringBuilder$$Append",
+   "0x3166eb0: cmp w8,#0x22 ; 0x3166f3c: 引号分支"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "语料侧:全量 1,867,761 行中仅 3 行含双引号,恰好覆盖两种用法 —— 参数内保护空格([input selectBranch skipStop \"branchNotRouteSelect 4000517 4000574\"])与整行包裹(\"[#…][r]  [#…]\")。",
+  "evidence": [
+   "0400051740.txt: [input selectBranch skipStop \"branchNotRouteSelect 4000517 4000574\"]",
+   "0200021421.txt / 0300122130.txt: \"[#Once you eliminate the impossible, whatever remains,:…][r]  [#no matter how improbable…]\"",
+   "work/scratch classify 扫描:含 \" 行 = 3,引号数为 2 的行 = 3"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "语料中不存在任何反斜杠转义(\\n \\t \\r \\b \\f \\\\ \\\" 均为 0 行)。AnalysScript 里唯一的'转义型'字面量是真实 CR(U+000D),用于 Replace(\"\\r\",\"\") 归一化行尾;文件再按一个 4 元 char[] 用 String.Split 切行。既有文档 §1 的'转义字面量 \\n \\t \\r \\b \\f \\\\' 说法需修正。",
+  "evidence": [
+   "0x31a54c4: ldr x8,[x8,#0x6f0] ; &'\\r'(真实 CR 字符) ; 0x31a54dc: bl #0x48748dc CALL System.String$$Replace",
+   "0x31a5510: bl #0x491026c CALL RuntimeHelpers$$InitializeArray ; char[4] ; 0x31a5528: bl #0x4875368 CALL System.String$$Split",
+   "语料扫描:含反斜杠的行 0 条;行内 CR 0 条"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "既有文档的行类型表(message2/message3/page/menu/jump/talkName 作为文本标签出现的说法)与真实语料矛盾:语料中 message2/message3/page/menu/jump 出现 0 次;消息行不以这些标签标识,而是由'整行恰为一个括号组 + tag 命中哈希树'的规则区分(见第 1 条)。",
+  "evidence": [
+   "work/coverage/census.json tagcount:message2/message3/page/menu/jump/switchCase-无(talkName 也无,只有 184,792 行 ＠ 经引擎改写为 tag talkName)",
+   "0x31aac0c-0x31aac14: tag 切分与哈希分派"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[q] 与 [k] 同族:fnv1a('q')=0xf40c425c 在 ScriptCommandExecute 哈希树;语料中 [q] 仅 1 处(0400070420.txt)。AnalysText 中 'k'/'q' 共用同一分支块(0x31ad4d0 装 'q'、0x31ab55c 装 'k',都跳 0x31ad4d8,块内用 op_Equality 区分)。",
+  "evidence": [
+   "0x31ad4d0: adrp x8,#0x55c8000 ; 0x31ad4d4: ldr x8,[x8,#0xfa0] ; &'q' ; 0x31ad4d8: 共用块",
+   "0x31ab55c: ldr x8,[x8,#0xf98] ; &'k' ; 0x31ab564: b #0x31ad4d8",
+   "语料:[q] 1 行(0400070420.txt)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "未解决:(a) ScriptManager.AnalysScript 中 marker 分支之后对 tag 的 op_Equality 长链(0x31a5cf8 起)完整控制流未逐块复原;(b) AnalysText 为 [k] 追加的 null tag 条目(0x31ad5ec)运行期消费点未定位;(c) 文件切行用的 4 元 char[] 分隔符内容未解(需解析 global-metadata.dat);(d) ＠/＄ 字符认定依赖本地化数据,本地化表不在 APK 内。",
+  "evidence": [
+   "0x31a5cf8 / 0x31a5d14 / 0x31a5e2c / 0x31a5e48 / 0x31a5e60 / 0x31a5e80 / 0x31a5e9c / 0x31a5eb8 / 0x31a5ed4: 对 x26(tag)的 op_Equality 长链",
+   "0x31ad5e4: str xzr,[x8,#0x20]! ; tagDataList.Add(null)",
+   "0x31a5510: RuntimeHelpers$$InitializeArray(char[4]) ; 0x31a5528: String$$Split",
+   "APK 内无本地化资源(仅 assets/AssetStorages/Android/AssetStorage.txt 等)"
+  ],
+  "confidence": "high"
+ }
+]

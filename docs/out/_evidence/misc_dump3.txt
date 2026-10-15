@@ -1,0 +1,638 @@
+--- 31895a0..31896c8
+31895a0 movi d8, #0000000000000000
+31895a4 cbz x23, #0x318b6c0
+31895a8 mov x0, x19
+31895ac mov x1, xzr
+31895b0 bl #0x31b5344   CALL ScriptManager$$IsFastPlaySpeed
+31895b4 adrp x8, #0x55c9000
+31895b8 movi d0, #0000000000000000
+31895bc tst w0, #1
+31895c0 ldr x8, [x8, #0x890]   ; &slot for 'subBgm'
+31895c4 ldr x0, [x22]
+31895c8 mov x2, xzr
+31895cc ldr x1, [x8]   ; 'subBgm'
+31895d0 fcsel s8, s0, s8, ne
+31895d4 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='subBgm'
+31895d8 ldr x20, [sp, #0x108]
+31895dc tbz w0, #0, #0x318b59c
+31895e0 adrp x8, #0x55b2000
+31895e4 ldr x8, [x8, #0x9e0]
+31895e8 ldr x0, [x8]
+31895ec bl #0x2230710   CALL 0x2230710
+31895f0 fmov s0, s8
+31895f4 mov x1, x23
+31895f8 mov x2, x20
+31895fc mov x3, xzr
+3189600 mov x4, xzr
+3189604 mov x21, x0
+3189608 bl #0x2e4802c   CALL SubBgmPlayArgs$$.ctor
+318960c adrp x8, #0x5576000
+3189610 ldr x8, [x8, #0x1c8]
+3189614 ldr x0, [x8]
+3189618 ldr w8, [x0, #0xe4]
+318961c cbnz w8, #0x3189624
+3189620 bl #0x22305f4   CALL 0x22305f4
+3189624 mov x0, x21
+3189628 mov x1, xzr
+318962c bl #0x2e44f18   CALL BgmManager$$PlaySubBgm
+3189630 b #0x318b6c0
+3189634 tst x9, #0xfffffffe
+3189638 b.eq #0x3193cd4
+318963c adrp x9, #0x5574000
+3189640 mov x2, xzr
+3189644 ldr x9, [x9, #0x9b0]   ; &slot for ' '
+3189648 ldr x0, [x8, #0x28]
+318964c ldr x1, [x9]   ; ' '
+3189650 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+3189654 tbnz w0, #0, #0x318965c
+3189658 b #0x3191820
+318965c ldr x8, [x20]
+3189660 cbz x8, #0x318f114
+3189664 ldr w9, [x8, #0x18]
+3189668 cbz w9, #0x3193cd4
+318966c cmp w9, #2
+3189670 b.ls #0x3193cd4
+3189674 ldr x0, [x8, #0x30]
+3189678 ldr x20, [x8, #0x20]
+318967c mov x1, xzr
+3189680 bl #0x49e8728   CALL System.Single$$Parse
+3189684 fmov s8, s0
+3189688 adrp x8, #0x55c9000
+318968c mov x2, xzr
+3189690 ldr x8, [x8, #0xdd8]   ; &slot for 'subBgmStop'
+3189694 ldr x0, [x22]
+3189698 ldr x1, [x8]   ; 'subBgmStop'
+318969c bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='subBgmStop'
+31896a0 tbz w0, #0, #0x31896d0
+31896a4 adrp x8, #0x5576000
+31896a8 ldr x8, [x8, #0x1c8]
+31896ac ldr x0, [x8]
+31896b0 ldr w8, [x0, #0xe4]
+31896b4 cbnz w8, #0x31896bc
+31896b8 bl #0x22305f4   CALL 0x22305f4
+31896bc fmov s0, s8
+31896c0 mov x0, x20
+31896c4 mov x1, xzr
+--- 3181e40..3181eb0
+3181e40 cmp w9, #4
+3181e44 b.ls #0x3193cd4
+3181e48 ldr x0, [x8, #0x40]
+3181e4c ldr x19, [x8, #0x20]
+3181e50 mov x1, xzr
+3181e54 bl #0x49e8728   CALL System.Single$$Parse
+3181e58 ldr x8, [x20]
+3181e5c cbz x8, #0x318f114
+3181e60 ldr w9, [x8, #0x18]
+3181e64 cmp w9, #2
+3181e68 b.ls #0x3193cd4
+3181e6c ldr x0, [x8, #0x30]
+3181e70 mov x1, xzr
+3181e74 fmov s8, s0
+3181e78 bl #0x49e8728   CALL System.Single$$Parse
+3181e7c adrp x8, #0x5572000
+3181e80 fmov s9, s0
+3181e84 ldr x8, [x8, #0xa68]
+3181e88 ldr x0, [x8]
+3181e8c ldr w8, [x0, #0xe4]
+3181e90 cbnz w8, #0x3181e98
+3181e94 bl #0x22305f4   CALL 0x22305f4
+3181e98 fmov s0, s8
+3181e9c fmov s1, s9
+3181ea0 mov x0, x19
+3181ea4 mov x1, xzr
+3181ea8 bl #0x2e9aab8   CALL SoundManager$$changeVolumeSe
+3181eac b #0x3193f00
+--- 3186e48..3186f40
+3186e48 ldr x8, [x20]
+3186e4c cbz x8, #0x318f114
+3186e50 ldr x9, [x8, #0x18]
+3186e54 cbz x9, #0x318b2a0
+3186e58 cbz w9, #0x3193cd4
+3186e5c add x8, x8, #0x20
+3186e60 b #0x318b2a8
+3186e64 adrp x8, #0x55c9000
+3186e68 ldr x8, [x8, #0xc38]   ; &slot for 'charaPutFSLNotNotch'
+3186e6c ldr x1, [x8]   ; 'charaPutFSLNotNotch'
+3186e70 mov x0, x25
+3186e74 mov x2, xzr
+3186e78 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaPutFSLNotNotch'
+3186e7c tbz w0, #0, #0x3188c6c
+3186e80 ldr x8, [x20]
+3186e84 cbz x8, #0x318f114
+3186e88 ldr w9, [x8, #0x18]
+3186e8c cmp w9, #3
+3186e90 b.lt #0x3191820
+3186e94 adrp x9, #0x5574000
+3186e98 mov x2, xzr
+3186e9c ldr x9, [x9, #0x9b0]   ; &slot for ' '
+3186ea0 ldr x0, [x8, #0x28]
+3186ea4 ldr x1, [x9]   ; ' '
+3186ea8 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+3186eac tbnz w0, #0, #0x3186eb4
+3186eb0 b #0x3191820
+3186eb4 ldr x8, [x20]
+3186eb8 cbz x8, #0x318f114
+3186ebc ldr w9, [x8, #0x18]
+3186ec0 cbz w9, #0x3193cd4
+3186ec4 ldr x1, [x8, #0x20]
+3186ec8 mov x0, x19
+3186ecc mov x2, xzr
+3186ed0 bl #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+3186ed4 ldr x8, [x19, #0x490]
+3186ed8 cbz x8, #0x318f114
+3186edc ldr w9, [x8, #0x18]
+3186ee0 cmp w0, w9
+3186ee4 b.hs #0x3193cd4
+3186ee8 add x8, x8, w0, sxtw #3
+3186eec ldr x21, [x8, #0x20]
+3186ef0 cbz x21, #0x3193f00
+3186ef4 ldr x8, [x20]
+3186ef8 cbz x8, #0x318f114
+3186efc ldr w9, [x8, #0x18]
+3186f00 cmp w9, #5
+3186f04 b.lt #0x318bbcc
+3186f08 ldr x0, [x8, #0x38]
+3186f0c cbz x0, #0x318f114
+3186f10 mov w1, wzr
+3186f14 mov x2, xzr
+3186f18 bl #0x486c8a8   CALL System.String$$get_Chars
+3186f1c ldr x8, [x20]
+3186f20 and w9, w0, #0xffff
+3186f24 cmp w9, #0x2c
+3186f28 b.ne #0x318bbc8
+3186f2c cbz x8, #0x318f114
+3186f30 ldr w9, [x8, #0x18]
+3186f34 cmp w9, #2
+3186f38 b.ls #0x3193cd4
+3186f3c ldr x0, [x8, #0x30]
+--- 3188c90..3188d80
+3188c90 add x0, x19, #0x3d8
+3188c94 str x1, [x19, #0x3d8]
+3188c98 bl #0x2230448   CALL 0x2230448
+3188c9c add x0, x19, #0x3f8
+3188ca0 mov x1, x24
+3188ca4 str x24, [x19, #0x3f8]
+3188ca8 b #0x3193efc
+3188cac cmp w9, #3
+3188cb0 b.ge #0x318946c
+3188cb4 cbnz x9, #0x3191820
+3188cb8 ldr x0, [x19, #0x28]
+3188cbc cbz x0, #0x318f114
+3188cc0 mov x1, xzr
+3188cc4 mov x2, xzr
+3188cc8 mov x3, xzr
+3188ccc bl #0x31d2684   CALL ScriptMessageCommonManager$$SetFontSize
+3188cd0 ldr x0, [x19, #0x1f8]
+3188cd4 cbz x0, #0x318f114
+3188cd8 mov x1, xzr
+3188cdc b #0x3187970
+3188ce0 cbz x22, #0x318f114
+3188ce4 mov x0, x22
+3188ce8 mov x1, xzr
+3188cec bl #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+3188cf0 ldr x8, [x21, #0x68]
+3188cf4 cbz x8, #0x318f114
+3188cf8 mov x19, x0
+3188cfc mov x0, x8
+3188d00 mov x1, xzr
+3188d04 bl #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+3188d08 cbz x0, #0x318f114
+3188d0c mov x1, xzr
+3188d10 bl #0x4fe19e0   CALL UnityEngine.Transform$$get_localPosition
+3188d14 cbz x19, #0x318f114
+3188d18 scvtf s1, w20
+3188d1c scvtf s0, w23
+3188d20 mov x0, x19
+3188d24 mov x1, xzr
+3188d28 bl #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+3188d2c b #0x3193f00
+3188d30 ldr x8, [x0]
+3188d34 fmov s0, s11
+3188d38 fmov s1, s10
+3188d3c fmov s2, s9
+3188d40 fmov s3, #1.00000000
+3188d44 ldr x9, [x8, #0x3a8]
+3188d48 ldr x1, [x8, #0x3b0]
+3188d4c blr x9   CALL 0x0
+3188d50 b #0x3193f00
+3188d54 adrp x8, #0x55c9000
+3188d58 mov w9, #4
+3188d5c ldr x8, [x8, #0x8e0]   ; &slot for 'wipe'
+3188d60 str w9, [x19, #0x288]
+3188d64 ldr x1, [x8]   ; 'wipe'
+3188d68 b #0x318cb8c
+3188d6c mov x20, xzr
+3188d70 b #0x3189688
+3188d74 cbnz x9, #0x3191820
+3188d78 ldr x0, [x19, #0x28]
+3188d7c cbz x0, #0x318f114
+--- 318152c..3181620
+318152c ldr x8, [x20]
+3181530 cbz x8, #0x318f114
+3181534 ldr x8, [x8, #0x18]
+3181538 cbnz x8, #0x3193e80
+318153c ldr x0, [x19, #0x28]
+3181540 cbz x0, #0x318f114
+3181544 mov x1, xzr
+3181548 bl #0x31d1da4   CALL ScriptMessageCommonManager$$OffScreen
+318154c ldr x0, [x19, #0x28]
+3181550 cbz x0, #0x318f114
+3181554 mov x1, xzr
+3181558 bl #0x31d1c1c   CALL ScriptMessageCommonManager$$ClearText
+318155c ldr x0, [x19, #0x760]
+3181560 cbz x0, #0x318f114
+3181564 mov x1, xzr
+3181568 bl #0x31ca07c   CALL ScriptLoop$$ShouldAddLogMessage
+318156c tbnz w0, #0, #0x3181574
+3181570 b #0x3193f00
+3181574 ldr x0, [x19, #0x1f8]
+3181578 cbz x0, #0x318f114
+318157c mov x1, xzr
+3181580 bl #0x3176848   CALL ScriptLogMessage$$ReturnText
+3181584 b #0x3193f00
+3181588 adrp x8, #0x55c9000
+318158c mov x0, x25
+3181590 mov x2, xzr
+3181594 ldr x8, [x8, #0xad8]   ; &slot for 'charaScale'
+3181598 ldr x1, [x8]   ; 'charaScale'
+318159c bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaScale'
+31815a0 tbz w0, #0, #0x3188c6c
+31815a4 ldr x8, [x20]
+31815a8 cbz x8, #0x318f114
+31815ac ldr w9, [x8, #0x18]
+31815b0 cmp w9, #3
+31815b4 b.ne #0x3191820
+31815b8 adrp x9, #0x5574000
+31815bc mov x2, xzr
+31815c0 ldr x9, [x9, #0x9b0]   ; &slot for ' '
+31815c4 ldr x0, [x8, #0x28]
+31815c8 ldr x1, [x9]   ; ' '
+31815cc bl #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+31815d0 tbnz w0, #0, #0x31815d8
+31815d4 b #0x3191820
+31815d8 ldr x8, [x20]
+31815dc cbz x8, #0x318f114
+31815e0 ldr w9, [x8, #0x18]
+31815e4 cbz w9, #0x3193cd4
+31815e8 ldr x1, [x8, #0x20]
+31815ec mov x0, x19
+31815f0 mov x2, xzr
+31815f4 bl #0x31b34f0   CALL ScriptManager$$ConvertCharaIndex
+31815f8 ldr x8, [x19, #0x490]
+31815fc cbz x8, #0x318f114
+3181600 ldr w9, [x8, #0x18]
+3181604 cmp w0, w9
+3181608 b.hs #0x3193cd4
+318160c add x8, x8, w0, sxtw #3
+3181610 ldr x19, [x8, #0x20]
+3181614 cbz x19, #0x3193f00
+3181618 ldr x8, [x20]
+318161c cbz x8, #0x318f114
+--- 317f98c..317fa00
+317f98c ldr x0, [x19, #0x28]
+317f990 cbz x0, #0x318f114
+317f994 ldr x1, [x20]
+317f998 mov x2, xzr
+317f99c bl #0x31d295c   CALL ScriptMessageCommonManager$$CalcMessageVerticalAlign
+317f9a0 b #0x3193f00
+317f9a4 adrp x8, #0x5578000
+317f9a8 ldr x8, [x8, #0x650]   ; &slot for 'end'
+317f9ac ldr x1, [x8]   ; 'end'
+317f9b0 mov x0, x25
+317f9b4 mov x2, xzr
+317f9b8 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='end'
+317f9bc tbnz w0, #0, #0x317f9c4
+317f9c0 b #0x3188c6c
+317f9c4 ldr x0, [x22]
+317f9c8 cbz x0, #0x318f114
+317f9cc adrp x8, #0x55c9000
+317f9d0 mov x2, xzr
+317f9d4 ldr x8, [x8, #0xc58]   ; &slot for 'interruption'
+317f9d8 ldr x1, [x8]   ; 'interruption'
+317f9dc bl #0x48706e4   CALL System.String$$Equals   args: x1='interruption'
+317f9e0 and w8, w0, #1
+317f9e4 strb w8, [x19, #0x459]
+317f9e8 ldr x8, [x20]
+317f9ec cbz x8, #0x318f114
+317f9f0 ldr x9, [x8, #0x18]
+317f9f4 cmp w9, #1
+317f9f8 b.ne #0x3188dc0
+317f9fc ldr x1, [x8, #0x20]
+--- 3182038..3182074
+3182038 ldr x8, [x20]
+318203c cbz x8, #0x318f114
+3182040 ldr x8, [x8, #0x18]
+3182044 cbnz x8, #0x3188dc4
+3182048 mov w8, #4
+318204c ldr x1, [x23]
+3182050 str w8, [x19, #0x288]
+3182054 b #0x3192e70
+3182058 adrp x8, #0x55c9000
+318205c mov x0, x25
+3182060 mov x2, xzr
+3182064 ldr x8, [x8, #0xae8]   ; &slot for 'messageShake'
+3182068 ldr x1, [x8]   ; 'messageShake'
+318206c bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='messageShake'
+3182070 tbz w0, #0, #0x3188c6c
+--- 3180268..3180340
+3180268 ldr x1, [x20]
+318026c mov w8, #4
+3180270 add x0, x19, #0x3d8
+3180274 str w8, [x19, #0x288]
+3180278 str x1, [x19, #0x3d8]
+318027c bl #0x2230448   CALL 0x2230448
+3180280 ldr x1, [x19, #0x6b8]
+3180284 add x0, x19, #0x3f8
+3180288 str x1, [x19, #0x3f8]
+318028c b #0x3193e94
+3180290 adrp x8, #0x559b000
+3180294 ldr x8, [x8, #0xdc0]   ; &slot for 'branchNotMaterial'
+3180298 ldr x1, [x8]   ; 'branchNotMaterial'
+318029c mov x0, x25
+31802a0 mov x2, xzr
+31802a4 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='branchNotMaterial'
+31802a8 tbnz w0, #0, #0x31802b0
+31802ac b #0x3188c6c
+31802b0 ldr x8, [x20]
+31802b4 cbz x8, #0x318f114
+31802b8 ldr w8, [x8, #0x18]
+31802bc cmp w8, #1
+31802c0 b.ne #0x3193ee8
+31802c4 adrp x8, #0x559b000
+31802c8 mov x2, xzr
+31802cc ldr x8, [x8, #0xdf0]   ; &slot for 'branchMaterial'
+31802d0 ldr x0, [x22]
+31802d4 ldrb w21, [x19, #0x371]
+31802d8 ldr x1, [x8]   ; 'branchMaterial'
+31802dc bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='branchMaterial'
+31802e0 and w8, w0, #1
+31802e4 cmp w21, w8
+31802e8 b.ne #0x3193f00
+31802ec b #0x3184684
+31802f0 adrp x8, #0x55c9000
+31802f4 mov x0, x25
+31802f8 mov x2, xzr
+31802fc ldr x8, [x8, #0xb50]   ; &slot for 'seContinue'
+3180300 ldr x1, [x8]   ; 'seContinue'
+3180304 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='seContinue'
+3180308 tbnz w0, #0, #0x3180310
+318030c b #0x3188c6c
+3180310 ldr x8, [x20]
+3180314 cbz x8, #0x318f114
+3180318 ldr w9, [x8, #0x18]
+318031c cmp w9, #7
+3180320 b.ne #0x318f9c0
+3180324 adrp x22, #0x5574000
+3180328 mov x2, xzr
+318032c ldr x22, [x22, #0x9b0]   ; &slot for ' '
+3180330 ldr x0, [x8, #0x28]
+3180334 ldr x1, [x22]   ; ' '
+3180338 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+318033c ldr x8, [x20]
+--- 318472c..3184800
+318472c ldr x8, [x20]
+3184730 cbz x8, #0x318f114
+3184734 ldr x9, [x8, #0x18]
+3184738 cmp w9, #1
+318473c b.ne #0x3188d90
+3184740 adrp x9, #0x5575000
+3184744 mov x2, xzr
+3184748 ldr x9, [x9, #0x7b8]   ; &slot for '-'
+318474c ldr x0, [x8, #0x20]
+3184750 ldr x1, [x9]   ; '-'
+3184754 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='-'
+3184758 fmov s8, #-1.00000000
+318475c tbnz w0, #0, #0x3184780
+3184760 ldr x8, [x20]
+3184764 cbz x8, #0x318f114
+3184768 ldr w9, [x8, #0x18]
+318476c cbz w9, #0x3193cd4
+3184770 ldr x0, [x8, #0x20]
+3184774 mov x1, xzr
+3184778 bl #0x49e8728   CALL System.Single$$Parse
+318477c fmov s8, s0
+3184780 ldr x0, [x19, #0x28]
+3184784 cbz x0, #0x318f114
+3184788 fmov s0, s8
+318478c mov x1, xzr
+3184790 bl #0x31d28f4   CALL ScriptMessageCommonManager$$SetBetweenLineHeight
+3184794 ldr x0, [x19, #0x1f8]
+3184798 cbz x0, #0x318f114
+318479c fmov s0, s8
+31847a0 b #0x3188db4
+31847a4 adrp x8, #0x55c9000
+31847a8 mov x0, x25
+31847ac mov x2, xzr
+31847b0 ldr x8, [x8, #0xe98]   ; &slot for 'charaFace'
+31847b4 ldr x1, [x8]   ; 'charaFace'
+31847b8 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaFace'
+31847bc tbz w0, #0, #0x3188c6c
+31847c0 ldr x8, [x20]
+31847c4 cbz x8, #0x318f114
+31847c8 ldr w9, [x8, #0x18]
+31847cc cmp w9, #3
+31847d0 b.ne #0x3193ee8
+31847d4 adrp x9, #0x5574000
+31847d8 mov x2, xzr
+31847dc ldr x9, [x9, #0x9b0]   ; &slot for ' '
+31847e0 ldr x0, [x8, #0x28]
+31847e4 ldr x1, [x9]   ; ' '
+31847e8 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1=' '
+31847ec tbnz w0, #0, #0x31847f4
+31847f0 b #0x3193ee8
+31847f4 ldr x8, [x20]
+31847f8 cbz x8, #0x318f114
+31847fc ldr w9, [x8, #0x18]
+--- 3187928..31879b0
+3187928 ldr x8, [x20]
+318792c cbz x8, #0x318f114
+3187930 ldr x9, [x8, #0x18]
+3187934 cmp w9, #1
+3187938 b.ne #0x3188cac
+318793c ldr x0, [x19, #0x28]
+3187940 cbz x0, #0x318f114
+3187944 ldr x1, [x8, #0x20]
+3187948 mov x2, xzr
+318794c mov x3, xzr
+3187950 bl #0x31d2684   CALL ScriptMessageCommonManager$$SetFontSize
+3187954 ldr x8, [x20]
+3187958 cbz x8, #0x318f114
+318795c ldr w9, [x8, #0x18]
+3187960 cbz w9, #0x3193cd4
+3187964 ldr x0, [x19, #0x1f8]
+3187968 cbz x0, #0x318f114
+318796c ldr x1, [x8, #0x20]
+3187970 mov x2, xzr
+3187974 b #0x31894ac
+3187978 adrp x8, #0x55ca000
+318797c mov x0, x25
+3187980 mov x2, xzr
+3187984 ldr x8, [x8, #0xd8]   ; &slot for 'blurOff'
+3187988 ldr x1, [x8]   ; 'blurOff'
+318798c bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='blurOff'
+3187990 tbz w0, #0, #0x3188c6c
+3187994 ldr x21, [x19, #0x5e0]
+3187998 cbz x21, #0x3193f00
+318799c ldr x8, [x20]
+31879a0 cbz x8, #0x318f114
+31879a4 ldr x9, [x8, #0x18]
+31879a8 cbz x9, #0x318cba8
+31879ac cbz w9, #0x3193cd4
+--- 317f90c..317f990
+317f90c ldr x8, [x20]
+317f910 cbz x8, #0x318f114
+317f914 ldr w9, [x8, #0x18]
+317f918 cmp w9, #1
+317f91c b.ne #0x3191820
+317f920 adrp x9, #0x556f000
+317f924 ldr x9, [x9, #0xbc8]
+317f928 ldr x20, [x8, #0x20]
+317f92c ldr x0, [x9, #0x28]
+317f930 ldr w9, [x0, #0xe4]
+317f934 cbnz w9, #0x317f93c
+317f938 bl #0x22305f4   CALL 0x22305f4
+317f93c add x1, sp, #0x13c
+317f940 mov x0, x20
+317f944 mov x2, xzr
+317f948 bl #0x495d278   CALL System.Boolean$$TryParse
+317f94c tbnz w0, #0, #0x317f954
+317f950 b #0x3191820
+317f954 ldr x8, [x19, #0x58]
+317f958 cbz x8, #0x318f114
+317f95c ldrb w9, [sp, #0x13c]
+317f960 mov w24, wzr
+317f964 strb w9, [x8, #0x90]
+317f968 b #0x3193f04
+317f96c adrp x8, #0x55c9000
+317f970 mov x0, x25
+317f974 mov x2, xzr
+317f978 ldr x8, [x8, #0xe50]   ; &slot for 'messageStart'
+317f97c ldr x1, [x8]   ; 'messageStart'
+317f980 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='messageStart'
+317f984 tbnz w0, #0, #0x317f98c
+317f988 b #0x3188c6c
+317f98c ldr x0, [x19, #0x28]
+--- 3184a58..3184b40
+3184a58 ldr x8, [x20]
+3184a5c cbz x8, #0x318f114
+3184a60 ldr x9, [x8, #0x18]
+3184a64 cmp w9, #1
+3184a68 b.ne #0x3188d74
+3184a6c adrp x9, #0x5575000
+3184a70 mov x2, xzr
+3184a74 ldr x9, [x9, #0x7b8]   ; &slot for '-'
+3184a78 ldr x0, [x8, #0x20]
+3184a7c ldr x1, [x9]   ; '-'
+3184a80 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='-'
+3184a84 fmov s0, #-1.00000000
+3184a88 tbnz w0, #0, #0x3184aa8
+3184a8c ldr x8, [x20]
+3184a90 cbz x8, #0x318f114
+3184a94 ldr w9, [x8, #0x18]
+3184a98 cbz w9, #0x3193cd4
+3184a9c ldr x0, [x8, #0x20]
+3184aa0 mov x1, xzr
+3184aa4 bl #0x49e8728   CALL System.Single$$Parse
+3184aa8 ldr x0, [x19, #0x28]
+3184aac cbnz x0, #0x3188d84
+3184ab0 b #0x318f114
+3184ab4 adrp x8, #0x55c9000
+3184ab8 mov x0, x25
+3184abc mov x2, xzr
+3184ac0 ldr x8, [x8, #0xc78]   ; &slot for 'backEffectDestroy'
+3184ac4 ldr x1, [x8]   ; 'backEffectDestroy'
+3184ac8 bl #0x4870cc0   CALL System.String$$op_Equality   args: x1='backEffectDestroy'
+3184acc tbz w0, #0, #0x3188c6c
+3184ad0 ldr x8, [x20]
+3184ad4 cbz x8, #0x318f114
+3184ad8 ldr w9, [x8, #0x18]
+3184adc cmp w9, #1
+3184ae0 b.lt #0x318b218
+3184ae4 ldr x1, [x8, #0x20]
+3184ae8 mov x0, x19
+3184aec mov x2, xzr
+3184af0 bl #0x31b37c8   CALL ScriptManager$$ConvertTalkEffectName
+3184af4 adrp x8, #0x5593000
+3184af8 mov x20, x0
+3184afc ldr x8, [x8, #0x440]
+3184b00 ldr x21, [x19, #0x178]
+3184b04 ldr x8, [x8]
+3184b08 ldr w9, [x8, #0xe4]
+3184b0c cbnz w9, #0x3184b18
+3184b10 mov x0, x8
+3184b14 bl #0x22305f4   CALL 0x22305f4
+3184b18 mov x0, x21
+3184b1c mov x1, x20
+3184b20 mov w2, #1
+3184b24 mov w3, wzr
+3184b28 mov x4, xzr
+3184b2c mov x5, xzr
+3184b30 mov w20, #1
+3184b34 bl #0x30c1c54   CALL CommonEffectManager$$Stop
+3184b38 b #0x318b250
+3184b3c adrp x8, #0x55c9000
+--- 317b600..317b700
+317b600 ldr x8, [x20]
+317b604 cbz x8, #0x318f114
+317b608 ldr w9, [x8, #0x18]
+317b60c cmp w9, #1
+317b610 b.ne #0x318663c
+317b614 ldr x0, [x19, #0x380]
+317b618 cbz x0, #0x317b664
+317b61c ldr x1, [x8, #0x20]
+317b620 mov x2, xzr
+317b624 bl #0x48706e4   CALL System.String$$Equals
+317b628 tbz w0, #0, #0x317b664
+317b62c ldrb w8, [x19, #0x390]
+317b630 cbz w8, #0x317b640
+317b634 add x8, x19, #0x28c
+317b638 mov w9, #2
+317b63c str x9, [x8]
+317b640 add x0, x19, #0x380
+317b644 mov x1, xzr
+317b648 str xzr, [x19, #0x380]
+317b64c bl #0x2230448   CALL 0x2230448
+317b650 ldr x0, [x19, #0x28]
+317b654 cbz x0, #0x318f114
+317b658 mov w1, wzr
+317b65c mov x2, xzr
+317b660 bl #0x31d1c00   CALL ScriptMessageCommonManager$$SetTapSkip
+317b664 ldr x8, [x20]
+317b668 cbz x8, #0x318f114
+317b66c ldr w9, [x8, #0x18]
+317b670 cbz w9, #0x3193cd4
+317b674 ldr x0, [x8, #0x20]
+317b678 cbz x0, #0x318f114
+317b67c adrp x8, #0x55ca000
+317b680 mov x2, xzr
+317b684 ldr x8, [x8, #0x118]   ; &slot for 'skip'
+317b688 ldr x1, [x8]   ; 'skip'
+317b68c bl #0x48706e4   CALL System.String$$Equals   args: x1='skip'
+317b690 tbnz w0, #0, #0x317b698
+317b694 b #0x3193f00
+317b698 mov w8, #1
+317b69c ldr x0, [x19, #0x1d0]
+317b6a0 mov w9, #2
+317b6a4 strb w8, [x19, #0x3a4]
+317b6a8 add x8, x19, #0x28c
+317b6ac str x9, [x8]
+317b6b0 cbz x0, #0x318f114
+317b6b4 ldr x8, [x0]
+317b6b8 mov w1, #3
+317b6bc mov w2, #1
+317b6c0 ldr x9, [x8, #0x218]
+317b6c4 ldr x3, [x8, #0x220]
+317b6c8 blr x9   CALL 0x0
+317b6cc b #0x3193f00
+317b6d0 mov w8, #0x9a77
+317b6d4 movk w8, #0xb12, lsl #16
+317b6d8 cmp w0, w8
+317b6dc b.hi #0x317e088
+317b6e0 mov w8, #0x3d9f
+317b6e4 movk w8, #0xa7f, lsl #16
+317b6e8 cmp w0, w8
+317b6ec b.eq #0x3184ab4
+317b6f0 mov w8, #0xbbea
+317b6f4 movk w8, #0xa87, lsl #16
+317b6f8 cmp w0, w8
+317b6fc b.eq #0x3180990

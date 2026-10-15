@@ -1,0 +1,13 @@
+{
+  "label": "＄",
+  "scene": "＃",
+  "talk": "＠",
+  "choice": "？",
+  "choiceEnd": "？！",
+  "choiceSplit": "：",
+  "hidden": "；",
+  "comment": "＊",
+  "voice": "％％",
+  "insert": "％！",
+  "return": "￥"
+}

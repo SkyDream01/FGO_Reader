@@ -1,0 +1,47 @@
+
+============================================================================
+### insertionAnimationStart  cmp@0x3180d00 slot@0x55ca2b8 handler@0x3180d0c
+0x3180d0c  ldr      x8, [x20]
+0x3180d10  cbz      x8, #0x318f114
+0x3180d14  ldr      w9, [x8, #0x18]
+0x3180d18  cbz      w9, #0x3193cd4
+0x3180d1c  ldr      x0, [x8, #0x20]
+0x3180d20  mov      x1, xzr
+0x3180d24  bl       #0x4fd53c0   CALL UnityEngine.GameObject$$Find
+0x3180d28  adrp     x22, #0x556f000
+0x3180d2c  mov      x21, x0
+0x3180d30  ldr      x22, [x22, #0xb90]
+0x3180d34  ldr      x8, [x22]
+0x3180d38  ldr      w9, [x8, #0xe4]
+0x3180d3c  cbnz     w9, #0x3180d48
+0x3180d40  mov      x0, x8
+0x3180d44  bl       #0x22305f4   CALL 0x22305f4
+0x3180d48  mov      x0, x21
+0x3180d4c  mov      x1, xzr
+0x3180d50  bl       #0x4fd98e8   CALL UnityEngine.Object$$op_Implicit
+0x3180d54  tbnz     w0, #0, #0x3180d5c
+0x3180d58  b        #0x3193f00
+
+============================================================================
+### insertionAnimationEnd  cmp@0x317f808 slot@0x55c97d8 handler@0x317f818
+0x317f818  ldr      x8, [x20]
+0x317f81c  cbz      x8, #0x318f114
+0x317f820  ldr      w9, [x8, #0x18]
+0x317f824  cbz      w9, #0x3193cd4
+0x317f828  ldr      x0, [x8, #0x20]
+0x317f82c  mov      x1, xzr
+0x317f830  bl       #0x4fd53c0   CALL UnityEngine.GameObject$$Find
+0x317f834  adrp     x22, #0x556f000
+0x317f838  mov      x21, x0
+0x317f83c  ldr      x22, [x22, #0xb90]
+0x317f840  ldr      x8, [x22]
+0x317f844  ldr      w9, [x8, #0xe4]
+0x317f848  cbnz     w9, #0x317f854
+0x317f84c  mov      x0, x8
+0x317f850  bl       #0x22305f4   CALL 0x22305f4
+0x317f854  mov      x0, x21
+0x317f858  mov      x1, xzr
+0x317f85c  bl       #0x4fd98e8   CALL UnityEngine.Object$$op_Implicit
+0x317f860  tbnz     w0, #0, #0x317f868
+0x317f864  b        #0x3193f00
+### UNKNOWN insertionAnimationSet

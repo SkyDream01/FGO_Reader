@@ -1,0 +1,722 @@
+======================================================================
+### bgm handler=0x31824fc min=3 opt=[4]
+--- 6 events
+318251c: pd0 -> ConvertNameString(string s #0)
+31893a8: pd.Length cmp #1
+31893b0: pd.Length cmp #3
+31893d4: pd1 == ' '
+31893e8: pd.Length cmp #2
+31893f8: pd2 -> System.Single$$Parse(arg x0)
+======================================================================
+### subBgm handler=0x31824fc min=3 opt=[4]
+--- 6 events
+318251c: pd0 -> ConvertNameString(string s #0)
+31893a8: pd.Length cmp #1
+31893b0: pd.Length cmp #3
+31893d4: pd1 == ' '
+31893e8: pd.Length cmp #2
+31893f8: pd2 -> System.Single$$Parse(arg x0)
+======================================================================
+### bgmStop handler=0x3181900 min=None opt=[4]
+--- 4 events
+3181948: pd.Length cmp #3
+3181950: pd.Length cmp #1
+31896b8: 'subBgmStop' -> 0x22305f4(arg x0)
+31896c8: pd0 -> StopSubBgm(string name #0)
+======================================================================
+### bgmStopEnd handler=0x3181900 min=None opt=[4]
+--- 4 events
+3181948: pd.Length cmp #3
+3181950: pd.Length cmp #1
+31896b8: 'subBgmStop' -> 0x22305f4(arg x0)
+31896c8: pd0 -> StopSubBgm(string name #0)
+======================================================================
+### subBgmStop handler=0x3181900 min=None opt=[4]
+--- 4 events
+3181948: pd.Length cmp #3
+3181950: pd.Length cmp #1
+31896b8: 'subBgmStop' -> 0x22305f4(arg x0)
+31896c8: pd0 -> StopSubBgm(string name #0)
+======================================================================
+### keepSubBgmOn handler=0x3181fd4 min=None opt=[]
+--- 0 events
+======================================================================
+### keepSubBgmOff handler=0x31797d0 min=None opt=[]
+--- 0 events
+======================================================================
+### se handler=0x3180760 min=5 opt=[2]
+--- 7 events
+318076c: pd.Length cmp #5
+3180788: pd1 == ' '
+318df88: pd.Length cmp #3
+318dfa4: pd1 == ' '
+318dfec: pd0 -> ConvertNameString(string s #0)
+318dffc: pd.Length cmp #2
+318e010: pd2 -> System.Single$$Parse(arg x0)
+======================================================================
+### seStop handler=0x3180a80 min=3 opt=[2]
+--- 7 events
+3180a90: pd.Length cmp #1
+3180a98: pd.Length cmp #3
+3180aa0: pd.Length cmp #1
+3180abc: pd1 == ' '
+3188c14: pd.Length cmp #2
+3188c2c: pd2 -> System.Single$$Parse(arg x0)
+318bd5c: pd0 -> OverwriteAssetSoundName$$StopSe(arg x1)
+======================================================================
+### seLoop handler=0x31833e0 min=5 opt=[2]
+--- 7 events
+31833ec: pd.Length cmp #5
+3183408: pd1 == ' '
+318e0b8: pd.Length cmp #3
+318e0d4: pd1 == ' '
+318e10c: pd0 -> ConvertNameString(string s #0)
+318e11c: pd.Length cmp #2
+318e130: pd2 -> System.Single$$Parse(arg x0)
+======================================================================
+### seVolume handler=0x3181dd0 min=5 opt=[2, 4]
+--- 2 events
+3181ddc: pd.Length cmp #5
+3181df8: pd1 == ' '
+======================================================================
+### seContinue handler=0x3180310 min=7 opt=[2, 4, 6, 8]
+--- 10 events
+318031c: pd.Length cmp #7
+3180338: pd1 == ' '
+318f9c4: pd.Length cmp #5
+318f9e0: pd1 == ' '
+318fa08: pd3 == ' '
+318fa2c: pd.Length cmp #4
+318fa3c: pd4 -> System.Int32$$Parse(arg x0)
+318fa88: pd0 -> ConvertNameString(string s #0)
+318fa98: pd.Length cmp #2
+318faac: pd2 -> System.Single$$Parse(arg x0)
+======================================================================
+### seContinueStop handler=0x31838c8 min=3 opt=[1, 2]
+--- 7 events
+31838dc: pd.Length cmp #1
+31838f0: pd.Length cmp #1
+318390c: pd1 == ' '
+318bc60: pd.Length cmp #3
+318bc7c: pd1 == ' '
+3193dd8: ' ' -> System.Collections.Generic.Dictionary.Enumerator<int, object>$$MoveNext(arg x1)
+3193dd8: ' ' -> System.Collections.Generic.Dictionary.Enumerator<int, object>$$MoveNext(arg x1)
+======================================================================
+### seContinueVolume handler=0x3188898 min=7 opt=[2, 4, 6]
+--- 11 events
+31888a4: pd.Length cmp #7
+31888c0: pd1 == ' '
+31888e8: pd3 == ' '
+31888fc: pd.Length cmp #5
+3188910: pd5 == ' '
+3188924: pd.Length cmp #6
+3188938: pd6 -> System.Int32$$Parse(arg x0)
+3188968: pd.Length cmp #4
+318897c: pd4 -> System.Single$$Parse(arg x0)
+318898c: pd.Length cmp #2
+31889a0: pd2 -> System.Single$$Parse(arg x0)
+======================================================================
+### cueSe handler=0x3186434 min=7 opt=[1, 2, 4]
+--- 10 events
+3186440: pd.Length cmp #7
+318645c: pd1 == ' '
+318fc30: pd.Length cmp #5
+318fc4c: pd1 == ' '
+318fc74: pd3 == ' '
+318fcbc: pd0 -> ConvertNameString(string s #0)
+318fccc: pd.Length cmp #2
+318fce4: pd2 -> ConvertNameString(string s #0)
+318fcf4: pd.Length cmp #4
+318fd08: pd4 -> System.Single$$Parse(arg x0)
+======================================================================
+### cueSeStop handler=0x3188bb0 min=3 opt=[2]
+--- 7 events
+3188bc0: pd.Length cmp #1
+3188bc8: pd.Length cmp #3
+3188bd0: pd.Length cmp #1
+3188bec: pd1 == ' '
+3188c14: pd.Length cmp #2
+3188c2c: pd2 -> System.Single$$Parse(arg x0)
+318bd5c: pd0 -> OverwriteAssetSoundName$$StopSe(arg x1)
+======================================================================
+### cueSeVolume handler=0x318440c min=5 opt=[2, 4]
+--- 2 events
+3184418: pd.Length cmp #5
+3184434: pd1 == ' '
+======================================================================
+### cueSeContinue handler=0x317ffa4 min=9 opt=[2, 4, 6, 8]
+--- 13 events
+317ffb0: pd.Length cmp #9
+317ffcc: pd1 == ' '
+3191568: pd.Length cmp #7
+3191584: pd1 == ' '
+31915ac: pd3 == ' '
+31915c0: pd.Length cmp #5
+31915d4: pd5 == ' '
+31915f8: pd.Length cmp #6
+3191608: pd6 -> System.Int32$$Parse(arg x0)
+3191640: pd.Length cmp #2
+3191658: pd2 -> ConvertNameString(string s #0)
+3191668: pd.Length cmp #4
+319167c: pd4 -> System.Single$$Parse(arg x0)
+======================================================================
+### cueSeContinueStop handler=0x31838c8 min=3 opt=[1, 2]
+--- 7 events
+31838dc: pd.Length cmp #1
+31838f0: pd.Length cmp #1
+318390c: pd1 == ' '
+318bc60: pd.Length cmp #3
+318bc7c: pd1 == ' '
+3193dd8: ' ' -> System.Collections.Generic.Dictionary.Enumerator<int, object>$$MoveNext(arg x1)
+3193dd8: ' ' -> System.Collections.Generic.Dictionary.Enumerator<int, object>$$MoveNext(arg x1)
+======================================================================
+### cueSeContinueVolume handler=0x3188898 min=7 opt=[2, 4, 6]
+--- 11 events
+31888a4: pd.Length cmp #7
+31888c0: pd1 == ' '
+31888e8: pd3 == ' '
+31888fc: pd.Length cmp #5
+3188910: pd5 == ' '
+3188924: pd.Length cmp #6
+3188938: pd6 -> System.Int32$$Parse(arg x0)
+3188968: pd.Length cmp #4
+318897c: pd4 -> System.Single$$Parse(arg x0)
+318898c: pd.Length cmp #2
+31889a0: pd2 -> System.Single$$Parse(arg x0)
+======================================================================
+### cueVoice handler=0x317cef8 min=3 opt=[2, 4]
+--- 2 events
+317cf04: pd.Length cmp #3
+317cf20: pd1 == ' '
+======================================================================
+### cueVoiceStop handler=0x3179ed0 min=None opt=[2]
+--- 5 events
+3179ee0: pd.Length cmp #1
+3179ee8: pd.Length cmp #3
+3179ef0: pd.Length cmp #1
+3179f0c: pd1 == ' '
+318e7bc: pd0 -> ConvertNameString(string s #0)
+======================================================================
+### cueVoiceVolume handler=0x317b954 min=5 opt=[2, 4, 5, 6, 8, 10, 12]
+--- 2 events
+317b960: pd.Length cmp #5
+317b97c: pd1 == ' '
+======================================================================
+### voice handler=0x317d5b0 min=1 opt=[2]
+--- 1 events
+317d5bc: pd.Length cmp #1
+======================================================================
+### voiceStop handler=0x317d8c8 min=None opt=[2]
+--- 5 events
+317d8d8: pd.Length cmp #1
+317d8e0: pd.Length cmp #3
+317d8e8: pd.Length cmp #1
+317d904: pd1 == ' '
+318e80c: pd0 -> ConvertNameString(string s #0)
+======================================================================
+### voiceVolume handler=0x317e3ec min=5 opt=[2, 4]
+--- 2 events
+317e3f8: pd.Length cmp #5
+317e414: pd1 == ' '
+======================================================================
+### tVoice handler=0x317cc08 min=7 opt=[]
+--- 18 events
+317cc14: pd.Length cmp #3
+317cc28: pd0 -> ConvertNameString(string s #0)
+317cc38: pd.Length cmp #2
+317cc48: pd.Length cmp #5
+318c738: pd.Length cmp #5
+318c754: pd1 == ' '
+318c76c: pd.Length cmp #4
+318c77c: pd4 -> System.Single$$Parse(arg x0)
+318c844: pd2 -> playVoice(bool ignorePreDelay #1)
+318c890: pd2 -> AddPlayVoice(string objectName #1)
+318c8a0: pd.Length cmp #7
+318c8c0: pd6 -> System.String$$Equals(arg x0)
+318c8c0: 'true' -> System.String$$Equals(arg x1)
+318c8d4: pd.Length cmp #5
+318c8f4: pd4 -> System.String$$Equals(arg x0)
+318c8f4: 'true' -> System.String$$Equals(arg x1)
+318c91c: ' ' -> AddText(text #0)
+318c93c: '[r][r]' -> AddText(text #0)
+======================================================================
+### tVoiceUser handler=0x317ae9c min=9 opt=[1, 2]
+--- 7 events
+317aea8: pd.Length cmp #7
+317aef4: pd0 -> ConvertNameString(string s #0)
+317af04: pd.Length cmp #2
+318c468: pd.Length cmp #9
+318c484: pd1 == ' '
+318c498: pd.Length cmp #8
+318c4a8: pd8 -> System.Single$$Parse(arg x0)
+======================================================================
+### jingle handler=0x3186b70 min=1 opt=[2]
+--- 1 events
+3186b7c: pd.Length cmp #1
+======================================================================
+### jingleStop handler=0x31846c0 min=None opt=[]
+--- 2 events
+31846d0: pd.Length cmp #1
+31846fc: pd0 -> isPlayJingle(string name #0)
+======================================================================
+### advSoundSet handler=0x3182018 min=None opt=[]
+--- 0 events
+======================================================================
+### soundStopAll handler=0x3188554 min=None opt=[]
+--- 0 events
+======================================================================
+### soundStopAllEnd handler=0x3187494 min=None opt=[]
+--- 0 events
+======================================================================
+### soundStopAllFade handler=0x3181c98 min=1 opt=[]
+--- 2 events
+3181ca4: pd.Length cmp #1
+3181cb4: pd0 -> System.Single$$Parse(arg x0)
+======================================================================
+### messageOn handler=0x317bc58 min=None opt=[]
+--- 0 events
+======================================================================
+### messageOff handler=0x318152c min=None opt=[]
+--- 0 events
+======================================================================
+### messageStart handler=0x317f98c min=None opt=[]
+--- 0 events
+======================================================================
+### messageChange handler=0x31852b8 min=1 opt=[]
+--- 4 events
+31852e4: pd.Length cmp #1
+31852f8: pd0 -> ConvertMessageWindowName(string s #0)
+318533c: 'prefab' -> AssetData$$GetObject(arg x1)
+3185368: 'prefab' -> UnityEngine.GameObject$$GetComponent<object>(arg x1)
+======================================================================
+### messageAlign handler=0x3186e48 min=None opt=[4]
+--- 0 events
+======================================================================
+### messageShake handler=0x3182074 min=7 opt=[2, 4, 5, 6, 8, 10, 12]
+--- 2 events
+3182080: pd.Length cmp #7
+318209c: pd1 == ' '
+======================================================================
+### messageShakeStop handler=0x317e89c min=None opt=[]
+--- 0 events
+======================================================================
+### messageSpeedForcedNormal handler=0x3184204 min=1 opt=[1, 2]
+--- 3 events
+3184210: pd.Length cmp #1
+318422c: pd0 == 'on'
+318c2e0: pd0 == 'off'
+======================================================================
+### scrollStop handler=0x317f1a0 min=None opt=[]
+--- 0 events
+======================================================================
+### effectmessageStop handler=0x31814c4 min=1 opt=[]
+--- 2 events
+31814d0: pd.Length cmp #1
+31814e4: pd0 -> ConvertTalkEffectName(string s #0)
+======================================================================
+### effectmessageDestroy handler=0x3181ce4 min=1 opt=[]
+--- 2 events
+3181cf0: pd.Length cmp #1
+3181d04: pd0 -> ConvertTalkEffectName(string s #0)
+======================================================================
+### talkName handler=0x3187bf0 min=None opt=[1, 2, 4]
+--- 0 events
+======================================================================
+### talkNameBack handler=0x3184900 min=1 opt=[]
+--- 2 events
+3184910: pd.Length cmp #1
+318b1bc: pd0 -> SetTalkNameBack(string imageName #0)
+======================================================================
+### talkStart handler=0x3182bc4 min=None opt=[]
+--- 0 events
+======================================================================
+### talkEnd handler=0x3180268 min=None opt=[]
+--- 0 events
+======================================================================
+### page handler=0x3182038 min=None opt=[2, 4]
+--- 0 events
+======================================================================
+### clear handler=0x3182038 min=None opt=[2, 4]
+--- 0 events
+======================================================================
+### fontSize handler=0x3187928 min=None opt=[4]
+--- 3 events
+3187934: pd.Length cmp #1
+3187950: pd0 -> SetFontSize(string sizeName #0)
+31894b0: pd0 -> SetFontSize(string sizeName #0)
+======================================================================
+### betweenHeight handler=0x318472c min=None opt=[1, 2, 4, 6]
+--- 3 events
+3184738: pd.Length cmp #1
+3184754: pd0 == '-'
+3184778: pd0 -> System.Single$$Parse(arg x0)
+======================================================================
+### font handler=0x3187928 min=None opt=[4]
+--- 3 events
+3187934: pd.Length cmp #1
+3187950: pd0 -> SetFontSize(string sizeName #0)
+31894b0: pd0 -> SetFontSize(string sizeName #0)
+======================================================================
+### fontType handler=0x31795f8 min=None opt=[1, 2, 4]
+--- 2 events
+3179604: pd.Length cmp #1
+3179614: pd0 -> System.String$$IsNullOrEmpty(arg x0)
+======================================================================
+### screen handler=0x31804c8 min=9 opt=[2, 4]
+--- 4 events
+31804d4: pd.Length cmp #9
+31804f0: pd1 == ' '
+318a2a8: pd.Length cmp #1
+318a2c8: pd0 == 'true'
+======================================================================
+### faceTalkScreen handler=0x317cd60 min=None opt=[]
+--- 3 events
+317cdd0: 'img_talk_textbg' -> SetWarBoardImage(spriteName #1)
+317ce24: 'img_talk_textbg' -> 0x22305f4(arg x0)
+317ce3c: 'img_talk_namebg' -> SetWarBoardImage(spriteName #1)
+======================================================================
+### label handler=0x317b600 min=1 opt=[]
+--- 4 events
+317b60c: pd.Length cmp #1
+317b624: pd0 -> System.String$$Equals(arg x1)
+317b68c: pd0 -> System.String$$Equals(arg x0)
+317b68c: 'skip' -> System.String$$Equals(arg x1)
+======================================================================
+### jump handler=0x31801a4 min=3 opt=[1, 2, 3, 6]
+--- 4 events
+31801b0: pd.Length cmp #3
+31801cc: pd1 == ' '
+318c288: pd.Length cmp #1
+318c29c: pd0 -> ConvertNameString(string s #0)
+======================================================================
+### skip handler=0x317b3f4 min=1 opt=[1, 2]
+--- 4 events
+317b400: pd.Length cmp #1
+317b420: pd0 == 'true'
+318c5e8: pd0 == 'false'
+318c614: pd0 == 'allFalse'
+======================================================================
+### wait handler=0x31874f4 min=1 opt=[2, 4]
+--- 5 events
+318750c: pd.Length cmp #0
+31938d4: pd.Length cmp #3
+31938f0: pd1 == ' '
+3193904: pd.Length cmp #2
+3193918: pd2 -> ConvertCharaIndex(string s #0)
+======================================================================
+### delay handler=0x3182768 min=5 opt=[]
+--- 6 events
+3182774: pd.Length cmp #5
+31827a8: pd0 -> System.Int32$$Parse(arg x0)
+31827b8: pd.Length cmp #2
+31827cc: pd2 -> System.Single$$Parse(arg x0)
+31827dc: pd.Length cmp #4
+31827f0: pd4 -> System.Int32$$Parse(arg x0)
+======================================================================
+### tdelay handler=0x3182768 min=5 opt=[]
+--- 6 events
+3182774: pd.Length cmp #5
+31827a8: pd0 -> System.Int32$$Parse(arg x0)
+31827b8: pd.Length cmp #2
+31827cc: pd2 -> System.Single$$Parse(arg x0)
+31827dc: pd.Length cmp #4
+31827f0: pd4 -> System.Int32$$Parse(arg x0)
+======================================================================
+### delayEnd handler=0x3182018 min=None opt=[]
+--- 0 events
+======================================================================
+### delayStop handler=0x31886a0 min=3 opt=[4]
+--- 4 events
+31886ac: pd.Length cmp #1
+31886bc: pd0 -> System.Int32$$Parse(arg x0)
+31886d0: pd.Length cmp #3
+31886e0: pd2 -> System.Int32$$Parse(arg x0)
+======================================================================
+### delayStopAll handler=0x317fcbc min=None opt=[1, 2, 4, 6, 8]
+--- 2 events
+317fcc8: pd.Length cmp #1
+317fce8: pd0 -> System.Int32$$Parse(arg x0)
+======================================================================
+### end handler=0x317f9c4 min=None opt=[4]
+--- 3 events
+317f9dc: 'interruption' -> System.String$$Equals(arg x1)
+317f9f4: pd.Length cmp #1
+318b4f4: pd0 -> EndExecuteScript(string endFadeColor #0)
+======================================================================
+### interruption handler=0x317f9c4 min=None opt=[4]
+--- 3 events
+317f9dc: 'interruption' -> System.String$$Equals(arg x1)
+317f9f4: pd.Length cmp #1
+318b4f4: pd0 -> EndExecuteScript(string endFadeColor #0)
+======================================================================
+### backlogStart handler=0x31813e0 min=None opt=[]
+--- 0 events
+======================================================================
+### backlogEnd handler=0x317c1ec min=None opt=[]
+--- 0 events
+======================================================================
+### autoAndBackLog handler=0x317923c min=1 opt=[1, 5, 6, 8, 10, 12]
+--- 3 events
+3179250: pd.Length cmp #1
+317926c: pd0 == 'true'
+317929c: pd0 == 'false'
+======================================================================
+### tapSkip handler=0x317bba0 min=5 opt=[3, 4, 6, 10]
+--- 6 events
+317bbb0: pd.Length cmp #1
+317bbe8: pd.Length cmp #5
+31903ec: pd.Length cmp #3
+3190408: pd1 == ' '
+319041c: pd.Length cmp #2
+3190430: pd2 == 'dontResetPress'
+======================================================================
+### speed handler=0x3184a58 min=None opt=[1, 4, 6, 8]
+--- 3 events
+3184a64: pd.Length cmp #1
+3184a80: pd0 == '-'
+3184aa4: pd0 -> System.Single$$Parse(arg x0)
+======================================================================
+### selectionUse handler=0x317d28c min=None opt=[]
+--- 0 events
+======================================================================
+### selectionCentering handler=0x317f90c min=1 opt=[]
+--- 2 events
+317f918: pd.Length cmp #1
+317f948: pd0 -> System.Boolean$$TryParse(arg x0)
+======================================================================
+### input handler=0x317a800 min=1 opt=[1, 3]
+--- 4 events
+317a80c: pd.Length cmp #1
+317a82c: pd0 == 'selectBranch'
+317a848: pd0 == 'selectBranchSkipTrueColor'
+318d9dc: pd0 -> System.String$$Concat(arg x1)
+======================================================================
+### menu handler=0x317fa74 min=None opt=[1, 4, 6, 8]
+--- 1 events
+317faf0: pd0 == ' '
+======================================================================
+### branch handler=0x317b498 min=3 opt=[2, 4, 6, 8]
+--- 3 events
+317b4a4: pd.Length cmp #3
+317b4c0: pd1 == ' '
+318c6a8: pd.Length cmp #1
+======================================================================
+### branchMaterial handler=0x31802b0 min=1 opt=[1]
+--- 2 events
+31802bc: pd.Length cmp #1
+3193dac: 'branchMaterial' -> System.Collections.Generic.Dictionary<int, object>$$GetEnumerator(arg x1)
+======================================================================
+### branchHaveSvtEquip handler=0x318459c min=3 opt=[2]
+--- 2 events
+31845a8: pd.Length cmp #3
+31845c4: pd1 == ' '
+======================================================================
+### branchNotHaveSvtEquip handler=0x318459c min=3 opt=[2]
+--- 2 events
+31845a8: pd.Length cmp #3
+31845c4: pd1 == ' '
+======================================================================
+### branchNotMaterial handler=0x31802b0 min=1 opt=[1]
+--- 2 events
+31802bc: pd.Length cmp #1
+3193dac: 'branchMaterial' -> System.Collections.Generic.Dictionary<int, object>$$GetEnumerator(arg x1)
+======================================================================
+### branchQuestClear handler=0x317bdd0 min=3 opt=[2, 4]
+--- 2 events
+317bddc: pd.Length cmp #3
+317bdf8: pd1 == ' '
+======================================================================
+### branchQuestNotClear handler=0x317bdd0 min=3 opt=[2, 4]
+--- 2 events
+317bddc: pd.Length cmp #3
+317bdf8: pd1 == ' '
+======================================================================
+### branchRouteSelect handler=0x31834e4 min=5 opt=[2, 4]
+--- 2 events
+31834f0: pd.Length cmp #5
+318350c: pd1 == ' '
+======================================================================
+### branchRouteSelectCount handler=0x317c85c min=9 opt=[1, 2, 4, 6]
+--- 2 events
+317c868: pd.Length cmp #9
+317c884: pd1 == ' '
+======================================================================
+### branchNotRouteSelect handler=0x31834e4 min=5 opt=[2, 4]
+--- 2 events
+31834f0: pd.Length cmp #5
+318350c: pd1 == ' '
+======================================================================
+### branchNotRouteSelectCount handler=0x317c85c min=9 opt=[1, 2, 4, 6]
+--- 2 events
+317c868: pd.Length cmp #9
+317c884: pd1 == ' '
+======================================================================
+### branchSetGrandSvtCount handler=0x317e20c min=5 opt=[2, 4]
+--- 2 events
+317e218: pd.Length cmp #5
+317e234: pd1 == ' '
+======================================================================
+### revivalBranch handler=0x31853a4 min=3 opt=[2]
+--- 2 events
+31853b0: pd.Length cmp #3
+31853cc: pd1 == ' '
+======================================================================
+### flag handler=0x3188a44 min=3 opt=[2, 3]
+--- 13 events
+3188a50: pd.Length cmp #3
+3188a6c: pd1 == ' '
+3188a90: pd0 -> SearchFlag(string name #0)
+3188aa0: pd.Length cmp #2
+3188ab4: pd2 -> ScriptFlagData$$Set(arg x1)
+3188ae0: pd0 -> System.String$$Contains(arg x0)
+3188ae0: 'Loop' -> System.String$$Contains(arg x1)
+3188af4: pd.Length cmp #2
+3188b10: pd2 == 'true'
+3188b48: pd0 -> System.String$$Contains(arg x0)
+3188b48: 'isEnableLoopLogLaterErase' -> System.String$$Contains(arg x1)
+3188b5c: pd.Length cmp #2
+3188b78: pd2 == 'true'
+======================================================================
+### flagRandom handler=0x3184ed4 min=5 opt=[2, 4]
+--- 2 events
+3184ee0: pd.Length cmp #5
+3184efc: pd1 == ' '
+======================================================================
+### masterBranch handler=0x3179bb8 min=3 opt=[2, 5, 6, 8, 10, 12]
+--- 2 events
+3179bc4: pd.Length cmp #3
+3179be0: pd1 == ' '
+======================================================================
+### questMessageOverwrite handler=0x317d710 min=None opt=[]
+--- 3 events
+317d720: pd.Length cmp #3
+317d764: 'QuestMessageAdd' -> System.String$$Concat(arg x0)
+317d764: pd0 -> System.String$$Concat(arg x1)
+======================================================================
+### rewardSwitch handler=0x318522c min=None opt=[1]
+--- 2 events
+318523c: pd.Length cmp #2
+3185284: pd0 == 'true'
+======================================================================
+### notification handler=0x317af78 min=3 opt=[2, 4]
+--- 2 events
+317af84: pd.Length cmp #3
+317afa0: pd1 == ' '
+======================================================================
+### enableWaitLoadAssetWhenResume handler=0x3182018 min=None opt=[]
+--- 0 events
+======================================================================
+### enableFullScreen handler=0x3182018 min=None opt=[]
+--- 0 events
+======================================================================
+### useSimpleMeshFigure handler=0x317ba14 min=None opt=[]
+--- 1 events
+317ba20: pd.Length cmp #1
+======================================================================
+### switchCase handler=0x31875c4 min=None opt=[]
+--- 1 events
+31875e0: 'switchCaseEnd' -> JumpScriptCommand(command #0)
+======================================================================
+### switchCaseEnd handler=0x3188c58 min=None opt=[1, 2, 4]
+--- 0 events
+======================================================================
+### warEventScript handler=0x317a1bc min=1 opt=[]
+--- 2 events
+317a1c8: pd.Length cmp #1
+317a1d8: pd0 -> System.Int32$$Parse(arg x0)
+======================================================================
+### movie handler=0x3183c38 min=None opt=[]
+--- 0 events
+======================================================================
+### criMovie handler=0x3183c38 min=None opt=[]
+--- 0 events
+======================================================================
+### warEffectPiece handler=0x317fd14 min=9 opt=[]
+--- 9 events
+317fd20: pd.Length cmp #9
+317fd50: pd.Length cmp #4
+317fd64: pd4 -> System.Int32$$Parse(arg x0)
+317fd84: pd.Length cmp #6
+317fd94: pd6 -> System.Int32$$Parse(arg x0)
+317fdb4: pd.Length cmp #8
+317fdc4: pd8 -> System.Int32$$Parse(arg x0)
+317fdfc: pd0 -> PlayEffectPieceScript(string key #0)
+317fdfc: pd2 -> PlayEffectPieceScript(string effectName #1)
+======================================================================
+### warEffectPos handler=0x3186664 min=7 opt=[]
+--- 6 events
+3186670: pd.Length cmp #7
+3186688: pd4 -> System.Single$$Parse(arg x0)
+3186698: pd.Length cmp #6
+31866ac: pd6 -> System.Single$$Parse(arg x0)
+31866dc: pd0 -> PlayEffectPosScript(string key #0)
+31866dc: pd2 -> PlayEffectPosScript(string effectName #1)
+======================================================================
+### warEffectOff handler=0x317fc60 min=1 opt=[]
+--- 2 events
+317fc6c: pd.Length cmp #1
+317fc94: pd0 -> StopEffectScript(string key #0)
+======================================================================
+### warEffectSquare handler=0x317f470 min=5 opt=[]
+--- 4 events
+317f47c: pd.Length cmp #5
+317f494: pd4 -> System.Int32$$Parse(arg x0)
+317f4c4: pd0 -> PlayEffectSquareScript(string key #0)
+317f4c4: pd2 -> PlayEffectSquareScript(string effectName #1)
+======================================================================
+### warMoveCameraPiece handler=0x3187cec min=9 opt=[3, 6]
+--- 15 events
+3187cf8: pd.Length cmp #0xd
+3187d08: pd0 -> System.Int32$$Parse(arg x0)
+3187d18: pd.Length cmp #2
+3187d2c: pd2 -> System.Single$$Parse(arg x0)
+3187d3c: pd.Length cmp #4
+3187d50: pd4 -> System.Single$$Parse(arg x0)
+3187d60: pd.Length cmp #6
+3187d90: pd.Length cmp #8
+3187da4: pd8 -> System.Int32$$Parse(arg x0)
+3187dc4: pd.Length cmp #0xa
+3187dd4: pd10 -> System.Int32$$Parse(arg x0)
+3187df4: pd.Length cmp #0xc
+3187e04: pd12 -> System.Int32$$Parse(arg x0)
+3187e24: pd.Length cmp #0x13
+318cb54: pd6 -> MoveCameraPieceScript(string easeType #3)
+======================================================================
+### warMoveCameraPos handler=0x317df90 min=7 opt=[]
+--- 12 events
+317df9c: pd.Length cmp #0xb
+317dfac: pd0 -> System.Int32$$Parse(arg x0)
+317dfbc: pd.Length cmp #2
+317dfd0: pd2 -> System.Single$$Parse(arg x0)
+317dfe0: pd.Length cmp #4
+317dff4: pd4 -> System.Single$$Parse(arg x0)
+317e004: pd.Length cmp #6
+317e00c: pd.Length cmp #8
+317e024: pd8 -> System.Single$$Parse(arg x0)
+317e034: pd.Length cmp #0xa
+317e048: pd10 -> System.Single$$Parse(arg x0)
+317e080: pd6 -> MoveCameraPosScript(string easeType #3)
+======================================================================
+### warMoveCameraSquare handler=0x3183030 min=9 opt=[]
+--- 10 events
+318303c: pd.Length cmp #9
+318304c: pd0 -> System.Int32$$Parse(arg x0)
+318305c: pd.Length cmp #2
+3183070: pd2 -> System.Single$$Parse(arg x0)
+3183080: pd.Length cmp #4
+3183094: pd4 -> System.Single$$Parse(arg x0)
+31830a4: pd.Length cmp #6
+31830ac: pd.Length cmp #8
+31830c4: pd8 -> System.Int32$$Parse(arg x0)
+31830fc: pd6 -> MoveCameraSquareScript(string easeType #3)
+======================================================================
+### warCharaFadein handler=0x317ac68 min=None opt=[3, 6]
+--- 2 events
+317ac74: pd.Length cmp #0xd
+317ac88: pd0 -> ConvertCharaIndex(string s #0)
+======================================================================
+### warBoardTalkScreen handler=0x317cd60 min=None opt=[]
+--- 3 events
+317cdd0: 'img_talk_textbg' -> SetWarBoardImage(spriteName #1)
+317ce24: 'img_talk_textbg' -> 0x22305f4(arg x0)
+317ce3c: 'img_talk_namebg' -> SetWarBoardImage(spriteName #1)

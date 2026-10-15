@@ -1,0 +1,330 @@
+{
+ "lines": [
+  {
+   "index": 0,
+   "raw": "# SYNTHETIC SAMPLE - only uses tag names recovered from the binary. NOT a real game script.",
+   "kind": "comment",
+   "tag": null,
+   "params": []
+  },
+  {
+   "index": 1,
+   "raw": "label start",
+   "kind": "command",
+   "tag": "label",
+   "params": [
+    "start"
+   ],
+   "pd": [
+    "start"
+   ]
+  },
+  {
+   "index": 2,
+   "raw": "bScene field_001",
+   "kind": "command",
+   "tag": "bScene",
+   "params": [
+    "field_001"
+   ],
+   "pd": [
+    "field_001"
+   ]
+  },
+  {
+   "index": 3,
+   "raw": "bgm BGM_001 0",
+   "kind": "command",
+   "tag": "bgm",
+   "params": [
+    "BGM_001",
+    "0"
+   ],
+   "pd": [
+    "BGM_001",
+    " ",
+    "0"
+   ]
+  },
+  {
+   "index": 4,
+   "raw": "charaSet 100100 0 0 0",
+   "kind": "command",
+   "tag": "charaSet",
+   "params": [
+    "100100",
+    "0",
+    "0",
+    "0"
+   ],
+   "pd": [
+    "100100",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0"
+   ]
+  },
+  {
+   "index": 5,
+   "raw": "talkName マシュ・キリエライト",
+   "kind": "structural",
+   "tag": "talkName",
+   "params": [
+    "マシュ・キリエライト"
+   ],
+   "pd": [
+    "マシュ・キリエライト"
+   ]
+  },
+  {
+   "index": 6,
+   "raw": "talkStart",
+   "kind": "command",
+   "tag": "talkStart",
+   "params": [],
+   "pd": []
+  },
+  {
+   "index": 7,
+   "raw": "message2 0 0 0 0 0 0 0 1 1 1 先輩、[#ff0000]赤い[-]です。[r]改行もできます。",
+   "kind": "message",
+   "tag": "message2",
+   "params": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1",
+    "1",
+    "先輩、[#ff0000]赤い[-]です。[r]改行もできます。"
+   ],
+   "pd": [
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "1",
+    " ",
+    "1",
+    " ",
+    "1",
+    " ",
+    "先輩、[#ff0000]赤い[-]です。[r]改行もできます。"
+   ],
+   "body": "先輩、[#ff0000]赤い[-]です。[r]改行もできます。",
+   "markup": [
+    {
+     "type": "text",
+     "value": "先輩、"
+    },
+    {
+     "type": "color",
+     "value": "ff0000"
+    },
+    {
+     "type": "text",
+     "value": "赤い"
+    },
+    {
+     "type": "tag",
+     "name": "-",
+     "arg": "",
+     "meaning": "end of colour span"
+    },
+    {
+     "type": "text",
+     "value": "です。"
+    },
+    {
+     "type": "tag",
+     "name": "r",
+     "arg": "",
+     "meaning": "line break"
+    },
+    {
+     "type": "text",
+     "value": "改行もできます。"
+    }
+   ]
+  },
+  {
+   "index": 8,
+   "raw": "message2 0 0 0 0 0 0 0 1 1 1 「[#ふりがな:漢字]」テスト",
+   "kind": "message",
+   "tag": "message2",
+   "params": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1",
+    "1",
+    "「[#ふりがな:漢字]」テスト"
+   ],
+   "pd": [
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "0",
+    " ",
+    "1",
+    " ",
+    "1",
+    " ",
+    "1",
+    " ",
+    "「[#ふりがな:漢字]」テスト"
+   ],
+   "body": "「[#ふりがな:漢字]」テスト",
+   "markup": [
+    {
+     "type": "text",
+     "value": "「"
+    },
+    {
+     "type": "ruby",
+     "ruby": "ふりがな",
+     "text": "漢字"
+    },
+    {
+     "type": "text",
+     "value": "」テスト"
+    }
+   ]
+  },
+  {
+   "index": 9,
+   "raw": "talkEnd",
+   "kind": "command",
+   "tag": "talkEnd",
+   "params": [],
+   "pd": []
+  },
+  {
+   "index": 10,
+   "raw": "charaFadeout 0 0.5",
+   "kind": "command",
+   "tag": "charaFadeout",
+   "params": [
+    "0",
+    "0.5"
+   ],
+   "pd": [
+    "0",
+    " ",
+    "0.5"
+   ]
+  },
+  {
+   "index": 11,
+   "raw": "wait 0.5",
+   "kind": "command",
+   "tag": "wait",
+   "params": [
+    "0.5"
+   ],
+   "pd": [
+    "0.5"
+   ]
+  },
+  {
+   "index": 12,
+   "raw": "selectBranch 0 選択肢A 選択肢B",
+   "kind": "structural",
+   "tag": "selectBranch",
+   "params": [
+    "0",
+    "選択肢A",
+    "選択肢B"
+   ],
+   "pd": [
+    "0",
+    " ",
+    "選択肢A",
+    " ",
+    "選択肢B"
+   ]
+  },
+  {
+   "index": 13,
+   "raw": "branch 1",
+   "kind": "command",
+   "tag": "branch",
+   "params": [
+    "1"
+   ],
+   "pd": [
+    "1"
+   ]
+  },
+  {
+   "index": 14,
+   "raw": "label routeA",
+   "kind": "command",
+   "tag": "label",
+   "params": [
+    "routeA"
+   ],
+   "pd": [
+    "routeA"
+   ]
+  },
+  {
+   "index": 15,
+   "raw": "clear",
+   "kind": "command",
+   "tag": "clear",
+   "params": [],
+   "pd": []
+  },
+  {
+   "index": 16,
+   "raw": "end",
+   "kind": "command",
+   "tag": "end",
+   "params": [],
+   "pd": []
+  },
+  {
+   "index": 17,
+   "raw": "",
+   "kind": "empty",
+   "tag": null,
+   "params": []
+  }
+ ],
+ "labels": {
+  "start": 1,
+  "routeA": 14
+ }
+}

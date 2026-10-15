@@ -1,0 +1,42 @@
+＄entry
+[backCameraColor 071622]
+[fadein black 0.3]
+[effect bit_talk_charge_blu 0,0]
+＠演出观测终端
+这是自制矢量演出。[r]能量环和粒子由阅读器内置资源绘制，不需要 Unity 资源包。
+[k]
+[messageChange cinema]
+[messageAlign bottom]
+[talkNameBack custom]
+＠演出观测终端
+[messageShake 0.05 4 3 0.5]这次只抖动消息窗口。[r][f large center]大字号[f -]和窗口底部对齐也已接入。
+[k]
+[messageShakeStop]
+[effectStop bit_talk_charge_blu]
+[wait effect bit_talk_charge_blu]
+[messageChange]
+[talkNameBack]
+[selectionCentering true]
+[menu impact="观看斩击与冲击演出" movie="体验影片缺失时的跳过流程"]
+＄impact
+[effect bit_talk_v_slash01 0,0]
+[wait time 0.5]
+[fowardEffect bit_talk_impactlanding 0,0]
+＠演出观测终端
+斩击和冲击使用本地原创 SVG。[r]资源缺失会给出兼容提示，剧情可以继续播放。
+[k]
+[effectDestroy]
+[fowardEffectDestroy]
+[branch closing]
+＄movie
+[criMovie demo_missing bgmPlay true]
+＠演出观测终端
+占位影片可自动结束，也可以点击“跳过影片”。[r]导入同名 MP4/WebM 后会改用真实影片的时长和结束事件。
+[k]
+＄closing
+[notification 演示完成 "原版音频、USM 内容和游戏存档不能从命令名恢复；自制演出与这些资源的边界已在文档中说明。"]
+＠演出观测终端
+最后以白色淡出结束。
+[k]
+[endFade white]
+[end]

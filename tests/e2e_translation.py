@@ -124,6 +124,8 @@ with sync_playwright() as playwright:
                             "baseUrl": payload["baseUrl"],
                             "model": payload["model"],
                             "allowNoAuth": payload["allowNoAuth"],
+                            "thinking": payload["thinking"],
+                            "reasoningEffort": payload["reasoningEffort"],
                             "apiKeyConfigured": bool(payload["apiKey"]),
                         }
                     },
@@ -150,6 +152,8 @@ with sync_playwright() as playwright:
                             "baseUrl": saved_openai["baseUrl"],
                             "model": saved_openai["model"],
                             "allowNoAuth": saved_openai["allowNoAuth"],
+                            "thinking": "disabled",
+                            "reasoningEffort": "medium",
                             "apiKeyConfigured": True,
                         }
                     },
@@ -312,6 +316,8 @@ with sync_playwright() as playwright:
         "apiKey": "new-test-key",
         "allowNoAuth": False,
         "clearApiKey": False,
+        "thinking": "disabled",
+        "reasoningEffort": "medium",
     }]
     page.screenshot(path="screenshots/llm-env-settings.png", full_page=True)
     page.set_viewport_size({"width": 760, "height": 900})

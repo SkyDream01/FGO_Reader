@@ -1,0 +1,1651 @@
+
+==============================================================================
+### ScriptManager$$SetAutoWait  0x31b1974..0x31b1eac  (size 0x538)
+0x31b1974  sub      sp, sp, #0x90
+0x31b1978  stp      d9, d8, [sp, #0x20]
+0x31b197c  stp      x29, x30, [sp, #0x30]
+0x31b1980  stp      x28, x27, [sp, #0x40]
+0x31b1984  stp      x26, x25, [sp, #0x50]
+0x31b1988  stp      x24, x23, [sp, #0x60]
+0x31b198c  stp      x22, x21, [sp, #0x70]
+0x31b1990  stp      x20, x19, [sp, #0x80]
+0x31b1994  adrp     x21, #0x59c5000
+0x31b1998  mov      x19, x1
+0x31b199c  mov      x20, x0
+0x31b19a0  ldrb     w8, [x21, #0x1a5]
+0x31b19a4  tbnz     w8, #0, #0x31b19ec
+0x31b19a8  adrp     x0, #0x5572000
+0x31b19ac  ldr      x0, [x0, #0xb48]
+0x31b19b0  bl       #0x22304a4   CALL 0x22304a4
+0x31b19b4  adrp     x0, #0x5572000
+0x31b19b8  ldr      x0, [x0, #0xf00]
+0x31b19bc  bl       #0x22304a4   CALL 0x22304a4
+0x31b19c0  adrp     x0, #0x558d000
+0x31b19c4  ldr      x0, [x0, #0x478]
+0x31b19c8  bl       #0x22304a4   CALL 0x22304a4
+0x31b19cc  adrp     x0, #0x55ca000
+0x31b19d0  ldr      x0, [x0, #0x9e0]   ; &slot for '[wait skippableTime {0:F2}]'
+0x31b19d4  bl       #0x22304a4   CALL 0x22304a4
+0x31b19d8  adrp     x0, #0x5570000
+0x31b19dc  ldr      x0, [x0, #0x458]   ; &slot for ''
+0x31b19e0  bl       #0x22304a4   CALL 0x22304a4
+0x31b19e4  mov      w8, #1
+0x31b19e8  strb     w8, [x21, #0x1a5]
+0x31b19ec  ldr      s0, [x20, #0x6f8]
+0x31b19f0  strh     wzr, [sp, #0x1c]
+0x31b19f4  fcmp     s0, #0.0
+0x31b19f8  b.ls     #0x31b1a8c
+0x31b19fc  adrp     x8, #0x5572000
+0x31b1a00  ldr      x8, [x8, #0xf00]
+0x31b1a04  ldr      x0, [x8]
+0x31b1a08  ldr      w8, [x0, #0xe4]
+0x31b1a0c  cbnz     w8, #0x31b1a14
+0x31b1a10  bl       #0x22305f4   CALL 0x22305f4
+0x31b1a14  mov      x0, xzr
+0x31b1a18  bl       #0x2e7d40c   CALL OptionManager$$GetScenarioTextSpeed
+0x31b1a1c  adrp     x21, #0x5572000
+0x31b1a20  fmov     s8, s0
+0x31b1a24  ldr      x21, [x21, #0xb48]
+0x31b1a28  ldr      x0, [x21]
+0x31b1a2c  ldr      w8, [x0, #0xe4]
+0x31b1a30  cbnz     w8, #0x31b1a3c
+0x31b1a34  bl       #0x22305f4   CALL 0x22305f4
+0x31b1a38  ldr      x0, [x21]
+0x31b1a3c  ldr      x8, [x0, #0xb8]
+0x31b1a40  ldr      s0, [x8, #0x25c]
+0x31b1a44  fcmp     s8, s0
+0x31b1a48  b.ge     #0x31b1a8c
+0x31b1a4c  adrp     x29, #0x558d000
+0x31b1a50  ldr      x29, [x29, #0x478]
+0x31b1a54  ldr      x21, [x20, #0x700]
+0x31b1a58  ldr      x0, [x29]
+0x31b1a5c  ldr      w8, [x0, #0xe4]
+0x31b1a60  cbnz     w8, #0x31b1a68
+0x31b1a64  bl       #0x22305f4   CALL 0x22305f4
+0x31b1a68  mov      x0, x19
+0x31b1a6c  mov      x1, x21
+0x31b1a70  mov      x2, xzr
+0x31b1a74  bl       #0x4e82fb8   CALL System.Text.RegularExpressions.Regex$$IsMatch
+0x31b1a78  tbz      w0, #0, #0x31b1a8c
+0x31b1a7c  ldr      x1, [x20, #0x718]
+0x31b1a80  mov      x2, x19
+0x31b1a84  bl       #0x31b1eac   CALL ScriptManager$$CheckNotSetAutoWaitCommand
+0x31b1a88  tbz      w0, #0, #0x31b1ab8
+0x31b1a8c  mov      x21, x19
+0x31b1a90  mov      x0, x21
+0x31b1a94  ldp      x20, x19, [sp, #0x80]
+0x31b1a98  ldp      x22, x21, [sp, #0x70]
+0x31b1a9c  ldp      x24, x23, [sp, #0x60]
+0x31b1aa0  ldp      x26, x25, [sp, #0x50]
+0x31b1aa4  ldp      x28, x27, [sp, #0x40]
+0x31b1aa8  ldp      x29, x30, [sp, #0x30]
+0x31b1aac  ldp      d9, d8, [sp, #0x20]
+0x31b1ab0  add      sp, sp, #0x90
+0x31b1ab4  ret      
+0x31b1ab8  cbz      x19, #0x31b1ea8
+0x31b1abc  adrp     x8, #0x5570000
+0x31b1ac0  ldr      w27, [x19, #0x10]
+0x31b1ac4  ldr      x8, [x8, #0x458]   ; &slot for ''
+0x31b1ac8  cmp      w27, #1
+0x31b1acc  ldr      x21, [x8]   ; ''
+0x31b1ad0  b.lt     #0x31b1a90
+0x31b1ad4  str      wzr, [sp, #0xc]
+0x31b1ad8  adrp     x28, #0x556f000
+0x31b1adc  mov      w22, wzr
+0x31b1ae0  ldr      x28, [x28, #0xbc8]
+0x31b1ae4  mov      w23, wzr
+0x31b1ae8  mov      w26, wzr
+0x31b1aec  mov      w9, wzr
+0x31b1af0  mov      x0, x19
+0x31b1af4  mov      w1, w22
+0x31b1af8  mov      x2, xzr
+0x31b1afc  str      w9, [sp, #0x10]
+0x31b1b00  add      w25, w22, #1
+0x31b1b04  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b1b08  mov      w24, w0
+0x31b1b0c  mov      w22, w25
+0x31b1b10  strh     w0, [sp, #0x1c]
+0x31b1b14  tbz      w26, #0, #0x31b1b90
+0x31b1b18  ldr      x0, [x28, #0x88]
+0x31b1b1c  and      w8, w24, #0xffff
+0x31b1b20  cmp      w8, #0x5d
+0x31b1b24  ldr      w9, [x0, #0xe4]
+0x31b1b28  cset     w22, ne
+0x31b1b2c  cbnz     w9, #0x31b1b34
+0x31b1b30  bl       #0x22305f4   CALL 0x22305f4
+0x31b1b34  add      x0, sp, #0x1c
+0x31b1b38  mov      x1, xzr
+0x31b1b3c  bl       #0x494f7e8   CALL System.Char$$ToString
+0x31b1b40  mov      x1, x0
+0x31b1b44  mov      x0, x21
+0x31b1b48  mov      x2, xzr
+0x31b1b4c  bl       #0x4867ef8   CALL System.String$$Concat
+0x31b1b50  cmp      w25, w27
+0x31b1b54  mov      x21, x0
+0x31b1b58  b.ge     #0x31b1a90
+0x31b1b5c  mov      x0, x19
+0x31b1b60  mov      w1, w25
+0x31b1b64  mov      x2, xzr
+0x31b1b68  and      w23, w22, w23
+0x31b1b6c  and      w26, w24, #0xffff
+0x31b1b70  add      w22, w25, #1
+0x31b1b74  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b1b78  mov      w24, w0
+0x31b1b7c  cmp      w26, #0x5d
+0x31b1b80  mov      w25, w22
+0x31b1b84  strh     w0, [sp, #0x1c]
+0x31b1b88  b.ne     #0x31b1b18
+0x31b1b8c  str      wzr, [sp, #0x10]
+0x31b1b90  and      w8, w24, #0xffff
+0x31b1b94  ldr      w9, [sp, #0xc]
+0x31b1b98  cmp      w8, #0x5b
+0x31b1b9c  cset     w8, eq
+0x31b1ba0  bic      w8, w8, w23
+0x31b1ba4  orr      w8, w9, w8
+0x31b1ba8  tbz      w8, #0, #0x31b1c40
+0x31b1bac  cmp      w22, w27
+0x31b1bb0  b.ge     #0x31b1c44
+0x31b1bb4  mov      w26, wzr
+0x31b1bb8  mov      w29, #1
+0x31b1bbc  ldr      x0, [x28, #0x88]
+0x31b1bc0  mov      w25, w22
+0x31b1bc4  ldr      w8, [x0, #0xe4]
+0x31b1bc8  cbnz     w8, #0x31b1bd0
+0x31b1bcc  bl       #0x22305f4   CALL 0x22305f4
+0x31b1bd0  add      x0, sp, #0x1c
+0x31b1bd4  mov      x1, xzr
+0x31b1bd8  bl       #0x494f7e8   CALL System.Char$$ToString
+0x31b1bdc  mov      x1, x0
+0x31b1be0  mov      x0, x21
+0x31b1be4  mov      x2, xzr
+0x31b1be8  bl       #0x4867ef8   CALL System.String$$Concat
+0x31b1bec  mov      x21, x0
+0x31b1bf0  mov      x0, x19
+0x31b1bf4  mov      w1, w25
+0x31b1bf8  mov      x2, xzr
+0x31b1bfc  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b1c00  and      w8, w0, #0xffff
+0x31b1c04  mov      w24, w0
+0x31b1c08  strh     w0, [sp, #0x1c]
+0x31b1c0c  cmp      w8, #0x5d
+0x31b1c10  b.eq     #0x31b1c24
+0x31b1c14  cmp      w8, #0x5b
+0x31b1c18  b.ne     #0x31b1c28
+0x31b1c1c  add      w29, w29, #1
+0x31b1c20  b        #0x31b1c28
+0x31b1c24  add      w26, w26, #1
+0x31b1c28  cmp      w29, w26
+0x31b1c2c  b.eq     #0x31b1d68
+0x31b1c30  add      w22, w25, #1
+0x31b1c34  cmp      w22, w27
+0x31b1c38  b.lt     #0x31b1bbc
+0x31b1c3c  b        #0x31b1d6c
+0x31b1c40  str      wzr, [sp, #0xc]
+0x31b1c44  tbz      w23, #0, #0x31b1d7c
+0x31b1c48  and      w8, w24, #0xffff
+0x31b1c4c  cmp      w8, #0x5b
+0x31b1c50  b.ne     #0x31b1cd0
+0x31b1c54  mov      w1, w22
+0x31b1c58  mov      x2, x19
+0x31b1c5c  bl       #0x31b1f34   CALL ScriptManager$$GetCommandTag
+0x31b1c60  ldr      x8, [x29]
+0x31b1c64  ldr      x23, [x20, #0x708]
+0x31b1c68  mov      x24, x0
+0x31b1c6c  ldr      w9, [x8, #0xe4]
+0x31b1c70  cbnz     w9, #0x31b1c7c
+0x31b1c74  mov      x0, x8
+0x31b1c78  bl       #0x22305f4   CALL 0x22305f4
+0x31b1c7c  mov      x0, x24
+0x31b1c80  mov      x1, x23
+0x31b1c84  mov      x2, xzr
+0x31b1c88  bl       #0x4e82fb8   CALL System.Text.RegularExpressions.Regex$$IsMatch
+0x31b1c8c  tbz      w0, #0, #0x31b1e08
+0x31b1c90  ldr      x0, [x28, #0x88]
+0x31b1c94  ldr      w8, [x0, #0xe4]
+0x31b1c98  cbnz     w8, #0x31b1ca0
+0x31b1c9c  bl       #0x22305f4   CALL 0x22305f4
+0x31b1ca0  add      x0, sp, #0x1c
+0x31b1ca4  mov      x1, xzr
+0x31b1ca8  bl       #0x494f7e8   CALL System.Char$$ToString
+0x31b1cac  mov      x1, x0
+0x31b1cb0  mov      x0, x21
+0x31b1cb4  mov      x2, xzr
+0x31b1cb8  bl       #0x4867ef8   CALL System.String$$Concat
+0x31b1cbc  mov      x21, x0
+0x31b1cc0  mov      w9, #1
+0x31b1cc4  mov      w26, #1
+0x31b1cc8  mov      w23, #1
+0x31b1ccc  b        #0x31b1dfc
+0x31b1cd0  ldr      s8, [x20, #0x6f8]
+0x31b1cd4  ldr      s9, [x20, #0x720]
+0x31b1cd8  bl       #0x31b206c   CALL ScriptManager$$GetTextSpeed
+0x31b1cdc  ldr      w8, [sp, #0x10]
+0x31b1ce0  ldr      x0, [x28, #0x78]
+0x31b1ce4  add      x1, sp, #0x14
+0x31b1ce8  scvtf    s1, w8
+0x31b1cec  fmul     s1, s9, s1
+0x31b1cf0  fdiv     s0, s1, s0
+0x31b1cf4  fadd     s0, s8, s0
+0x31b1cf8  str      s0, [sp, #0x14]
+0x31b1cfc  bl       #0x22305fc   CALL 0x22305fc
+0x31b1d00  adrp     x8, #0x55ca000
+0x31b1d04  mov      x1, x0
+0x31b1d08  mov      x2, xzr
+0x31b1d0c  ldr      x8, [x8, #0x9e0]   ; &slot for '[wait skippableTime {0:F2}]'
+0x31b1d10  ldr      x8, [x8]   ; &slot for 'charaMoveScaleEase'
+0x31b1d14  mov      x0, x8
+0x31b1d18  bl       #0x4868ad0   CALL System.String$$Format
+0x31b1d1c  ldr      x8, [x28, #0x88]
+0x31b1d20  mov      x23, x0
+0x31b1d24  ldr      w9, [x8, #0xe4]
+0x31b1d28  cbnz     w9, #0x31b1d34
+0x31b1d2c  mov      x0, x8
+0x31b1d30  bl       #0x22305f4   CALL 0x22305f4
+0x31b1d34  add      x0, sp, #0x1c
+0x31b1d38  mov      x1, xzr
+0x31b1d3c  bl       #0x494f7e8   CALL System.Char$$ToString
+0x31b1d40  mov      x2, x0
+0x31b1d44  mov      x0, x21
+0x31b1d48  mov      x1, x23
+0x31b1d4c  mov      x3, xzr
+0x31b1d50  bl       #0x48727c4   CALL System.String$$Concat
+0x31b1d54  mov      x21, x0
+0x31b1d58  mov      w26, wzr
+0x31b1d5c  mov      w23, wzr
+0x31b1d60  mov      w9, #1
+0x31b1d64  b        #0x31b1dfc
+0x31b1d68  str      wzr, [sp, #0xc]
+0x31b1d6c  adrp     x29, #0x558d000
+0x31b1d70  add      w22, w25, #1
+0x31b1d74  ldr      x29, [x29, #0x478]
+0x31b1d78  tbnz     w23, #0, #0x31b1c48
+0x31b1d7c  ldr      x0, [x28, #0x88]
+0x31b1d80  ldr      w8, [x0, #0xe4]
+0x31b1d84  cbnz     w8, #0x31b1d8c
+0x31b1d88  bl       #0x22305f4   CALL 0x22305f4
+0x31b1d8c  add      x0, sp, #0x1c
+0x31b1d90  mov      x1, xzr
+0x31b1d94  bl       #0x494f7e8   CALL System.Char$$ToString
+0x31b1d98  ldr      x8, [x29]
+0x31b1d9c  ldr      x23, [x20, #0x700]
+0x31b1da0  mov      x24, x0
+0x31b1da4  ldr      w9, [x8, #0xe4]
+0x31b1da8  cbnz     w9, #0x31b1db4
+0x31b1dac  mov      x0, x8
+0x31b1db0  bl       #0x22305f4   CALL 0x22305f4
+0x31b1db4  mov      x0, x24
+0x31b1db8  mov      x1, x23
+0x31b1dbc  mov      x2, xzr
+0x31b1dc0  bl       #0x4e82fb8   CALL System.Text.RegularExpressions.Regex$$IsMatch
+0x31b1dc4  mov      w23, w0
+0x31b1dc8  add      x0, sp, #0x1c
+0x31b1dcc  mov      x1, xzr
+0x31b1dd0  bl       #0x494f7e8   CALL System.Char$$ToString
+0x31b1dd4  mov      x1, x0
+0x31b1dd8  mov      x0, x21
+0x31b1ddc  mov      x2, xzr
+0x31b1de0  bl       #0x4867ef8   CALL System.String$$Concat
+0x31b1de4  ldrh     w8, [sp, #0x1c]
+0x31b1de8  ldr      w9, [sp, #0x10]
+0x31b1dec  mov      x21, x0
+0x31b1df0  mov      w26, wzr
+0x31b1df4  cmp      w8, #0x5d
+0x31b1df8  csinc    w9, wzr, w9, eq
+0x31b1dfc  cmp      w22, w27
+0x31b1e00  b.lt     #0x31b1af0
+0x31b1e04  b        #0x31b1a90
+0x31b1e08  ldr      s8, [x20, #0x6f8]
+0x31b1e0c  ldr      s9, [x20, #0x720]
+0x31b1e10  bl       #0x31b206c   CALL ScriptManager$$GetTextSpeed
+0x31b1e14  ldr      w8, [sp, #0x10]
+0x31b1e18  ldr      x0, [x28, #0x78]
+0x31b1e1c  add      x1, sp, #0x18
+0x31b1e20  scvtf    s1, w8
+0x31b1e24  fmul     s1, s9, s1
+0x31b1e28  fdiv     s0, s1, s0
+0x31b1e2c  fadd     s0, s8, s0
+0x31b1e30  str      s0, [sp, #0x18]
+0x31b1e34  bl       #0x22305fc   CALL 0x22305fc
+0x31b1e38  adrp     x8, #0x55ca000
+0x31b1e3c  mov      x1, x0
+0x31b1e40  mov      x2, xzr
+0x31b1e44  ldr      x8, [x8, #0x9e0]   ; &slot for '[wait skippableTime {0:F2}]'
+0x31b1e48  ldr      x8, [x8]   ; &slot for 'charaMoveScaleEase'
+0x31b1e4c  mov      x0, x8
+0x31b1e50  bl       #0x4868ad0   CALL System.String$$Format
+0x31b1e54  ldr      x8, [x28, #0x88]
+0x31b1e58  mov      x23, x0
+0x31b1e5c  ldr      w9, [x8, #0xe4]
+0x31b1e60  cbnz     w9, #0x31b1e6c
+0x31b1e64  mov      x0, x8
+0x31b1e68  bl       #0x22305f4   CALL 0x22305f4
+0x31b1e6c  add      x0, sp, #0x1c
+0x31b1e70  mov      x1, xzr
+0x31b1e74  bl       #0x494f7e8   CALL System.Char$$ToString
+0x31b1e78  mov      x2, x0
+0x31b1e7c  mov      x0, x21
+0x31b1e80  mov      x1, x23
+0x31b1e84  mov      x3, xzr
+0x31b1e88  bl       #0x48727c4   CALL System.String$$Concat
+0x31b1e8c  mov      w8, #1
+0x31b1e90  mov      x21, x0
+0x31b1e94  mov      w26, wzr
+0x31b1e98  mov      w23, wzr
+0x31b1e9c  mov      w9, #1
+0x31b1ea0  str      w8, [sp, #0xc]
+0x31b1ea4  b        #0x31b1dfc
+0x31b1ea8  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$CheckNotSetAutoWaitCommand  0x31b1eac..0x31b1f34  (size 0x88)
+0x31b1eac  stp      x30, x23, [sp, #-0x30]!
+0x31b1eb0  stp      x22, x21, [sp, #0x10]
+0x31b1eb4  stp      x20, x19, [sp, #0x20]
+0x31b1eb8  cbz      x1, #0x31b1f2c
+0x31b1ebc  ldr      x8, [x1, #0x18]
+0x31b1ec0  mov      x19, x1
+0x31b1ec4  cmp      w8, #0
+0x31b1ec8  cset     w21, gt
+0x31b1ecc  cmp      w8, #1
+0x31b1ed0  b.lt     #0x31b1f18
+0x31b1ed4  mov      x20, x2
+0x31b1ed8  mov      x22, xzr
+0x31b1edc  and      x8, x8, #0xffffffff
+0x31b1ee0  add      x23, x19, #0x20
+0x31b1ee4  cmp      x22, w8, uxtw
+0x31b1ee8  b.hs     #0x31b1f30
+0x31b1eec  cbz      x20, #0x31b1f2c
+0x31b1ef0  ldr      x1, [x23, x22, lsl #3]
+0x31b1ef4  mov      x0, x20
+0x31b1ef8  mov      x2, xzr
+0x31b1efc  bl       #0x4877124   CALL System.String$$Contains
+0x31b1f00  tbnz     w0, #0, #0x31b1f18
+0x31b1f04  ldr      w8, [x19, #0x18]
+0x31b1f08  add      x22, x22, #1
+0x31b1f0c  cmp      x22, w8, sxtw
+0x31b1f10  cset     w21, lt
+0x31b1f14  b.lt     #0x31b1ee4
+0x31b1f18  and      w0, w21, #1
+0x31b1f1c  ldp      x20, x19, [sp, #0x20]
+0x31b1f20  ldp      x22, x21, [sp, #0x10]
+0x31b1f24  ldp      x30, x23, [sp], #0x30
+0x31b1f28  ret      
+0x31b1f2c  bl       #0x2230720   CALL 0x2230720
+0x31b1f30  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptManager$$GetAutoWaitTime  0x31b2038..0x31b206c  (size 0x34)
+0x31b2038  stp      d9, d8, [sp, #-0x20]!
+0x31b203c  stp      x30, x19, [sp, #0x10]
+0x31b2040  ldr      s8, [x0, #0x6f8]
+0x31b2044  ldr      s9, [x0, #0x720]
+0x31b2048  mov      w19, w1
+0x31b204c  bl       #0x31b206c   CALL ScriptManager$$GetTextSpeed
+0x31b2050  scvtf    s1, w19
+0x31b2054  ldp      x30, x19, [sp, #0x10]
+0x31b2058  fmul     s1, s9, s1
+0x31b205c  fdiv     s0, s1, s0
+0x31b2060  fadd     s0, s8, s0
+0x31b2064  ldp      d9, d8, [sp], #0x20
+0x31b2068  ret      
+
+==============================================================================
+### ScriptManager$$ModifyPlaySpeed  0x31a8220..0x31a8488  (size 0x268)
+0x31a8220  sub      sp, sp, #0x60
+0x31a8224  str      x30, [sp, #0x30]
+0x31a8228  stp      x22, x21, [sp, #0x40]
+0x31a822c  stp      x20, x19, [sp, #0x50]
+0x31a8230  adrp     x21, #0x59c5000
+0x31a8234  mov      w20, w1
+0x31a8238  mov      x19, x0
+0x31a823c  ldrb     w8, [x21, #0x1d2]
+0x31a8240  tbnz     w8, #0, #0x31a8288
+0x31a8244  adrp     x0, #0x55ca000
+0x31a8248  ldr      x0, [x0, #0x948]
+0x31a824c  bl       #0x22304a4   CALL 0x22304a4
+0x31a8250  adrp     x0, #0x55ca000
+0x31a8254  ldr      x0, [x0, #0x950]
+0x31a8258  bl       #0x22304a4   CALL 0x22304a4
+0x31a825c  adrp     x0, #0x55ca000
+0x31a8260  ldr      x0, [x0, #0x958]
+0x31a8264  bl       #0x22304a4   CALL 0x22304a4
+0x31a8268  adrp     x0, #0x55ca000
+0x31a826c  ldr      x0, [x0, #0x790]
+0x31a8270  bl       #0x22304a4   CALL 0x22304a4
+0x31a8274  adrp     x0, #0x55ca000
+0x31a8278  ldr      x0, [x0, #0x960]
+0x31a827c  bl       #0x22304a4   CALL 0x22304a4
+0x31a8280  mov      w8, #1
+0x31a8284  strb     w8, [x21, #0x1d2]
+0x31a8288  ldr      w8, [x19, #0x28c]
+0x31a828c  stp      xzr, xzr, [sp, #0x18]
+0x31a8290  str      xzr, [sp, #0x28]
+0x31a8294  tbz      w20, #0, #0x31a82c0
+0x31a8298  cmp      w8, #1
+0x31a829c  b.eq     #0x31a82b0
+0x31a82a0  ldr      w8, [x19, #0x290]
+0x31a82a4  cbz      w8, #0x31a82f4
+0x31a82a8  cmp      w8, #1
+0x31a82ac  b.ne     #0x31a8318
+0x31a82b0  add      x8, x19, #0x28c
+0x31a82b4  mov      w9, #1
+0x31a82b8  str      x9, [x8]
+0x31a82bc  b        #0x31a8320
+0x31a82c0  cmp      w8, #1
+0x31a82c4  b.eq     #0x31a8320
+0x31a82c8  cmp      w8, #2
+0x31a82cc  b.ne     #0x31a8320
+0x31a82d0  ldr      w8, [x19, #0x290]
+0x31a82d4  cbnz     w8, #0x31a8320
+0x31a82d8  ldr      x0, [x19, #0x28]
+0x31a82dc  cbz      x0, #0x31a842c
+0x31a82e0  mov      x1, xzr
+0x31a82e4  bl       #0x31d478c   CALL ScriptMessageCommonManager$$IsLongPress
+0x31a82e8  tbz      w0, #0, #0x31a8320
+0x31a82ec  mov      w8, #3
+0x31a82f0  b        #0x31a8310
+0x31a82f4  ldr      x0, [x19, #0x28]
+0x31a82f8  cbz      x0, #0x31a842c
+0x31a82fc  mov      x1, xzr
+0x31a8300  bl       #0x31d478c   CALL ScriptMessageCommonManager$$IsLongPress
+0x31a8304  mov      w8, #2
+0x31a8308  tst      w0, #1
+0x31a830c  cinc     w8, w8, ne
+0x31a8310  str      w8, [x19, #0x28c]
+0x31a8314  b        #0x31a8320
+0x31a8318  str      w8, [x19, #0x28c]
+0x31a831c  str      wzr, [x19, #0x290]
+0x31a8320  ldr      x0, [x19, #0x1e0]
+0x31a8324  cbz      x0, #0x31a842c
+0x31a8328  ldr      w8, [x19, #0x28c]
+0x31a832c  mov      x2, xzr
+0x31a8330  cmp      w8, #3
+0x31a8334  cset     w1, eq
+0x31a8338  bl       #0x4fd4510   CALL UnityEngine.GameObject$$SetActive
+0x31a833c  ldr      w8, [x19, #0x408]
+0x31a8340  tbz      w8, #0x1f, #0x31a8358
+0x31a8344  ldrb     w8, [x19, #0x392]
+0x31a8348  cbnz     w8, #0x31a8358
+0x31a834c  ldr      w8, [x19, #0x28c]
+0x31a8350  cmp      w8, #3
+0x31a8354  b.ne     #0x31a8414
+0x31a8358  ldr      x0, [x19, #0x28]
+0x31a835c  cbz      x0, #0x31a842c
+0x31a8360  mov      x1, xzr
+0x31a8364  bl       #0x31d46e4   CALL ScriptMessageCommonManager$$RequestFastMessage
+0x31a8368  mov      x0, x19
+0x31a836c  bl       #0x31b5450   CALL ScriptManager$$DestroyStoppedCharaEffect
+0x31a8370  mov      x0, x19
+0x31a8374  bl       #0x31b5500   CALL ScriptManager$$StopMoveRelativePosition
+0x31a8378  mov      x0, x19
+0x31a837c  bl       #0x31b5574   CALL ScriptManager$$StopMoveAlphaLoop
+0x31a8380  ldr      x0, [x19, #0x770]
+0x31a8384  cbz      x0, #0x31a842c
+0x31a8388  adrp     x8, #0x55ca000
+0x31a838c  adrp     x20, #0x55ca000
+0x31a8390  adrp     x21, #0x55ca000
+0x31a8394  ldr      x8, [x8, #0x960]
+0x31a8398  ldr      x20, [x20, #0x950]
+0x31a839c  ldr      x21, [x21, #0x948]
+0x31a83a0  add      x22, sp, #0x18
+0x31a83a4  ldr      x1, [x8]
+0x31a83a8  add      x8, sp, #0x18
+0x31a83ac  bl       #0x44c8ecc   CALL System.Collections.Generic.List<object>$$GetEnumerator
+0x31a83b0  stp      xzr, x22, [sp, #8]
+0x31a83b4  ldr      x1, [x20]
+0x31a83b8  add      x0, sp, #0x18
+0x31a83bc  bl       #0x4133c18   CALL System.Collections.Generic.List.Enumerator<object>$$MoveNext
+0x31a83c0  tbz      w0, #0, #0x31a83dc
+0x31a83c4  ldr      x0, [sp, #0x28]
+0x31a83c8  cbz      x0, #0x31a8428
+0x31a83cc  fmov     s0, #1.00000000
+0x31a83d0  mov      x1, xzr
+0x31a83d4  bl       #0x36193f8   CALL UITweener$$set_tweenFactor
+0x31a83d8  b        #0x31a83b4
+0x31a83dc  ldr      x1, [x21]
+0x31a83e0  add      x0, sp, #0x18
+0x31a83e4  bl       #0x4133c14   CALL System.Collections.Generic.List.Enumerator<object>$$Dispose
+0x31a83e8  ldr      x8, [x19, #0x770]
+0x31a83ec  cbz      x8, #0x31a842c
+0x31a83f0  ldp      w2, w9, [x8, #0x18]
+0x31a83f4  add      w9, w9, #1
+0x31a83f8  cmp      w2, #1
+0x31a83fc  stp      wzr, w9, [x8, #0x18]
+0x31a8400  b.lt     #0x31a8414
+0x31a8404  ldr      x0, [x8, #0x10]
+0x31a8408  mov      w1, wzr
+0x31a840c  mov      x3, xzr
+0x31a8410  bl       #0x49f8178   CALL System.Array$$Clear
+0x31a8414  ldp      x20, x19, [sp, #0x50]
+0x31a8418  ldr      x30, [sp, #0x30]
+0x31a841c  ldp      x22, x21, [sp, #0x40]
+0x31a8420  add      sp, sp, #0x60
+0x31a8424  ret      
+0x31a8428  bl       #0x2230720   CALL 0x2230720
+0x31a842c  bl       #0x2230720   CALL 0x2230720
+0x31a8430  b        #0x31a8438
+0x31a8434  b        #0x31a8438
+0x31a8438  mov      x20, x0
+0x31a843c  cmp      w1, #1
+0x31a8440  b.ne     #0x31a8474
+0x31a8444  mov      x0, x20
+0x31a8448  bl       #0x5311370   CALL System.__Il2CppComDelegate$$Finalize
+0x31a844c  ldr      x20, [x0]
+0x31a8450  str      x20, [sp, #8]
+0x31a8454  bl       #0x5311380   CALL System.__Il2CppComDelegate$$Finalize
+0x31a8458  ldr      x0, [sp, #0x10]
+0x31a845c  ldr      x1, [x21]
+0x31a8460  bl       #0x4133c14   CALL System.Collections.Generic.List.Enumerator<object>$$Dispose
+0x31a8464  cbz      x20, #0x31a83e8
+0x31a8468  mov      x0, x20
+0x31a846c  bl       #0x2230718   CALL 0x2230718
+0x31a8470  mov      x20, x0
+0x31a8474  add      x0, sp, #8
+0x31a8478  bl       #0x202b9a4   CALL 0x202b9a4
+0x31a847c  mov      x0, x20
+0x31a8480  bl       #0x231db7c   CALL 0x231db7c
+0x31a8484  bl       #0x20150d0   CALL 0x20150d0
+
+==============================================================================
+### ScriptManager$$IsNormalPlaySpeed  0x31b5324..0x31b5344  (size 0x20)
+0x31b5324  ldr      w8, [x0, #0x408]
+0x31b5328  tbnz     w8, #0x1f, #0x31b5334
+0x31b532c  mov      w0, wzr
+0x31b5330  ret      
+0x31b5334  ldr      w8, [x0, #0x28c]
+0x31b5338  cmp      w8, #3
+0x31b533c  cset     w0, ne
+0x31b5340  ret      
+
+==============================================================================
+### ScriptManager$$PausePlaySpeed  0x31b536c..0x31b53d8  (size 0x6c)
+0x31b536c  str      x30, [sp, #-0x20]!
+0x31b5370  stp      x20, x19, [sp, #0x10]
+0x31b5374  mov      x19, x0
+0x31b5378  ldr      x0, [x0, #0x28]
+0x31b537c  mov      w8, #1
+0x31b5380  str      w8, [x19, #0x290]
+0x31b5384  cbz      x0, #0x31b53d4
+0x31b5388  mov      w20, w1
+0x31b538c  mov      x1, xzr
+0x31b5390  bl       #0x31d47c8   CALL ScriptMessageCommonManager$$ResetLongPress
+0x31b5394  ldr      x0, [x19, #0x1e0]
+0x31b5398  cbz      x0, #0x31b53d4
+0x31b539c  mov      w1, wzr
+0x31b53a0  mov      x2, xzr
+0x31b53a4  bl       #0x4fd4510   CALL UnityEngine.GameObject$$SetActive
+0x31b53a8  tbz      w20, #0, #0x31b53b8
+0x31b53ac  ldp      x20, x19, [sp, #0x10]
+0x31b53b0  ldr      x30, [sp], #0x20
+0x31b53b4  ret      
+0x31b53b8  ldr      x0, [x19, #0x248]
+0x31b53bc  cbz      x0, #0x31b53d4
+0x31b53c0  ldp      x20, x19, [sp, #0x10]
+0x31b53c4  mov      w1, #1
+0x31b53c8  mov      x2, xzr
+0x31b53cc  ldr      x30, [sp], #0x20
+0x31b53d0  b        #0x316a2cc
+0x31b53d4  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$UpdateDelayScript  0x31b576c..0x31b58dc  (size 0x170)
+0x31b576c  stp      d11, d10, [sp, #-0x50]!
+0x31b5770  stp      d9, d8, [sp, #0x10]
+0x31b5774  str      x30, [sp, #0x20]
+0x31b5778  stp      x22, x21, [sp, #0x30]
+0x31b577c  stp      x20, x19, [sp, #0x40]
+0x31b5780  ldr      x8, [x0, #0x6e8]
+0x31b5784  cbz      x8, #0x31b58c0
+0x31b5788  ldr      x8, [x0, #0x28]
+0x31b578c  mov      x19, x0
+0x31b5790  cbz      x8, #0x31b5888
+0x31b5794  fmov     s8, s0
+0x31b5798  ldrb     w8, [x8, #0x1c0]
+0x31b579c  cbnz     w8, #0x31b57ac
+0x31b57a0  ldr      w8, [x19, #0x28c]
+0x31b57a4  cmp      w8, #1
+0x31b57a8  b.eq     #0x31b58c0
+0x31b57ac  bl       #0x31b206c   CALL ScriptManager$$GetTextSpeed
+0x31b57b0  ldr      x8, [x19, #0x6e8]
+0x31b57b4  cbz      x8, #0x31b5888
+0x31b57b8  fmov     s9, s0
+0x31b57bc  fmov     s11, #1.00000000
+0x31b57c0  mov      x22, xzr
+0x31b57c4  ldr      w9, [x8, #0x18]
+0x31b57c8  cmp      x22, w9, sxtw
+0x31b57cc  b.ge     #0x31b58c0
+0x31b57d0  cmp      x22, x9
+0x31b57d4  b.hs     #0x31b58d8
+0x31b57d8  add      x8, x8, x22, lsl #3
+0x31b57dc  ldr      x20, [x8, #0x20]
+0x31b57e0  cbz      x20, #0x31b587c
+0x31b57e4  ldrb     w8, [x20, #0x1e]
+0x31b57e8  ldrb     w9, [x20, #0x1d]
+0x31b57ec  mov      x0, x19
+0x31b57f0  cmp      w8, #0
+0x31b57f4  cset     w1, ne
+0x31b57f8  ccmp     w9, #0, #4, ne
+0x31b57fc  fcsel    s0, s11, s9, eq
+0x31b5800  fmul     s10, s0, s8
+0x31b5804  bl       #0x31b58dc   CALL ScriptManager$$IsTextSkip
+0x31b5808  tbz      w0, #0, #0x31b5820
+0x31b580c  fmov     s0, s10
+0x31b5810  mov      x0, x19
+0x31b5814  mov      x1, x20
+0x31b5818  mov      w2, #1
+0x31b581c  b        #0x31b5848
+0x31b5820  ldr      s0, [x20, #0x18]
+0x31b5824  fcmp     s0, #0.0
+0x31b5828  b.ls     #0x31b5838
+0x31b582c  fsub     s0, s0, s10
+0x31b5830  str      s0, [x20, #0x18]
+0x31b5834  b        #0x31b587c
+0x31b5838  mov      x0, x19
+0x31b583c  fmov     s0, s10
+0x31b5840  mov      x1, x20
+0x31b5844  mov      w2, wzr
+0x31b5848  mov      w3, wzr
+0x31b584c  bl       #0x31b59c0   CALL ScriptManager$$ProcessDelayScript
+0x31b5850  ldr      x8, [x19, #0x6e8]
+0x31b5854  cbz      x8, #0x31b5888
+0x31b5858  ldr      w9, [x8, #0x18]
+0x31b585c  mov      x21, x0
+0x31b5860  cmp      x22, x9
+0x31b5864  b.hs     #0x31b58d8
+0x31b5868  add      x0, x8, x22, lsl #3
+0x31b586c  mov      x1, xzr
+0x31b5870  str      xzr, [x0, #0x20]!
+0x31b5874  bl       #0x2230448   CALL 0x2230448
+0x31b5878  cbnz     x21, #0x31b588c
+0x31b587c  ldr      x8, [x19, #0x6e8]
+0x31b5880  add      x22, x22, #1
+0x31b5884  cbnz     x8, #0x31b57c4
+0x31b5888  bl       #0x2230720   CALL 0x2230720
+0x31b588c  ldr      x9, [x19, #0x340]
+0x31b5890  cbz      x9, #0x31b5888
+0x31b5894  ldr      w8, [x20, #0x10]
+0x31b5898  ldr      w9, [x9, #0x18]
+0x31b589c  cmp      w8, w9
+0x31b58a0  b.hs     #0x31b58d8
+0x31b58a4  ldr      x9, [x19, #0x338]
+0x31b58a8  cbz      x9, #0x31b5888
+0x31b58ac  ldr      w9, [x9, #0x18]
+0x31b58b0  cmp      w8, w9
+0x31b58b4  b.hs     #0x31b58d8
+0x31b58b8  mov      w8, #0x10
+0x31b58bc  str      w8, [x19, #0x288]
+0x31b58c0  ldp      x20, x19, [sp, #0x40]
+0x31b58c4  ldr      x30, [sp, #0x20]
+0x31b58c8  ldp      x22, x21, [sp, #0x30]
+0x31b58cc  ldp      d9, d8, [sp, #0x10]
+0x31b58d0  ldp      d11, d10, [sp], #0x50
+0x31b58d4  ret      
+0x31b58d8  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptManager$$ProcessDelayScript  0x31b59c0..0x31b6618  (size 0xc58)
+0x31b59c0  sub      sp, sp, #0x80
+0x31b59c4  stp      x29, x30, [sp, #0x20]
+0x31b59c8  stp      x28, x27, [sp, #0x30]
+0x31b59cc  stp      x26, x25, [sp, #0x40]
+0x31b59d0  stp      x24, x23, [sp, #0x50]
+0x31b59d4  stp      x22, x21, [sp, #0x60]
+0x31b59d8  stp      x20, x19, [sp, #0x70]
+0x31b59dc  adrp     x23, #0x59c5000
+0x31b59e0  mov      w21, w3
+0x31b59e4  mov      w22, w2
+0x31b59e8  ldrb     w8, [x23, #0x227]
+0x31b59ec  mov      x20, x1
+0x31b59f0  mov      x19, x0
+0x31b59f4  str      s0, [sp, #0x1c]
+0x31b59f8  tbnz     w8, #0, #0x31b5cc8
+0x31b59fc  adrp     x0, #0x55ca000
+0x31b5a00  ldr      x0, [x0, #0xaa0]   ; &slot for 'charaMoveREturnEaseFSR'
+0x31b5a04  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a08  adrp     x0, #0x55c9000
+0x31b5a0c  ldr      x0, [x0, #0x780]   ; &slot for 'backEffect'
+0x31b5a10  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a14  adrp     x0, #0x55c9000
+0x31b5a18  ldr      x0, [x0, #0x790]   ; &slot for 'charaMoveFSSideR'
+0x31b5a1c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a20  adrp     x0, #0x55c9000
+0x31b5a24  ldr      x0, [x0, #0x7f0]   ; &slot for 'charaPutFSSideR'
+0x31b5a28  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a2c  adrp     x0, #0x55c9000
+0x31b5a30  ldr      x0, [x0, #0x800]   ; &slot for 'charaMoveFSSideL'
+0x31b5a34  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a38  adrp     x0, #0x55c9000
+0x31b5a3c  ldr      x0, [x0, #0x810]   ; &slot for 'cameraMove'
+0x31b5a40  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a44  adrp     x0, #0x55c9000
+0x31b5a48  ldr      x0, [x0, #0x868]   ; &slot for 'charaFadeinFSL'
+0x31b5a4c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a50  adrp     x0, #0x55c9000
+0x31b5a54  ldr      x0, [x0, #0x878]   ; &slot for 'charaMoveReturnFSSideL'
+0x31b5a58  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a5c  adrp     x0, #0x55c9000
+0x31b5a60  ldr      x0, [x0, #0x890]   ; &slot for 'subBgm'
+0x31b5a64  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a68  adrp     x0, #0x55c9000
+0x31b5a6c  ldr      x0, [x0, #0x8a0]   ; &slot for 'charaFadeinFSR'
+0x31b5a70  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a74  adrp     x0, #0x55c9000
+0x31b5a78  ldr      x0, [x0, #0x8b0]   ; &slot for 'charaPutFSL'
+0x31b5a7c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a80  adrp     x0, #0x5578000
+0x31b5a84  ldr      x0, [x0, #0x610]   ; &slot for 'effect'
+0x31b5a88  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a8c  adrp     x0, #0x55c9000
+0x31b5a90  ldr      x0, [x0, #0x8d8]   ; &slot for 'cameraMoveEase'
+0x31b5a94  bl       #0x22304a4   CALL 0x22304a4
+0x31b5a98  adrp     x0, #0x55c9000
+0x31b5a9c  ldr      x0, [x0, #0x910]   ; &slot for 'charaFadeinFSSideR'
+0x31b5aa0  bl       #0x22304a4   CALL 0x22304a4
+0x31b5aa4  adrp     x0, #0x55c9000
+0x31b5aa8  ldr      x0, [x0, #0x978]   ; &slot for 'charaRoll'
+0x31b5aac  bl       #0x22304a4   CALL 0x22304a4
+0x31b5ab0  adrp     x0, #0x55c9000
+0x31b5ab4  ldr      x0, [x0, #0x988]   ; &slot for 'charaEffect'
+0x31b5ab8  bl       #0x22304a4   CALL 0x22304a4
+0x31b5abc  adrp     x0, #0x55c9000
+0x31b5ac0  ldr      x0, [x0, #0x990]   ; &slot for 'charaPutFSRNotNotch'
+0x31b5ac4  bl       #0x22304a4   CALL 0x22304a4
+0x31b5ac8  adrp     x0, #0x55c9000
+0x31b5acc  ldr      x0, [x0, #0x9b0]   ; &slot for 'charaMoveEaseFSSideR'
+0x31b5ad0  bl       #0x22304a4   CALL 0x22304a4
+0x31b5ad4  adrp     x0, #0x55c9000
+0x31b5ad8  ldr      x0, [x0, #0xa68]   ; &slot for 'charaFadein'
+0x31b5adc  bl       #0x22304a4   CALL 0x22304a4
+0x31b5ae0  adrp     x0, #0x55c9000
+0x31b5ae4  ldr      x0, [x0, #0xa70]   ; &slot for 'charaPut'
+0x31b5ae8  bl       #0x22304a4   CALL 0x22304a4
+0x31b5aec  adrp     x0, #0x55c9000
+0x31b5af0  ldr      x0, [x0, #0xa90]   ; &slot for 'charaBackEffect'
+0x31b5af4  bl       #0x22304a4   CALL 0x22304a4
+0x31b5af8  adrp     x0, #0x55c9000
+0x31b5afc  ldr      x0, [x0, #0xab0]   ; &slot for 'charaMoveReturnEaseFSSideL'
+0x31b5b00  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b04  adrp     x0, #0x55c9000
+0x31b5b08  ldr      x0, [x0, #0xae8]   ; &slot for 'messageShake'
+0x31b5b0c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b10  adrp     x0, #0x55c9000
+0x31b5b14  ldr      x0, [x0, #0xaf8]   ; &slot for 'charaMoveReturnEase'
+0x31b5b18  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b1c  adrp     x0, #0x55c9000
+0x31b5b20  ldr      x0, [x0, #0xb50]   ; &slot for 'seContinue'
+0x31b5b24  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b28  adrp     x0, #0x55ca000
+0x31b5b2c  ldr      x0, [x0, #0xaa8]   ; &slot for 'charaMoveREturnFSR'
+0x31b5b30  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b34  adrp     x0, #0x55c9000
+0x31b5b38  ldr      x0, [x0, #0xbd8]   ; &slot for 'charaEffectEdgeBlur'
+0x31b5b3c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b40  adrp     x0, #0x55c9000
+0x31b5b44  ldr      x0, [x0, #0xc20]   ; &slot for 'charaMove'
+0x31b5b48  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b4c  adrp     x0, #0x5578000
+0x31b5b50  ldr      x0, [x0, #0x630]   ; &slot for 'bgm'
+0x31b5b54  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b58  adrp     x0, #0x55c9000
+0x31b5b5c  ldr      x0, [x0, #0xc38]   ; &slot for 'charaPutFSLNotNotch'
+0x31b5b60  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b64  adrp     x0, #0x55c9000
+0x31b5b68  ldr      x0, [x0, #0xcd0]   ; &slot for 'charaPutFSR'
+0x31b5b6c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b70  adrp     x0, #0x55c9000
+0x31b5b74  ldr      x0, [x0, #0xd50]   ; &slot for 'charaMoveReturnEaseFSL'
+0x31b5b78  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b7c  adrp     x0, #0x55c9000
+0x31b5b80  ldr      x0, [x0, #0xd60]   ; &slot for 'charaMoveReturn'
+0x31b5b84  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b88  adrp     x0, #0x55c9000
+0x31b5b8c  ldr      x0, [x0, #0xdd0]   ; &slot for 'charaFadeTimeLoop'
+0x31b5b90  bl       #0x22304a4   CALL 0x22304a4
+0x31b5b94  adrp     x0, #0x55c9000
+0x31b5b98  ldr      x0, [x0, #0xde0]   ; &slot for 'specialEffect'
+0x31b5b9c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5ba0  adrp     x0, #0x55c9000
+0x31b5ba4  ldr      x0, [x0, #0xe00]   ; &slot for 'fowardEffect'
+0x31b5ba8  bl       #0x22304a4   CALL 0x22304a4
+0x31b5bac  adrp     x0, #0x55c9000
+0x31b5bb0  ldr      x0, [x0, #0xe78]   ; &slot for 'charaFadeout'
+0x31b5bb4  bl       #0x22304a4   CALL 0x22304a4
+0x31b5bb8  adrp     x0, #0x55c9000
+0x31b5bbc  ldr      x0, [x0, #0xe98]   ; &slot for 'charaFace'
+0x31b5bc0  bl       #0x22304a4   CALL 0x22304a4
+0x31b5bc4  adrp     x0, #0x55be000
+0x31b5bc8  ldr      x0, [x0, #0x270]   ; &slot for 'se'
+0x31b5bcc  bl       #0x22304a4   CALL 0x22304a4
+0x31b5bd0  adrp     x0, #0x55c9000
+0x31b5bd4  ldr      x0, [x0, #0xf80]   ; &slot for 'overlayFadein'
+0x31b5bd8  bl       #0x22304a4   CALL 0x22304a4
+0x31b5bdc  adrp     x0, #0x55c9000
+0x31b5be0  ldr      x0, [x0, #0xff0]   ; &slot for 'advRelease'
+0x31b5be4  bl       #0x22304a4   CALL 0x22304a4
+0x31b5be8  adrp     x0, #0x55ca000
+0x31b5bec  ldr      x0, [x0, #0x18]   ; &slot for 'charaMoveFSR'
+0x31b5bf0  bl       #0x22304a4   CALL 0x22304a4
+0x31b5bf4  adrp     x0, #0x55ca000
+0x31b5bf8  ldr      x0, [x0, #0xab0]   ; &slot for 'charaMoveREturnFSSideR'
+0x31b5bfc  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c00  adrp     x0, #0x55ca000
+0x31b5c04  ldr      x0, [x0, #0x58]   ; &slot for 'charaFadeinFSSideL'
+0x31b5c08  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c0c  adrp     x0, #0x55ca000
+0x31b5c10  ldr      x0, [x0, #0xb0]   ; &slot for 'charaPutFSSideL'
+0x31b5c14  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c18  adrp     x0, #0x55ca000
+0x31b5c1c  ldr      x0, [x0, #0xe0]   ; &slot for 'charaMoveEaseFSSideL'
+0x31b5c20  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c24  adrp     x0, #0x55ca000
+0x31b5c28  ldr      x0, [x0, #0xf8]   ; &slot for 'charaMoveFSL'
+0x31b5c2c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c30  adrp     x0, #0x55ca000
+0x31b5c34  ldr      x0, [x0, #0xab8]   ; &slot for 'charaMoveREturnEaseFSSideR'
+0x31b5c38  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c3c  adrp     x0, #0x5570000
+0x31b5c40  ldr      x0, [x0, #0x458]   ; &slot for ''
+0x31b5c44  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c48  adrp     x0, #0x55ca000
+0x31b5c4c  ldr      x0, [x0, #0x1b8]   ; &slot for 'advPrepare'
+0x31b5c50  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c54  adrp     x0, #0x55ca000
+0x31b5c58  ldr      x0, [x0, #0x1e8]   ; &slot for 'charaFadeinFSRNotNotch'
+0x31b5c5c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c60  adrp     x0, #0x55ca000
+0x31b5c64  ldr      x0, [x0, #0x208]   ; &slot for 'charaFadeinFSLNotNotch'
+0x31b5c68  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c6c  adrp     x0, #0x55ca000
+0x31b5c70  ldr      x0, [x0, #0x210]   ; &slot for 'charaMoveEase'
+0x31b5c74  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c78  adrp     x0, #0x55ca000
+0x31b5c7c  ldr      x0, [x0, #0x218]   ; &slot for 'charaShake'
+0x31b5c80  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c84  adrp     x0, #0x55ca000
+0x31b5c88  ldr      x0, [x0, #0x260]   ; &slot for 'charaMoveEaseFSL'
+0x31b5c8c  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c90  adrp     x0, #0x55ca000
+0x31b5c94  ldr      x0, [x0, #0xac0]   ; &slot for 'this command is not supported for delay : '
+0x31b5c98  bl       #0x22304a4   CALL 0x22304a4
+0x31b5c9c  adrp     x0, #0x55ca000
+0x31b5ca0  ldr      x0, [x0, #0x2e0]   ; &slot for 'charaMoveEaseFSR'
+0x31b5ca4  bl       #0x22304a4   CALL 0x22304a4
+0x31b5ca8  adrp     x0, #0x55ca000
+0x31b5cac  ldr      x0, [x0, #0x310]   ; &slot for 'charaMoveReturnFSL'
+0x31b5cb0  bl       #0x22304a4   CALL 0x22304a4
+0x31b5cb4  adrp     x0, #0x55ca000
+0x31b5cb8  ldr      x0, [x0, #0x330]   ; &slot for 'charaFadeTimeLoopStop'
+0x31b5cbc  bl       #0x22304a4   CALL 0x22304a4
+0x31b5cc0  mov      w8, #1
+0x31b5cc4  strb     w8, [x23, #0x227]
+0x31b5cc8  str      xzr, [sp, #0x10]
+0x31b5ccc  strb     wzr, [sp, #0xc]
+0x31b5cd0  tbz      w22, #0, #0x31b5cec
+0x31b5cd4  tbnz     w21, #0, #0x31b5cec
+0x31b5cd8  cbz      x20, #0x31b6610
+0x31b5cdc  ldrb     w8, [x20, #0x1c]
+0x31b5ce0  cbz      w8, #0x31b5cf0
+0x31b5ce4  mov      x0, xzr
+0x31b5ce8  b        #0x31b65f0
+0x31b5cec  cbz      x20, #0x31b6610
+0x31b5cf0  ldp      w8, w9, [x20, #0x10]
+0x31b5cf4  ldr      w27, [x19, #0x288]
+0x31b5cf8  ldr      x21, [x19, #0x3d8]
+0x31b5cfc  ldr      w10, [x19, #0x3e0]
+0x31b5d00  cmp      w8, w9
+0x31b5d04  str      w10, [sp, #8]
+0x31b5d08  b.ge     #0x31b65d0
+0x31b5d0c  ldr      x9, [sp, #0x10]
+0x31b5d10  cbnz     x9, #0x31b65d0
+0x31b5d14  adrp     x28, #0x5570000
+0x31b5d18  adrp     x26, #0x55ca000
+0x31b5d1c  mov      w29, #0x20dd
+0x31b5d20  ldr      x28, [x28, #0x458]   ; &slot for ''
+0x31b5d24  ldr      x26, [x26, #0xac0]   ; &slot for 'this command is not supported for delay : '
+0x31b5d28  movk     w29, #0x6dc5, lsl #16
+0x31b5d2c  ldr      x9, [x19, #0x330]
+0x31b5d30  cbz      x9, #0x31b6610
+0x31b5d34  ldr      w10, [x9, #0x18]
+0x31b5d38  cmp      w8, w10
+0x31b5d3c  b.hs     #0x31b6614
+0x31b5d40  add      x8, x9, w8, sxtw #3
+0x31b5d44  ldr      x22, [x8, #0x20]
+0x31b5d48  cbz      x22, #0x31b65b4
+0x31b5d4c  ldr      x1, [x28]   ; ''
+0x31b5d50  mov      x0, x22
+0x31b5d54  mov      x2, xzr
+0x31b5d58  bl       #0x4870cc4   CALL System.String$$op_Inequality   args: x1=''
+0x31b5d5c  tbz      w0, #0, #0x31b65b4
+0x31b5d60  ldr      x8, [x19, #0x340]
+0x31b5d64  cbz      x8, #0x31b6610
+0x31b5d68  ldrsw    x9, [x20, #0x10]
+0x31b5d6c  ldr      w10, [x8, #0x18]
+0x31b5d70  cmp      w9, w10
+0x31b5d74  b.hs     #0x31b6614
+0x31b5d78  ldr      x10, [x19, #0x338]
+0x31b5d7c  cbz      x10, #0x31b6610
+0x31b5d80  ldr      w11, [x10, #0x18]
+0x31b5d84  cmp      w9, w11
+0x31b5d88  b.hs     #0x31b6614
+0x31b5d8c  add      x8, x8, x9, lsl #2
+0x31b5d90  add      x9, x10, x9, lsl #3
+0x31b5d94  ldr      x24, [x9, #0x20]
+0x31b5d98  ldr      w23, [x8, #0x20]
+0x31b5d9c  mov      x1, x24
+0x31b5da0  bl       #0x31a7688   CALL ScriptManager$$AnalysParam
+0x31b5da4  mov      x25, x0
+0x31b5da8  mov      x0, x22
+0x31b5dac  mov      x1, xzr
+0x31b5db0  strb     wzr, [sp, #0xc]
+0x31b5db4  bl       #0x2cdf448   CALL <PrivateImplementationDetails>$$ComputeStringHash
+0x31b5db8  cmp      w0, w29
+0x31b5dbc  b.hi     #0x31b5e2c
+0x31b5dc0  mov      w8, #0xa31b
+0x31b5dc4  movk     w8, #0x36ea, lsl #16
+0x31b5dc8  cmp      w0, w8
+0x31b5dcc  b.hi     #0x31b5e98
+0x31b5dd0  mov      w8, #0xbf10
+0x31b5dd4  movk     w8, #0xc87, lsl #16
+0x31b5dd8  cmp      w0, w8
+0x31b5ddc  b.hi     #0x31b5f50
+0x31b5de0  mov      w8, #0x2061
+0x31b5de4  movk     w8, #0x537, lsl #16
+0x31b5de8  cmp      w0, w8
+0x31b5dec  b.hi     #0x31b6080
+0x31b5df0  mov      w8, #0x406
+0x31b5df4  movk     w8, #0x2f8, lsl #16
+0x31b5df8  cmp      w0, w8
+0x31b5dfc  b.eq     #0x31b6438
+0x31b5e00  mov      w8, #0x5580
+0x31b5e04  movk     w8, #0x4da, lsl #16
+0x31b5e08  cmp      w0, w8
+0x31b5e0c  b.eq     #0x31b63e4
+0x31b5e10  mov      w8, #0x2061
+0x31b5e14  movk     w8, #0x537, lsl #16
+0x31b5e18  cmp      w0, w8
+0x31b5e1c  b.ne     #0x31b65a0
+0x31b5e20  adrp     x8, #0x55c9000
+0x31b5e24  ldr      x8, [x8, #0x890]   ; &slot for 'subBgm'
+0x31b5e28  b        #0x31b6560
+0x31b5e2c  mov      w8, #0x9d21
+0x31b5e30  movk     w8, #0xa8af, lsl #16
+0x31b5e34  cmp      w0, w8
+0x31b5e38  b.hi     #0x31b5ef4
+0x31b5e3c  mov      w8, #0x37f
+0x31b5e40  movk     w8, #0x8df3, lsl #16
+0x31b5e44  cmp      w0, w8
+0x31b5e48  b.hi     #0x31b5f9c
+0x31b5e4c  mov      w8, #0x6a9
+0x31b5e50  movk     w8, #0x7df4, lsl #16
+0x31b5e54  cmp      w0, w8
+0x31b5e58  b.hi     #0x31b60bc
+0x31b5e5c  mov      w8, #0x8d54
+0x31b5e60  movk     w8, #0x6e6e, lsl #16
+0x31b5e64  cmp      w0, w8
+0x31b5e68  b.eq     #0x31b6444
+0x31b5e6c  mov      w8, #0xcb89
+0x31b5e70  movk     w8, #0x79a1, lsl #16
+0x31b5e74  cmp      w0, w8
+0x31b5e78  b.eq     #0x31b63f0
+0x31b5e7c  mov      w8, #0x6a9
+0x31b5e80  movk     w8, #0x7df4, lsl #16
+0x31b5e84  cmp      w0, w8
+0x31b5e88  b.ne     #0x31b65a0
+0x31b5e8c  adrp     x8, #0x55c9000
+0x31b5e90  ldr      x8, [x8, #0x8d8]   ; &slot for 'cameraMoveEase'
+0x31b5e94  b        #0x31b6560
+0x31b5e98  mov      w8, #0x6c2f
+0x31b5e9c  movk     w8, #0x4a6c, lsl #16
+0x31b5ea0  cmp      w0, w8
+0x31b5ea4  b.hi     #0x31b5fe8
+0x31b5ea8  mov      w8, #0x155f
+0x31b5eac  movk     w8, #0x4448, lsl #16
+0x31b5eb0  cmp      w0, w8
+0x31b5eb4  b.hi     #0x31b60f8
+0x31b5eb8  mov      w8, #0xaa5
+0x31b5ebc  movk     w8, #0x3c52, lsl #16
+0x31b5ec0  cmp      w0, w8
+0x31b5ec4  b.eq     #0x31b6450
+0x31b5ec8  mov      w8, #0x2be6
+0x31b5ecc  movk     w8, #0x417a, lsl #16
+0x31b5ed0  cmp      w0, w8
+0x31b5ed4  b.eq     #0x31b63fc
+0x31b5ed8  mov      w8, #0x155f
+0x31b5edc  movk     w8, #0x4448, lsl #16
+0x31b5ee0  cmp      w0, w8
+0x31b5ee4  b.ne     #0x31b65a0
+0x31b5ee8  adrp     x8, #0x55c9000
+0x31b5eec  ldr      x8, [x8, #0xab0]   ; &slot for 'charaMoveReturnEaseFSSideL'
+0x31b5ef0  b        #0x31b6560
+0x31b5ef4  mov      w8, #0x434d
+0x31b5ef8  movk     w8, #0xd115, lsl #16
+0x31b5efc  cmp      w0, w8
+0x31b5f00  b.hi     #0x31b6034
+0x31b5f04  mov      w8, #0x3cdb
+0x31b5f08  movk     w8, #0xaaf5, lsl #16
+0x31b5f0c  cmp      w0, w8
+0x31b5f10  b.hi     #0x31b6134
+0x31b5f14  mov      w8, #0x5341
+0x31b5f18  movk     w8, #0xa92c, lsl #16
+0x31b5f1c  cmp      w0, w8
+0x31b5f20  b.eq     #0x31b645c
+0x31b5f24  mov      w8, #0x1acb
+0x31b5f28  movk     w8, #0xa9e9, lsl #16
+0x31b5f2c  cmp      w0, w8
+0x31b5f30  b.eq     #0x31b6408
+0x31b5f34  mov      w8, #0x3cdb
+0x31b5f38  movk     w8, #0xaaf5, lsl #16
+0x31b5f3c  cmp      w0, w8
+0x31b5f40  b.ne     #0x31b65a0
+0x31b5f44  adrp     x8, #0x55c9000
+0x31b5f48  ldr      x8, [x8, #0x810]   ; &slot for 'cameraMove'
+0x31b5f4c  b        #0x31b6560
+0x31b5f50  mov      w8, #0x14ae
+0x31b5f54  movk     w8, #0x1e98, lsl #16
+0x31b5f58  cmp      w0, w8
+0x31b5f5c  b.hi     #0x31b6170
+0x31b5f60  mov      w8, #0x105
+0x31b5f64  movk     w8, #0x132e, lsl #16
+0x31b5f68  cmp      w0, w8
+0x31b5f6c  b.eq     #0x31b6468
+0x31b5f70  mov      w8, #0xd1a7
+0x31b5f74  movk     w8, #0x1819, lsl #16
+0x31b5f78  cmp      w0, w8
+0x31b5f7c  b.eq     #0x31b6414
+0x31b5f80  mov      w8, #0x14ae
+0x31b5f84  movk     w8, #0x1e98, lsl #16
+0x31b5f88  cmp      w0, w8
+0x31b5f8c  b.ne     #0x31b65a0
+0x31b5f90  adrp     x8, #0x55c9000
+0x31b5f94  ldr      x8, [x8, #0x868]   ; &slot for 'charaFadeinFSL'
+0x31b5f98  b        #0x31b6560
+0x31b5f9c  mov      w8, #0x9b01
+0x31b5fa0  movk     w8, #0x9b43, lsl #16
+0x31b5fa4  cmp      w0, w8
+0x31b5fa8  b.hi     #0x31b61ac
+0x31b5fac  mov      w8, #0x8604
+0x31b5fb0  movk     w8, #0x973b, lsl #16
+0x31b5fb4  cmp      w0, w8
+0x31b5fb8  b.eq     #0x31b6474
+0x31b5fbc  mov      w8, #0xe291
+0x31b5fc0  movk     w8, #0x99ae, lsl #16
+0x31b5fc4  cmp      w0, w8
+0x31b5fc8  b.eq     #0x31b6420
+0x31b5fcc  mov      w8, #0x9b01
+0x31b5fd0  movk     w8, #0x9b43, lsl #16
+0x31b5fd4  cmp      w0, w8
+0x31b5fd8  b.ne     #0x31b65a0
+0x31b5fdc  adrp     x8, #0x55c9000
+0x31b5fe0  ldr      x8, [x8, #0xde0]   ; &slot for 'specialEffect'
+0x31b5fe4  b        #0x31b6560
+0x31b5fe8  mov      w8, #0x168e
+0x31b5fec  movk     w8, #0x5e4d, lsl #16
+0x31b5ff0  cmp      w0, w8
+0x31b5ff4  b.hi     #0x31b61e8
+0x31b5ff8  mov      w8, #0x4b6b
+0x31b5ffc  movk     w8, #0x4b3c, lsl #16
+0x31b6000  cmp      w0, w8
+0x31b6004  b.eq     #0x31b6480
+0x31b6008  mov      w8, #0xd891
+0x31b600c  movk     w8, #0x5db2, lsl #16
+0x31b6010  cmp      w0, w8
+0x31b6014  b.eq     #0x31b642c
+0x31b6018  mov      w8, #0x168e
+0x31b601c  movk     w8, #0x5e4d, lsl #16
+0x31b6020  cmp      w0, w8
+0x31b6024  b.ne     #0x31b65a0
+0x31b6028  adrp     x8, #0x55c9000
+0x31b602c  ldr      x8, [x8, #0x8b0]   ; &slot for 'charaPutFSL'
+0x31b6030  b        #0x31b6560
+0x31b6034  mov      w8, #0x7bc1
+0x31b6038  movk     w8, #0xf178, lsl #16
+0x31b603c  cmp      w0, w8
+0x31b6040  b.hi     #0x31b6224
+0x31b6044  mov      w8, #0x297a
+0x31b6048  movk     w8, #0xe127, lsl #16
+0x31b604c  cmp      w0, w8
+0x31b6050  b.hi     #0x31b6260
+0x31b6054  mov      w8, #0x1d65
+0x31b6058  movk     w8, #0xd701, lsl #16
+0x31b605c  cmp      w0, w8
+0x31b6060  b.eq     #0x31b648c
+0x31b6064  mov      w8, #0x297a
+0x31b6068  movk     w8, #0xe127, lsl #16
+0x31b606c  cmp      w0, w8
+0x31b6070  b.ne     #0x31b65a0
+0x31b6074  adrp     x8, #0x55c9000
+0x31b6078  ldr      x8, [x8, #0xae8]   ; &slot for 'messageShake'
+0x31b607c  b        #0x31b6560
+0x31b6080  mov      w8, #0xbbea
+0x31b6084  movk     w8, #0xa87, lsl #16
+0x31b6088  cmp      w0, w8
+0x31b608c  b.hi     #0x31b628c
+0x31b6090  mov      w8, #0xf20c
+0x31b6094  movk     w8, #0x897, lsl #16
+0x31b6098  cmp      w0, w8
+0x31b609c  b.eq     #0x31b6498
+0x31b60a0  mov      w8, #0xbbea
+0x31b60a4  movk     w8, #0xa87, lsl #16
+0x31b60a8  cmp      w0, w8
+0x31b60ac  b.ne     #0x31b65a0
+0x31b60b0  adrp     x8, #0x55ca000
+0x31b60b4  ldr      x8, [x8, #0xf8]   ; &slot for 'charaMoveFSL'
+0x31b60b8  b        #0x31b6560
+0x31b60bc  mov      w8, #0x5fca
+0x31b60c0  movk     w8, #0x85c6, lsl #16
+0x31b60c4  cmp      w0, w8
+0x31b60c8  b.hi     #0x31b62b8
+0x31b60cc  mov      w8, #0xab2
+0x31b60d0  movk     w8, #0x831f, lsl #16
+0x31b60d4  cmp      w0, w8
+0x31b60d8  b.eq     #0x31b64a4
+0x31b60dc  mov      w8, #0x5fca
+0x31b60e0  movk     w8, #0x85c6, lsl #16
+0x31b60e4  cmp      w0, w8
+0x31b60e8  b.ne     #0x31b65a0
+0x31b60ec  adrp     x8, #0x55ca000
+0x31b60f0  ldr      x8, [x8, #0xaa8]   ; &slot for 'charaMoveREturnFSR'
+0x31b60f4  b        #0x31b6560
+0x31b60f8  mov      w8, #0x9261
+0x31b60fc  movk     w8, #0x4725, lsl #16
+0x31b6100  cmp      w0, w8
+0x31b6104  b.hi     #0x31b62e4
+0x31b6108  mov      w8, #0xd4f
+0x31b610c  movk     w8, #0x4534, lsl #16
+0x31b6110  cmp      w0, w8
+0x31b6114  b.eq     #0x31b64b0
+0x31b6118  mov      w8, #0x9261
+0x31b611c  movk     w8, #0x4725, lsl #16
+0x31b6120  cmp      w0, w8
+0x31b6124  b.ne     #0x31b65a0
+0x31b6128  adrp     x8, #0x55ca000
+0x31b612c  ldr      x8, [x8, #0x330]   ; &slot for 'charaFadeTimeLoopStop'
+0x31b6130  b        #0x31b6560
+0x31b6134  mov      w8, #0x6afa
+0x31b6138  movk     w8, #0xc01f, lsl #16
+0x31b613c  cmp      w0, w8
+0x31b6140  b.hi     #0x31b6310
+0x31b6144  mov      w8, #0x810d
+0x31b6148  movk     w8, #0xae20, lsl #16
+0x31b614c  cmp      w0, w8
+0x31b6150  b.eq     #0x31b64bc
+0x31b6154  mov      w8, #0x6afa
+0x31b6158  movk     w8, #0xc01f, lsl #16
+0x31b615c  cmp      w0, w8
+0x31b6160  b.ne     #0x31b65a0
+0x31b6164  adrp     x8, #0x55c9000
+0x31b6168  ldr      x8, [x8, #0xa90]   ; &slot for 'charaBackEffect'
+0x31b616c  b        #0x31b6560
+0x31b6170  mov      w8, #0x86c5
+0x31b6174  movk     w8, #0x24ea, lsl #16
+0x31b6178  cmp      w0, w8
+0x31b617c  b.hi     #0x31b633c
+0x31b6180  mov      w8, #0x84ba
+0x31b6184  movk     w8, #0x22da, lsl #16
+0x31b6188  cmp      w0, w8
+0x31b618c  b.eq     #0x31b64c8
+0x31b6190  mov      w8, #0x86c5
+0x31b6194  movk     w8, #0x24ea, lsl #16
+0x31b6198  cmp      w0, w8
+0x31b619c  b.ne     #0x31b65a0
+0x31b61a0  adrp     x8, #0x55c9000
+0x31b61a4  ldr      x8, [x8, #0x910]   ; &slot for 'charaFadeinFSSideR'
+0x31b61a8  b        #0x31b6560
+0x31b61ac  mov      w8, #0xf24f
+0x31b61b0  movk     w8, #0xa3ae, lsl #16
+0x31b61b4  cmp      w0, w8
+0x31b61b8  b.hi     #0x31b6368
+0x31b61bc  mov      w8, #0x676f
+0x31b61c0  movk     w8, #0x9f05, lsl #16
+0x31b61c4  cmp      w0, w8
+0x31b61c8  b.eq     #0x31b64d4
+0x31b61cc  mov      w8, #0xf24f
+0x31b61d0  movk     w8, #0xa3ae, lsl #16
+0x31b61d4  cmp      w0, w8
+0x31b61d8  b.ne     #0x31b65a0
+0x31b61dc  adrp     x8, #0x55c9000
+0x31b61e0  ldr      x8, [x8, #0x9b0]   ; &slot for 'charaMoveEaseFSSideR'
+0x31b61e4  b        #0x31b6560
+0x31b61e8  mov      w8, #0x3dfb
+0x31b61ec  movk     w8, #0x66e0, lsl #16
+0x31b61f0  cmp      w0, w8
+0x31b61f4  b.hi     #0x31b6394
+0x31b61f8  mov      w8, #0x8cca
+0x31b61fc  movk     w8, #0x65c8, lsl #16
+0x31b6200  cmp      w0, w8
+0x31b6204  b.eq     #0x31b64e0
+0x31b6208  mov      w8, #0x3dfb
+0x31b620c  movk     w8, #0x66e0, lsl #16
+0x31b6210  cmp      w0, w8
+0x31b6214  b.ne     #0x31b65a0
+0x31b6218  adrp     x8, #0x55c9000
+0x31b621c  ldr      x8, [x8, #0xd60]   ; &slot for 'charaMoveReturn'
+0x31b6220  b        #0x31b6560
+0x31b6224  mov      w8, #0x4141
+0x31b6228  movk     w8, #0xf71d, lsl #16
+0x31b622c  cmp      w0, w8
+0x31b6230  b.hi     #0x31b63b8
+0x31b6234  mov      w8, #0x92c1
+0x31b6238  movk     w8, #0xf1c2, lsl #16
+0x31b623c  cmp      w0, w8
+0x31b6240  b.eq     #0x31b64ec
+0x31b6244  mov      w8, #0x4141
+0x31b6248  movk     w8, #0xf71d, lsl #16
+0x31b624c  cmp      w0, w8
+0x31b6250  b.ne     #0x31b65a0
+0x31b6254  adrp     x8, #0x55c9000
+0x31b6258  ldr      x8, [x8, #0xdd0]   ; &slot for 'charaFadeTimeLoop'
+0x31b625c  b        #0x31b6560
+0x31b6260  mov      w8, #0x39bb
+0x31b6264  movk     w8, #0xe901, lsl #16
+0x31b6268  cmp      w0, w8
+0x31b626c  b.eq     #0x31b64f8
+0x31b6270  mov      w8, #0x7bc1
+0x31b6274  movk     w8, #0xf178, lsl #16
+0x31b6278  cmp      w0, w8
+0x31b627c  b.ne     #0x31b65a0
+0x31b6280  adrp     x8, #0x55ca000
+0x31b6284  ldr      x8, [x8, #0x1b8]   ; &slot for 'advPrepare'
+0x31b6288  b        #0x31b6560
+0x31b628c  mov      w8, #0xac68
+0x31b6290  movk     w8, #0xc1e, lsl #16
+0x31b6294  cmp      w0, w8
+0x31b6298  b.eq     #0x31b6504
+0x31b629c  mov      w8, #0xbf10
+0x31b62a0  movk     w8, #0xc87, lsl #16
+0x31b62a4  cmp      w0, w8
+0x31b62a8  b.ne     #0x31b65a0
+0x31b62ac  adrp     x8, #0x55ca000
+0x31b62b0  ldr      x8, [x8, #0x18]   ; &slot for 'charaMoveFSR'
+0x31b62b4  b        #0x31b6560
+0x31b62b8  mov      w8, #0x67fd
+0x31b62bc  movk     w8, #0x87ab, lsl #16
+0x31b62c0  cmp      w0, w8
+0x31b62c4  b.eq     #0x31b6510
+0x31b62c8  mov      w8, #0x37f
+0x31b62cc  movk     w8, #0x8df3, lsl #16
+0x31b62d0  cmp      w0, w8
+0x31b62d4  b.ne     #0x31b65a0
+0x31b62d8  adrp     x8, #0x55ca000
+0x31b62dc  ldr      x8, [x8, #0xab0]   ; &slot for 'charaMoveREturnFSSideR'
+0x31b62e0  b        #0x31b6560
+0x31b62e4  mov      w8, #0xf3ec
+0x31b62e8  movk     w8, #0x484c, lsl #16
+0x31b62ec  cmp      w0, w8
+0x31b62f0  b.eq     #0x31b651c
+0x31b62f4  mov      w8, #0x6c2f
+0x31b62f8  movk     w8, #0x4a6c, lsl #16
+0x31b62fc  cmp      w0, w8
+0x31b6300  b.ne     #0x31b65a0
+0x31b6304  adrp     x8, #0x55c9000
+0x31b6308  ldr      x8, [x8, #0x780]   ; &slot for 'backEffect'
+0x31b630c  b        #0x31b6560
+0x31b6310  mov      w8, #0x60d0
+0x31b6314  movk     w8, #0xcf6a, lsl #16
+0x31b6318  cmp      w0, w8
+0x31b631c  b.eq     #0x31b6528
+0x31b6320  mov      w8, #0x434d
+0x31b6324  movk     w8, #0xd115, lsl #16
+0x31b6328  cmp      w0, w8
+0x31b632c  b.ne     #0x31b65a0
+0x31b6330  adrp     x8, #0x55c9000
+0x31b6334  ldr      x8, [x8, #0xbd8]   ; &slot for 'charaEffectEdgeBlur'
+0x31b6338  b        #0x31b6560
+0x31b633c  mov      w8, #0xbca1
+0x31b6340  movk     w8, #0x300b, lsl #16
+0x31b6344  cmp      w0, w8
+0x31b6348  b.eq     #0x31b6534
+0x31b634c  mov      w8, #0xa31b
+0x31b6350  movk     w8, #0x36ea, lsl #16
+0x31b6354  cmp      w0, w8
+0x31b6358  b.ne     #0x31b65a0
+0x31b635c  adrp     x8, #0x55ca000
+0x31b6360  ldr      x8, [x8, #0x58]   ; &slot for 'charaFadeinFSSideL'
+0x31b6364  b        #0x31b6560
+0x31b6368  mov      w8, #0x4b01
+0x31b636c  movk     w8, #0xa725, lsl #16
+0x31b6370  cmp      w0, w8
+0x31b6374  b.eq     #0x31b6540
+0x31b6378  mov      w8, #0x9d21
+0x31b637c  movk     w8, #0xa8af, lsl #16
+0x31b6380  cmp      w0, w8
+0x31b6384  b.ne     #0x31b65a0
+0x31b6388  adrp     x8, #0x55ca000
+0x31b638c  ldr      x8, [x8, #0xab8]   ; &slot for 'charaMoveREturnEaseFSSideR'
+0x31b6390  b        #0x31b6560
+0x31b6394  mov      w8, #0x2ee7
+0x31b6398  movk     w8, #0x6b8e, lsl #16
+0x31b639c  cmp      w0, w8
+0x31b63a0  b.eq     #0x31b654c
+0x31b63a4  cmp      w0, w29
+0x31b63a8  b.ne     #0x31b65a0
+0x31b63ac  adrp     x8, #0x55c9000
+0x31b63b0  ldr      x8, [x8, #0xa68]   ; &slot for 'charaFadein'
+0x31b63b4  b        #0x31b6560
+0x31b63b8  mov      w8, #0x36fd
+0x31b63bc  movk     w8, #0xfb0c, lsl #16
+0x31b63c0  cmp      w0, w8
+0x31b63c4  b.eq     #0x31b6558
+0x31b63c8  mov      w8, #0xa8b9
+0x31b63cc  movk     w8, #0xfe19, lsl #16
+0x31b63d0  cmp      w0, w8
+0x31b63d4  b.ne     #0x31b65a0
+0x31b63d8  adrp     x8, #0x55c9000
+0x31b63dc  ldr      x8, [x8, #0x790]   ; &slot for 'charaMoveFSSideR'
+0x31b63e0  b        #0x31b6560
+0x31b63e4  adrp     x8, #0x55ca000
+0x31b63e8  ldr      x8, [x8, #0x260]   ; &slot for 'charaMoveEaseFSL'
+0x31b63ec  b        #0x31b6560
+0x31b63f0  adrp     x8, #0x55c9000
+0x31b63f4  ldr      x8, [x8, #0xaf8]   ; &slot for 'charaMoveReturnEase'
+0x31b63f8  b        #0x31b6560
+0x31b63fc  adrp     x8, #0x55c9000
+0x31b6400  ldr      x8, [x8, #0xe78]   ; &slot for 'charaFadeout'
+0x31b6404  b        #0x31b6560
+0x31b6408  adrp     x8, #0x55c9000
+0x31b640c  ldr      x8, [x8, #0xff0]   ; &slot for 'advRelease'
+0x31b6410  b        #0x31b6560
+0x31b6414  adrp     x8, #0x55c9000
+0x31b6418  ldr      x8, [x8, #0x800]   ; &slot for 'charaMoveFSSideL'
+0x31b641c  b        #0x31b6560
+0x31b6420  adrp     x8, #0x55ca000
+0x31b6424  ldr      x8, [x8, #0xe0]   ; &slot for 'charaMoveEaseFSSideL'
+0x31b6428  b        #0x31b6560
+0x31b642c  adrp     x8, #0x5578000
+0x31b6430  ldr      x8, [x8, #0x630]   ; &slot for 'bgm'
+0x31b6434  b        #0x31b6560
+0x31b6438  adrp     x8, #0x55c9000
+0x31b643c  ldr      x8, [x8, #0xf80]   ; &slot for 'overlayFadein'
+0x31b6440  b        #0x31b6560
+0x31b6444  adrp     x8, #0x5578000
+0x31b6448  ldr      x8, [x8, #0x610]   ; &slot for 'effect'
+0x31b644c  b        #0x31b6560
+0x31b6450  adrp     x8, #0x55be000
+0x31b6454  ldr      x8, [x8, #0x270]   ; &slot for 'se'
+0x31b6458  b        #0x31b6560
+0x31b645c  adrp     x8, #0x55c9000
+0x31b6460  ldr      x8, [x8, #0x878]   ; &slot for 'charaMoveReturnFSSideL'
+0x31b6464  b        #0x31b6560
+0x31b6468  adrp     x8, #0x55c9000
+0x31b646c  ldr      x8, [x8, #0xe98]   ; &slot for 'charaFace'
+0x31b6470  b        #0x31b6560
+0x31b6474  adrp     x8, #0x55c9000
+0x31b6478  ldr      x8, [x8, #0xb50]   ; &slot for 'seContinue'
+0x31b647c  b        #0x31b6560
+0x31b6480  adrp     x8, #0x55ca000
+0x31b6484  ldr      x8, [x8, #0x210]   ; &slot for 'charaMoveEase'
+0x31b6488  b        #0x31b6560
+0x31b648c  adrp     x8, #0x55c9000
+0x31b6490  ldr      x8, [x8, #0x7f0]   ; &slot for 'charaPutFSSideR'
+0x31b6494  b        #0x31b6560
+0x31b6498  adrp     x8, #0x55c9000
+0x31b649c  ldr      x8, [x8, #0x8a0]   ; &slot for 'charaFadeinFSR'
+0x31b64a0  b        #0x31b6560
+0x31b64a4  adrp     x8, #0x55c9000
+0x31b64a8  ldr      x8, [x8, #0xd50]   ; &slot for 'charaMoveReturnEaseFSL'
+0x31b64ac  b        #0x31b6560
+0x31b64b0  adrp     x8, #0x55c9000
+0x31b64b4  ldr      x8, [x8, #0xc38]   ; &slot for 'charaPutFSLNotNotch'
+0x31b64b8  b        #0x31b6560
+0x31b64bc  adrp     x8, #0x55c9000
+0x31b64c0  ldr      x8, [x8, #0xe00]   ; &slot for 'fowardEffect'
+0x31b64c4  b        #0x31b6560
+0x31b64c8  adrp     x8, #0x55ca000
+0x31b64cc  ldr      x8, [x8, #0x2e0]   ; &slot for 'charaMoveEaseFSR'
+0x31b64d0  b        #0x31b6560
+0x31b64d4  adrp     x8, #0x55ca000
+0x31b64d8  ldr      x8, [x8, #0x208]   ; &slot for 'charaFadeinFSLNotNotch'
+0x31b64dc  b        #0x31b6560
+0x31b64e0  adrp     x8, #0x55ca000
+0x31b64e4  ldr      x8, [x8, #0x218]   ; &slot for 'charaShake'
+0x31b64e8  b        #0x31b6560
+0x31b64ec  adrp     x8, #0x55c9000
+0x31b64f0  ldr      x8, [x8, #0xc20]   ; &slot for 'charaMove'
+0x31b64f4  b        #0x31b6560
+0x31b64f8  adrp     x8, #0x55ca000
+0x31b64fc  ldr      x8, [x8, #0xb0]   ; &slot for 'charaPutFSSideL'
+0x31b6500  b        #0x31b6560
+0x31b6504  adrp     x8, #0x55ca000
+0x31b6508  ldr      x8, [x8, #0xaa0]   ; &slot for 'charaMoveREturnEaseFSR'
+0x31b650c  b        #0x31b6560
+0x31b6510  adrp     x8, #0x55c9000
+0x31b6514  ldr      x8, [x8, #0xa70]   ; &slot for 'charaPut'
+0x31b6518  b        #0x31b6560
+0x31b651c  adrp     x8, #0x55c9000
+0x31b6520  ldr      x8, [x8, #0xcd0]   ; &slot for 'charaPutFSR'
+0x31b6524  b        #0x31b6560
+0x31b6528  adrp     x8, #0x55ca000
+0x31b652c  ldr      x8, [x8, #0x310]   ; &slot for 'charaMoveReturnFSL'
+0x31b6530  b        #0x31b6560
+0x31b6534  adrp     x8, #0x55ca000
+0x31b6538  ldr      x8, [x8, #0x1e8]   ; &slot for 'charaFadeinFSRNotNotch'
+0x31b653c  b        #0x31b6560
+0x31b6540  adrp     x8, #0x55c9000
+0x31b6544  ldr      x8, [x8, #0x990]   ; &slot for 'charaPutFSRNotNotch'
+0x31b6548  b        #0x31b6560
+0x31b654c  adrp     x8, #0x55c9000
+0x31b6550  ldr      x8, [x8, #0x978]   ; &slot for 'charaRoll'
+0x31b6554  b        #0x31b6560
+0x31b6558  adrp     x8, #0x55c9000
+0x31b655c  ldr      x8, [x8, #0x988]   ; &slot for 'charaEffect'
+0x31b6560  ldr      x1, [x8]   ; 'charaEffect'
+0x31b6564  mov      x0, x22
+0x31b6568  mov      x2, xzr
+0x31b656c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaEffect'
+0x31b6570  tbz      w0, #0, #0x31b65a0
+0x31b6574  add      x5, sp, #0x10
+0x31b6578  add      x6, sp, #0xc
+0x31b657c  add      x7, sp, #0x1c
+0x31b6580  mov      x0, x19
+0x31b6584  mov      x1, x22
+0x31b6588  mov      x2, x25
+0x31b658c  mov      w3, w23
+0x31b6590  mov      x4, x24
+0x31b6594  str      xzr, [sp]
+0x31b6598  bl       #0x3177290   CALL ScriptManager$$ScriptCommandExecute
+0x31b659c  b        #0x31b65b4
+0x31b65a0  ldr      x0, [x26]   ; 'this command is not supported for delay : '
+0x31b65a4  mov      x1, x22
+0x31b65a8  mov      x2, xzr
+0x31b65ac  bl       #0x4867ef8   CALL System.String$$Concat   args: x0='this command is not supported for delay : '
+0x31b65b0  str      x0, [sp, #0x10]
+0x31b65b4  ldp      w8, w9, [x20, #0x10]
+0x31b65b8  add      w8, w8, #1
+0x31b65bc  cmp      w8, w9
+0x31b65c0  str      w8, [x20, #0x10]
+0x31b65c4  b.ge     #0x31b65d0
+0x31b65c8  ldr      x9, [sp, #0x10]
+0x31b65cc  cbz      x9, #0x31b5d2c
+0x31b65d0  add      x0, x19, #0x3d8
+0x31b65d4  mov      x1, x21
+0x31b65d8  str      w27, [x19, #0x288]
+0x31b65dc  str      x21, [x19, #0x3d8]
+0x31b65e0  bl       #0x2230448   CALL 0x2230448
+0x31b65e4  ldr      x0, [sp, #0x10]
+0x31b65e8  ldr      w8, [sp, #8]
+0x31b65ec  str      w8, [x19, #0x3e0]
+0x31b65f0  ldp      x20, x19, [sp, #0x70]
+0x31b65f4  ldp      x22, x21, [sp, #0x60]
+0x31b65f8  ldp      x24, x23, [sp, #0x50]
+0x31b65fc  ldp      x26, x25, [sp, #0x40]
+0x31b6600  ldp      x28, x27, [sp, #0x30]
+0x31b6604  ldp      x29, x30, [sp, #0x20]
+0x31b6608  add      sp, sp, #0x80
+0x31b660c  ret      
+0x31b6610  bl       #0x2230720   CALL 0x2230720
+0x31b6614  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptManager$$DelayStop  0x31c5ab4..0x31c5b68  (size 0xb4)
+0x31c5ab4  stp      x30, x21, [sp, #-0x20]!
+0x31c5ab8  stp      x20, x19, [sp, #0x10]
+0x31c5abc  tbnz     w1, #0x1f, #0x31c5b00
+0x31c5ac0  ldr      x8, [x0, #0x6e8]
+0x31c5ac4  mov      x20, x0
+0x31c5ac8  cbz      x8, #0x31c5b60
+0x31c5acc  ldr      w9, [x8, #0x18]
+0x31c5ad0  mov      w19, w1
+0x31c5ad4  cmp      w9, w1
+0x31c5ad8  b.le     #0x31c5b00
+0x31c5adc  add      x8, x8, w19, uxtw #3
+0x31c5ae0  ldr      x1, [x8, #0x20]
+0x31c5ae4  cbz      x1, #0x31c5b00
+0x31c5ae8  cmp      w2, #1
+0x31c5aec  b.eq     #0x31c5b14
+0x31c5af0  cmp      w2, #2
+0x31c5af4  b.ne     #0x31c5b30
+0x31c5af8  mov      w3, wzr
+0x31c5afc  b        #0x31c5b18
+0x31c5b00  mov      x21, xzr
+0x31c5b04  ldp      x20, x19, [sp, #0x10]
+0x31c5b08  mov      x0, x21
+0x31c5b0c  ldp      x30, x21, [sp], #0x20
+0x31c5b10  ret      
+0x31c5b14  mov      w3, #1
+0x31c5b18  movi     d0, #0000000000000000
+0x31c5b1c  mov      x0, x20
+0x31c5b20  mov      w2, #1
+0x31c5b24  bl       #0x31b59c0   CALL ScriptManager$$ProcessDelayScript
+0x31c5b28  mov      x21, x0
+0x31c5b2c  b        #0x31c5b34
+0x31c5b30  mov      x21, xzr
+0x31c5b34  ldr      x8, [x20, #0x6e8]
+0x31c5b38  cbz      x8, #0x31c5b60
+0x31c5b3c  ldr      w9, [x8, #0x18]
+0x31c5b40  cmp      w9, w19
+0x31c5b44  b.ls     #0x31c5b64
+0x31c5b48  mov      w9, w19
+0x31c5b4c  mov      x1, xzr
+0x31c5b50  add      x0, x8, x9, lsl #3
+0x31c5b54  str      xzr, [x0, #0x20]!
+0x31c5b58  bl       #0x2230448   CALL 0x2230448
+0x31c5b5c  b        #0x31c5b04
+0x31c5b60  bl       #0x2230720   CALL 0x2230720
+0x31c5b64  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptManager$$GetNextDelayEnd  0x31b2710..0x31b27a8  (size 0x98)
+0x31b2710  stp      x30, x21, [sp, #-0x20]!
+0x31b2714  stp      x20, x19, [sp, #0x10]
+0x31b2718  adrp     x21, #0x59c5000
+0x31b271c  mov      w20, w1
+0x31b2720  mov      x19, x0
+0x31b2724  ldrb     w8, [x21, #0x1aa]
+0x31b2728  tbnz     w8, #0, #0x31b2740
+0x31b272c  adrp     x0, #0x55c1000
+0x31b2730  ldr      x0, [x0, #0x900]   ; &slot for 'delayEnd'
+0x31b2734  bl       #0x22304a4   CALL 0x22304a4
+0x31b2738  mov      w8, #1
+0x31b273c  strb     w8, [x21, #0x1aa]
+0x31b2740  ldr      x8, [x19, #0x330]
+0x31b2744  cbz      x8, #0x31b278c
+0x31b2748  adrp     x21, #0x55c1000
+0x31b274c  sxtw     x20, w20
+0x31b2750  ldr      x21, [x21, #0x900]   ; &slot for 'delayEnd'
+0x31b2754  ldr      x9, [x8, #0x18]
+0x31b2758  cmp      x20, w9, sxtw
+0x31b275c  b.ge     #0x31b2790
+0x31b2760  cmp      w20, w9
+0x31b2764  b.hs     #0x31b27a4
+0x31b2768  add      x8, x8, x20, lsl #3
+0x31b276c  ldr      x1, [x21]   ; 'delayEnd'
+0x31b2770  mov      x2, xzr
+0x31b2774  ldr      x0, [x8, #0x20]
+0x31b2778  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='delayEnd'
+0x31b277c  tbnz     w0, #0, #0x31b2794
+0x31b2780  ldr      x8, [x19, #0x330]
+0x31b2784  add      x20, x20, #1
+0x31b2788  cbnz     x8, #0x31b2754
+0x31b278c  bl       #0x2230720   CALL 0x2230720
+0x31b2790  sub      w20, w9, #1
+0x31b2794  mov      w0, w20
+0x31b2798  ldp      x20, x19, [sp, #0x10]
+0x31b279c  ldp      x30, x21, [sp], #0x20
+0x31b27a0  ret      
+0x31b27a4  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptManager$$TDelayJumpScript  0x31b27a8..0x31b27e4  (size 0x3c)
+0x31b27a8  tbnz     w1, #0x1f, #0x31b27d0
+0x31b27ac  ldr      w8, [x0, #0x324]
+0x31b27b0  cmp      w8, w1
+0x31b27b4  b.le     #0x31b27d0
+0x31b27b8  mov      w8, #3
+0x31b27bc  str      w1, [x0, #0x320]
+0x31b27c0  str      w8, [x0, #0x288]
+0x31b27c4  mov      w8, #1
+0x31b27c8  str      w1, [x0, #0x32c]
+0x31b27cc  b        #0x31b27dc
+0x31b27d0  mov      w8, wzr
+0x31b27d4  mov      w9, #0x10
+0x31b27d8  str      w9, [x0, #0x288]
+0x31b27dc  mov      w0, w8
+0x31b27e0  ret      
+
+==============================================================================
+### ScriptManager$$GetCommandTag  0x31b1f34..0x31b2038  (size 0x104)
+0x31b1f34  str      x30, [sp, #-0x30]!
+0x31b1f38  stp      x22, x21, [sp, #0x10]
+0x31b1f3c  stp      x20, x19, [sp, #0x20]
+0x31b1f40  adrp     x21, #0x59c5000
+0x31b1f44  mov      x19, x2
+0x31b1f48  mov      w20, w1
+0x31b1f4c  ldrb     w8, [x21, #0x1a6]
+0x31b1f50  tbnz     w8, #0, #0x31b1f68
+0x31b1f54  adrp     x0, #0x5570000
+0x31b1f58  ldr      x0, [x0, #0x458]   ; &slot for ''
+0x31b1f5c  bl       #0x22304a4   CALL 0x22304a4
+0x31b1f60  mov      w8, #1
+0x31b1f64  strb     w8, [x21, #0x1a6]
+0x31b1f68  strh     wzr, [sp, #0xc]
+0x31b1f6c  cbz      x19, #0x31b2034
+0x31b1f70  adrp     x8, #0x5570000
+0x31b1f74  ldr      x8, [x8, #0x458]   ; &slot for ''
+0x31b1f78  ldr      w9, [x19, #0x10]
+0x31b1f7c  ldr      x21, [x8]   ; ''
+0x31b1f80  cmp      w9, w20
+0x31b1f84  b.le     #0x31b2020
+0x31b1f88  adrp     x22, #0x556f000
+0x31b1f8c  ldr      x22, [x22, #0xbc8]
+0x31b1f90  mov      x0, x19
+0x31b1f94  mov      w1, w20
+0x31b1f98  mov      x2, xzr
+0x31b1f9c  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b1fa0  and      w8, w0, #0xffff
+0x31b1fa4  cmp      w8, #0x5d
+0x31b1fa8  b.eq     #0x31b2020
+0x31b1fac  mov      x0, x19
+0x31b1fb0  mov      w1, w20
+0x31b1fb4  mov      x2, xzr
+0x31b1fb8  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b1fbc  and      w8, w0, #0xffff
+0x31b1fc0  cmp      w8, #0x20
+0x31b1fc4  b.eq     #0x31b2020
+0x31b1fc8  mov      x0, x19
+0x31b1fcc  mov      w1, w20
+0x31b1fd0  mov      x2, xzr
+0x31b1fd4  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b1fd8  ldr      x8, [x22, #0x88]
+0x31b1fdc  strh     w0, [sp, #0xc]
+0x31b1fe0  ldr      w9, [x8, #0xe4]
+0x31b1fe4  cbnz     w9, #0x31b1ff0
+0x31b1fe8  mov      x0, x8
+0x31b1fec  bl       #0x22305f4   CALL 0x22305f4
+0x31b1ff0  add      x0, sp, #0xc
+0x31b1ff4  mov      x1, xzr
+0x31b1ff8  bl       #0x494f7e8   CALL System.Char$$ToString
+0x31b1ffc  mov      x1, x0
+0x31b2000  mov      x0, x21
+0x31b2004  mov      x2, xzr
+0x31b2008  bl       #0x4867ef8   CALL System.String$$Concat
+0x31b200c  ldr      w8, [x19, #0x10]
+0x31b2010  add      w20, w20, #1
+0x31b2014  mov      x21, x0
+0x31b2018  cmp      w20, w8
+0x31b201c  b.lt     #0x31b1f90
+0x31b2020  mov      x0, x21
+0x31b2024  ldp      x20, x19, [sp, #0x20]
+0x31b2028  ldp      x22, x21, [sp, #0x10]
+0x31b202c  ldr      x30, [sp], #0x30
+0x31b2030  ret      
+0x31b2034  bl       #0x2230720   CALL 0x2230720

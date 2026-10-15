@@ -1,0 +1,10 @@
+{
+  "format": "fgo-reader-script-package",
+  "version": 1,
+  "title": "ADV 补齐功能演示",
+  "author": "FGO Chronicle Reader",
+  "description": "使用本地自制资源展示消息控制、特效生命周期、菜单和影片占位，无需下载游戏资源。",
+  "region": "CN",
+  "script": "script.txt",
+  "assets": {}
+}

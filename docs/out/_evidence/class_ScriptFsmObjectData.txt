@@ -1,0 +1,46 @@
+==============================================================================
+// ScriptFsmObjectData  (dump.cs line 166489)
+public class ScriptFsmObjectData // TypeDefIndex: 4821
+{
+	// Fields
+	private ScriptFsmObject fsmObject; // 0x10
+	private bool isLoading; // 0x18
+	private AssetData loadedAssetData; // 0x20
+
+	// Methods
+
+	// RVA: 0x3171C84 Offset: 0x316DC84 VA: 0x3171C84
+	public bool IsLoading() { }
+
+	// RVA: 0x3171C8C Offset: 0x316DC8C VA: 0x3171C8C
+	public bool IsPlaying() { }
+
+	// RVA: 0x3171D14 Offset: 0x316DD14 VA: 0x3171D14
+	public void .ctor(string assetName, string objectName) { }
+
+	// RVA: 0x3171E40 Offset: 0x316DE40 VA: 0x3171E40
+	public void SetParent(GameObject parent) { }
+
+	// RVA: 0x3171F34 Offset: 0x316DF34 VA: 0x3171F34
+	public void SetPosition(float x, float y) { }
+
+	// RVA: 0x3171FDC Offset: 0x316DFDC VA: 0x3171FDC
+	public void SetState(string stateName) { }
+
+	// RVA: 0x3172070 Offset: 0x316E070 VA: 0x3172070
+	public void SendEvent(string eventName) { }
+
+	// RVA: 0x3172104 Offset: 0x316E104 VA: 0x3172104
+	public void SetString(string name, string value) { }
+
+	// RVA: 0x31721A0 Offset: 0x316E1A0 VA: 0x31721A0
+	public void SetFloat(string name, float value) { }
+
+	// RVA: 0x3172248 Offset: 0x316E248 VA: 0x3172248
+	public void SetBool(string name, bool value) { }
+
+	// RVA: 0x31722E4 Offset: 0x316E2E4 VA: 0x31722E4
+	public void Skip() { }
+
+	// RVA: 0x3172364 Offset: 0x316E364 VA: 0x3172364
+	public void Destroy() { }

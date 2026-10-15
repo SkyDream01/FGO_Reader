@@ -84,7 +84,27 @@ Compress-Archive -Path .\my-story\* -DestinationPath .\my-story.zip
 | <code>script</code> | 是 | ZIP 内的 UTF-8 剧本文本路径，例如 <code>script.txt</code>。 |
 | <code>assets</code> | 否 | 本地背景、立绘和 BGM 的 ID 到 ZIP 路径映射。 |
 
-<code>assets</code> 下的 <code>backgrounds</code>、<code>characters</code> 和 <code>bgm</code> 都是可选对象。JSON 对象键会是字符串，因此即使 ID 看起来是数字，也请写成键名，例如 <code>"10001"</code>。
+<code>assets</code> 下的 <code>backgrounds</code>、<code>characters</code>、<code>bgm</code>、<code>images</code>、<code>sounds</code>、<code>movies</code> 都是可选对象。`images` 对应图片、行内图片及特效替代图，`sounds` 对应 `se` / `voice` / CRI cue，`movies` 对应已转码的影片。JSON 对象键会是字符串，因此即使 ID 看起来是数字，也请写成键名，例如 <code>"10001"</code>。
+
+例如下面的映射可替换内置自制演出和影片占位：
+
+~~~json
+{
+  "images": {
+    "Effect/Talk/bit_talk_charge_blu": "assets/charge.png",
+    "CharaGraph/9400010": "assets/card.webp",
+    "mask_round": "assets/round-mask.png"
+  },
+  "sounds": {
+    "Se/event_bank/impact": "assets/impact.ogg"
+  },
+  "movies": {
+    "talk_mov151_M": "assets/movie.webm"
+  }
+}
+~~~
+
+`[cueSe event_bank impact]` 优先按 `Se/event_bank/impact` 查找，再查 `Se/impact` 和 `impact`。`[criMovie talk_mov151_M bgmPlay false]` 使用上述本地影片，`false` 表示后台播放；不带 `false` 时阻塞至影片结束或点击跳过。影片支持 MP4/WebM，单文件上限 64 MiB，整个 ZIP 和解压总量仍受原有上限约束。没有影片时显示 3 秒可跳过占位；没有声音时静音继续。
 
 ZIP 内路径必须相对于包根目录，并使用正斜杠 <code>/</code>，例如 <code>assets/backgrounds/10001.webp</code>。不要写空路径、以 <code>/</code> 开头的路径、反斜杠、<code>.</code> 或 <code>..</code> 路径段、盘符路径、<code>file:</code> 路径或网络 URL。也就是说，资源一定要实际放在 ZIP 内，不能引用创作者电脑上的本地文件。
 
@@ -95,7 +115,7 @@ ZIP 内路径必须相对于包根目录，并使用正斜杠 <code>/</code>，�
 | 剧本命令 | 查找的映射 | 示例 |
 | --- | --- | --- |
 | <code>[scene 10001]</code> | <code>assets.backgrounds["10001"]</code> | 背景图 |
-| <code>[charaSet MASH 1001001 0 玛修]</code> | <code>assets.characters["1001001"]</code> | 玛修立绘；<code>MASH</code> 是剧本槽位，不是资源键。 |
+| <code>[charaSet A 1001001 0 玛修]</code> | <code>assets.characters["1001001"]</code> | 玛修立绘；槽位只能使用 <code>A</code>–<code>Z</code>。 |
 | <code>[bgm BGM_EVENT_2 0.2]</code> | <code>assets.bgm["BGM_EVENT_2"]</code> | BGM 音频。 |
 
 本地映射优先于 Atlas Academy 的远程资源。没有给某个 ID 配置本地映射时，阅读器才会按 <code>region</code> 尝试 Atlas 回退；回退失败时会以缺失资源状态继续，而不会把资源写入包中。已经配置映射的资源必须真实存在于 ZIP 内，否则导入会被拒绝。
@@ -114,26 +134,27 @@ ZIP 内路径必须相对于包根目录，并使用正斜杠 <code>/</code>，�
 | 剧本文本 | 2 MiB |
 | 单张背景或立绘 | 12 MiB |
 | 单个 BGM | 24 MiB |
+| 单个影片（MP4/WebM） | 64 MiB |
 | ZIP 中的文件数 | 256 个 |
 | 展开后的剧情帧 | 10,000 条 |
-| 定义的角色槽位 | 64 个 |
+| 定义的角色槽位 | 26 个（A–Z） |
 | 每组选项 | 9 个 |
 
 图片和音频通常最容易超过限制。先压缩图片、裁剪无用音频，并删除未被映射或未被剧本使用的文件。
 
 ## 剧本基本写法
 
-每条对话以 <code>＠</code> 开头；解析器也兼容半角 <code>@</code>，韩服脚本通常使用半角形式。一条对话必须用 <code>[k]</code>、<code>[page]</code> 或 <code>[q]</code> 结束；否则解析器会在下一结构处自动结束，并给出诊断。
+说话人行以 <code>＠</code> 开头，正文是普通文本行，以 <code>[k]</code> 或 <code>[q]</code> 收束并等待点击。默认控制符来自逆向得到的本地化表；半角控制符需要由调用方明确配置，不能根据区服猜测。命令名称必须保留大小写。
 
-最简单的署名形式是 <code>＠玛修</code>。也可以让槽位成为发言者：<code>＠MASH：玛修</code>（冒号可使用全角或半角）；前者是槽位名，后者是显示名称。<code>[scene]</code> 的 ID 和 <code>charaSet</code> 的角色 ID 通常为数字；它们会作为字符串与 <code>assets</code> 中的映射键匹配，因此自定义包也可以使用非数字键，只要剧本与清单保持一致。<code>[bgm]</code> 的 ID 不能含空格，后面的可选参数会被阅读器忽略。
+最简单的署名形式是 <code>＠玛修</code>。也可以让槽位成为发言者：<code>＠A：玛修</code>（冒号可使用全角或半角）；前者是槽位字母，后者是显示名称。资源 ID 作为字符串匹配清单映射。御主性别会影响 `master*` 资源、跳转和性别文本；可在阅读设置中选择，下次载入生效。
 
 ~~~text
 [scene 10001]
 [bgm BGM_EVENT_2 0.2]
-[charaSet MASH 1001001 0 玛修]
-[charaFadein MASH 0.2 1]
-[charaTalk MASH]
-＠MASH：玛修
+[charaSet A 1001001 0 玛修]
+[charaFadein A 0.2 1]
+[charaTalk A]
+＠A：玛修
 欢迎来到自定义剧本。[k]
 ~~~
 
@@ -143,9 +164,9 @@ ZIP 内路径必须相对于包根目录，并使用正斜杠 <code>/</code>，�
 | --- | --- |
 | <code>[scene ID]</code> | 切换背景 ID。 |
 | <code>[bgm ID ...]</code>、<code>[bgmStop]</code> | 播放或停止 BGM。 |
-| <code>[charaSet 槽位 角色ID 表情ID 名称]</code> | 定义角色槽位和角色 ID。 |
-| <code>[charaPut 槽位 位置]</code> | 显示角色；位置 <code>0</code>、<code>1</code>、<code>2</code> 分别常用于左、中、右。 |
-| <code>[charaFadein 槽位 时长 X,Y]</code>、<code>[charaFadein 槽位 时长 1]</code> | 淡入角色；传入坐标时使用指定位置，传入位置编号 <code>1</code> 或省略坐标时位于中心 <code>(0,0)</code>。 |
+| <code>[charaSet 槽位 角色ID 位置 名称]</code> | 定义角色槽位与初始位置；第三个值不是表情编号。 |
+| <code>[charaPut 槽位 位置]</code> | 设置位置，不改变透明度；位置 <code>0</code>、<code>1</code>、<code>2</code> 对应左、中、右。 |
+| <code>[charaFadein 槽位 时长 X,Y]</code>、<code>[charaFadein 槽位 时长 1]</code> | 把槽位淡入到指定位置；省略位置时使用已经设置的槽位坐标。 |
 | <code>[charaTalk 槽位]</code>、<code>[charaFadeout 槽位]</code>、<code>[charaClearAll]</code> | 标记发言角色、隐藏角色或清空角色。 |
 | <code>[fadein]</code>、<code>[fadeout]</code>、<code>[wipein]</code>、<code>[wipeout]</code> | 使用基础转场。 |
 
@@ -153,7 +174,7 @@ ZIP 内路径必须相对于包根目录，并使用正斜杠 <code>/</code>，�
 
 ## 选项、收束与重置
 
-选项标题由问号、数字、冒号和选项文字组成，例如 <code>？1：继续前进</code>。全角 <code>？1：</code> 与半角 <code>?1:</code> 都受支持，韩服脚本通常使用半角形式；结束行同样可写成 <code>？！</code> 或 <code>?!</code>。选项内部不能再嵌套选项，选项文字不能留空。分支正文可以为空，此时选择后会直接进入选项组后的共同剧情。
+选项标题形如 <code>？1：继续前进</code>，以 <code>？！</code> 结束。序号从 1 开始依次递增，不能嵌套。<code>；flag</code> 后缀表示旗标为真时隐藏选项，但不改变后续序号。分支正文可以为空，此时选择后直接进入共同剧情。
 
 ~~~text
 ？1：继续前进
@@ -171,9 +192,10 @@ ZIP 内路径必须相对于包根目录，并使用正斜杠 <code>/</code>，�
 ？！
 [scene 10001]
 [bgm BGM_EVENT_2]
-[charaClearAll]
-[charaPut MASH 1]
-＠MASH：玛修
+[charaClear A]
+[charaSet A 1001001 1 玛修]
+[charaFadein A 0 1]
+＠A：玛修
 我们回到同一条主线。[k]
 ~~~
 

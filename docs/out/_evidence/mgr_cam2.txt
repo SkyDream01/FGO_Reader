@@ -1,0 +1,1732 @@
+
+==============================================================================
+### ScriptManager$$GetHorizontal5SplitUv  0x31bb60c..0x31bb734  (size 0x128)
+0x31bb60c  str      x30, [sp, #-0x20]!
+0x31bb610  stp      x20, x19, [sp, #0x10]
+0x31bb614  adrp     x19, #0x59c5000
+0x31bb618  adrp     x20, #0x5571000
+0x31bb61c  ldrb     w8, [x19, #0x1fa]
+0x31bb620  ldr      x20, [x20, #0xae8]
+0x31bb624  tbnz     w8, #0, #0x31bb63c
+0x31bb628  adrp     x0, #0x5571000
+0x31bb62c  ldr      x0, [x0, #0xae8]
+0x31bb630  bl       #0x22304a4   CALL 0x22304a4
+0x31bb634  mov      w8, #1
+0x31bb638  strb     w8, [x19, #0x1fa]
+0x31bb63c  ldr      x0, [x20]
+0x31bb640  mov      w1, #0xc
+0x31bb644  bl       #0x2230564   CALL 0x2230564
+0x31bb648  cbz      x0, #0x31bb730
+0x31bb64c  ldr      w8, [x0, #0x18]
+0x31bb650  cbz      w8, #0x31bb72c
+0x31bb654  adrp     x9, #0xea6000
+0x31bb658  cmp      w8, #1
+0x31bb65c  ldr      d0, [x9, #0xc68]
+0x31bb660  str      d0, [x0, #0x20]
+0x31bb664  b.eq     #0x31bb72c
+0x31bb668  cmp      w8, #2
+0x31bb66c  str      xzr, [x0, #0x28]
+0x31bb670  b.ls     #0x31bb72c
+0x31bb674  adrp     x9, #0xea7000
+0x31bb678  cmp      w8, #3
+0x31bb67c  ldr      d0, [x9, #0xc38]
+0x31bb680  str      d0, [x0, #0x30]
+0x31bb684  b.eq     #0x31bb72c
+0x31bb688  adrp     x9, #0xea7000
+0x31bb68c  cmp      w8, #4
+0x31bb690  ldr      d0, [x9, #0xee8]
+0x31bb694  str      d0, [x0, #0x38]
+0x31bb698  b.ls     #0x31bb72c
+0x31bb69c  adrp     x9, #0xea7000
+0x31bb6a0  cmp      w8, #5
+0x31bb6a4  ldr      d0, [x9, #0x140]
+0x31bb6a8  str      d0, [x0, #0x40]
+0x31bb6ac  b.eq     #0x31bb72c
+0x31bb6b0  adrp     x9, #0xea8000
+0x31bb6b4  cmp      w8, #6
+0x31bb6b8  ldr      d1, [x9, #0x1a0]
+0x31bb6bc  str      d1, [x0, #0x48]
+0x31bb6c0  b.ls     #0x31bb72c
+0x31bb6c4  cmp      w8, #7
+0x31bb6c8  str      d0, [x0, #0x50]
+0x31bb6cc  b.eq     #0x31bb72c
+0x31bb6d0  cmp      w8, #8
+0x31bb6d4  str      d1, [x0, #0x58]
+0x31bb6d8  b.ls     #0x31bb72c
+0x31bb6dc  adrp     x9, #0xea6000
+0x31bb6e0  cmp      w8, #9
+0x31bb6e4  ldr      d0, [x9, #0xab8]
+0x31bb6e8  str      d0, [x0, #0x60]
+0x31bb6ec  b.eq     #0x31bb72c
+0x31bb6f0  adrp     x9, #0xea7000
+0x31bb6f4  cmp      w8, #0xa
+0x31bb6f8  ldr      d0, [x9, #0x688]
+0x31bb6fc  str      d0, [x0, #0x68]
+0x31bb700  b.ls     #0x31bb72c
+0x31bb704  fmov     v0.2s, #1.00000000
+0x31bb708  cmp      w8, #0xb
+0x31bb70c  str      d0, [x0, #0x70]
+0x31bb710  b.eq     #0x31bb72c
+0x31bb714  adrp     x8, #0xea6000
+0x31bb718  ldp      x20, x19, [sp, #0x10]
+0x31bb71c  ldr      d0, [x8, #0xcb8]
+0x31bb720  str      d0, [x0, #0x78]
+0x31bb724  ldr      x30, [sp], #0x20
+0x31bb728  ret      
+0x31bb72c  bl       #0x2230728   CALL 0x2230728
+0x31bb730  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$GetHorizontal5Split  0x31bb734..0x31bb998  (size 0x264)
+0x31bb734  stp      d15, d14, [sp, #-0x60]!
+0x31bb738  stp      d13, d12, [sp, #0x10]
+0x31bb73c  stp      d11, d10, [sp, #0x20]
+0x31bb740  stp      d9, d8, [sp, #0x30]
+0x31bb744  str      x30, [sp, #0x40]
+0x31bb748  stp      x20, x19, [sp, #0x50]
+0x31bb74c  fmov     s8, s3
+0x31bb750  fmov     s9, s2
+0x31bb754  adrp     x20, #0x59c5000
+0x31bb758  fmov     s10, s1
+0x31bb75c  fmov     s11, s0
+0x31bb760  adrp     x19, #0x5571000
+0x31bb764  ldrb     w8, [x20, #0x1fb]
+0x31bb768  ldr      x19, [x19, #0x4b0]
+0x31bb76c  tbnz     w8, #0, #0x31bb790
+0x31bb770  adrp     x0, #0x5571000
+0x31bb774  ldr      x0, [x0, #0x4b0]
+0x31bb778  bl       #0x22304a4   CALL 0x22304a4
+0x31bb77c  adrp     x0, #0x5582000
+0x31bb780  ldr      x0, [x0, #0xa38]
+0x31bb784  bl       #0x22304a4   CALL 0x22304a4
+0x31bb788  mov      w8, #1
+0x31bb78c  strb     w8, [x20, #0x1fb]
+0x31bb790  fmov     s12, #0.50000000
+0x31bb794  ldr      x0, [x19]
+0x31bb798  adrp     x19, #0x5582000
+0x31bb79c  ldr      w8, [x0, #0xe4]
+0x31bb7a0  ldr      x19, [x19, #0xa38]
+0x31bb7a4  fmul     s11, s11, s12
+0x31bb7a8  fmul     s14, s10, s12
+0x31bb7ac  cbnz     w8, #0x31bb7b4
+0x31bb7b0  bl       #0x22305f4   CALL 0x22305f4
+0x31bb7b4  movi     d0, #0000000000000000
+0x31bb7b8  fmov     s1, s9
+0x31bb7bc  mov      x0, xzr
+0x31bb7c0  movi     d15, #0000000000000000
+0x31bb7c4  bl       #0x49d6890   CALL System.Math$$Max
+0x31bb7c8  fmov     s10, s0
+0x31bb7cc  movi     d0, #0000000000000000
+0x31bb7d0  mov      x0, xzr
+0x31bb7d4  fmov     s1, s8
+0x31bb7d8  bl       #0x49d6890   CALL System.Math$$Max
+0x31bb7dc  fmul     s1, s9, s12
+0x31bb7e0  fmov     s2, #-0.50000000
+0x31bb7e4  fcmp     s9, #0.0
+0x31bb7e8  fmov     s3, #1.00000000
+0x31bb7ec  mov      w8, #0x3efe0000
+0x31bb7f0  movi     v4.2s, #0x3b, lsl #24
+0x31bb7f4  ldr      x0, [x19]
+0x31bb7f8  mov      w1, #0xc
+0x31bb7fc  fmul     s2, s8, s2
+0x31bb800  fcsel    s13, s1, s15, lt
+0x31bb804  fcmp     s8, #0.0
+0x31bb808  fadd     s1, s11, s3
+0x31bb80c  fsub     s0, s3, s0
+0x31bb810  fcsel    s8, s2, s15, lt
+0x31bb814  fcmp     s11, #0.0
+0x31bb818  fmov     s2, w8
+0x31bb81c  adrp     x8, #0xee7000
+0x31bb820  fcsel    s1, s1, s3, gt
+0x31bb824  fcmp     s10, s3
+0x31bb828  str      s1, [sp, #0x4c]
+0x31bb82c  fcsel    s1, s3, s10, gt
+0x31bb830  fcmp     s10, #0.0
+0x31bb834  fmul     s1, s1, s2
+0x31bb838  fadd     s1, s1, s4
+0x31bb83c  fcsel    s9, s4, s1, mi
+0x31bb840  fcmp     s0, s3
+0x31bb844  fcsel    s1, s3, s0, gt
+0x31bb848  fcmp     s0, #0.0
+0x31bb84c  fmul     s1, s1, s2
+0x31bb850  ldr      s2, [x8, #0x5f8]
+0x31bb854  fadd     s1, s1, s2
+0x31bb858  fcsel    s12, s2, s1, mi
+0x31bb85c  fcmp     s14, #0.0
+0x31bb860  fcsel    s10, s15, s14, mi
+0x31bb864  bl       #0x2230564   CALL 0x2230564
+0x31bb868  cbz      x0, #0x31bb994
+0x31bb86c  ldr      w8, [x0, #0x18]
+0x31bb870  cbz      w8, #0x31bb990
+0x31bb874  fminnm   s0, s11, s15
+0x31bb878  cmp      w8, #1
+0x31bb87c  stp      wzr, wzr, [x0, #0x24]
+0x31bb880  fadd     s0, s0, s13
+0x31bb884  fsub     s1, s0, s10
+0x31bb888  str      s1, [x0, #0x20]
+0x31bb88c  b.eq     #0x31bb990
+0x31bb890  adrp     x9, #0xea6000
+0x31bb894  cmp      w8, #2
+0x31bb898  str      s1, [x0, #0x2c]
+0x31bb89c  ldr      d0, [x9, #0xcb8]
+0x31bb8a0  str      d0, [x0, #0x30]
+0x31bb8a4  b.ls     #0x31bb990
+0x31bb8a8  fadd     s1, s11, s13
+0x31bb8ac  cmp      w8, #3
+0x31bb8b0  stp      wzr, wzr, [x0, #0x3c]
+0x31bb8b4  fadd     s1, s1, s9
+0x31bb8b8  fsub     s1, s1, s10
+0x31bb8bc  str      s1, [x0, #0x38]
+0x31bb8c0  b.eq     #0x31bb990
+0x31bb8c4  cmp      w8, #4
+0x31bb8c8  str      s1, [x0, #0x44]
+0x31bb8cc  str      d0, [x0, #0x48]
+0x31bb8d0  b.ls     #0x31bb990
+0x31bb8d4  fmov     s1, #0.50000000
+0x31bb8d8  cmp      w8, #5
+0x31bb8dc  stp      wzr, wzr, [x0, #0x54]
+0x31bb8e0  fadd     s1, s11, s1
+0x31bb8e4  fsub     s2, s1, s10
+0x31bb8e8  str      s2, [x0, #0x50]
+0x31bb8ec  b.eq     #0x31bb990
+0x31bb8f0  cmp      w8, #6
+0x31bb8f4  str      s2, [x0, #0x5c]
+0x31bb8f8  str      d0, [x0, #0x60]
+0x31bb8fc  b.ls     #0x31bb990
+0x31bb900  fadd     s1, s1, s10
+0x31bb904  cmp      w8, #7
+0x31bb908  stp      wzr, wzr, [x0, #0x6c]
+0x31bb90c  str      s1, [x0, #0x68]
+0x31bb910  b.eq     #0x31bb990
+0x31bb914  cmp      w8, #8
+0x31bb918  str      s1, [x0, #0x74]
+0x31bb91c  str      d0, [x0, #0x78]
+0x31bb920  b.ls     #0x31bb990
+0x31bb924  fadd     s1, s11, s8
+0x31bb928  cmp      w8, #9
+0x31bb92c  stp      wzr, wzr, [x0, #0x84]
+0x31bb930  fadd     s1, s1, s12
+0x31bb934  fadd     s1, s10, s1
+0x31bb938  str      s1, [x0, #0x80]
+0x31bb93c  b.eq     #0x31bb990
+0x31bb940  cmp      w8, #0xa
+0x31bb944  str      s1, [x0, #0x8c]
+0x31bb948  str      d0, [x0, #0x90]
+0x31bb94c  b.ls     #0x31bb990
+0x31bb950  ldr      s1, [sp, #0x4c]
+0x31bb954  cmp      w8, #0xb
+0x31bb958  stp      wzr, wzr, [x0, #0x9c]
+0x31bb95c  fadd     s1, s1, s8
+0x31bb960  fadd     s1, s10, s1
+0x31bb964  str      s1, [x0, #0x98]
+0x31bb968  b.eq     #0x31bb990
+0x31bb96c  ldp      x20, x19, [sp, #0x50]
+0x31bb970  ldr      x30, [sp, #0x40]
+0x31bb974  ldp      d9, d8, [sp, #0x30]
+0x31bb978  str      s1, [x0, #0xa4]
+0x31bb97c  str      d0, [x0, #0xa8]
+0x31bb980  ldp      d11, d10, [sp, #0x20]
+0x31bb984  ldp      d13, d12, [sp, #0x10]
+0x31bb988  ldp      d15, d14, [sp], #0x60
+0x31bb98c  ret      
+0x31bb990  bl       #0x2230728   CALL 0x2230728
+0x31bb994  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$MainCameraMoveEase  0x31b8ff0..0x31b94fc  (size 0x50c)
+0x31b8ff0  sub      sp, sp, #0xb0
+0x31b8ff4  str      d12, [sp, #0x20]
+0x31b8ff8  stp      d11, d10, [sp, #0x30]
+0x31b8ffc  stp      d9, d8, [sp, #0x40]
+0x31b9000  stp      x29, x30, [sp, #0x50]
+0x31b9004  stp      x28, x27, [sp, #0x60]
+0x31b9008  stp      x26, x25, [sp, #0x70]
+0x31b900c  stp      x24, x23, [sp, #0x80]
+0x31b9010  stp      x22, x21, [sp, #0x90]
+0x31b9014  stp      x20, x19, [sp, #0xa0]
+0x31b9018  fmov     s8, s4
+0x31b901c  fmov     s12, s3
+0x31b9020  adrp     x22, #0x59c5000
+0x31b9024  fmov     s10, s2
+0x31b9028  fmov     s11, s1
+0x31b902c  ldrb     w8, [x22, #0x1eb]
+0x31b9030  fmov     s9, s0
+0x31b9034  mov      w21, w2
+0x31b9038  mov      x20, x1
+0x31b903c  mov      x19, x0
+0x31b9040  tbnz     w8, #0, #0x31b90e8
+0x31b9044  adrp     x0, #0x5577000
+0x31b9048  ldr      x0, [x0, #0xd10]
+0x31b904c  bl       #0x22304a4   CALL 0x22304a4
+0x31b9050  adrp     x0, #0x5571000
+0x31b9054  ldr      x0, [x0, #0xa88]
+0x31b9058  bl       #0x22304a4   CALL 0x22304a4
+0x31b905c  adrp     x0, #0x5577000
+0x31b9060  ldr      x0, [x0, #0xcd0]   ; &slot for 'x'
+0x31b9064  bl       #0x22304a4   CALL 0x22304a4
+0x31b9068  adrp     x0, #0x5577000
+0x31b906c  ldr      x0, [x0, #0xcd8]   ; &slot for 'easetype'
+0x31b9070  bl       #0x22304a4   CALL 0x22304a4
+0x31b9074  adrp     x0, #0x55ca000
+0x31b9078  ldr      x0, [x0, #0xb50]   ; &slot for 'EndExecuteCamera'
+0x31b907c  bl       #0x22304a4   CALL 0x22304a4
+0x31b9080  adrp     x0, #0x5576000
+0x31b9084  ldr      x0, [x0, #0x6c0]   ; &slot for 'time'
+0x31b9088  bl       #0x22304a4   CALL 0x22304a4
+0x31b908c  adrp     x0, #0x5577000
+0x31b9090  ldr      x0, [x0, #0xce8]   ; &slot for 'oncompletetarget'
+0x31b9094  bl       #0x22304a4   CALL 0x22304a4
+0x31b9098  adrp     x0, #0x5577000
+0x31b909c  ldr      x0, [x0, #0xcf0]   ; &slot for 'delay'
+0x31b90a0  bl       #0x22304a4   CALL 0x22304a4
+0x31b90a4  adrp     x0, #0x55ca000
+0x31b90a8  ldr      x0, [x0, #0xb38]   ; &slot for 'y'
+0x31b90ac  bl       #0x22304a4   CALL 0x22304a4
+0x31b90b0  adrp     x0, #0x5577000
+0x31b90b4  ldr      x0, [x0, #0xd08]   ; &slot for 'isLocal'
+0x31b90b8  bl       #0x22304a4   CALL 0x22304a4
+0x31b90bc  adrp     x0, #0x5576000
+0x31b90c0  ldr      x0, [x0, #0x6f0]   ; &slot for 'oncomplete'
+0x31b90c4  bl       #0x22304a4   CALL 0x22304a4
+0x31b90c8  adrp     x0, #0x55ca000
+0x31b90cc  ldr      x0, [x0, #0xb48]   ; &slot for 'scale'
+0x31b90d0  bl       #0x22304a4   CALL 0x22304a4
+0x31b90d4  adrp     x0, #0x5576000
+0x31b90d8  ldr      x0, [x0, #0x700]
+0x31b90dc  bl       #0x22304a4   CALL 0x22304a4
+0x31b90e0  mov      w8, #1
+0x31b90e4  strb     w8, [x22, #0x1eb]
+0x31b90e8  ldr      x1, [x19, #0x100]
+0x31b90ec  bl       #0x31b85fc   CALL ScriptManager$$StopMoveTween
+0x31b90f0  tbz      w21, #0, #0x31b90fc
+0x31b90f4  ldr      x1, [x19, #0xf8]
+0x31b90f8  bl       #0x31b86f4   CALL ScriptManager$$StopMoveScaleTween
+0x31b90fc  fcmp     s9, #0.0
+0x31b9100  mov      w23, #1
+0x31b9104  strb     w23, [x19, #0x4f8]
+0x31b9108  b.ls     #0x31b9474
+0x31b910c  adrp     x8, #0x5577000
+0x31b9110  ldr      x8, [x8, #0xd10]
+0x31b9114  ldr      x0, [x8]
+0x31b9118  bl       #0x2230710   CALL 0x2230710
+0x31b911c  mov      x1, xzr
+0x31b9120  mov      x22, x0
+0x31b9124  bl       #0x498b604   CALL System.Collections.Hashtable$$.ctor
+0x31b9128  adrp     x24, #0x556f000
+0x31b912c  add      x1, sp, #0x2c
+0x31b9130  ldr      x24, [x24, #0xbc8]
+0x31b9134  strb     w23, [sp, #0x2c]
+0x31b9138  ldr      x0, [x24, #0x28]
+0x31b913c  bl       #0x22305fc   CALL 0x22305fc
+0x31b9140  cbz      x22, #0x31b94f8
+0x31b9144  adrp     x9, #0x5577000
+0x31b9148  mov      x2, x0
+0x31b914c  mov      x0, x22
+0x31b9150  ldr      x9, [x9, #0xd08]   ; &slot for 'isLocal'
+0x31b9154  ldr      x8, [x22]
+0x31b9158  ldr      x1, [x9]   ; 'isLocal'
+0x31b915c  ldr      x9, [x8, #0x298]
+0x31b9160  ldr      x3, [x8, #0x2a0]
+0x31b9164  blr      x9   CALL 0x0   args: x1='isLocal'
+0x31b9168  ldr      x0, [x24, #0x78]
+0x31b916c  add      x1, sp, #0xc
+0x31b9170  str      wzr, [sp, #0xc]
+0x31b9174  bl       #0x22305fc   CALL 0x22305fc
+0x31b9178  adrp     x9, #0x5577000
+0x31b917c  mov      x2, x0
+0x31b9180  mov      x0, x22
+0x31b9184  ldr      x9, [x9, #0xcf0]   ; &slot for 'delay'
+0x31b9188  ldr      x8, [x22]
+0x31b918c  ldr      x1, [x9]   ; 'delay'
+0x31b9190  ldr      x9, [x8, #0x298]
+0x31b9194  ldr      x3, [x8, #0x2a0]
+0x31b9198  blr      x9   CALL 0x0   args: x1='delay'
+0x31b919c  ldr      x0, [x24, #0x78]
+0x31b91a0  add      x1, sp, #0x28
+0x31b91a4  str      s11, [sp, #0x28]
+0x31b91a8  bl       #0x22305fc   CALL 0x22305fc
+0x31b91ac  adrp     x8, #0x5577000
+0x31b91b0  mov      x2, x0
+0x31b91b4  mov      x0, x22
+0x31b91b8  ldr      x8, [x8, #0xcd0]   ; &slot for 'x'
+0x31b91bc  ldr      x9, [x22]
+0x31b91c0  ldr      x1, [x8]   ; 'x'
+0x31b91c4  ldr      x8, [x9, #0x298]
+0x31b91c8  ldr      x3, [x9, #0x2a0]
+0x31b91cc  blr      x8   CALL 0x0   args: x1='x'
+0x31b91d0  ldr      x0, [x24, #0x78]
+0x31b91d4  add      x1, sp, #0x1c
+0x31b91d8  str      s10, [sp, #0x1c]
+0x31b91dc  bl       #0x22305fc   CALL 0x22305fc
+0x31b91e0  adrp     x8, #0x55ca000
+0x31b91e4  mov      x2, x0
+0x31b91e8  mov      x0, x22
+0x31b91ec  ldr      x8, [x8, #0xb38]   ; &slot for 'y'
+0x31b91f0  ldr      x9, [x22]
+0x31b91f4  ldr      x1, [x8]   ; 'y'
+0x31b91f8  ldr      x8, [x9, #0x298]
+0x31b91fc  ldr      x3, [x9, #0x2a0]
+0x31b9200  blr      x8   CALL 0x0   args: x1='y'
+0x31b9204  adrp     x9, #0x5577000
+0x31b9208  mov      x0, x22
+0x31b920c  mov      x2, x20
+0x31b9210  ldr      x9, [x9, #0xcd8]   ; &slot for 'easetype'
+0x31b9214  ldr      x8, [x22]
+0x31b9218  ldr      x1, [x9]   ; 'easetype'
+0x31b921c  ldr      x9, [x8, #0x298]
+0x31b9220  ldr      x3, [x8, #0x2a0]
+0x31b9224  blr      x9   CALL 0x0   args: x1='easetype'
+0x31b9228  ldr      x0, [x24, #0x78]
+0x31b922c  add      x1, sp, #0x18
+0x31b9230  str      s9, [sp, #0x18]
+0x31b9234  bl       #0x22305fc   CALL 0x22305fc
+0x31b9238  adrp     x29, #0x5576000
+0x31b923c  mov      x2, x0
+0x31b9240  mov      x0, x22
+0x31b9244  ldr      x29, [x29, #0x6c0]   ; &slot for 'time'
+0x31b9248  ldr      x8, [x22]
+0x31b924c  ldr      x1, [x29]   ; 'time'
+0x31b9250  ldr      x9, [x8, #0x298]
+0x31b9254  ldr      x3, [x8, #0x2a0]
+0x31b9258  blr      x9   CALL 0x0   args: x1='time'
+0x31b925c  mov      x0, x19
+0x31b9260  mov      x1, xzr
+0x31b9264  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b9268  adrp     x25, #0x5577000
+0x31b926c  mov      x2, x0
+0x31b9270  mov      x0, x22
+0x31b9274  ldr      x25, [x25, #0xce8]   ; &slot for 'oncompletetarget'
+0x31b9278  ldr      x8, [x22]
+0x31b927c  ldr      x1, [x25]   ; 'oncompletetarget'
+0x31b9280  ldr      x9, [x8, #0x298]
+0x31b9284  ldr      x3, [x8, #0x2a0]
+0x31b9288  blr      x9   CALL 0x0   args: x1='oncompletetarget'
+0x31b928c  adrp     x26, #0x5576000
+0x31b9290  adrp     x27, #0x55ca000
+0x31b9294  mov      x0, x22
+0x31b9298  ldr      x26, [x26, #0x6f0]   ; &slot for 'oncomplete'
+0x31b929c  ldr      x27, [x27, #0xb50]   ; &slot for 'EndExecuteCamera'
+0x31b92a0  ldr      x8, [x22]
+0x31b92a4  ldr      x1, [x26]   ; 'oncomplete'
+0x31b92a8  ldr      x2, [x27]   ; 'EndExecuteCamera'
+0x31b92ac  ldr      x9, [x8, #0x298]
+0x31b92b0  ldr      x3, [x8, #0x2a0]
+0x31b92b4  blr      x9   CALL 0x0   args: x1='oncomplete', x2='EndExecuteCamera'
+0x31b92b8  adrp     x28, #0x5576000
+0x31b92bc  ldr      x28, [x28, #0x700]
+0x31b92c0  ldr      x23, [x19, #0x100]
+0x31b92c4  ldr      x0, [x28]
+0x31b92c8  ldr      w8, [x0, #0xe4]
+0x31b92cc  cbnz     w8, #0x31b92d4
+0x31b92d0  bl       #0x22305f4   CALL 0x22305f4
+0x31b92d4  mov      x0, x23
+0x31b92d8  mov      x1, x22
+0x31b92dc  mov      x2, xzr
+0x31b92e0  bl       #0x48107cc   CALL iTween$$MoveTo
+0x31b92e4  tbz      w21, #0, #0x31b94cc
+0x31b92e8  adrp     x8, #0x5577000
+0x31b92ec  ldr      x8, [x8, #0xd10]
+0x31b92f0  ldr      x0, [x8]
+0x31b92f4  bl       #0x2230710   CALL 0x2230710
+0x31b92f8  mov      x1, xzr
+0x31b92fc  mov      x21, x0
+0x31b9300  bl       #0x498b604   CALL System.Collections.Hashtable$$.ctor
+0x31b9304  ldr      x0, [x24, #0x28]
+0x31b9308  mov      w8, #1
+0x31b930c  add      x1, sp, #0x18
+0x31b9310  strb     w8, [sp, #0x18]
+0x31b9314  bl       #0x22305fc   CALL 0x22305fc
+0x31b9318  cbz      x21, #0x31b94f8
+0x31b931c  adrp     x9, #0x5577000
+0x31b9320  ldr      x8, [x21]
+0x31b9324  mov      x2, x0
+0x31b9328  ldr      x9, [x9, #0xd08]   ; &slot for 'isLocal'
+0x31b932c  mov      x0, x21
+0x31b9330  ldr      x3, [x8, #0x2a0]
+0x31b9334  ldr      x1, [x9]   ; 'isLocal'
+0x31b9338  ldr      x9, [x8, #0x298]
+0x31b933c  blr      x9   CALL 0x0   args: x1='isLocal'
+0x31b9340  ldr      x0, [x24, #0x78]
+0x31b9344  add      x1, sp, #0x28
+0x31b9348  str      wzr, [sp, #0x28]
+0x31b934c  bl       #0x22305fc   CALL 0x22305fc
+0x31b9350  adrp     x9, #0x5577000
+0x31b9354  ldr      x8, [x21]
+0x31b9358  mov      x2, x0
+0x31b935c  ldr      x9, [x9, #0xcf0]   ; &slot for 'delay'
+0x31b9360  mov      x0, x21
+0x31b9364  ldr      x3, [x8, #0x2a0]
+0x31b9368  ldr      x1, [x9]   ; 'delay'
+0x31b936c  ldr      x9, [x8, #0x298]
+0x31b9370  blr      x9   CALL 0x0   args: x1='delay'
+0x31b9374  adrp     x8, #0x5571000
+0x31b9378  mov      w9, #0x3f800000
+0x31b937c  add      x1, sp, #0xc
+0x31b9380  ldr      x8, [x8, #0xa88]
+0x31b9384  stp      s8, s8, [sp, #0xc]
+0x31b9388  str      w9, [sp, #0x14]
+0x31b938c  ldr      x0, [x8]
+0x31b9390  bl       #0x22305fc   CALL 0x22305fc
+0x31b9394  adrp     x8, #0x55ca000
+0x31b9398  mov      x2, x0
+0x31b939c  mov      x0, x21
+0x31b93a0  ldr      x8, [x8, #0xb48]   ; &slot for 'scale'
+0x31b93a4  ldr      x9, [x21]
+0x31b93a8  ldr      x1, [x8]   ; 'scale'
+0x31b93ac  ldr      x8, [x9, #0x298]
+0x31b93b0  ldr      x3, [x9, #0x2a0]
+0x31b93b4  blr      x8   CALL 0x0   args: x1='scale'
+0x31b93b8  adrp     x9, #0x5577000
+0x31b93bc  ldr      x8, [x21]
+0x31b93c0  mov      x0, x21
+0x31b93c4  ldr      x9, [x9, #0xcd8]   ; &slot for 'easetype'
+0x31b93c8  mov      x2, x20
+0x31b93cc  ldr      x3, [x8, #0x2a0]
+0x31b93d0  ldr      x1, [x9]   ; 'easetype'
+0x31b93d4  ldr      x9, [x8, #0x298]
+0x31b93d8  blr      x9   CALL 0x0   args: x1='easetype'
+0x31b93dc  ldr      x0, [x24, #0x78]
+0x31b93e0  add      x1, sp, #0x1c
+0x31b93e4  str      s9, [sp, #0x1c]
+0x31b93e8  bl       #0x22305fc   CALL 0x22305fc
+0x31b93ec  ldr      x8, [x21]
+0x31b93f0  ldr      x1, [x29]
+0x31b93f4  mov      x2, x0
+0x31b93f8  mov      x0, x21
+0x31b93fc  ldr      x9, [x8, #0x298]
+0x31b9400  ldr      x3, [x8, #0x2a0]
+0x31b9404  blr      x9   CALL 0x0
+0x31b9408  mov      x0, x19
+0x31b940c  mov      x1, xzr
+0x31b9410  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b9414  ldr      x8, [x21]
+0x31b9418  ldr      x1, [x25]   ; 'oncompletetarget'
+0x31b941c  mov      x2, x0
+0x31b9420  mov      x0, x21
+0x31b9424  ldr      x9, [x8, #0x298]
+0x31b9428  ldr      x3, [x8, #0x2a0]
+0x31b942c  blr      x9   CALL 0x0   args: x1='oncompletetarget'
+0x31b9430  ldr      x8, [x21]
+0x31b9434  ldr      x1, [x26]   ; 'oncomplete'
+0x31b9438  mov      x0, x21
+0x31b943c  ldr      x2, [x27]   ; 'EndExecuteCamera'
+0x31b9440  ldr      x9, [x8, #0x298]
+0x31b9444  ldr      x3, [x8, #0x2a0]
+0x31b9448  blr      x9   CALL 0x0   args: x1='oncomplete', x2='EndExecuteCamera'
+0x31b944c  ldr      x0, [x28]
+0x31b9450  ldr      x19, [x19, #0xf8]
+0x31b9454  ldr      w8, [x0, #0xe4]
+0x31b9458  cbnz     w8, #0x31b9460
+0x31b945c  bl       #0x22305f4   CALL 0x22305f4
+0x31b9460  mov      x0, x19
+0x31b9464  mov      x1, x21
+0x31b9468  mov      x2, xzr
+0x31b946c  bl       #0x4811d28   CALL iTween$$ScaleTo
+0x31b9470  b        #0x31b94cc
+0x31b9474  ldr      x0, [x19, #0x100]
+0x31b9478  cbz      x0, #0x31b94f8
+0x31b947c  mov      x1, xzr
+0x31b9480  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9484  cbz      x0, #0x31b94f8
+0x31b9488  fmov     s0, s11
+0x31b948c  fmov     s1, s10
+0x31b9490  mov      x1, xzr
+0x31b9494  fmov     s2, s12
+0x31b9498  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b949c  tbz      w21, #0, #0x31b94c8
+0x31b94a0  ldr      x0, [x19, #0xf8]
+0x31b94a4  cbz      x0, #0x31b94f8
+0x31b94a8  mov      x1, xzr
+0x31b94ac  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b94b0  cbz      x0, #0x31b94f8
+0x31b94b4  fmov     s0, s8
+0x31b94b8  fmov     s1, s8
+0x31b94bc  mov      x1, xzr
+0x31b94c0  fmov     s2, #1.00000000
+0x31b94c4  bl       #0x4fe21f8   CALL UnityEngine.Transform$$set_localScale
+0x31b94c8  strb     wzr, [x19, #0x4f8]
+0x31b94cc  ldp      x20, x19, [sp, #0xa0]
+0x31b94d0  ldr      d12, [sp, #0x20]
+0x31b94d4  ldp      x22, x21, [sp, #0x90]
+0x31b94d8  ldp      x24, x23, [sp, #0x80]
+0x31b94dc  ldp      x26, x25, [sp, #0x70]
+0x31b94e0  ldp      x28, x27, [sp, #0x60]
+0x31b94e4  ldp      x29, x30, [sp, #0x50]
+0x31b94e8  ldp      d9, d8, [sp, #0x40]
+0x31b94ec  ldp      d11, d10, [sp, #0x30]
+0x31b94f0  add      sp, sp, #0xb0
+0x31b94f4  ret      
+0x31b94f8  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$SubCameraMoveEase  0x31b87ec..0x31b8cf0  (size 0x504)
+0x31b87ec  sub      sp, sp, #0xb0
+0x31b87f0  str      d12, [sp, #0x20]
+0x31b87f4  stp      d11, d10, [sp, #0x30]
+0x31b87f8  stp      d9, d8, [sp, #0x40]
+0x31b87fc  stp      x29, x30, [sp, #0x50]
+0x31b8800  stp      x28, x27, [sp, #0x60]
+0x31b8804  stp      x26, x25, [sp, #0x70]
+0x31b8808  stp      x24, x23, [sp, #0x80]
+0x31b880c  stp      x22, x21, [sp, #0x90]
+0x31b8810  stp      x20, x19, [sp, #0xa0]
+0x31b8814  fmov     s8, s4
+0x31b8818  fmov     s12, s3
+0x31b881c  adrp     x23, #0x59c5000
+0x31b8820  fmov     s10, s2
+0x31b8824  fmov     s11, s1
+0x31b8828  ldrb     w8, [x23, #0x1e9]
+0x31b882c  fmov     s9, s0
+0x31b8830  mov      w22, w3
+0x31b8834  mov      x21, x2
+0x31b8838  mov      x19, x1
+0x31b883c  mov      x20, x0
+0x31b8840  tbnz     w8, #0, #0x31b88e8
+0x31b8844  adrp     x0, #0x5577000
+0x31b8848  ldr      x0, [x0, #0xd10]
+0x31b884c  bl       #0x22304a4   CALL 0x22304a4
+0x31b8850  adrp     x0, #0x5571000
+0x31b8854  ldr      x0, [x0, #0xa88]
+0x31b8858  bl       #0x22304a4   CALL 0x22304a4
+0x31b885c  adrp     x0, #0x5577000
+0x31b8860  ldr      x0, [x0, #0xcd0]   ; &slot for 'x'
+0x31b8864  bl       #0x22304a4   CALL 0x22304a4
+0x31b8868  adrp     x0, #0x5577000
+0x31b886c  ldr      x0, [x0, #0xcd8]   ; &slot for 'easetype'
+0x31b8870  bl       #0x22304a4   CALL 0x22304a4
+0x31b8874  adrp     x0, #0x5576000
+0x31b8878  ldr      x0, [x0, #0x6c0]   ; &slot for 'time'
+0x31b887c  bl       #0x22304a4   CALL 0x22304a4
+0x31b8880  adrp     x0, #0x5577000
+0x31b8884  ldr      x0, [x0, #0xce8]   ; &slot for 'oncompletetarget'
+0x31b8888  bl       #0x22304a4   CALL 0x22304a4
+0x31b888c  adrp     x0, #0x5577000
+0x31b8890  ldr      x0, [x0, #0xcf0]   ; &slot for 'delay'
+0x31b8894  bl       #0x22304a4   CALL 0x22304a4
+0x31b8898  adrp     x0, #0x55ca000
+0x31b889c  ldr      x0, [x0, #0xb38]   ; &slot for 'y'
+0x31b88a0  bl       #0x22304a4   CALL 0x22304a4
+0x31b88a4  adrp     x0, #0x55ca000
+0x31b88a8  ldr      x0, [x0, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b88ac  bl       #0x22304a4   CALL 0x22304a4
+0x31b88b0  adrp     x0, #0x5577000
+0x31b88b4  ldr      x0, [x0, #0xd08]   ; &slot for 'isLocal'
+0x31b88b8  bl       #0x22304a4   CALL 0x22304a4
+0x31b88bc  adrp     x0, #0x5576000
+0x31b88c0  ldr      x0, [x0, #0x6f0]   ; &slot for 'oncomplete'
+0x31b88c4  bl       #0x22304a4   CALL 0x22304a4
+0x31b88c8  adrp     x0, #0x55ca000
+0x31b88cc  ldr      x0, [x0, #0xb48]   ; &slot for 'scale'
+0x31b88d0  bl       #0x22304a4   CALL 0x22304a4
+0x31b88d4  adrp     x0, #0x5576000
+0x31b88d8  ldr      x0, [x0, #0x700]
+0x31b88dc  bl       #0x22304a4   CALL 0x22304a4
+0x31b88e0  mov      w8, #1
+0x31b88e4  strb     w8, [x23, #0x1e9]
+0x31b88e8  mov      x1, x19
+0x31b88ec  bl       #0x31b85fc   CALL ScriptManager$$StopMoveTween
+0x31b88f0  tbz      w22, #0, #0x31b88fc
+0x31b88f4  mov      x1, x19
+0x31b88f8  bl       #0x31b86f4   CALL ScriptManager$$StopMoveScaleTween
+0x31b88fc  fcmp     s9, #0.0
+0x31b8900  mov      w25, #1
+0x31b8904  strb     w25, [x20, #0x768]
+0x31b8908  b.ls     #0x31b8c6c
+0x31b890c  adrp     x8, #0x5577000
+0x31b8910  ldr      x8, [x8, #0xd10]
+0x31b8914  ldr      x0, [x8]
+0x31b8918  bl       #0x2230710   CALL 0x2230710
+0x31b891c  mov      x1, xzr
+0x31b8920  mov      x23, x0
+0x31b8924  bl       #0x498b604   CALL System.Collections.Hashtable$$.ctor
+0x31b8928  adrp     x24, #0x556f000
+0x31b892c  add      x1, sp, #0x2c
+0x31b8930  ldr      x24, [x24, #0xbc8]
+0x31b8934  strb     w25, [sp, #0x2c]
+0x31b8938  ldr      x0, [x24, #0x28]
+0x31b893c  bl       #0x22305fc   CALL 0x22305fc
+0x31b8940  cbz      x23, #0x31b8cec
+0x31b8944  adrp     x9, #0x5577000
+0x31b8948  mov      x2, x0
+0x31b894c  mov      x0, x23
+0x31b8950  ldr      x9, [x9, #0xd08]   ; &slot for 'isLocal'
+0x31b8954  ldr      x8, [x23]
+0x31b8958  ldr      x1, [x9]   ; 'isLocal'
+0x31b895c  ldr      x9, [x8, #0x298]
+0x31b8960  ldr      x3, [x8, #0x2a0]
+0x31b8964  blr      x9   CALL 0x0   args: x1='isLocal'
+0x31b8968  ldr      x0, [x24, #0x78]
+0x31b896c  add      x1, sp, #0xc
+0x31b8970  str      wzr, [sp, #0xc]
+0x31b8974  bl       #0x22305fc   CALL 0x22305fc
+0x31b8978  adrp     x9, #0x5577000
+0x31b897c  mov      x2, x0
+0x31b8980  mov      x0, x23
+0x31b8984  ldr      x9, [x9, #0xcf0]   ; &slot for 'delay'
+0x31b8988  ldr      x8, [x23]
+0x31b898c  ldr      x1, [x9]   ; 'delay'
+0x31b8990  ldr      x9, [x8, #0x298]
+0x31b8994  ldr      x3, [x8, #0x2a0]
+0x31b8998  blr      x9   CALL 0x0   args: x1='delay'
+0x31b899c  ldr      x0, [x24, #0x78]
+0x31b89a0  add      x1, sp, #0x28
+0x31b89a4  str      s11, [sp, #0x28]
+0x31b89a8  bl       #0x22305fc   CALL 0x22305fc
+0x31b89ac  adrp     x8, #0x5577000
+0x31b89b0  mov      x2, x0
+0x31b89b4  mov      x0, x23
+0x31b89b8  ldr      x8, [x8, #0xcd0]   ; &slot for 'x'
+0x31b89bc  ldr      x9, [x23]
+0x31b89c0  ldr      x1, [x8]   ; 'x'
+0x31b89c4  ldr      x8, [x9, #0x298]
+0x31b89c8  ldr      x3, [x9, #0x2a0]
+0x31b89cc  blr      x8   CALL 0x0   args: x1='x'
+0x31b89d0  ldr      x0, [x24, #0x78]
+0x31b89d4  add      x1, sp, #0x1c
+0x31b89d8  str      s10, [sp, #0x1c]
+0x31b89dc  bl       #0x22305fc   CALL 0x22305fc
+0x31b89e0  adrp     x8, #0x55ca000
+0x31b89e4  mov      x2, x0
+0x31b89e8  mov      x0, x23
+0x31b89ec  ldr      x8, [x8, #0xb38]   ; &slot for 'y'
+0x31b89f0  ldr      x9, [x23]
+0x31b89f4  ldr      x1, [x8]   ; 'y'
+0x31b89f8  ldr      x8, [x9, #0x298]
+0x31b89fc  ldr      x3, [x9, #0x2a0]
+0x31b8a00  blr      x8   CALL 0x0   args: x1='y'
+0x31b8a04  adrp     x9, #0x5577000
+0x31b8a08  mov      x0, x23
+0x31b8a0c  mov      x2, x21
+0x31b8a10  ldr      x9, [x9, #0xcd8]   ; &slot for 'easetype'
+0x31b8a14  ldr      x8, [x23]
+0x31b8a18  ldr      x1, [x9]   ; 'easetype'
+0x31b8a1c  ldr      x9, [x8, #0x298]
+0x31b8a20  ldr      x3, [x8, #0x2a0]
+0x31b8a24  blr      x9   CALL 0x0   args: x1='easetype'
+0x31b8a28  ldr      x0, [x24, #0x78]
+0x31b8a2c  add      x1, sp, #0x18
+0x31b8a30  str      s9, [sp, #0x18]
+0x31b8a34  bl       #0x22305fc   CALL 0x22305fc
+0x31b8a38  adrp     x29, #0x5576000
+0x31b8a3c  mov      x2, x0
+0x31b8a40  mov      x0, x23
+0x31b8a44  ldr      x29, [x29, #0x6c0]   ; &slot for 'time'
+0x31b8a48  ldr      x8, [x23]
+0x31b8a4c  ldr      x1, [x29]   ; 'time'
+0x31b8a50  ldr      x9, [x8, #0x298]
+0x31b8a54  ldr      x3, [x8, #0x2a0]
+0x31b8a58  blr      x9   CALL 0x0   args: x1='time'
+0x31b8a5c  mov      x0, x20
+0x31b8a60  mov      x1, xzr
+0x31b8a64  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b8a68  adrp     x25, #0x5577000
+0x31b8a6c  mov      x2, x0
+0x31b8a70  mov      x0, x23
+0x31b8a74  ldr      x25, [x25, #0xce8]   ; &slot for 'oncompletetarget'
+0x31b8a78  ldr      x8, [x23]
+0x31b8a7c  ldr      x1, [x25]   ; 'oncompletetarget'
+0x31b8a80  ldr      x9, [x8, #0x298]
+0x31b8a84  ldr      x3, [x8, #0x2a0]
+0x31b8a88  blr      x9   CALL 0x0   args: x1='oncompletetarget'
+0x31b8a8c  adrp     x26, #0x5576000
+0x31b8a90  adrp     x27, #0x55ca000
+0x31b8a94  mov      x0, x23
+0x31b8a98  ldr      x26, [x26, #0x6f0]   ; &slot for 'oncomplete'
+0x31b8a9c  ldr      x27, [x27, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b8aa0  ldr      x8, [x23]
+0x31b8aa4  ldr      x1, [x26]   ; 'oncomplete'
+0x31b8aa8  ldr      x2, [x27]   ; 'EndExecuteSubCamera'
+0x31b8aac  ldr      x9, [x8, #0x298]
+0x31b8ab0  ldr      x3, [x8, #0x2a0]
+0x31b8ab4  blr      x9   CALL 0x0   args: x1='oncomplete', x2='EndExecuteSubCamera'
+0x31b8ab8  adrp     x28, #0x5576000
+0x31b8abc  ldr      x28, [x28, #0x700]
+0x31b8ac0  ldr      x0, [x28]
+0x31b8ac4  ldr      w8, [x0, #0xe4]
+0x31b8ac8  cbnz     w8, #0x31b8ad0
+0x31b8acc  bl       #0x22305f4   CALL 0x22305f4
+0x31b8ad0  mov      x0, x19
+0x31b8ad4  mov      x1, x23
+0x31b8ad8  mov      x2, xzr
+0x31b8adc  bl       #0x48107cc   CALL iTween$$MoveTo
+0x31b8ae0  tbz      w22, #0, #0x31b8cc0
+0x31b8ae4  adrp     x8, #0x5577000
+0x31b8ae8  ldr      x8, [x8, #0xd10]
+0x31b8aec  ldr      x0, [x8]
+0x31b8af0  bl       #0x2230710   CALL 0x2230710
+0x31b8af4  mov      x1, xzr
+0x31b8af8  mov      x22, x0
+0x31b8afc  bl       #0x498b604   CALL System.Collections.Hashtable$$.ctor
+0x31b8b00  ldr      x0, [x24, #0x28]
+0x31b8b04  mov      w8, #1
+0x31b8b08  add      x1, sp, #0x18
+0x31b8b0c  strb     w8, [sp, #0x18]
+0x31b8b10  bl       #0x22305fc   CALL 0x22305fc
+0x31b8b14  cbz      x22, #0x31b8cec
+0x31b8b18  adrp     x9, #0x5577000
+0x31b8b1c  ldr      x8, [x22]
+0x31b8b20  mov      x2, x0
+0x31b8b24  ldr      x9, [x9, #0xd08]   ; &slot for 'isLocal'
+0x31b8b28  mov      x0, x22
+0x31b8b2c  ldr      x3, [x8, #0x2a0]
+0x31b8b30  ldr      x1, [x9]   ; 'isLocal'
+0x31b8b34  ldr      x9, [x8, #0x298]
+0x31b8b38  blr      x9   CALL 0x0   args: x1='isLocal'
+0x31b8b3c  ldr      x0, [x24, #0x78]
+0x31b8b40  add      x1, sp, #0x28
+0x31b8b44  str      wzr, [sp, #0x28]
+0x31b8b48  bl       #0x22305fc   CALL 0x22305fc
+0x31b8b4c  adrp     x9, #0x5577000
+0x31b8b50  ldr      x8, [x22]
+0x31b8b54  mov      x2, x0
+0x31b8b58  ldr      x9, [x9, #0xcf0]   ; &slot for 'delay'
+0x31b8b5c  mov      x0, x22
+0x31b8b60  ldr      x3, [x8, #0x2a0]
+0x31b8b64  ldr      x1, [x9]   ; 'delay'
+0x31b8b68  ldr      x9, [x8, #0x298]
+0x31b8b6c  blr      x9   CALL 0x0   args: x1='delay'
+0x31b8b70  adrp     x8, #0x5571000
+0x31b8b74  mov      w9, #0x3f800000
+0x31b8b78  add      x1, sp, #0xc
+0x31b8b7c  ldr      x8, [x8, #0xa88]
+0x31b8b80  stp      s8, s8, [sp, #0xc]
+0x31b8b84  str      w9, [sp, #0x14]
+0x31b8b88  ldr      x0, [x8]
+0x31b8b8c  bl       #0x22305fc   CALL 0x22305fc
+0x31b8b90  adrp     x8, #0x55ca000
+0x31b8b94  mov      x2, x0
+0x31b8b98  mov      x0, x22
+0x31b8b9c  ldr      x8, [x8, #0xb48]   ; &slot for 'scale'
+0x31b8ba0  ldr      x9, [x22]
+0x31b8ba4  ldr      x1, [x8]   ; 'scale'
+0x31b8ba8  ldr      x8, [x9, #0x298]
+0x31b8bac  ldr      x3, [x9, #0x2a0]
+0x31b8bb0  blr      x8   CALL 0x0   args: x1='scale'
+0x31b8bb4  adrp     x9, #0x5577000
+0x31b8bb8  ldr      x8, [x22]
+0x31b8bbc  mov      x0, x22
+0x31b8bc0  ldr      x9, [x9, #0xcd8]   ; &slot for 'easetype'
+0x31b8bc4  mov      x2, x21
+0x31b8bc8  ldr      x3, [x8, #0x2a0]
+0x31b8bcc  ldr      x1, [x9]   ; 'easetype'
+0x31b8bd0  ldr      x9, [x8, #0x298]
+0x31b8bd4  blr      x9   CALL 0x0   args: x1='easetype'
+0x31b8bd8  ldr      x0, [x24, #0x78]
+0x31b8bdc  add      x1, sp, #0x1c
+0x31b8be0  str      s9, [sp, #0x1c]
+0x31b8be4  bl       #0x22305fc   CALL 0x22305fc
+0x31b8be8  ldr      x8, [x22]
+0x31b8bec  ldr      x1, [x29]
+0x31b8bf0  mov      x2, x0
+0x31b8bf4  mov      x0, x22
+0x31b8bf8  ldr      x9, [x8, #0x298]
+0x31b8bfc  ldr      x3, [x8, #0x2a0]
+0x31b8c00  blr      x9   CALL 0x0
+0x31b8c04  mov      x0, x20
+0x31b8c08  mov      x1, xzr
+0x31b8c0c  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b8c10  ldr      x8, [x22]
+0x31b8c14  ldr      x1, [x25]   ; 'oncompletetarget'
+0x31b8c18  mov      x2, x0
+0x31b8c1c  mov      x0, x22
+0x31b8c20  ldr      x9, [x8, #0x298]
+0x31b8c24  ldr      x3, [x8, #0x2a0]
+0x31b8c28  blr      x9   CALL 0x0   args: x1='oncompletetarget'
+0x31b8c2c  ldr      x8, [x22]
+0x31b8c30  ldr      x1, [x26]   ; 'oncomplete'
+0x31b8c34  mov      x0, x22
+0x31b8c38  ldr      x2, [x27]   ; 'EndExecuteSubCamera'
+0x31b8c3c  ldr      x9, [x8, #0x298]
+0x31b8c40  ldr      x3, [x8, #0x2a0]
+0x31b8c44  blr      x9   CALL 0x0   args: x1='oncomplete', x2='EndExecuteSubCamera'
+0x31b8c48  ldr      x0, [x28]
+0x31b8c4c  ldr      w8, [x0, #0xe4]
+0x31b8c50  cbnz     w8, #0x31b8c58
+0x31b8c54  bl       #0x22305f4   CALL 0x22305f4
+0x31b8c58  mov      x0, x19
+0x31b8c5c  mov      x1, x22
+0x31b8c60  mov      x2, xzr
+0x31b8c64  bl       #0x4811d28   CALL iTween$$ScaleTo
+0x31b8c68  b        #0x31b8cc0
+0x31b8c6c  cbz      x19, #0x31b8cec
+0x31b8c70  mov      x0, x19
+0x31b8c74  mov      x1, xzr
+0x31b8c78  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b8c7c  cbz      x0, #0x31b8cec
+0x31b8c80  fmov     s0, s11
+0x31b8c84  fmov     s1, s10
+0x31b8c88  mov      x1, xzr
+0x31b8c8c  fmov     s2, s12
+0x31b8c90  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b8c94  tbz      w22, #0, #0x31b8cbc
+0x31b8c98  mov      x0, x19
+0x31b8c9c  mov      x1, xzr
+0x31b8ca0  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b8ca4  cbz      x0, #0x31b8cec
+0x31b8ca8  fmov     s0, s8
+0x31b8cac  fmov     s1, s8
+0x31b8cb0  mov      x1, xzr
+0x31b8cb4  fmov     s2, #1.00000000
+0x31b8cb8  bl       #0x4fe21f8   CALL UnityEngine.Transform$$set_localScale
+0x31b8cbc  strb     wzr, [x20, #0x768]
+0x31b8cc0  ldp      x20, x19, [sp, #0xa0]
+0x31b8cc4  ldr      d12, [sp, #0x20]
+0x31b8cc8  ldp      x22, x21, [sp, #0x90]
+0x31b8ccc  ldp      x24, x23, [sp, #0x80]
+0x31b8cd0  ldp      x26, x25, [sp, #0x70]
+0x31b8cd4  ldp      x28, x27, [sp, #0x60]
+0x31b8cd8  ldp      x29, x30, [sp, #0x50]
+0x31b8cdc  ldp      d9, d8, [sp, #0x40]
+0x31b8ce0  ldp      d11, d10, [sp, #0x30]
+0x31b8ce4  add      sp, sp, #0xb0
+0x31b8ce8  ret      
+0x31b8cec  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$SubRenderMoveScaleEase  0x31b8cf0..0x31b8ff0  (size 0x300)
+0x31b8cf0  sub      sp, sp, #0x60
+0x31b8cf4  stp      d9, d8, [sp, #0x10]
+0x31b8cf8  str      x30, [sp, #0x20]
+0x31b8cfc  stp      x24, x23, [sp, #0x30]
+0x31b8d00  stp      x22, x21, [sp, #0x40]
+0x31b8d04  stp      x20, x19, [sp, #0x50]
+0x31b8d08  fmov     s8, s1
+0x31b8d0c  fmov     s9, s0
+0x31b8d10  adrp     x22, #0x59c5000
+0x31b8d14  ldrb     w8, [x22, #0x1ea]
+0x31b8d18  mov      x21, x2
+0x31b8d1c  mov      x19, x1
+0x31b8d20  mov      x20, x0
+0x31b8d24  tbnz     w8, #0, #0x31b8db4
+0x31b8d28  adrp     x0, #0x5577000
+0x31b8d2c  ldr      x0, [x0, #0xd10]
+0x31b8d30  bl       #0x22304a4   CALL 0x22304a4
+0x31b8d34  adrp     x0, #0x5577000
+0x31b8d38  ldr      x0, [x0, #0xcd0]   ; &slot for 'x'
+0x31b8d3c  bl       #0x22304a4   CALL 0x22304a4
+0x31b8d40  adrp     x0, #0x5577000
+0x31b8d44  ldr      x0, [x0, #0xcd8]   ; &slot for 'easetype'
+0x31b8d48  bl       #0x22304a4   CALL 0x22304a4
+0x31b8d4c  adrp     x0, #0x5576000
+0x31b8d50  ldr      x0, [x0, #0x6c0]   ; &slot for 'time'
+0x31b8d54  bl       #0x22304a4   CALL 0x22304a4
+0x31b8d58  adrp     x0, #0x5577000
+0x31b8d5c  ldr      x0, [x0, #0xce8]   ; &slot for 'oncompletetarget'
+0x31b8d60  bl       #0x22304a4   CALL 0x22304a4
+0x31b8d64  adrp     x0, #0x5577000
+0x31b8d68  ldr      x0, [x0, #0xcf0]   ; &slot for 'delay'
+0x31b8d6c  bl       #0x22304a4   CALL 0x22304a4
+0x31b8d70  adrp     x0, #0x55ca000
+0x31b8d74  ldr      x0, [x0, #0xb38]   ; &slot for 'y'
+0x31b8d78  bl       #0x22304a4   CALL 0x22304a4
+0x31b8d7c  adrp     x0, #0x55ca000
+0x31b8d80  ldr      x0, [x0, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b8d84  bl       #0x22304a4   CALL 0x22304a4
+0x31b8d88  adrp     x0, #0x5577000
+0x31b8d8c  ldr      x0, [x0, #0xd08]   ; &slot for 'isLocal'
+0x31b8d90  bl       #0x22304a4   CALL 0x22304a4
+0x31b8d94  adrp     x0, #0x5576000
+0x31b8d98  ldr      x0, [x0, #0x6f0]   ; &slot for 'oncomplete'
+0x31b8d9c  bl       #0x22304a4   CALL 0x22304a4
+0x31b8da0  adrp     x0, #0x5576000
+0x31b8da4  ldr      x0, [x0, #0x700]
+0x31b8da8  bl       #0x22304a4   CALL 0x22304a4
+0x31b8dac  mov      w8, #1
+0x31b8db0  strb     w8, [x22, #0x1ea]
+0x31b8db4  mov      x1, x19
+0x31b8db8  bl       #0x31b86f4   CALL ScriptManager$$StopMoveScaleTween
+0x31b8dbc  fcmp     s8, #0.0
+0x31b8dc0  mov      w24, #1
+0x31b8dc4  strb     w24, [x20, #0x768]
+0x31b8dc8  b.ls     #0x31b8fa4
+0x31b8dcc  adrp     x8, #0x5577000
+0x31b8dd0  ldr      x8, [x8, #0xd10]
+0x31b8dd4  ldr      x0, [x8]
+0x31b8dd8  bl       #0x2230710   CALL 0x2230710
+0x31b8ddc  mov      x1, xzr
+0x31b8de0  mov      x22, x0
+0x31b8de4  bl       #0x498b604   CALL System.Collections.Hashtable$$.ctor
+0x31b8de8  adrp     x23, #0x556f000
+0x31b8dec  add      x1, sp, #0x2c
+0x31b8df0  ldr      x23, [x23, #0xbc8]
+0x31b8df4  strb     w24, [sp, #0x2c]
+0x31b8df8  ldr      x0, [x23, #0x28]
+0x31b8dfc  bl       #0x22305fc   CALL 0x22305fc
+0x31b8e00  cbz      x22, #0x31b8fec
+0x31b8e04  adrp     x8, #0x5577000
+0x31b8e08  mov      x2, x0
+0x31b8e0c  mov      x0, x22
+0x31b8e10  ldr      x8, [x8, #0xd08]   ; &slot for 'isLocal'
+0x31b8e14  ldr      x9, [x22]
+0x31b8e18  ldr      x1, [x8]   ; 'isLocal'
+0x31b8e1c  ldr      x8, [x9, #0x298]
+0x31b8e20  ldr      x3, [x9, #0x2a0]
+0x31b8e24  blr      x8   CALL 0x0   args: x1='isLocal'
+0x31b8e28  ldr      x0, [x23, #0x78]
+0x31b8e2c  add      x1, sp, #0x28
+0x31b8e30  str      wzr, [sp, #0x28]
+0x31b8e34  bl       #0x22305fc   CALL 0x22305fc
+0x31b8e38  adrp     x8, #0x5577000
+0x31b8e3c  mov      x2, x0
+0x31b8e40  mov      x0, x22
+0x31b8e44  ldr      x8, [x8, #0xcf0]   ; &slot for 'delay'
+0x31b8e48  ldr      x9, [x22]
+0x31b8e4c  ldr      x1, [x8]   ; 'delay'
+0x31b8e50  ldr      x8, [x9, #0x298]
+0x31b8e54  ldr      x3, [x9, #0x2a0]
+0x31b8e58  blr      x8   CALL 0x0   args: x1='delay'
+0x31b8e5c  ldr      x0, [x23, #0x78]
+0x31b8e60  add      x1, sp, #0xc
+0x31b8e64  str      s9, [sp, #0xc]
+0x31b8e68  bl       #0x22305fc   CALL 0x22305fc
+0x31b8e6c  adrp     x8, #0x5577000
+0x31b8e70  mov      x2, x0
+0x31b8e74  mov      x0, x22
+0x31b8e78  ldr      x8, [x8, #0xcd0]   ; &slot for 'x'
+0x31b8e7c  ldr      x9, [x22]
+0x31b8e80  ldr      x1, [x8]   ; 'x'
+0x31b8e84  ldr      x8, [x9, #0x298]
+0x31b8e88  ldr      x3, [x9, #0x2a0]
+0x31b8e8c  blr      x8   CALL 0x0   args: x1='x'
+0x31b8e90  ldr      x0, [x23, #0x78]
+0x31b8e94  add      x1, sp, #8
+0x31b8e98  str      s9, [sp, #8]
+0x31b8e9c  bl       #0x22305fc   CALL 0x22305fc
+0x31b8ea0  adrp     x8, #0x55ca000
+0x31b8ea4  mov      x2, x0
+0x31b8ea8  mov      x0, x22
+0x31b8eac  ldr      x8, [x8, #0xb38]   ; &slot for 'y'
+0x31b8eb0  ldr      x9, [x22]
+0x31b8eb4  ldr      x1, [x8]   ; 'y'
+0x31b8eb8  ldr      x8, [x9, #0x298]
+0x31b8ebc  ldr      x3, [x9, #0x2a0]
+0x31b8ec0  blr      x8   CALL 0x0   args: x1='y'
+0x31b8ec4  adrp     x8, #0x5577000
+0x31b8ec8  mov      x0, x22
+0x31b8ecc  mov      x2, x21
+0x31b8ed0  ldr      x8, [x8, #0xcd8]   ; &slot for 'easetype'
+0x31b8ed4  ldr      x9, [x22]
+0x31b8ed8  ldr      x1, [x8]   ; 'easetype'
+0x31b8edc  ldr      x8, [x9, #0x298]
+0x31b8ee0  ldr      x3, [x9, #0x2a0]
+0x31b8ee4  blr      x8   CALL 0x0   args: x1='easetype'
+0x31b8ee8  ldr      x0, [x23, #0x78]
+0x31b8eec  add      x1, sp, #4
+0x31b8ef0  str      s8, [sp, #4]
+0x31b8ef4  bl       #0x22305fc   CALL 0x22305fc
+0x31b8ef8  adrp     x8, #0x5576000
+0x31b8efc  mov      x2, x0
+0x31b8f00  mov      x0, x22
+0x31b8f04  ldr      x8, [x8, #0x6c0]   ; &slot for 'time'
+0x31b8f08  ldr      x9, [x22]
+0x31b8f0c  ldr      x1, [x8]   ; 'time'
+0x31b8f10  ldr      x8, [x9, #0x298]
+0x31b8f14  ldr      x3, [x9, #0x2a0]
+0x31b8f18  blr      x8   CALL 0x0   args: x1='time'
+0x31b8f1c  mov      x0, x20
+0x31b8f20  mov      x1, xzr
+0x31b8f24  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b8f28  adrp     x8, #0x5577000
+0x31b8f2c  mov      x2, x0
+0x31b8f30  mov      x0, x22
+0x31b8f34  ldr      x8, [x8, #0xce8]   ; &slot for 'oncompletetarget'
+0x31b8f38  ldr      x9, [x22]
+0x31b8f3c  ldr      x1, [x8]   ; 'oncompletetarget'
+0x31b8f40  ldr      x8, [x9, #0x298]
+0x31b8f44  ldr      x3, [x9, #0x2a0]
+0x31b8f48  blr      x8   CALL 0x0   args: x1='oncompletetarget'
+0x31b8f4c  adrp     x8, #0x5576000
+0x31b8f50  adrp     x9, #0x55ca000
+0x31b8f54  mov      x0, x22
+0x31b8f58  ldr      x8, [x8, #0x6f0]   ; &slot for 'oncomplete'
+0x31b8f5c  ldr      x9, [x9, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b8f60  ldr      x10, [x22]
+0x31b8f64  ldr      x1, [x8]   ; 'oncomplete'
+0x31b8f68  ldr      x2, [x9]   ; 'EndExecuteSubCamera'
+0x31b8f6c  ldr      x8, [x10, #0x298]
+0x31b8f70  ldr      x3, [x10, #0x2a0]
+0x31b8f74  blr      x8   CALL 0x0   args: x1='oncomplete', x2='EndExecuteSubCamera'
+0x31b8f78  adrp     x8, #0x5576000
+0x31b8f7c  ldr      x8, [x8, #0x700]
+0x31b8f80  ldr      x0, [x8]
+0x31b8f84  ldr      w8, [x0, #0xe4]
+0x31b8f88  cbnz     w8, #0x31b8f90
+0x31b8f8c  bl       #0x22305f4   CALL 0x22305f4
+0x31b8f90  mov      x0, x19
+0x31b8f94  mov      x1, x22
+0x31b8f98  mov      x2, xzr
+0x31b8f9c  bl       #0x4811d28   CALL iTween$$ScaleTo
+0x31b8fa0  b        #0x31b8fd0
+0x31b8fa4  cbz      x19, #0x31b8fec
+0x31b8fa8  mov      x0, x19
+0x31b8fac  mov      x1, xzr
+0x31b8fb0  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b8fb4  cbz      x0, #0x31b8fec
+0x31b8fb8  fmov     s0, s9
+0x31b8fbc  fmov     s1, s9
+0x31b8fc0  mov      x1, xzr
+0x31b8fc4  fmov     s2, #1.00000000
+0x31b8fc8  bl       #0x4fe21f8   CALL UnityEngine.Transform$$set_localScale
+0x31b8fcc  strb     wzr, [x20, #0x768]
+0x31b8fd0  ldp      x20, x19, [sp, #0x50]
+0x31b8fd4  ldr      x30, [sp, #0x20]
+0x31b8fd8  ldp      x22, x21, [sp, #0x40]
+0x31b8fdc  ldp      x24, x23, [sp, #0x30]
+0x31b8fe0  ldp      d9, d8, [sp, #0x10]
+0x31b8fe4  add      sp, sp, #0x60
+0x31b8fe8  ret      
+0x31b8fec  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$StartCamera  0x31b94fc..0x31b9518  (size 0x1c)
+0x31b94fc  str      x30, [sp, #-0x10]!
+0x31b9500  ldp      x1, x2, [x0, #0xf8]
+0x31b9504  mov      w3, #1
+0x31b9508  bl       #0x31b9518   CALL ScriptManager$$StartCamera
+0x31b950c  mov      w0, #1
+0x31b9510  ldr      x30, [sp], #0x10
+0x31b9514  ret      
+
+==============================================================================
+### ScriptManager$$StartCamera  0x31b9518..0x31b97a8  (size 0x290)
+0x31b9518  str      d12, [sp, #-0x70]!
+0x31b951c  stp      d11, d10, [sp, #0x10]
+0x31b9520  stp      d9, d8, [sp, #0x20]
+0x31b9524  stp      x30, x25, [sp, #0x30]
+0x31b9528  stp      x24, x23, [sp, #0x40]
+0x31b952c  stp      x22, x21, [sp, #0x50]
+0x31b9530  stp      x20, x19, [sp, #0x60]
+0x31b9534  fmov     s11, s4
+0x31b9538  fmov     s8, s3
+0x31b953c  adrp     x23, #0x59c5000
+0x31b9540  fmov     s9, s2
+0x31b9544  fmov     s10, s1
+0x31b9548  ldrb     w8, [x23, #0x1ec]
+0x31b954c  fmov     s12, s0
+0x31b9550  mov      w20, w3
+0x31b9554  mov      x21, x2
+0x31b9558  mov      x22, x1
+0x31b955c  mov      x19, x0
+0x31b9560  tbnz     w8, #0, #0x31b9590
+0x31b9564  adrp     x0, #0x556f000
+0x31b9568  ldr      x0, [x0, #0xb90]
+0x31b956c  bl       #0x22304a4   CALL 0x22304a4
+0x31b9570  adrp     x0, #0x55ca000
+0x31b9574  ldr      x0, [x0, #0xb50]   ; &slot for 'EndExecuteCamera'
+0x31b9578  bl       #0x22304a4   CALL 0x22304a4
+0x31b957c  adrp     x0, #0x55ca000
+0x31b9580  ldr      x0, [x0, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b9584  bl       #0x22304a4   CALL 0x22304a4
+0x31b9588  mov      w8, #1
+0x31b958c  strb     w8, [x23, #0x1ec]
+0x31b9590  mov      x1, x21
+0x31b9594  bl       #0x31b85fc   CALL ScriptManager$$StopMoveTween
+0x31b9598  mov      x1, x22
+0x31b959c  bl       #0x31b86f4   CALL ScriptManager$$StopMoveScaleTween
+0x31b95a0  fcmp     s12, #0.0
+0x31b95a4  b.le     #0x31b96e0
+0x31b95a8  fmov     s0, s12
+0x31b95ac  fmov     s1, s11
+0x31b95b0  adrp     x25, #0x556f000
+0x31b95b4  fmov     s2, s11
+0x31b95b8  fmov     s3, #1.00000000
+0x31b95bc  ldr      x25, [x25, #0xb90]
+0x31b95c0  mov      x0, x22
+0x31b95c4  mov      x1, xzr
+0x31b95c8  bl       #0x3619af0   CALL TweenScale$$Begin
+0x31b95cc  fmov     s0, s12
+0x31b95d0  fmov     s1, s10
+0x31b95d4  mov      x23, x0
+0x31b95d8  fmov     s2, s9
+0x31b95dc  fmov     s3, s8
+0x31b95e0  mov      x0, x21
+0x31b95e4  mov      x1, xzr
+0x31b95e8  bl       #0x3619114   CALL TweenPosition$$Begin
+0x31b95ec  ldr      x8, [x25]
+0x31b95f0  mov      x24, x0
+0x31b95f4  ldr      w9, [x8, #0xe4]
+0x31b95f8  cbnz     w9, #0x31b9604
+0x31b95fc  mov      x0, x8
+0x31b9600  bl       #0x22305f4   CALL 0x22305f4
+0x31b9604  mov      x0, x23
+0x31b9608  mov      x1, xzr
+0x31b960c  mov      x2, xzr
+0x31b9610  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b9614  tbz      w0, #0, #0x31b9664
+0x31b9618  cbz      x23, #0x31b97a4
+0x31b961c  mov      x0, x23
+0x31b9620  mov      x1, xzr
+0x31b9624  bl       #0x4fcfd44   CALL UnityEngine.Behaviour$$get_enabled
+0x31b9628  tbz      w0, #0, #0x31b9664
+0x31b962c  mov      x0, x19
+0x31b9630  mov      x1, xzr
+0x31b9634  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b9638  mov      x1, x0
+0x31b963c  str      x0, [x23, #0x50]!
+0x31b9640  mov      x0, x23
+0x31b9644  bl       #0x2230448   CALL 0x2230448
+0x31b9648  tbz      w20, #0, #0x31b9744
+0x31b964c  adrp     x8, #0x55ca000
+0x31b9650  add      x0, x23, #8
+0x31b9654  ldr      x8, [x8, #0xb50]   ; &slot for 'EndExecuteCamera'
+0x31b9658  ldr      x1, [x8]   ; 'EndExecuteCamera'
+0x31b965c  stur     x1, [x23, #8]
+0x31b9660  b        #0x31b96d0
+0x31b9664  ldr      x0, [x25]
+0x31b9668  ldr      w8, [x0, #0xe4]
+0x31b966c  cbnz     w8, #0x31b9674
+0x31b9670  bl       #0x22305f4   CALL 0x22305f4
+0x31b9674  mov      x0, x24
+0x31b9678  mov      x1, xzr
+0x31b967c  mov      x2, xzr
+0x31b9680  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b9684  tbz      w0, #0, #0x31b96e0
+0x31b9688  cbz      x24, #0x31b97a4
+0x31b968c  mov      x0, x24
+0x31b9690  mov      x1, xzr
+0x31b9694  bl       #0x4fcfd44   CALL UnityEngine.Behaviour$$get_enabled
+0x31b9698  tbz      w0, #0, #0x31b96e0
+0x31b969c  mov      x0, x19
+0x31b96a0  mov      x1, xzr
+0x31b96a4  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b96a8  mov      x1, x0
+0x31b96ac  mov      x0, x24
+0x31b96b0  str      x1, [x0, #0x50]!
+0x31b96b4  bl       #0x2230448   CALL 0x2230448
+0x31b96b8  tbz      w20, #0, #0x31b975c
+0x31b96bc  adrp     x8, #0x55ca000
+0x31b96c0  ldr      x8, [x8, #0xb50]   ; &slot for 'EndExecuteCamera'
+0x31b96c4  ldr      x1, [x8]   ; 'EndExecuteCamera'
+0x31b96c8  str      x1, [x24, #0x58]!
+0x31b96cc  mov      x0, x24
+0x31b96d0  bl       #0x2230448   CALL 0x2230448   args: x1='EndExecuteCamera'
+0x31b96d4  mov      w8, #1
+0x31b96d8  strb     w8, [x19, #0x4f8]
+0x31b96dc  b        #0x31b9780
+0x31b96e0  cbz      x22, #0x31b97a4
+0x31b96e4  mov      x0, x22
+0x31b96e8  mov      x1, xzr
+0x31b96ec  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b96f0  cbz      x0, #0x31b97a4
+0x31b96f4  fmov     s0, s11
+0x31b96f8  fmov     s1, s11
+0x31b96fc  mov      x1, xzr
+0x31b9700  fmov     s2, #1.00000000
+0x31b9704  bl       #0x4fe21f8   CALL UnityEngine.Transform$$set_localScale
+0x31b9708  cbz      x21, #0x31b97a4
+0x31b970c  mov      x0, x21
+0x31b9710  mov      x1, xzr
+0x31b9714  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9718  cbz      x0, #0x31b97a4
+0x31b971c  fmov     s0, s10
+0x31b9720  fmov     s1, s9
+0x31b9724  mov      x1, xzr
+0x31b9728  fmov     s2, s8
+0x31b972c  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b9730  tbz      w20, #0, #0x31b973c
+0x31b9734  strb     wzr, [x19, #0x4f8]
+0x31b9738  b        #0x31b9780
+0x31b973c  strb     wzr, [x19, #0x768]
+0x31b9740  b        #0x31b9780
+0x31b9744  adrp     x8, #0x55ca000
+0x31b9748  add      x0, x23, #8
+0x31b974c  ldr      x8, [x8, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b9750  ldr      x1, [x8]   ; 'EndExecuteSubCamera'
+0x31b9754  stur     x1, [x23, #8]
+0x31b9758  b        #0x31b9774
+0x31b975c  cbz      x23, #0x31b97a4
+0x31b9760  adrp     x8, #0x55ca000
+0x31b9764  ldr      x8, [x8, #0xb40]   ; &slot for 'EndExecuteSubCamera'
+0x31b9768  ldr      x1, [x8]   ; 'EndExecuteSubCamera'
+0x31b976c  str      x1, [x23, #0x58]!
+0x31b9770  mov      x0, x23
+0x31b9774  bl       #0x2230448   CALL 0x2230448   args: x1='EndExecuteSubCamera'
+0x31b9778  mov      w8, #1
+0x31b977c  strb     w8, [x19, #0x768]
+0x31b9780  ldp      x20, x19, [sp, #0x60]
+0x31b9784  mov      w0, #1
+0x31b9788  ldp      x22, x21, [sp, #0x50]
+0x31b978c  ldp      x24, x23, [sp, #0x40]
+0x31b9790  ldp      x30, x25, [sp, #0x30]
+0x31b9794  ldp      d9, d8, [sp, #0x20]
+0x31b9798  ldp      d11, d10, [sp, #0x10]
+0x31b979c  ldr      d12, [sp], #0x70
+0x31b97a0  ret      
+0x31b97a4  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$SetCameraRoll  0x31b9830..0x31b99d0  (size 0x1a0)
+0x31b9830  str      d14, [sp, #-0x70]!
+0x31b9834  stp      d13, d12, [sp, #0x10]
+0x31b9838  stp      d11, d10, [sp, #0x20]
+0x31b983c  stp      d9, d8, [sp, #0x30]
+0x31b9840  stp      x30, x23, [sp, #0x40]
+0x31b9844  stp      x22, x21, [sp, #0x50]
+0x31b9848  stp      x20, x19, [sp, #0x60]
+0x31b984c  fmov     s8, s3
+0x31b9850  fmov     s9, s2
+0x31b9854  adrp     x23, #0x59c5000
+0x31b9858  fmov     s10, s1
+0x31b985c  fmov     s11, s0
+0x31b9860  ldrb     w8, [x23, #0x1ed]
+0x31b9864  mov      w19, w3
+0x31b9868  mov      x21, x2
+0x31b986c  mov      x22, x1
+0x31b9870  mov      x20, x0
+0x31b9874  tbnz     w8, #0, #0x31b9898
+0x31b9878  adrp     x0, #0x55ca000
+0x31b987c  ldr      x0, [x0, #0xb58]
+0x31b9880  bl       #0x22304a4   CALL 0x22304a4
+0x31b9884  adrp     x0, #0x556f000
+0x31b9888  ldr      x0, [x0, #0xb90]
+0x31b988c  bl       #0x22304a4   CALL 0x22304a4
+0x31b9890  mov      w8, #1
+0x31b9894  strb     w8, [x23, #0x1ed]
+0x31b9898  adrp     x8, #0xee7000
+0x31b989c  movi     d1, #0000000000000000
+0x31b98a0  mov      x0, xzr
+0x31b98a4  ldr      s0, [x8, #0x70c]
+0x31b98a8  fmul     s2, s11, s0
+0x31b98ac  movi     d0, #0000000000000000
+0x31b98b0  bl       #0x4fc47a0   CALL UnityEngine.Quaternion$$Internal_FromEulerRad
+0x31b98b4  cbz      x22, #0x31b99cc
+0x31b98b8  adrp     x8, #0x55ca000
+0x31b98bc  adrp     x23, #0x556f000
+0x31b98c0  mov      x0, x22
+0x31b98c4  ldr      x8, [x8, #0xb58]
+0x31b98c8  ldr      x23, [x23, #0xb90]
+0x31b98cc  fmov     s11, s0
+0x31b98d0  fmov     s12, s1
+0x31b98d4  fmov     s13, s2
+0x31b98d8  fmov     s14, s3
+0x31b98dc  ldr      x1, [x8]
+0x31b98e0  bl       #0x38ebe30   CALL UnityEngine.GameObject$$GetComponent<object>
+0x31b98e4  ldr      x8, [x23]
+0x31b98e8  mov      x23, x0
+0x31b98ec  ldr      w9, [x8, #0xe4]
+0x31b98f0  cbnz     w9, #0x31b98fc
+0x31b98f4  mov      x0, x8
+0x31b98f8  bl       #0x22305f4   CALL 0x22305f4
+0x31b98fc  mov      x0, x23
+0x31b9900  mov      x1, xzr
+0x31b9904  mov      x2, xzr
+0x31b9908  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b990c  tbz      w0, #0, #0x31b9924
+0x31b9910  cbz      x23, #0x31b99cc
+0x31b9914  mov      x0, x23
+0x31b9918  mov      w1, wzr
+0x31b991c  mov      x2, xzr
+0x31b9920  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31b9924  mov      x0, x22
+0x31b9928  mov      x1, xzr
+0x31b992c  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9930  cbz      x0, #0x31b99cc
+0x31b9934  fmov     s0, s11
+0x31b9938  fmov     s1, s12
+0x31b993c  mov      x1, xzr
+0x31b9940  fmov     s2, s13
+0x31b9944  fmov     s3, s14
+0x31b9948  bl       #0x4fe1e08   CALL UnityEngine.Transform$$set_localRotation
+0x31b994c  mov      x0, x22
+0x31b9950  mov      x1, xzr
+0x31b9954  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9958  cbz      x0, #0x31b99cc
+0x31b995c  fneg     s2, s8
+0x31b9960  fneg     s1, s9
+0x31b9964  mov      x1, xzr
+0x31b9968  fneg     s0, s10
+0x31b996c  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b9970  cbz      x21, #0x31b99cc
+0x31b9974  mov      x0, x21
+0x31b9978  mov      x1, xzr
+0x31b997c  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9980  cbz      x0, #0x31b99cc
+0x31b9984  fmov     s0, s10
+0x31b9988  fmov     s1, s9
+0x31b998c  mov      x1, xzr
+0x31b9990  fmov     s2, s8
+0x31b9994  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b9998  tbz      w19, #0, #0x31b99a4
+0x31b999c  strb     wzr, [x20, #0x4f9]
+0x31b99a0  b        #0x31b99a8
+0x31b99a4  strb     wzr, [x20, #0x768]
+0x31b99a8  ldp      x20, x19, [sp, #0x60]
+0x31b99ac  mov      w0, #1
+0x31b99b0  ldp      x22, x21, [sp, #0x50]
+0x31b99b4  ldp      x30, x23, [sp, #0x40]
+0x31b99b8  ldp      d9, d8, [sp, #0x30]
+0x31b99bc  ldp      d11, d10, [sp, #0x20]
+0x31b99c0  ldp      d13, d12, [sp, #0x10]
+0x31b99c4  ldr      d14, [sp], #0x70
+0x31b99c8  ret      
+0x31b99cc  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$SetCameraRoll  0x31b99d0..0x31b99ec  (size 0x1c)
+0x31b99d0  str      x30, [sp, #-0x10]!
+0x31b99d4  ldp      x1, x2, [x0, #0x108]
+0x31b99d8  mov      w3, #1
+0x31b99dc  bl       #0x31b9830   CALL ScriptManager$$SetCameraRoll
+0x31b99e0  mov      w0, #1
+0x31b99e4  ldr      x30, [sp], #0x10
+0x31b99e8  ret      
+
+==============================================================================
+### ScriptManager$$StartCameraRoll  0x31b99ec..0x31b9a08  (size 0x1c)
+0x31b99ec  str      x30, [sp, #-0x10]!
+0x31b99f0  ldr      x1, [x0, #0x108]
+0x31b99f4  mov      w2, #1
+0x31b99f8  bl       #0x31b9a08   CALL ScriptManager$$StartCameraRoll
+0x31b99fc  mov      w0, #1
+0x31b9a00  ldr      x30, [sp], #0x10
+0x31b9a04  ret      
+
+==============================================================================
+### ScriptManager$$StartCameraRoll  0x31b9a08..0x31b9c18  (size 0x210)
+0x31b9a08  str      d12, [sp, #-0x60]!
+0x31b9a0c  stp      d11, d10, [sp, #0x10]
+0x31b9a10  stp      d9, d8, [sp, #0x20]
+0x31b9a14  stp      x30, x23, [sp, #0x30]
+0x31b9a18  stp      x22, x21, [sp, #0x40]
+0x31b9a1c  stp      x20, x19, [sp, #0x50]
+0x31b9a20  fmov     s8, s1
+0x31b9a24  fmov     s12, s0
+0x31b9a28  adrp     x22, #0x59c5000
+0x31b9a2c  ldrb     w8, [x22, #0x1ee]
+0x31b9a30  mov      w20, w2
+0x31b9a34  mov      x21, x1
+0x31b9a38  mov      x19, x0
+0x31b9a3c  tbnz     w8, #0, #0x31b9a78
+0x31b9a40  adrp     x0, #0x55ca000
+0x31b9a44  ldr      x0, [x0, #0xb58]
+0x31b9a48  bl       #0x22304a4   CALL 0x22304a4
+0x31b9a4c  adrp     x0, #0x556f000
+0x31b9a50  ldr      x0, [x0, #0xb90]
+0x31b9a54  bl       #0x22304a4   CALL 0x22304a4
+0x31b9a58  adrp     x0, #0x55ca000
+0x31b9a5c  ldr      x0, [x0, #0xb60]   ; &slot for 'EndExecuteSubCameraRoll'
+0x31b9a60  bl       #0x22304a4   CALL 0x22304a4
+0x31b9a64  adrp     x0, #0x55ca000
+0x31b9a68  ldr      x0, [x0, #0xb68]   ; &slot for 'EndExecuteCameraRoll'
+0x31b9a6c  bl       #0x22304a4   CALL 0x22304a4
+0x31b9a70  mov      w8, #1
+0x31b9a74  strb     w8, [x22, #0x1ee]
+0x31b9a78  adrp     x8, #0xee7000
+0x31b9a7c  movi     d1, #0000000000000000
+0x31b9a80  mov      x0, xzr
+0x31b9a84  ldr      s0, [x8, #0x70c]
+0x31b9a88  fmul     s2, s8, s0
+0x31b9a8c  movi     d0, #0000000000000000
+0x31b9a90  bl       #0x4fc47a0   CALL UnityEngine.Quaternion$$Internal_FromEulerRad
+0x31b9a94  cbz      x21, #0x31b9c14
+0x31b9a98  adrp     x8, #0x55ca000
+0x31b9a9c  adrp     x23, #0x556f000
+0x31b9aa0  mov      x0, x21
+0x31b9aa4  ldr      x8, [x8, #0xb58]
+0x31b9aa8  ldr      x23, [x23, #0xb90]
+0x31b9aac  fmov     s8, s0
+0x31b9ab0  fmov     s9, s1
+0x31b9ab4  fmov     s10, s2
+0x31b9ab8  fmov     s11, s3
+0x31b9abc  ldr      x1, [x8]
+0x31b9ac0  bl       #0x38ebe30   CALL UnityEngine.GameObject$$GetComponent<object>
+0x31b9ac4  ldr      x8, [x23]
+0x31b9ac8  mov      x22, x0
+0x31b9acc  ldr      w9, [x8, #0xe4]
+0x31b9ad0  cbnz     w9, #0x31b9adc
+0x31b9ad4  mov      x0, x8
+0x31b9ad8  bl       #0x22305f4   CALL 0x22305f4
+0x31b9adc  mov      x0, x22
+0x31b9ae0  mov      x1, xzr
+0x31b9ae4  mov      x2, xzr
+0x31b9ae8  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b9aec  tbz      w0, #0, #0x31b9b04
+0x31b9af0  cbz      x22, #0x31b9c14
+0x31b9af4  mov      x0, x22
+0x31b9af8  mov      w1, wzr
+0x31b9afc  mov      x2, xzr
+0x31b9b00  bl       #0x4fcfdf8   CALL UnityEngine.Behaviour$$set_enabled
+0x31b9b04  fmov     s0, s12
+0x31b9b08  fmov     s1, s8
+0x31b9b0c  mov      x0, x21
+0x31b9b10  fmov     s2, s9
+0x31b9b14  fmov     s3, s10
+0x31b9b18  mov      x1, xzr
+0x31b9b1c  fmov     s4, s11
+0x31b9b20  bl       #0x3619654   CALL TweenRotation$$Begin
+0x31b9b24  ldr      x8, [x23]
+0x31b9b28  mov      x22, x0
+0x31b9b2c  ldr      w9, [x8, #0xe4]
+0x31b9b30  cbnz     w9, #0x31b9b3c
+0x31b9b34  mov      x0, x8
+0x31b9b38  bl       #0x22305f4   CALL 0x22305f4
+0x31b9b3c  mov      x0, x22
+0x31b9b40  mov      x1, xzr
+0x31b9b44  mov      x2, xzr
+0x31b9b48  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b9b4c  tbz      w0, #0, #0x31b9ba8
+0x31b9b50  cbz      x22, #0x31b9c14
+0x31b9b54  mov      x0, x22
+0x31b9b58  mov      x1, xzr
+0x31b9b5c  bl       #0x4fcfd44   CALL UnityEngine.Behaviour$$get_enabled
+0x31b9b60  tbz      w0, #0, #0x31b9ba8
+0x31b9b64  mov      x0, x19
+0x31b9b68  mov      x1, xzr
+0x31b9b6c  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b9b70  mov      x1, x0
+0x31b9b74  str      x0, [x22, #0x50]!
+0x31b9b78  mov      x0, x22
+0x31b9b7c  bl       #0x2230448   CALL 0x2230448
+0x31b9b80  tbz      w20, #0, #0x31b9bf0
+0x31b9b84  adrp     x8, #0x55ca000
+0x31b9b88  add      x0, x22, #8
+0x31b9b8c  ldr      x8, [x8, #0xb68]   ; &slot for 'EndExecuteCameraRoll'
+0x31b9b90  ldr      x1, [x8]   ; 'EndExecuteCameraRoll'
+0x31b9b94  stur     x1, [x22, #8]
+0x31b9b98  bl       #0x2230448   CALL 0x2230448
+0x31b9b9c  mov      w8, #1
+0x31b9ba0  strb     w8, [x19, #0x4f9]
+0x31b9ba4  b        #0x31b9bd0
+0x31b9ba8  mov      x0, x21
+0x31b9bac  mov      x1, xzr
+0x31b9bb0  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31b9bb4  cbz      x0, #0x31b9c14
+0x31b9bb8  fmov     s0, s8
+0x31b9bbc  fmov     s1, s9
+0x31b9bc0  mov      x1, xzr
+0x31b9bc4  fmov     s2, s10
+0x31b9bc8  fmov     s3, s11
+0x31b9bcc  bl       #0x4fe1e08   CALL UnityEngine.Transform$$set_localRotation
+0x31b9bd0  ldp      x20, x19, [sp, #0x50]
+0x31b9bd4  mov      w0, #1
+0x31b9bd8  ldp      x22, x21, [sp, #0x40]
+0x31b9bdc  ldp      x30, x23, [sp, #0x30]
+0x31b9be0  ldp      d9, d8, [sp, #0x20]
+0x31b9be4  ldp      d11, d10, [sp, #0x10]
+0x31b9be8  ldr      d12, [sp], #0x60
+0x31b9bec  ret      
+0x31b9bf0  adrp     x8, #0x55ca000
+0x31b9bf4  add      x0, x22, #8
+0x31b9bf8  ldr      x8, [x8, #0xb60]   ; &slot for 'EndExecuteSubCameraRoll'
+0x31b9bfc  ldr      x1, [x8]   ; 'EndExecuteSubCameraRoll'
+0x31b9c00  stur     x1, [x22, #8]
+0x31b9c04  bl       #0x2230448   CALL 0x2230448
+0x31b9c08  mov      w8, #1
+0x31b9c0c  strb     w8, [x19, #0x768]
+0x31b9c10  b        #0x31b9bd0
+0x31b9c14  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$Shake  0x31a1c80..0x31a1ce4  (size 0x64)
+0x31a1c80  stp      d11, d10, [sp, #-0x30]!
+0x31a1c84  stp      d9, d8, [sp, #0x10]
+0x31a1c88  stp      x30, x19, [sp, #0x20]
+0x31a1c8c  fmov     s11, s0
+0x31a1c90  fmov     s8, s3
+0x31a1c94  mov      x19, x0
+0x31a1c98  fmov     s9, s2
+0x31a1c9c  fmov     s10, s1
+0x31a1ca0  movi     d0, #0000000000000000
+0x31a1ca4  fcmp     s11, #0.0
+0x31a1ca8  b.le     #0x31a1cb8
+0x31a1cac  mov      x0, xzr
+0x31a1cb0  bl       #0x4fde4a8   CALL UnityEngine.Time$$get_time
+0x31a1cb4  fadd     s0, s0, s11
+0x31a1cb8  cbz      x19, #0x31a1ce0
+0x31a1cbc  str      s0, [x19, #0x4e8]
+0x31a1cc0  mov      x0, x19
+0x31a1cc4  str      s10, [x19, #0x4ec]
+0x31a1cc8  str      s9, [x19, #0x4f0]
+0x31a1ccc  str      s8, [x19, #0x4f4]
+0x31a1cd0  ldp      x30, x19, [sp, #0x20]
+0x31a1cd4  ldp      d9, d8, [sp, #0x10]
+0x31a1cd8  ldp      d11, d10, [sp], #0x30
+0x31a1cdc  b        #0x31ba0c0
+0x31a1ce0  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$IsShake  0x31ba0b0..0x31ba0c0  (size 0x10)
+0x31ba0b0  ldr      s0, [x0, #0x4ec]
+0x31ba0b4  fcmp     s0, #0.0
+0x31ba0b8  cset     w0, gt
+0x31ba0bc  ret      
+
+==============================================================================
+### ScriptManager$$SetCameraFilter  0x319ff30..0x319ff74  (size 0x44)
+0x319ff30  stp      x30, x21, [sp, #-0x20]!
+0x319ff34  stp      x20, x19, [sp, #0x10]
+0x319ff38  mov      x20, x0
+0x319ff3c  ldr      x0, [x0, #0x130]
+0x319ff40  cbz      x0, #0x319ff70
+0x319ff44  mov      x21, x1
+0x319ff48  mov      x1, xzr
+0x319ff4c  mov      x19, x2
+0x319ff50  bl       #0x2e0c664   CALL ExUIMeshRenderer$$get_material
+0x319ff54  mov      x1, x0
+0x319ff58  mov      x0, x20
+0x319ff5c  mov      x3, x19
+0x319ff60  ldp      x20, x19, [sp, #0x10]
+0x319ff64  mov      x2, x21
+0x319ff68  ldp      x30, x21, [sp], #0x20
+0x319ff6c  b        #0x31a0304
+0x319ff70  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$SetCameraFilter  0x31a0304..0x31a0578  (size 0x274)
+0x31a0304  sub      sp, sp, #0xc0
+0x31a0308  str      x30, [sp, #0x80]
+0x31a030c  stp      x24, x23, [sp, #0x90]
+0x31a0310  stp      x22, x21, [sp, #0xa0]
+0x31a0314  stp      x20, x19, [sp, #0xb0]
+0x31a0318  adrp     x23, #0x59c5000
+0x31a031c  adrp     x24, #0x556f000
+0x31a0320  mov      x20, x3
+0x31a0324  ldrb     w8, [x23, #0x182]
+0x31a0328  ldr      x24, [x24, #0xb90]
+0x31a032c  mov      x21, x2
+0x31a0330  mov      x19, x1
+0x31a0334  mov      x22, x0
+0x31a0338  tbnz     w8, #0, #0x31a0380
+0x31a033c  adrp     x0, #0x556f000
+0x31a0340  ldr      x0, [x0, #0xb90]
+0x31a0344  bl       #0x22304a4   CALL 0x22304a4
+0x31a0348  adrp     x0, #0x55ca000
+0x31a034c  ldr      x0, [x0, #0x778]   ; &slot for '_FilterParam'
+0x31a0350  bl       #0x22304a4   CALL 0x22304a4
+0x31a0354  adrp     x0, #0x5574000
+0x31a0358  ldr      x0, [x0, #0xdb0]   ; &slot for 'summon'
+0x31a035c  bl       #0x22304a4   CALL 0x22304a4
+0x31a0360  adrp     x0, #0x55c6000
+0x31a0364  ldr      x0, [x0, #0x9e0]   ; &slot for 'normal'
+0x31a0368  bl       #0x22304a4   CALL 0x22304a4
+0x31a036c  adrp     x0, #0x5570000
+0x31a0370  ldr      x0, [x0, #0x458]   ; &slot for ''
+0x31a0374  bl       #0x22304a4   CALL 0x22304a4
+0x31a0378  mov      w8, #1
+0x31a037c  strb     w8, [x23, #0x182]
+0x31a0380  ldr      x0, [x24]
+0x31a0384  ldr      w8, [x0, #0xe4]
+0x31a0388  cbnz     w8, #0x31a0390
+0x31a038c  bl       #0x22305f4   CALL 0x22305f4
+0x31a0390  mov      x0, x19
+0x31a0394  mov      x1, xzr
+0x31a0398  mov      x2, xzr
+0x31a039c  bl       #0x4fd5da8   CALL UnityEngine.Object$$op_Equality
+0x31a03a0  tbnz     w0, #0, #0x31a0558
+0x31a03a4  mov      x0, x21
+0x31a03a8  mov      x1, xzr
+0x31a03ac  bl       #0x4871c3c   CALL System.String$$IsNullOrEmpty
+0x31a03b0  tbnz     w0, #0, #0x31a03ec
+0x31a03b4  adrp     x8, #0x5574000
+0x31a03b8  mov      x0, x21
+0x31a03bc  mov      x2, xzr
+0x31a03c0  ldr      x8, [x8, #0xdb0]   ; &slot for 'summon'
+0x31a03c4  ldr      x1, [x8]   ; 'summon'
+0x31a03c8  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='summon'
+0x31a03cc  tbz      w0, #0, #0x31a03ec
+0x31a03d0  ldr      x0, [x22, #0x138]
+0x31a03d4  cbz      x0, #0x31a0574
+0x31a03d8  movi     d0, #0000000000000000
+0x31a03dc  movi     d1, #0000000000000000
+0x31a03e0  movi     d2, #0000000000000000
+0x31a03e4  fmov     s3, #1.00000000
+0x31a03e8  b        #0x31a0404
+0x31a03ec  ldr      x0, [x22, #0x138]
+0x31a03f0  cbz      x0, #0x31a0574
+0x31a03f4  movi     d0, #0000000000000000
+0x31a03f8  movi     d1, #0000000000000000
+0x31a03fc  movi     d2, #0000000000000000
+0x31a0400  movi     d3, #0000000000000000
+0x31a0404  mov      x1, xzr
+0x31a0408  bl       #0x4f99474   CALL UnityEngine.Camera$$set_backgroundColor
+0x31a040c  mov      x0, x21
+0x31a0410  mov      x1, xzr
+0x31a0414  bl       #0x4871c3c   CALL System.String$$IsNullOrEmpty
+0x31a0418  tbnz     w0, #0, #0x31a0438
+0x31a041c  adrp     x8, #0x55c6000
+0x31a0420  mov      x0, x21
+0x31a0424  mov      x2, xzr
+0x31a0428  ldr      x8, [x8, #0x9e0]   ; &slot for 'normal'
+0x31a042c  ldr      x1, [x8]   ; 'normal'
+0x31a0430  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='normal'
+0x31a0434  tbz      w0, #0, #0x31a0448
+0x31a0438  adrp     x8, #0x5570000
+0x31a043c  ldr      x8, [x8, #0x458]   ; &slot for ''
+0x31a0440  ldr      x1, [x8]   ; ''
+0x31a0444  b        #0x31a0454
+0x31a0448  mov      x1, x21
+0x31a044c  bl       #0x31a0578   CALL ScriptManager$$GetStringWithFirstLetterChangedToUpperCase
+0x31a0450  mov      x1, x0
+0x31a0454  bl       #0x31a0608   CALL ScriptManager$$GetSpriteScriptActionRenderShader
+0x31a0458  cbz      x19, #0x31a0574
+0x31a045c  mov      x1, x0
+0x31a0460  mov      x0, x19
+0x31a0464  mov      x2, xzr
+0x31a0468  bl       #0x4fad4d8   CALL UnityEngine.Material$$set_shader
+0x31a046c  cbz      x20, #0x31a0558
+0x31a0470  add      x8, sp, #0x40
+0x31a0474  mov      x0, xzr
+0x31a0478  bl       #0x4fc2748   CALL UnityEngine.Matrix4x4$$get_zero
+0x31a047c  ldr      w8, [x20, #0x18]
+0x31a0480  cbz      w8, #0x31a0570
+0x31a0484  cmp      w8, #1
+0x31a0488  b.eq     #0x31a0570
+0x31a048c  cmp      w8, #2
+0x31a0490  b.ls     #0x31a0570
+0x31a0494  cmp      w8, #3
+0x31a0498  b.eq     #0x31a0570
+0x31a049c  cmp      w8, #4
+0x31a04a0  b.ls     #0x31a0570
+0x31a04a4  cmp      w8, #5
+0x31a04a8  b.eq     #0x31a0570
+0x31a04ac  cmp      w8, #6
+0x31a04b0  b.ls     #0x31a0570
+0x31a04b4  cmp      w8, #7
+0x31a04b8  b.eq     #0x31a0570
+0x31a04bc  cmp      w8, #8
+0x31a04c0  b.ls     #0x31a0570
+0x31a04c4  cmp      w8, #9
+0x31a04c8  b.eq     #0x31a0570
+0x31a04cc  cmp      w8, #0xa
+0x31a04d0  b.ls     #0x31a0570
+0x31a04d4  cmp      w8, #0xb
+0x31a04d8  b.eq     #0x31a0570
+0x31a04dc  cmp      w8, #0xc
+0x31a04e0  b.ls     #0x31a0570
+0x31a04e4  cmp      w8, #0xd
+0x31a04e8  b.eq     #0x31a0570
+0x31a04ec  cmp      w8, #0xe
+0x31a04f0  b.ls     #0x31a0570
+0x31a04f4  cmp      w8, #0xf
+0x31a04f8  b.eq     #0x31a0570
+0x31a04fc  ldp      s0, s1, [x20, #0x20]
+0x31a0500  adrp     x8, #0x55ca000
+0x31a0504  ldp      s2, s3, [x20, #0x30]
+0x31a0508  mov      x2, sp
+0x31a050c  mov      x0, x19
+0x31a0510  mov      x3, xzr
+0x31a0514  stp      s0, s2, [sp]
+0x31a0518  ldp      s0, s5, [x20, #0x50]
+0x31a051c  ldp      s4, s2, [x20, #0x40]
+0x31a0520  stp      s1, s3, [sp, #0x10]
+0x31a0524  stp      s4, s0, [sp, #8]
+0x31a0528  ldp      s0, s1, [x20, #0x28]
+0x31a052c  stp      s2, s5, [sp, #0x18]
+0x31a0530  ldp      s2, s3, [x20, #0x38]
+0x31a0534  stp      s0, s2, [sp, #0x20]
+0x31a0538  ldp      s0, s5, [x20, #0x58]
+0x31a053c  ldp      s4, s2, [x20, #0x48]
+0x31a0540  stp      s4, s0, [sp, #0x28]
+0x31a0544  ldr      x8, [x8, #0x778]   ; &slot for '_FilterParam'
+0x31a0548  stp      s1, s3, [sp, #0x30]
+0x31a054c  stp      s2, s5, [sp, #0x38]
+0x31a0550  ldr      x1, [x8]   ; '_FilterParam'
+0x31a0554  bl       #0x4fafc30   CALL UnityEngine.Material$$SetMatrix   args: x1='_FilterParam'
+0x31a0558  ldp      x20, x19, [sp, #0xb0]
+0x31a055c  ldr      x30, [sp, #0x80]
+0x31a0560  ldp      x22, x21, [sp, #0xa0]
+0x31a0564  ldp      x24, x23, [sp, #0x90]
+0x31a0568  add      sp, sp, #0xc0
+0x31a056c  ret      
+0x31a0570  bl       #0x2230728   CALL 0x2230728
+0x31a0574  bl       #0x2230720   CALL 0x2230720

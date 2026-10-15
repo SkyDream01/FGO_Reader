@@ -80,6 +80,7 @@ export interface StoryCameraState {
   scale: number;
   rotation: number;
   filter: string | null;
+  pivot?: { x: number; y: number };
 }
 
 export interface CharacterState {
@@ -128,6 +129,7 @@ export interface ReaderSettings {
   skipUnread: boolean;
   reduceMotion: boolean;
   masterName: string;
+  masterGender: "male" | "female";
 }
 
 export interface Bookmark {

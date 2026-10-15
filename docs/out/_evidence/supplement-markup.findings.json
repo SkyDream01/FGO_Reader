@@ -1,0 +1,279 @@
+[
+ {
+  "claim": "语料全量:scripts/ 33 章 2583 个 .txt,1,870,344 行;非空行 1,373,841;章节行 2,582;说话人行(＠)184,792;整行恰为一个括号组的语句行 971,836;消息行 214,631;消息行里的括号 token 共 201,461。(与 supplement-script-format 的分类一致:语句行=命令 857,520+整行非命令 114,315;消息行=以[开头的 11,423+纯文本 203,209)",
+  "evidence": [
+   "work/coverage/inline_scan.py 输出 meta:files=2583, lines=1870344, sections=2582, speakers=184792, stmt_lines=971836, stmt_tokens=971836, msg_lines=214631, inline_tokens=201461",
+   "work/scratch/inline_scan.json 的 meta 字段(全量扫描结果快照)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "消息行的内联标记使用密度:64.9%(139,251/214,631)的消息行至少含 1 个括号 token;直方图 0→75,380、1→112,970、2→20,618、3→4,165、4→591、5→703、>=6→204。",
+  "evidence": [
+   "work/coverage/inline_scan.py 二次统计脚本输出的直方图与占比(见 supplement-markup.md §1.1)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "内联标记总清单(非命令,14 种):r 133,096;#base:ruby 24,882;line 19,538(内联 19,515+整行 23);#text 4,363;%N 3,856;&a:b 3,073(内联 3,071+整行 2);裸 16 进制颜色 3,292(消息 2,342+＠名 936+整行 14);[-] 2,953(消息 2,037+＠名 916);align 536;image 291(270+21);i 49(45+4);twt 27;tRaidShortName 3;line3 1。",
+  "evidence": [
+   "work/scratch/inline_scan.json 的 tags/chapters/examples/value_domains",
+   "work/coverage/inline_scan.py 逐类型统计(按行类型分类的修正后计数)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[%1] 是玩家自己的名字:ScriptReplaceString.Index 枚举只有 USER_NAME=1,ScriptManager$$FirstExecuteScript 用 SetString(1, UserGame.name) 写入;%2/%3/%4 = ScriptManager.questTitle(0xF0)/questMessage(0xF8)/questMessageRuby(0x100);%5 = UserServantMaster.servantAllNum.ToString()(所持从者总数)。语料旁证 [%5]騎による総力戦。",
+  "evidence": [
+   "dump.cs:170577 public enum ScriptReplaceString.Index { public const ScriptReplaceString.Index USER_NAME = 1; }",
+   "0x31a35a8 bl #0x31d9134 CALL ScriptReplaceString$$SetString ; w0=1, x1=UserGame.getSelfUserGame()[0x18]",
+   "0x31a3624 bl #0x31d9198 CALL ScriptReplaceString$$SetString ; w0=2, x1=ScriptManager static +0xF0",
+   "0x31a363c bl #0x31d9198 CALL ScriptReplaceString$$SetString ; w0=3, x1=+0xF8",
+   "0x31a3654 bl #0x31d9198 CALL ScriptReplaceString$$SetString ; w0=4, x1=+0x100",
+   "0x31a3664 bl #0x3043378 CALL UserServantMaster$$getServantAllNum ; 0x31a3684 bl #0x31d9198 SetString w0=5",
+   "dump.cs ScriptManager: protected static string questTitle; // 0xF0 / questMessage; // 0xF8 / questMessageRuby; // 0x100",
+   "语料 0300132330.txt:964 [%5]騎による総力戦。"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[%N] 的解析点有两处,都是:识别字符 '%'(0x25) → Substring 取数字 → Int32.Parse → ScriptReplaceString.GetString(n) → 结果尾部拼 '[-]'。",
+  "evidence": [
+   "0x31d039c cmp w8, #0x25 ; ScriptMessageCommonManager$$UpdateLabels,msg[i+1]=='%'",
+   "0x31d03cc bl #0x48746b4 CALL System.String$$Substring ; 0x31d03d4 bl #0x49d31f4 CALL System.Int32$$Parse",
+   "0x31d03fc bl #0x31d0d0c CALL ScriptReplaceString$$GetString",
+   "0x31d0410 bl #0x4867ef8 CALL System.String$$Concat args: x1='[-]' ; Concat(替换文本,'[-]')",
+   "0x31c6190 cmp w8, #0x25 ; ScriptManager$$GetReplacedText",
+   "0x31c61b4 bl #0x49d31f4 CALL System.Int32$$Parse ; 0x31c61d8 bl #0x31d0d0c CALL ScriptReplaceString$$GetString"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[&a:b] 按玩家性别取分支的两个解析点都读取 ScriptReplaceString 的静态字段 playerGenderIndex(static_fields 偏移 +8),再用 ScriptMessageLabel$$GetTagSplitString(msg, '[' 之后第 2 个字符, playerGenderIndex) 取第 N 个 ':' 参数。",
+  "evidence": [
+   "0x31c61f8 cmp w8, #0x26 ; GetReplacedText,msg[i+1]=='&'",
+   "0x31c6244 ldr w25, [x9, #8] ; x9=ScriptReplaceString static_fields → playerGenderIndex",
+   "0x31c6264 bl #0x31d0d8c CALL ScriptMessageLabel$$GetTagSplitString",
+   "0x31d04f4 cmp w8, #0x26 ; UpdateLabels 同一分支",
+   "0x31d0568 ldr w29, [x9, #8] ; playerGenderIndex",
+   "0x31d0584 bl #0x31d0d8c CALL ScriptMessageLabel$$GetTagSplitString",
+   "0x31d05b0 bl #0x31cfff8 CALL ScriptMessageCommonManager$$UpdateLabels ; 选中的那一支递归再解析",
+   "0x31a35e4 str w22, [x8, #8] ; FirstExecuteScript 从 UserGame+0x4c 写入 playerGenderIndex"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[&a:b] 的空分支是合法写法(某性别显示空串):语料 [&君:] 118 次、[&だ:] 45 次、[&:さん] 39 次;GetTagSplitString 在 index 越界时返回空串(x23 初值为 '')。",
+  "evidence": [
+   "work/scratch/inline_scan.json value_domains['&'] : '君:' 118, 'だ:' 45, ':さん' 39, 'か:' 27",
+   "0x31d0f78 mov x0, x23 ; GetTagSplitString 未命中 index 时返回 x23('')"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "align 的解析是整串相等比较,[align]/[align center]/[align right] 三种,大小写与空格必须精确;设置的值是 1(center)/2(right)/复位。[align] 在 lit_methods.json 里没有名字字面量,因为字面量就是带括号的完整 token。",
+  "evidence": [
+   "0x31c1080 ldr x8,[x8,#0xcc0] ; &slot for '[align center]'; 0x31c108c bl #0x4870cc0 CALL System.String$$op_Equality",
+   "0x31c109c mov w9,#1 ; 0x31c10cc str w9,[x8,#0x1ec] (center=1)",
+   "0x31c10b8 bl #0x4870cc0 CALL System.String$$op_Equality args: x1='[align right]'; 0x31c10c8 mov w9,#2",
+   "0x31bea20 bl #0x4870cc0 CALL System.String$$op_Equality args: x1='[align]' ; 0x31c11ec / 0x31c1208 / 0x31c14d4 同样",
+   "work/scratch/inline_scan.json:align 取值 center 240 / right 27 / 无参 268,无 left"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[f]/[font]/[fontSize] 是同一 handler(0x3187928);第 1 参是字号名(字典:- =29, x-small=19, small=24, medium=29, large=48, x-large=64),第 2 参是垂直对齐(top/center/bottom → 0/1/2)。这解释了语料里 [f small center] / [f x-small center] 的双参写法。",
+  "evidence": [
+   "0x3187920 bl #0x4870cc0 CALL System.String$$op_Equality args: x1='fontSize'; 0x3187934 cmp w9,#1 ; pd.Length==1 → 0x3187950 SetFontSize(pd[0],null)",
+   "0x3185408 ldr x8,[x8,#0xe48] ; &slot for 'f' ; 0x3185410 b #0x3187920 (与 fontSize 汇入同一比较);0x318017c ; &slot for 'font' ; 0x3180180 b #0x3187914",
+   "0x3188cac cmp w9,#3 ; 0x3188cb0 b.ge #0x318946c ; 0x3188ccc bl #0x31d2684 CALL SetFontSize (pd.Length==0 → null,null 复位)",
+   "0x3189474 ldr x2,[x8,#0x30] ; 0x3189478 ldr x1,[x8,#0x20] ; 0x3189480 bl #0x31d2684 CALL SetFontSize ; pd=[size,' ',align] → (pd[0],pd[2])",
+   "0x3191820 ldr x8,[x8,#0x58] ; &slot for 'parameter error' ; pd.Length==2 视为参数错误",
+   "0x3168df0 cmp w9,#3 ; 0x3168df4 b.ge #0x3168e50 ; 0x3168e58 mov x0,x19 ; 0x3168e60 bl #0x31d2684 CALL SetFontSize (消息路径同构)",
+   "0x31d8068 Add x1='-' w2=#0x1d; 0x31d807c 'x-small'=0x13; 0x31d8090 'small'=0x18; 0x31d80a4 'medium'=0x1d; 0x31d80b8 'large'=0x30; 0x31d80cc 'x-large'=0x40",
+   "0x31d26e0 bl #0x31d271c CALL ScriptMessageLabel$$GetFontSize ; 0x31d26e4 str w0,[x19,#0x130]",
+   "0x31d26ec bl #0x31d2828 CALL GetVerticalAlignFromString ; 0x31d26f8 str w0,[x19,#0x134]",
+   "0x31d2890 op_Equality(s,'top')→0; 0x31d28bc op_Equality(s,'center')→1; 0x31d28e0 op_Equality(s,'bottom')→2",
+   "out/commands.json: font/fontSize 是 f 的 alias,handler 0x3187928"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "颜色标记是裸 16 进制 [RRGGBB]/[RRGGBBAA],没有 '#';'#' 由引擎在 GetColor 里补,再交 ColorUtility.TryParseHtmlString。语料 [#'+hex 出现 0 次,裸 hex 共 3,292 次(34 种)。",
+  "evidence": [
+   "0x31d66fc cmp w8, #0xa ; (len|2)==10 → len 8 或 10 (IsColorBeginTag)",
+   "0x31d671c cmp w8, #0x5b ; '[' ; 0x31d6738 cmp w8, #0x5d ; ']'",
+   "0x31d67a0 tst x8, #0x3f0000003f ; 掩码 A-F(bit0-5) 与 a-f(bit32-37)",
+   "0x31d7918 bl #0x4867ef8 CALL System.String$$Concat ; '#' + colorTag",
+   "0x31d7924 bl #0x4fc0a28 CALL UnityEngine.ColorUtility$$TryParseHtmlString",
+   "0x326e088 'AccountLinkageParams$$AddColorCodeBracket' 字面量正则 '(\\[[0-9A-F]{6}\\])'",
+   "work/scratch/inline_scan.json:<hexcolor> inline=2342 line=14;按行类型细分 消息 2342 / ＠名 936 / 整行 14;[#+hex 计 0"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "'#' 标记有且只有两种形态:[#base:ruby] 注音(冒号前正文、冒号后读音)与 [#text] 无冒号强调(内部名 '・',由 UpdateBouten 每字符画一个 '・')。",
+  "evidence": [
+   "0x31739ec cmp w8,#0x5b; 0x3173a08 cmp w8,#0x23 ; AddLabel 检查 t[0]=='[' t[1]=='#'",
+   "0x3173a14 CALL FetchMainLabel; 0x3173a30 CALL FetchRubyLabel; 0x3173a58 Substring(2,len-3); 0x3173a8c mov w8,#0x3a (用 ':' Split)",
+   "0x3174d90 字面量 '\\\\[#[^:]+:[^:]+\\\\]' 属 ScriptLineMessage$$HasRubyFormat",
+   "0x31a6eac cmp w8,#1; 0x31a6eb0 b.gt #0x31a7074 ; AnalysScript:有 ':' 走注音",
+   "0x31a6ebc ldr x8,[x8,#0x928] ; &slot for '・ ' ; 0x31a7070 StringBuilder$$Append ; 无冒号用 '・ ' 作名字",
+   "0x31ceac4 ldr w8,[x29,#0x10] (文本长度); 0x31ceaf0 CALL System.String$$Concat args: x1='・' (循环 len 次)",
+   "0x3173eb0 / 0x3175e24 / 0x31ce420 均 CALL ScriptMessageLabel$$UpdateBouten",
+   "work/scratch/inline_scan.json:#ruby 24882, #text 4363, [#+hex 0"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "标记名 = 从 '[' 之后到第一个 ' '(0x20) / ':'(0x3a) / '['(0x5b) / ']'(0x5d) 为止(GetCommandName 的 4 位掩码)。参数 = 冒号分割(深度 0 才算分隔符),支持 \" 引号屏蔽,支持 [...] 深度。配对括号用深度计数(GetBraceIndex),不配对返回 -1。",
+  "evidence": [
+   "0x31d0c80 sub w8,w8,#0x20; 0x31d0c84 lsl x9,x22,x8; 0x31d0c88 cmp w8,#0x3d; 0x31d0c8c and x8,x9,x23; 0x31d0c90 ccmp x8,#0,#4,ls; 0x31d0c94 b.ne ; x23=1|(0x400<<16)|(0x2800<<48) → bit0/26/59/61 = ' '/':'/'['/']'",
+   "0x31d1080 cmp w8,#0x3a ; 0x31d1088 cmp w8,#0x5b ; 0x31d1090 cmp w8,#0x5d ; 0x31d1098 subs w25,w25,#1 ; 0x31d10a4 add w25,w25,#1 ; 0x31d10ac cbz w25,#0x31d1140",
+   "0x31d10c8 cmp w8,#0x22 ; 引号原样拷贝循环 0x31d10dc..0x31d1118",
+   "0x31d0b9c cmp w8,#0x5b ; 0x31d0bc0 cmp w8,#0x5d ; 0x31d0bc8 cbz w21,#0x31d0be4 ; 0x31d0be0 mov w19,#-1"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "引号 \" 在证据中确实存在(修正 script-format.md §2 的'引号未在证据中出现'):ScriptManager$$AnalysParam 比较 '+'/' '/'\"'/','/'=';ScriptMessageLabel$$AnalysTagParam 与 ScriptManager$$AnalysText 也比较 '\"'。",
+  "evidence": [
+   "0x31a77e8 cmp w8, #0x2b ; '+' (AnalysParam)",
+   "0x31a77f8 cmp w8, #0x22 ; '\"'",
+   "0x31a7838 cmp w8, #0x22 ; '\"'",
+   "0x31a7864 cmp w8, #0x2c ; ',' ; 0x31a786c cmp w8, #0x3d ; '='",
+   "0x31d10c8 cmp w8, #0x22 ; AnalysTagParam",
+   "0x31aa624 cmp w8, #0x22 ; AnalysText;0x31aa628 b.eq",
+   "语料 3 行含 \":Ordeal Call IV 0400051740.txt:529 [input selectBranch skipStop \"branchNotRouteSelect 4000517 4000574\"]"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "引擎把 i / image / line / %… / &… / #… 六类明确当作'消息内嵌标记'处理,其余名字交给命令哈希树或按消息文本处理。",
+  "evidence": [
+   "0x31a6814 op_Equality(name,'i') → 0x31a6818 tbnz 0x31a68a8",
+   "0x31a6830 op_Equality(name,'image') → 0x31a6834 tbnz",
+   "0x31a684c op_Equality(name,'line') → 0x31a6850 tbnz",
+   "0x31a6868 StartsWith(name,'%') → 0x31a686c tbnz",
+   "0x31a6884 StartsWith(name,'&') → 0x31a6888 tbnz",
+   "0x31a68a0 StartsWith(name,'#') → 0x31a68a4 tbz 0x31a622c",
+   "0x31a67c0 bl #0x31a920c CALL ScriptManager$$AnalysText (先取名字)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "不认识的标记原样保留不是建议而是引擎实际行为:UpdateLabels 未命中任何名字比较时走逐字符 StringBuilder.Append;括号未配对时单独 Append('[')。语料实证 [line3](拼写错误)1 次。",
+  "evidence": [
+   "0x31d0420..0x31d0448 CALL System.String$$get_Chars + StringBuilder$$Append ; 未识别字符拷贝",
+   "0x31d04c0 ldr x0,[x24] ; 0x31d04d0 ldr x8,[x8,#0x5f0] ; &slot for '[' ; 0x31d04d8 Append('[')",
+   "0x31d02d4 CALL ScriptMessageLabel$$GetBraceIndex ; 0x31d02d8 cmn w0,#1 ; b.eq 0x31d05c8",
+   "语料 0200011310.txt:90 ...あのカルデアのマスター[line3]。"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "嵌套([…[..]..])是引擎显式支持的:三处独立实现都用深度计数,并且 [&a:b] 选中一支后递归调用 UpdateLabels。语料嵌套只有 13 例,全部在 [&a:b] 内部(8 例嵌 [#…]、3 例嵌 [%N]、1 例嵌 [line 3])。",
+  "evidence": [
+   "0x31d0b9c/0x31d0bc0/0x31d0bc8 GetBraceIndex 深度",
+   "0x31d1088/0x31d1090/0x31d1098/0x31d10ac AnalysTagParam 深度",
+   "0x31d0e44/0x31d0e4c/0x31d0e60/0x31d0e68 GetTagSplitString 深度",
+   "0x31b5134 cmp w8,#0x5b + 深度寄存器 w28 (ReplaceBranchText)",
+   "0x31d05b0 bl #0x31cfff8 CALL ScriptMessageCommonManager$$UpdateLabels ; & 分支递归",
+   "语料 13 例清单见 supplement-markup.md §1.5(如 0200030820.txt:538 [&女の[#躯:からだ]がさほどに珍しいか？:…])"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "语料中不存在'裸 & + 独立 [#…]'的写法:&[ 的 6 处全部是 [&[#… 的前缀片段(任务描述里的 &[#彼らを欺いてまで / [&女の[#躯:からだ 是完整 token 的片段)。",
+  "evidence": [
+   "grep 结果:&[ 共 6 处,均为 [&[#… 或 [&[%1]… 形态,如 0400032540.txt:766 [&[#俯:うつむ]いて、奥歯を噛みしめる:[#俯:うつむ]いて、唇を噛む]",
+   "嵌套检测脚本:全语料 [& 内再出现 [ 的 token 恰好 13 个"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "[line N] 内部被改写成标签 [~N](N 由 Trim 后的数字串决定);[image X] 改写为 [^X];[effectmessage X] 改写为 [*X];AddLabel 的默认标签类型名是 'line'。语料 0 次出现 [~N]/[^X]/[*X]。",
+  "evidence": [
+   "0x31d08dc StartsWith(name,'line') ; 0x31d08fc add w1,w27,#5 ; 0x31d090c Substring ; 0x31d0924 Trim",
+   "0x31d06b8 ldr x8,[x8,#0x490] ; &slot for '[^' ; 0x31d06d8 Concat args: x2=']'",
+   "0x31d0324 add w1,w27,#0xf ; 0x31d0348 op_Equality(sub,'/') ; 0x31d077c Concat args: x0='[*', x2=']'",
+   "0x31ce36c cmp w9,#2 ; 0x31ce370 csel x9,x10('line'),x11,lt (AddLabel 默认名)",
+   "0x31d00d8 '[~1]' / 0x31d00cc '[*' / 0x31d00e4 '[^' / 0x31d0138 '[~' / 0x31d0144 ']' 字面量表",
+   "work/scratch/inline_scan.json:标记名 '~'/'^'/'*' 均为 ABSENT"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "全角 ［］ 是输入消毒产物而非脚本标记:GetTagFairingString 把 '['→'［'、']'→'］',唯一调用者是 ScriptReplaceString$$SetString(玩家名等外部文本入库前)。语料全角 ］ 仅 1 次且位于乱码行。",
+  "evidence": [
+   "0x31d6b10 cmp w8,#0x5b ; 0x31d6b18 ldr x8,[x8,#0x90] ; &slot for '［' ; 0x31d6b1c csel x8,x8,x29,eq ; 0x31d6b24 Append",
+   "0x31d922c in ScriptReplaceString$$SetString [find_callers 0x31d67d8 唯一调用者]",
+   "语料 0100071611.txt:922 乱码行 ｚｇ＠ｋｉｙ：＠ｙｑ、ｑｋｄ］！"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "■ 不是脚本标记:语料 88 行里的 ■ 是涂黑/乱码字符(普通文本);引擎里 '■' 只作为 UILabel$$set_text 的 UI 占位出现在 Init/Start。・ 也绝大多数是普通中点(消息文本 6,974 个),只有被 [#…] 包裹才是强调。",
+  "evidence": [
+   "0x317285c / 0x31728fc bl #0x3625460 CALL UILabel$$set_text args: x1='■' (ScriptLineMessage$$Init)",
+   "0x31d8444 / 0x31d8480 (ScriptMessageManager$$Start);0x31713cc / 0x3171400 (ScriptFaceMessageManager$$Start)",
+   "语料示例 0400070340.txt:220 ■■■■■。[r]■■■■■、■■■。",
+   "work/scratch/inline_scan.json meta:bouten(消息文本中的 ・)=6974"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "＠ 名称字段也有小语法:＠<槽>：<显示名>(7,735 行,全角冒号由 GetTalkName Concat('：') 拼接)、=spot[槽,槽](159 行,ProcessScript 用 Contains('=spot')+Split('=spot') 解析)、名称里也会跑 %N(96 次,如 ＠[%1])与颜色(936 次)。",
+  "evidence": [
+   "0x31d6fa0 bl #0x4867ef8 CALL System.String$$Concat args: x1='：' (GetTalkName)",
+   "0x31c0888 ldr x27,[x8] ; '=spot' ; 0x31c0890 CALL System.String$$Contains ; 0x31c08d0 CALL System.String$$Split args: x2='=spot'",
+   "语料:＠E：ネモ・プロフェッサー、＠ネモ・マリーン=spot[H,I]、＠[%1]、＠T：[51d4ff]アナウンス[-]"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "script-format.md §3 的 [#RRGGBB] 一条是错的:语料 0 次、引擎补 '#';§3 的 [~<n>]/[^…]/[*…] 是引擎内部标签而非脚本标记(语料 0 次);§3 的 [tRoute] 正则属 ScriptAnalys 的文件级分支收集,渲染路径是 ReplaceBranchText(识别 tRoute/tFlag/tRaidShortName),本语料 tRoute/tFlag 0 次;§3 把 '[image ' 归给 GetTalkName 是错的(使用点在 SetTalkName,'[image <名> 1.5]');§3 的 '■ 强调符' 与 '全角 ［］ 名称分隔' 均不成立。",
+  "evidence": [
+   "见 supplement-markup.md §6 的逐条表(每条都对应本文其他 finding 的 VA)",
+   "0x31d3d3c bl #0x4872f4c CALL System.String$$Concat args: x0='[image ', x2=' 1.5]' (SetTalkName)",
+   "0x31d6c90 / 0x31d6c9c / 0x31d6ca8 是 GetTalkName 的全部相关字面量('icon_class_{0:D3}'/'：'/'SCRIPT_ACTION_CODE_CLASS_SPLIT')"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "INFERRED:playerGenderIndex 的取值是 1/2 还是 0/1 未能确证 —— GetTagSplitString 的 index 从 1 起算(0x31d0f00 cmp w25,w19),而 SetPlayerGenderIndex/GetPlayerGenderIndex(0x31d93f4/0x31d9450)在 2.139.3 无调用者,字段由 0x31a35e4 从 UserGame+0x4c 直接写入。",
+  "evidence": [
+   "0x31d0f00 cmp w25, w19 ; b.ne #0x31d0f24 (index 从 1 起)",
+   "find_callers 0x31d93f4 → 0 callers;0x31d9450 → 0 callers",
+   "0x31a35e4 str w22, [x8, #8] ; [UserGame+0x4c] → playerGenderIndex"
+  ],
+  "confidence": "inferred"
+ },
+ {
+  "claim": "INFERRED:[twt n] 语义为'等待'(与 wt 同族):它只出现在 AnalysText 的已知名字表(0x31a960c),不在 commands.json 的 366 条也不在 all_key_literals.json 的 378 个 FNV 常量里;语料 27 次全部是 ……[twt 0.5]…… 这种停顿用法。",
+  "evidence": [
+   "lit_methods.json 'twt' 唯一引用点 0x31a960c ScriptManager$$AnalysText(方法序言)",
+   "work/il2cpp_out/all_key_literals.json(378 项)不含 'twt'",
+   "work/out/commands.json(366 条)不含 'twt'",
+   "语料 0300040341.txt:374 ……[twt 0.5]……[twt 0.5]……[twt 0.5]……[twt 0.5][charaFace A 3]は？"
+  ],
+  "confidence": "inferred"
+ },
+ {
+  "claim": "INFERRED:[#text] 的视觉效果是给文字加傍点(UpdateBouten 每字符输出一个 '・'),机制 high 但没有真机截图;同理 [i 名] 与 [image 名] 的渲染差异(尺寸/锚点)未能从代码区分。",
+  "evidence": [
+   "0x31ceaf0 Concat(acc,'・') 循环文本长度次",
+   "0x31a6ebc '・ ' 作为 [#text] 的内部名",
+   "语料 [i …] 45 次与 [image …] 270 次共用 berserker_language_*/npc_language_* 资源名"
+  ],
+  "confidence": "inferred"
+ },
+ {
+  "claim": "语料里颜色的大小写混用(51ffff/FFFFFF/93CA76/…共 34 种),IsColorBeginTag 同时接受 A-F 与 a-f(tst 掩码 0x3f0000003f 覆盖 'A'-'F' 与 'a'-'f');同章内混用说明脚本作者侧无规范。",
+  "evidence": [
+   "0x31d6794 cmp w8,#0x25 ; 0x31d67a0 tst x8,#0x3f0000003f",
+   "work/scratch/inline_scan.json:<hexcolor> shapes 51ffff 900 / FFFFFF 418 / 93CA76 220 / 51d4ff 154 / D9FF69 149"
+  ],
+  "confidence": "high"
+ }
+]

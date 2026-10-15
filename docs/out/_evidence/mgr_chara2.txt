@@ -1,0 +1,527 @@
+
+==============================================================================
+### ScriptManager$$SetCharaSpotlight  0x31b76dc..0x31b77c4  (size 0xe8)
+0x31b76dc  stp      x30, x23, [sp, #-0x30]!
+0x31b76e0  stp      x22, x21, [sp, #0x10]
+0x31b76e4  stp      x20, x19, [sp, #0x20]
+0x31b76e8  adrp     x21, #0x59c5000
+0x31b76ec  mov      x19, x1
+0x31b76f0  mov      x20, x0
+0x31b76f4  ldrb     w8, [x21, #0x1da]
+0x31b76f8  tbnz     w8, #0, #0x31b7710
+0x31b76fc  adrp     x0, #0x5571000
+0x31b7700  ldr      x0, [x0, #0x958]
+0x31b7704  bl       #0x22304a4   CALL 0x22304a4
+0x31b7708  mov      w8, #1
+0x31b770c  strb     w8, [x21, #0x1da]
+0x31b7710  ldr      x8, [x20, #0x490]
+0x31b7714  cbz      x8, #0x31b77ac
+0x31b7718  adrp     x23, #0x5571000
+0x31b771c  mov      x21, xzr
+0x31b7720  ldr      x23, [x23, #0x958]
+0x31b7724  ldr      w9, [x8, #0x18]
+0x31b7728  cmp      x21, w9, sxtw
+0x31b772c  b.ge     #0x31b77b0
+0x31b7730  cmp      x21, x9
+0x31b7734  b.hs     #0x31b77c0
+0x31b7738  add      x8, x8, x21, lsl #3
+0x31b773c  ldr      x22, [x8, #0x20]
+0x31b7740  cbz      x22, #0x31b77a0
+0x31b7744  cbz      x19, #0x31b77ac
+0x31b7748  ldr      x2, [x23]
+0x31b774c  mov      x0, x19
+0x31b7750  mov      w1, w21
+0x31b7754  bl       #0x44abd80   CALL System.Collections.Generic.List<int>$$Contains
+0x31b7758  tbz      w0, #0, #0x31b7784
+0x31b775c  mov      x0, x22
+0x31b7760  mov      w1, wzr
+0x31b7764  mov      x2, xzr
+0x31b7768  bl       #0x316fc34   CALL ScriptCharaData$$SetTalkMask
+0x31b776c  ldrb     w8, [x20, #0x3b2]
+0x31b7770  cbz      w8, #0x31b7794
+0x31b7774  mov      x0, x22
+0x31b7778  mov      x1, xzr
+0x31b777c  bl       #0x316fca0   CALL ScriptCharaData$$SetTalkDepth
+0x31b7780  b        #0x31b77a0
+0x31b7784  mov      x0, x22
+0x31b7788  mov      w1, #1
+0x31b778c  mov      x2, xzr
+0x31b7790  bl       #0x316fc34   CALL ScriptCharaData$$SetTalkMask
+0x31b7794  mov      x0, x22
+0x31b7798  mov      x1, xzr
+0x31b779c  bl       #0x316fc78   CALL ScriptCharaData$$RecoverDepth
+0x31b77a0  ldr      x8, [x20, #0x490]
+0x31b77a4  add      x21, x21, #1
+0x31b77a8  cbnz     x8, #0x31b7724
+0x31b77ac  bl       #0x2230720   CALL 0x2230720
+0x31b77b0  ldp      x20, x19, [sp, #0x20]
+0x31b77b4  ldp      x22, x21, [sp, #0x10]
+0x31b77b8  ldp      x30, x23, [sp], #0x30
+0x31b77bc  ret      
+0x31b77c0  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptManager$$SetCharaImage  0x31b77c4..0x31b78e8  (size 0x124)
+0x31b77c4  stp      x30, x23, [sp, #-0x30]!
+0x31b77c8  stp      x22, x21, [sp, #0x10]
+0x31b77cc  stp      x20, x19, [sp, #0x20]
+0x31b77d0  adrp     x22, #0x59c5000
+0x31b77d4  mov      x20, x2
+0x31b77d8  mov      x21, x1
+0x31b77dc  ldrb     w8, [x22, #0x1db]
+0x31b77e0  mov      x19, x0
+0x31b77e4  tbnz     w8, #0, #0x31b77fc
+0x31b77e8  adrp     x0, #0x55c9000
+0x31b77ec  ldr      x0, [x0, #0x5e8]
+0x31b77f0  bl       #0x22304a4   CALL 0x22304a4
+0x31b77f4  mov      w8, #1
+0x31b77f8  strb     w8, [x22, #0x1db]
+0x31b77fc  ldr      x8, [x19, #0x490]
+0x31b7800  cbz      x8, #0x31b78d4
+0x31b7804  ldr      w9, [x8, #0x18]
+0x31b7808  cbz      w9, #0x31b78d8
+0x31b780c  ldr      x22, [x8, #0x20]
+0x31b7810  cbz      x22, #0x31b7854
+0x31b7814  mov      x0, x22
+0x31b7818  mov      x1, xzr
+0x31b781c  bl       #0x316f36c   CALL ScriptCharaData$$IsLoad
+0x31b7820  tbz      w0, #0, #0x31b782c
+0x31b7824  mov      w0, wzr
+0x31b7828  b        #0x31b78c4
+0x31b782c  mov      x0, x22
+0x31b7830  mov      x1, xzr
+0x31b7834  bl       #0x316f98c   CALL ScriptCharaData$$Destroy
+0x31b7838  ldr      x0, [x19, #0x490]
+0x31b783c  cbz      x0, #0x31b78d4
+0x31b7840  ldr      w8, [x0, #0x18]
+0x31b7844  cbz      w8, #0x31b78d8
+0x31b7848  mov      x1, xzr
+0x31b784c  str      xzr, [x0, #0x20]!
+0x31b7850  bl       #0x2230448   CALL 0x2230448
+0x31b7854  adrp     x8, #0x55c9000
+0x31b7858  ldr      x8, [x8, #0x5e8]
+0x31b785c  ldr      x23, [x19, #0x90]
+0x31b7860  ldr      x0, [x8]
+0x31b7864  bl       #0x2230710   CALL 0x2230710
+0x31b7868  mov      w1, wzr
+0x31b786c  mov      x2, x21
+0x31b7870  mov      x3, x20
+0x31b7874  mov      x4, x23
+0x31b7878  mov      x5, xzr
+0x31b787c  mov      x22, x0
+0x31b7880  bl       #0x316f3a4   CALL ScriptCharaData$$.ctor
+0x31b7884  ldr      x20, [x19, #0x490]
+0x31b7888  str      wzr, [x19, #0x638]
+0x31b788c  cbz      x20, #0x31b78d4
+0x31b7890  cbz      x22, #0x31b78a8
+0x31b7894  ldr      x8, [x20]
+0x31b7898  mov      x0, x22
+0x31b789c  ldr      x1, [x8, #0x40]
+0x31b78a0  bl       #0x22305f8   CALL 0x22305f8
+0x31b78a4  cbz      x0, #0x31b78dc
+0x31b78a8  ldr      w8, [x20, #0x18]
+0x31b78ac  cbz      w8, #0x31b78d8
+0x31b78b0  str      x22, [x20, #0x20]!
+0x31b78b4  mov      x0, x20
+0x31b78b8  mov      x1, x22
+0x31b78bc  bl       #0x2230448   CALL 0x2230448
+0x31b78c0  mov      w0, #1
+0x31b78c4  ldp      x20, x19, [sp, #0x20]
+0x31b78c8  ldp      x22, x21, [sp, #0x10]
+0x31b78cc  ldp      x30, x23, [sp], #0x30
+0x31b78d0  ret      
+0x31b78d4  bl       #0x2230720   CALL 0x2230720
+0x31b78d8  bl       #0x2230728   CALL 0x2230728
+0x31b78dc  bl       #0x2230744   CALL 0x2230744
+0x31b78e0  mov      x1, xzr
+0x31b78e4  bl       #0x22305e4   CALL 0x22305e4
+
+==============================================================================
+### ScriptManager$$SetCharaFace  0x31b78e8..0x31b79b4  (size 0xcc)
+0x31b78e8  str      x30, [sp, #-0x30]!
+0x31b78ec  stp      x22, x21, [sp, #0x10]
+0x31b78f0  stp      x20, x19, [sp, #0x20]
+0x31b78f4  adrp     x22, #0x59c5000
+0x31b78f8  adrp     x21, #0x557a000
+0x31b78fc  mov      w20, w1
+0x31b7900  ldrb     w8, [x22, #0x1dc]
+0x31b7904  ldr      x21, [x21, #0xc8]
+0x31b7908  mov      x19, x0
+0x31b790c  tbnz     w8, #0, #0x31b7924
+0x31b7910  adrp     x0, #0x557a000
+0x31b7914  ldr      x0, [x0, #0xc8]
+0x31b7918  bl       #0x22304a4   CALL 0x22304a4
+0x31b791c  mov      w8, #1
+0x31b7920  strb     w8, [x22, #0x1dc]
+0x31b7924  ldr      x0, [x21]
+0x31b7928  ldr      w8, [x0, #0xe4]
+0x31b792c  tbnz     w20, #0x1f, #0x31b7950
+0x31b7930  cbnz     w8, #0x31b793c
+0x31b7934  bl       #0x22305f4   CALL 0x22305f4
+0x31b7938  ldr      x0, [x21]
+0x31b793c  ldr      x8, [x0, #0xb8]
+0x31b7940  ldr      w8, [x8, #8]
+0x31b7944  cmp      w8, w20
+0x31b7948  csel     w1, w20, wzr, gt
+0x31b794c  b        #0x31b7968
+0x31b7950  cbnz     w8, #0x31b795c
+0x31b7954  bl       #0x22305f4   CALL 0x22305f4
+0x31b7958  ldr      x0, [x21]
+0x31b795c  ldr      x8, [x0, #0xb8]
+0x31b7960  ldr      w8, [x8, #8]
+0x31b7964  sub      w1, w8, #1
+0x31b7968  ldr      x8, [x19, #0x490]
+0x31b796c  str      w1, [x19, #0x638]
+0x31b7970  cbz      x8, #0x31b79ac
+0x31b7974  ldr      w9, [x8, #0x18]
+0x31b7978  cbz      w9, #0x31b79b0
+0x31b797c  ldr      x0, [x8, #0x20]
+0x31b7980  cbz      x0, #0x31b799c
+0x31b7984  ldp      x20, x19, [sp, #0x20]
+0x31b7988  movi     d0, #0000000000000000
+0x31b798c  ldp      x22, x21, [sp, #0x10]
+0x31b7990  mov      x2, xzr
+0x31b7994  ldr      x30, [sp], #0x30
+0x31b7998  b        #0x316fa54
+0x31b799c  ldp      x20, x19, [sp, #0x20]
+0x31b79a0  ldp      x22, x21, [sp, #0x10]
+0x31b79a4  ldr      x30, [sp], #0x30
+0x31b79a8  ret      
+0x31b79ac  bl       #0x2230720   CALL 0x2230720
+0x31b79b0  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptManager$$SetEquipGraphic  0x31b79b4..0x31b7ad4  (size 0x120)
+0x31b79b4  stp      x30, x23, [sp, #-0x30]!
+0x31b79b8  stp      x22, x21, [sp, #0x10]
+0x31b79bc  stp      x20, x19, [sp, #0x20]
+0x31b79c0  adrp     x22, #0x59c5000
+0x31b79c4  mov      x20, x2
+0x31b79c8  mov      x21, x1
+0x31b79cc  ldrb     w8, [x22, #0x1dd]
+0x31b79d0  mov      x19, x0
+0x31b79d4  tbnz     w8, #0, #0x31b79ec
+0x31b79d8  adrp     x0, #0x55c9000
+0x31b79dc  ldr      x0, [x0, #0x5e8]
+0x31b79e0  bl       #0x22304a4   CALL 0x22304a4
+0x31b79e4  mov      w8, #1
+0x31b79e8  strb     w8, [x22, #0x1dd]
+0x31b79ec  ldr      x8, [x19, #0x490]
+0x31b79f0  cbz      x8, #0x31b7ac0
+0x31b79f4  ldr      w9, [x8, #0x18]
+0x31b79f8  cbz      w9, #0x31b7ac4
+0x31b79fc  ldr      x22, [x8, #0x20]
+0x31b7a00  cbz      x22, #0x31b7a44
+0x31b7a04  mov      x0, x22
+0x31b7a08  mov      x1, xzr
+0x31b7a0c  bl       #0x316f36c   CALL ScriptCharaData$$IsLoad
+0x31b7a10  tbz      w0, #0, #0x31b7a1c
+0x31b7a14  mov      w0, wzr
+0x31b7a18  b        #0x31b7ab0
+0x31b7a1c  mov      x0, x22
+0x31b7a20  mov      x1, xzr
+0x31b7a24  bl       #0x316f98c   CALL ScriptCharaData$$Destroy
+0x31b7a28  ldr      x0, [x19, #0x490]
+0x31b7a2c  cbz      x0, #0x31b7ac0
+0x31b7a30  ldr      w8, [x0, #0x18]
+0x31b7a34  cbz      w8, #0x31b7ac4
+0x31b7a38  mov      x1, xzr
+0x31b7a3c  str      xzr, [x0, #0x20]!
+0x31b7a40  bl       #0x2230448   CALL 0x2230448
+0x31b7a44  adrp     x8, #0x55c9000
+0x31b7a48  ldr      x8, [x8, #0x5e8]
+0x31b7a4c  ldr      x23, [x19, #0xb8]
+0x31b7a50  ldr      x0, [x8]
+0x31b7a54  bl       #0x2230710   CALL 0x2230710
+0x31b7a58  mov      w1, #1
+0x31b7a5c  mov      x2, x21
+0x31b7a60  mov      x3, x20
+0x31b7a64  mov      x4, x23
+0x31b7a68  mov      x5, xzr
+0x31b7a6c  mov      x22, x0
+0x31b7a70  bl       #0x316f3a4   CALL ScriptCharaData$$.ctor
+0x31b7a74  ldr      x19, [x19, #0x490]
+0x31b7a78  cbz      x19, #0x31b7ac0
+0x31b7a7c  cbz      x22, #0x31b7a94
+0x31b7a80  ldr      x8, [x19]
+0x31b7a84  mov      x0, x22
+0x31b7a88  ldr      x1, [x8, #0x40]
+0x31b7a8c  bl       #0x22305f8   CALL 0x22305f8
+0x31b7a90  cbz      x0, #0x31b7ac8
+0x31b7a94  ldr      w8, [x19, #0x18]
+0x31b7a98  cbz      w8, #0x31b7ac4
+0x31b7a9c  str      x22, [x19, #0x20]!
+0x31b7aa0  mov      x0, x19
+0x31b7aa4  mov      x1, x22
+0x31b7aa8  bl       #0x2230448   CALL 0x2230448
+0x31b7aac  mov      w0, #1
+0x31b7ab0  ldp      x20, x19, [sp, #0x20]
+0x31b7ab4  ldp      x22, x21, [sp, #0x10]
+0x31b7ab8  ldp      x30, x23, [sp], #0x30
+0x31b7abc  ret      
+0x31b7ac0  bl       #0x2230720   CALL 0x2230720
+0x31b7ac4  bl       #0x2230728   CALL 0x2230728
+0x31b7ac8  bl       #0x2230744   CALL 0x2230744
+0x31b7acc  mov      x1, xzr
+0x31b7ad0  bl       #0x22305e4   CALL 0x22305e4
+
+==============================================================================
+### ScriptManager$$SetPictureFrameImage  0x31b7bbc..0x31b7d60  (size 0x1a4)
+0x31b7bbc  str      d10, [sp, #-0x50]!
+0x31b7bc0  stp      d9, d8, [sp, #0x10]
+0x31b7bc4  stp      x30, x23, [sp, #0x20]
+0x31b7bc8  stp      x22, x21, [sp, #0x30]
+0x31b7bcc  stp      x20, x19, [sp, #0x40]
+0x31b7bd0  adrp     x22, #0x59c5000
+0x31b7bd4  mov      w21, w2
+0x31b7bd8  mov      x19, x1
+0x31b7bdc  ldrb     w8, [x22, #0x1e0]
+0x31b7be0  mov      x20, x0
+0x31b7be4  tbnz     w8, #0, #0x31b7c14
+0x31b7be8  adrp     x0, #0x5570000
+0x31b7bec  ldr      x0, [x0, #0x298]
+0x31b7bf0  bl       #0x22304a4   CALL 0x22304a4
+0x31b7bf4  adrp     x0, #0x55ca000
+0x31b7bf8  ldr      x0, [x0, #0xaf8]
+0x31b7bfc  bl       #0x22304a4   CALL 0x22304a4
+0x31b7c00  adrp     x0, #0x557a000
+0x31b7c04  ldr      x0, [x0, #0xc8]
+0x31b7c08  bl       #0x22304a4   CALL 0x22304a4
+0x31b7c0c  mov      w8, #1
+0x31b7c10  strb     w8, [x22, #0x1e0]
+0x31b7c14  ldrb     w8, [x20, #0x4d8]
+0x31b7c18  cbnz     w8, #0x31b7c24
+0x31b7c1c  ldrb     w8, [x20, #0x4d9]
+0x31b7c20  cbz      w8, #0x31b7c40
+0x31b7c24  mov      w0, wzr
+0x31b7c28  ldp      x20, x19, [sp, #0x40]
+0x31b7c2c  ldp      x22, x21, [sp, #0x30]
+0x31b7c30  ldp      x30, x23, [sp, #0x20]
+0x31b7c34  ldp      d9, d8, [sp, #0x10]
+0x31b7c38  ldr      d10, [sp], #0x50
+0x31b7c3c  ret      
+0x31b7c40  ldr      x0, [x20, #0x78]
+0x31b7c44  mov      w8, #0x101
+0x31b7c48  strh     w8, [x20, #0x4d8]
+0x31b7c4c  cbz      x0, #0x31b7d5c
+0x31b7c50  mov      x1, xzr
+0x31b7c54  bl       #0x4fd0604   CALL UnityEngine.Component$$get_transform
+0x31b7c58  cbz      x0, #0x31b7d5c
+0x31b7c5c  mov      x1, xzr
+0x31b7c60  bl       #0x4fe19e0   CALL UnityEngine.Transform$$get_localPosition
+0x31b7c64  adrp     x22, #0x557a000
+0x31b7c68  fmov     s8, s0
+0x31b7c6c  fmov     s9, s1
+0x31b7c70  ldr      x22, [x22, #0xc8]
+0x31b7c74  ldr      x0, [x22]
+0x31b7c78  ldr      w8, [x0, #0xe4]
+0x31b7c7c  tbz      w21, #0, #0x31b7c98
+0x31b7c80  cbnz     w8, #0x31b7c8c
+0x31b7c84  bl       #0x22305f4   CALL 0x22305f4
+0x31b7c88  ldr      x0, [x22]
+0x31b7c8c  ldr      x8, [x0, #0xb8]
+0x31b7c90  add      x8, x8, #0x14
+0x31b7c94  b        #0x31b7cac
+0x31b7c98  cbnz     w8, #0x31b7ca4
+0x31b7c9c  bl       #0x22305f4   CALL 0x22305f4
+0x31b7ca0  ldr      x0, [x22]
+0x31b7ca4  ldr      x8, [x0, #0xb8]
+0x31b7ca8  add      x8, x8, #0x10
+0x31b7cac  ldr      x0, [x20, #0x78]
+0x31b7cb0  cbz      x0, #0x31b7d5c
+0x31b7cb4  ldr      s10, [x8]
+0x31b7cb8  mov      x1, xzr
+0x31b7cbc  bl       #0x4fd0604   CALL UnityEngine.Component$$get_transform
+0x31b7cc0  cbz      x0, #0x31b7d5c
+0x31b7cc4  fmov     s0, s8
+0x31b7cc8  fmov     s1, s9
+0x31b7ccc  mov      x1, xzr
+0x31b7cd0  fmov     s2, s10
+0x31b7cd4  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b7cd8  ldr      x0, [x20, #0x78]
+0x31b7cdc  cbz      x0, #0x31b7d5c
+0x31b7ce0  mov      x1, xzr
+0x31b7ce4  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31b7ce8  cbz      x0, #0x31b7d5c
+0x31b7cec  mov      w1, #1
+0x31b7cf0  mov      x2, xzr
+0x31b7cf4  bl       #0x4fd4510   CALL UnityEngine.GameObject$$SetActive
+0x31b7cf8  ldr      x21, [x20, #0x78]
+0x31b7cfc  mov      x1, x19
+0x31b7d00  bl       #0x31b38e4   CALL ScriptManager$$ConvertPictureFrameImageName
+0x31b7d04  adrp     x8, #0x5570000
+0x31b7d08  mov      x22, x0
+0x31b7d0c  ldr      x8, [x8, #0x298]
+0x31b7d10  ldr      x8, [x8]   ; &slot for 'getGoogleAdId'
+0x31b7d14  mov      x0, x8
+0x31b7d18  bl       #0x2230710   CALL 0x2230710
+0x31b7d1c  adrp     x8, #0x55ca000
+0x31b7d20  mov      x1, x20
+0x31b7d24  mov      x3, xzr
+0x31b7d28  ldr      x8, [x8, #0xaf8]
+0x31b7d2c  mov      x23, x0
+0x31b7d30  ldr      x2, [x8]
+0x31b7d34  bl       #0x4959620   CALL System.Action$$.ctor
+0x31b7d38  cbz      x21, #0x31b7d5c
+0x31b7d3c  mov      x0, x21
+0x31b7d40  mov      x1, x22
+0x31b7d44  mov      x2, x19
+0x31b7d48  mov      x3, x23
+0x31b7d4c  mov      x4, xzr
+0x31b7d50  bl       #0x2e0e478   CALL ExUISpriteRenderer$$SetAssetImage2
+0x31b7d54  mov      w0, #1
+0x31b7d58  b        #0x31b7c28
+0x31b7d5c  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$SetSceneImage  0x31b7d68..0x31b7fc0  (size 0x258)
+0x31b7d68  stp      x30, x23, [sp, #-0x30]!
+0x31b7d6c  stp      x22, x21, [sp, #0x10]
+0x31b7d70  stp      x20, x19, [sp, #0x20]
+0x31b7d74  adrp     x20, #0x59c5000
+0x31b7d78  adrp     x23, #0x55ca000
+0x31b7d7c  mov      w21, w2
+0x31b7d80  ldrb     w8, [x20, #0x1e1]
+0x31b7d84  ldr      x23, [x23, #0xb00]
+0x31b7d88  mov      x22, x1
+0x31b7d8c  mov      x19, x0
+0x31b7d90  tbnz     w8, #0, #0x31b7de4
+0x31b7d94  adrp     x0, #0x5570000
+0x31b7d98  ldr      x0, [x0, #0x298]
+0x31b7d9c  bl       #0x22304a4   CALL 0x22304a4
+0x31b7da0  adrp     x0, #0x5573000
+0x31b7da4  ldr      x0, [x0, #0x90]
+0x31b7da8  bl       #0x22304a4   CALL 0x22304a4
+0x31b7dac  adrp     x0, #0x55ca000
+0x31b7db0  ldr      x0, [x0, #0xb08]
+0x31b7db4  bl       #0x22304a4   CALL 0x22304a4
+0x31b7db8  adrp     x0, #0x55ca000
+0x31b7dbc  ldr      x0, [x0, #0xb10]
+0x31b7dc0  bl       #0x22304a4   CALL 0x22304a4
+0x31b7dc4  adrp     x0, #0x55ca000
+0x31b7dc8  ldr      x0, [x0, #0xb00]
+0x31b7dcc  bl       #0x22304a4   CALL 0x22304a4
+0x31b7dd0  adrp     x0, #0x5571000
+0x31b7dd4  ldr      x0, [x0, #0x4a0]   ; &slot for '0'
+0x31b7dd8  bl       #0x22304a4   CALL 0x22304a4
+0x31b7ddc  mov      w8, #1
+0x31b7de0  strb     w8, [x20, #0x1e1]
+0x31b7de4  ldr      x0, [x23]
+0x31b7de8  bl       #0x2230710   CALL 0x2230710
+0x31b7dec  mov      x1, xzr
+0x31b7df0  mov      x20, x0
+0x31b7df4  bl       #0x31cb644   CALL ScriptManager.<>c__DisplayClass659_0$$.ctor
+0x31b7df8  cbz      x20, #0x31b7fbc
+0x31b7dfc  mov      x0, x20
+0x31b7e00  mov      x1, x19
+0x31b7e04  str      x19, [x0, #0x10]!
+0x31b7e08  bl       #0x2230448   CALL 0x2230448
+0x31b7e0c  mov      x23, x20
+0x31b7e10  mov      x1, x22
+0x31b7e14  str      x22, [x23, #0x18]!
+0x31b7e18  mov      x0, x23
+0x31b7e1c  bl       #0x2230448   CALL 0x2230448
+0x31b7e20  ldrb     w8, [x19, #0x4e0]
+0x31b7e24  str      w21, [x23, #8]
+0x31b7e28  cbnz     w8, #0x31b7e34
+0x31b7e2c  ldrb     w8, [x19, #0x4e1]
+0x31b7e30  cbz      w8, #0x31b7e48
+0x31b7e34  mov      w0, wzr
+0x31b7e38  ldp      x20, x19, [sp, #0x20]
+0x31b7e3c  ldp      x22, x21, [sp, #0x10]
+0x31b7e40  ldp      x30, x23, [sp], #0x30
+0x31b7e44  ret      
+0x31b7e48  adrp     x8, #0x5573000
+0x31b7e4c  mov      w9, #0x101
+0x31b7e50  ldr      x8, [x8, #0x90]
+0x31b7e54  strh     w9, [x19, #0x4e0]
+0x31b7e58  ldr      x21, [x23]
+0x31b7e5c  ldr      x0, [x8]
+0x31b7e60  ldr      w8, [x0, #0xe4]
+0x31b7e64  cbnz     w8, #0x31b7e6c
+0x31b7e68  bl       #0x22305f4   CALL 0x22305f4
+0x31b7e6c  mov      x0, x21
+0x31b7e70  mov      x1, xzr
+0x31b7e74  bl       #0x2da2ba0   CALL AssetManager$$isExistAssetStorage
+0x31b7e78  tbnz     w0, #0, #0x31b7e9c
+0x31b7e7c  adrp     x8, #0x5571000
+0x31b7e80  ldr      x8, [x8, #0x4a0]   ; &slot for '0'
+0x31b7e84  ldr      x1, [x8]   ; '0'
+0x31b7e88  bl       #0x31b3930   CALL ScriptManager$$ConvertBackTextureName   args: x1='0'
+0x31b7e8c  mov      x1, x0
+0x31b7e90  str      x0, [x23]
+0x31b7e94  mov      x0, x23
+0x31b7e98  bl       #0x2230448   CALL 0x2230448
+0x31b7e9c  ldr      w8, [x19, #0x4dc]
+0x31b7ea0  cbz      w8, #0x31b7f18
+0x31b7ea4  ldr      x0, [x19, #0x88]
+0x31b7ea8  cbz      x0, #0x31b7fbc
+0x31b7eac  ldr      x8, [x0]
+0x31b7eb0  movi     d3, #0000000000000000
+0x31b7eb4  fmov     s0, #1.00000000
+0x31b7eb8  fmov     s1, #1.00000000
+0x31b7ebc  fmov     s2, #1.00000000
+0x31b7ec0  ldr      x9, [x8, #0x3a8]
+0x31b7ec4  ldr      x1, [x8, #0x3b0]
+0x31b7ec8  blr      x9   CALL 0x0
+0x31b7ecc  ldr      x0, [x19, #0x88]
+0x31b7ed0  cbz      x0, #0x31b7fbc
+0x31b7ed4  mov      x1, xzr
+0x31b7ed8  bl       #0x4fd0604   CALL UnityEngine.Component$$get_transform
+0x31b7edc  cbz      x0, #0x31b7fbc
+0x31b7ee0  movi     d0, #0000000000000000
+0x31b7ee4  movi     d1, #0000000000000000
+0x31b7ee8  mov      x1, xzr
+0x31b7eec  fmov     s2, #-1.00000000
+0x31b7ef0  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b7ef4  adrp     x8, #0x5570000
+0x31b7ef8  ldr      x8, [x8, #0x298]
+0x31b7efc  ldr      x19, [x19, #0x88]
+0x31b7f00  ldr      x21, [x20, #0x18]
+0x31b7f04  ldr      x0, [x8]
+0x31b7f08  bl       #0x2230710   CALL 0x2230710
+0x31b7f0c  adrp     x8, #0x55ca000
+0x31b7f10  ldr      x8, [x8, #0xb10]
+0x31b7f14  b        #0x31b7f88
+0x31b7f18  ldr      x0, [x19, #0x80]
+0x31b7f1c  cbz      x0, #0x31b7fbc
+0x31b7f20  ldr      x8, [x0]
+0x31b7f24  movi     d3, #0000000000000000
+0x31b7f28  fmov     s0, #1.00000000
+0x31b7f2c  fmov     s1, #1.00000000
+0x31b7f30  fmov     s2, #1.00000000
+0x31b7f34  ldr      x9, [x8, #0x3a8]
+0x31b7f38  ldr      x1, [x8, #0x3b0]
+0x31b7f3c  blr      x9   CALL 0x0
+0x31b7f40  ldr      x0, [x19, #0x80]
+0x31b7f44  cbz      x0, #0x31b7fbc
+0x31b7f48  mov      x1, xzr
+0x31b7f4c  bl       #0x4fd0604   CALL UnityEngine.Component$$get_transform
+0x31b7f50  cbz      x0, #0x31b7fbc
+0x31b7f54  movi     d0, #0000000000000000
+0x31b7f58  movi     d1, #0000000000000000
+0x31b7f5c  mov      x1, xzr
+0x31b7f60  fmov     s2, #-1.00000000
+0x31b7f64  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31b7f68  adrp     x8, #0x5570000
+0x31b7f6c  ldr      x8, [x8, #0x298]
+0x31b7f70  ldr      x19, [x19, #0x80]
+0x31b7f74  ldr      x21, [x20, #0x18]
+0x31b7f78  ldr      x0, [x8]
+0x31b7f7c  bl       #0x2230710   CALL 0x2230710
+0x31b7f80  adrp     x8, #0x55ca000
+0x31b7f84  ldr      x8, [x8, #0xb08]
+0x31b7f88  ldr      x2, [x8]
+0x31b7f8c  mov      x1, x20
+0x31b7f90  mov      x3, xzr
+0x31b7f94  mov      x22, x0
+0x31b7f98  bl       #0x4959620   CALL System.Action$$.ctor
+0x31b7f9c  cbz      x19, #0x31b7fbc
+0x31b7fa0  mov      x0, x19
+0x31b7fa4  mov      x1, x21
+0x31b7fa8  mov      x2, x22
+0x31b7fac  mov      x3, xzr
+0x31b7fb0  bl       #0x2e0dcdc   CALL ExUISpriteRenderer$$SetAssetImageBackFS
+0x31b7fb4  mov      w0, #1
+0x31b7fb8  b        #0x31b7e38
+0x31b7fbc  bl       #0x2230720   CALL 0x2230720

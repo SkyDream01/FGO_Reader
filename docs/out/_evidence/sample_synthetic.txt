@@ -1,0 +1,17 @@
+# SYNTHETIC SAMPLE - only uses tag names recovered from the binary. NOT a real game script.
+label start
+bScene field_001
+bgm BGM_001 0
+charaSet 100100 0 0 0
+talkName マシュ・キリエライト
+talkStart
+message2 0 0 0 0 0 0 0 1 1 1 先輩、[#ff0000]赤い[-]です。[r]改行もできます。
+message2 0 0 0 0 0 0 0 1 1 1 「[#ふりがな:漢字]」テスト
+talkEnd
+charaFadeout 0 0.5
+wait 0.5
+selectBranch 0 選択肢A 選択肢B
+branch 1
+label routeA
+clear
+end

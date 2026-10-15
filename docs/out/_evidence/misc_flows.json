@@ -1,0 +1,5168 @@
+{
+ "bgm": {
+  "handler": "0x31824fc",
+  "min_token_count": 3,
+  "regions": [
+   "0x31824fc",
+   "0x31893a4",
+   "0x318b6c0",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51914012,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "sizeName",
+    "param_type": "string",
+    "callee": "ScriptLogMessage$$SetFontSize",
+    "at": 51942576,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 1,
+    "param": "verticalAlign",
+    "param_type": "string",
+    "callee": "ScriptLogMessage$$SetFontSize",
+    "at": 51942576,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopSubBgm",
+    "at": 51943112,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopBgm",
+    "at": 51943196,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51943324
+   ],
+   [
+    3,
+    51951748
+   ],
+   [
+    3,
+    51951956
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptMessageCommonManager$$SetFontSize",
+   "ScriptLogMessage$$SetFontSize",
+   "ScriptManager.NotificationInfoManager$$HasCurrentNotificationInfo",
+   "SoundManager$$stopVoiceAll",
+   "ScriptManager$$ResetWipeFilter",
+   "ScriptMessageCommonManager$$SetFontType",
+   "ScriptManager$$IsFastPlaySpeed",
+   "BgmManager$$PlaySubBgm",
+   "BgmManager$$StopSubBgm",
+   "BgmManager$$StopBgm",
+   "ScriptManager$$DelayStop",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$StartCameraRoll",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$SetCameraRoll"
+  ]
+ },
+ "subBgm": {
+  "handler": "0x31824fc",
+  "min_token_count": 3,
+  "regions": [
+   "0x31824fc",
+   "0x31893a4",
+   "0x318b6c0",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51914012,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "sizeName",
+    "param_type": "string",
+    "callee": "ScriptLogMessage$$SetFontSize",
+    "at": 51942576,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 1,
+    "param": "verticalAlign",
+    "param_type": "string",
+    "callee": "ScriptLogMessage$$SetFontSize",
+    "at": 51942576,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopSubBgm",
+    "at": 51943112,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopBgm",
+    "at": 51943196,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51943324
+   ],
+   [
+    3,
+    51951748
+   ],
+   [
+    3,
+    51951956
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptMessageCommonManager$$SetFontSize",
+   "ScriptLogMessage$$SetFontSize",
+   "ScriptManager.NotificationInfoManager$$HasCurrentNotificationInfo",
+   "SoundManager$$stopVoiceAll",
+   "ScriptManager$$ResetWipeFilter",
+   "ScriptMessageCommonManager$$SetFontType",
+   "ScriptManager$$IsFastPlaySpeed",
+   "BgmManager$$PlaySubBgm",
+   "BgmManager$$StopSubBgm",
+   "BgmManager$$StopBgm",
+   "ScriptManager$$DelayStop",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$StartCameraRoll",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$SetCameraRoll"
+  ]
+ },
+ "bgmStop": {
+  "handler": "0x3181900",
+  "min_token_count": null,
+  "regions": [
+   "0x3181900",
+   "0x3189688",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 4,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51943788,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 3,
+    "param": "easetype",
+    "param_type": "string",
+    "callee": "ScriptManager$$SubRenderMoveScaleEase",
+    "at": 51944012,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51943324
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$GetNonStopEndBgm",
+   "BgmManager$$StopSubBgm",
+   "BgmManager$$StopBgm",
+   "ScriptManager$$GetFSCommandOffsetX",
+   "ScriptCharaData$$SetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ConvertNameString",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptManager$$SubRenderMoveScaleEase",
+   "ScriptManager.<>c__DisplayClass808_1$$.ctor"
+  ]
+ },
+ "bgmStopEnd": {
+  "handler": "0x3181900",
+  "min_token_count": null,
+  "regions": [
+   "0x3181900",
+   "0x3189688",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 4,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51943788,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 3,
+    "param": "easetype",
+    "param_type": "string",
+    "callee": "ScriptManager$$SubRenderMoveScaleEase",
+    "at": 51944012,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51943324
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$GetNonStopEndBgm",
+   "BgmManager$$StopSubBgm",
+   "BgmManager$$StopBgm",
+   "ScriptManager$$GetFSCommandOffsetX",
+   "ScriptCharaData$$SetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ConvertNameString",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptManager$$SubRenderMoveScaleEase",
+   "ScriptManager.<>c__DisplayClass808_1$$.ctor"
+  ]
+ },
+ "subBgmStop": {
+  "handler": "0x3181900",
+  "min_token_count": null,
+  "regions": [
+   "0x3181900",
+   "0x3189688",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 4,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51943788,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 3,
+    "param": "easetype",
+    "param_type": "string",
+    "callee": "ScriptManager$$SubRenderMoveScaleEase",
+    "at": 51944012,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51943324
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$GetNonStopEndBgm",
+   "BgmManager$$StopSubBgm",
+   "BgmManager$$StopBgm",
+   "ScriptManager$$GetFSCommandOffsetX",
+   "ScriptCharaData$$SetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ConvertNameString",
+   "ScriptSubLayerManager$$GetScriptSubLayer",
+   "ScriptManager$$SubRenderMoveScaleEase",
+   "ScriptManager.<>c__DisplayClass808_1$$.ctor"
+  ]
+ },
+ "keepSubBgmOn": {
+  "handler": "0x3181fd4",
+  "min_token_count": null,
+  "regions": [
+   "0x3181fd4",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "BgmManager$$Enable_KeepSubBgm"
+  ]
+ },
+ "keepSubBgmOff": {
+  "handler": "0x31797d0",
+  "min_token_count": null,
+  "regions": [
+   "0x31797d0",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "BgmManager$$Enable_KeepSubBgm"
+  ]
+ },
+ "se": {
+  "handler": "0x3180760",
+  "min_token_count": 5,
+  "regions": [
+   "0x3180760",
+   "0x318df80",
+   "0x318e09c",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51961836,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51906440
+   ],
+   [
+    1,
+    51962068
+   ],
+   [
+    1,
+    51962068
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$SaveFlagInfo",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetGaussianBlur",
+   "ScriptActionRenderEffectController$$StartGaussianBlur",
+   "ScriptCharaData$$SetBackEffect",
+   "ScriptSubLayer$$SetBackgroundColor",
+   "ScriptActionRenderEffectController$$SetMotionBlur"
+  ]
+ },
+ "seStop": {
+  "handler": "0x3180a80",
+  "min_token_count": 3,
+  "regions": [
+   "0x3180a80",
+   "0x3188bf4",
+   "0x318bd58",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51953768,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51907260
+   ]
+  ],
+  "context_apis": [
+   "ScriptCharaData$$StopSpecialEffect",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$ResumeSpecialEffect",
+   "ScriptCharaData$$ResumeBackEffect",
+   "ScriptCharaData$$ResumeEffect",
+   "ScriptCharaData$$StopEffect",
+   "ScriptCharaData$$StopBackEffect",
+   "ScriptCharaData$$MoveReturnPosition",
+   "ScriptManager$$ResetWipeFilter",
+   "ScriptFsmObjectData$$SetFloat",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$SetPictureFrameImage",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "seLoop": {
+  "handler": "0x31833e0",
+  "min_token_count": 5,
+  "regions": [
+   "0x31833e0",
+   "0x318e0b0",
+   "0x318e19c",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51962124,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51917832
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$SaveFlagInfo",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetGaussianBlur",
+   "ScriptActionRenderEffectController$$StartGaussianBlur",
+   "ScriptCharaData$$SetBackEffect",
+   "ScriptSubLayer$$SetBackgroundColor",
+   "ScriptActionRenderEffectController$$SetMotionBlur",
+   "ScriptActionRenderEffectController$$StartMotionBlur"
+  ]
+ },
+ "seVolume": {
+  "handler": "0x3181dd0",
+  "min_token_count": 5,
+  "regions": [
+   "0x3181dd0",
+   "0x3193e80",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "SoundManager$$changeVolumeSe",
+    "at": 51912360,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51912184
+   ],
+   [
+    3,
+    51912228
+   ]
+  ],
+  "context_apis": [
+   "SoundManager$$changeVolumeSe"
+  ]
+ },
+ "seContinue": {
+  "handler": "0x3180310",
+  "min_token_count": 7,
+  "regions": [
+   "0x3180310",
+   "0x318f9bc",
+   "0x318f114"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51968648,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51969252,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51967048,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51967208,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4,
+   6,
+   8
+  ],
+  "equality_at": [
+   [
+    1,
+    51905336
+   ],
+   [
+    3,
+    51968520
+   ],
+   [
+    1,
+    51968816
+   ],
+   [
+    1,
+    51969100
+   ],
+   [
+    3,
+    51969140
+   ],
+   [
+    1,
+    51969348
+   ],
+   [
+    3,
+    51966932
+   ],
+   [
+    5,
+    51967008
+   ],
+   [
+    7,
+    51967104
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$CheckSameIdSeContinue",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetEffect",
+   "SoundManager$$playJingle",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$ConvertColor",
+   "ScriptManager$$ConvertEffectFlipKind"
+  ]
+ },
+ "seContinueStop": {
+  "handler": "0x31838c8",
+  "min_token_count": 3,
+  "regions": [
+   "0x31838c8",
+   "0x318bc58",
+   "0x3193d94",
+   "0x3193dd0"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1,
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51919116
+   ],
+   [
+    0,
+    51952888
+   ],
+   [
+    0,
+    51985924
+   ],
+   [
+    0,
+    51985924
+   ]
+  ],
+  "context_apis": [
+   "ScriptCharaData$$StopSpecialEffect",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$ResumeSpecialEffect",
+   "ScriptCharaData$$ResumeBackEffect",
+   "ScriptCharaData$$ResumeEffect",
+   "ScriptCharaData$$StopEffect",
+   "ScriptCharaData$$StopBackEffect",
+   "ScriptCharaData$$MoveReturnPosition",
+   "ScriptManager$$ResetWipeFilter",
+   "ScriptFsmObjectData$$SetFloat"
+  ]
+ },
+ "seContinueVolume": {
+  "handler": "0x3188898",
+  "min_token_count": 7,
+  "regions": [
+   "0x3188898",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   2,
+   4,
+   6
+  ],
+  "equality_at": [
+   [
+    1,
+    51939520
+   ],
+   [
+    3,
+    51939560
+   ],
+   [
+    5,
+    51939600
+   ]
+  ],
+  "context_apis": []
+ },
+ "cueSe": {
+  "handler": "0x3186434",
+  "min_token_count": 7,
+  "regions": [
+   "0x3186434",
+   "0x318fc28",
+   "0x318fdc8",
+   "0x3193e94"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51930372,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51930412,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51970092,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51930204
+   ],
+   [
+    3,
+    51969140
+   ],
+   [
+    1,
+    51969348
+   ],
+   [
+    0,
+    51969548
+   ],
+   [
+    0,
+    51969548
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetMotionBlur",
+   "ScriptActionRenderEffectController$$StartMotionBlur",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptSubLayer$$SetBackgroundColor"
+  ]
+ },
+ "cueSeStop": {
+  "handler": "0x3188bb0",
+  "min_token_count": 3,
+  "regions": [
+   "0x3188bb0",
+   "0x318bd58",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51953768,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51940332
+   ]
+  ],
+  "context_apis": [
+   "ScriptCharaData$$StopSpecialEffect",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$ResumeSpecialEffect",
+   "ScriptCharaData$$ResumeBackEffect",
+   "ScriptCharaData$$ResumeEffect",
+   "ScriptCharaData$$StopEffect",
+   "ScriptCharaData$$StopBackEffect",
+   "ScriptCharaData$$MoveReturnPosition",
+   "ScriptManager$$ResetWipeFilter",
+   "ScriptFsmObjectData$$SetFloat",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$SetPictureFrameImage",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "cueSeVolume": {
+  "handler": "0x318440c",
+  "min_token_count": 5,
+  "regions": [
+   "0x318440c",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "SoundManager$$changeVolumeSe",
+    "at": 51922148,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51921972
+   ],
+   [
+    3,
+    51922016
+   ]
+  ],
+  "context_apis": [
+   "SoundManager$$changeVolumeSe",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "cueSeContinue": {
+  "handler": "0x317ffa4",
+  "min_token_count": 9,
+  "regions": [
+   "0x317ffa4",
+   "0x3191560",
+   "0x318f114"
+  ],
+  "flows": [
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51975768,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51967048,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51967208,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4,
+   6,
+   8
+  ],
+  "equality_at": [
+   [
+    1,
+    51904460
+   ],
+   [
+    3,
+    51975596
+   ],
+   [
+    5,
+    51975636
+   ],
+   [
+    1,
+    51975936
+   ],
+   [
+    3,
+    51975976
+   ],
+   [
+    3,
+    51966932
+   ],
+   [
+    5,
+    51967008
+   ],
+   [
+    7,
+    51967104
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$CheckSameIdSeContinue",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptCharaData$$SetEffect",
+   "SoundManager$$playJingle",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$ConvertColor",
+   "ScriptManager$$ConvertEffectFlipKind"
+  ]
+ },
+ "cueSeContinueStop": {
+  "handler": "0x31838c8",
+  "min_token_count": 3,
+  "regions": [
+   "0x31838c8",
+   "0x318bc58",
+   "0x3193d94",
+   "0x3193dd0"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1,
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51919116
+   ],
+   [
+    0,
+    51952888
+   ],
+   [
+    0,
+    51985924
+   ],
+   [
+    0,
+    51985924
+   ]
+  ],
+  "context_apis": [
+   "ScriptCharaData$$StopSpecialEffect",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptCharaData$$ResumeSpecialEffect",
+   "ScriptCharaData$$ResumeBackEffect",
+   "ScriptCharaData$$ResumeEffect",
+   "ScriptCharaData$$StopEffect",
+   "ScriptCharaData$$StopBackEffect",
+   "ScriptCharaData$$MoveReturnPosition",
+   "ScriptManager$$ResetWipeFilter",
+   "ScriptFsmObjectData$$SetFloat"
+  ]
+ },
+ "cueSeContinueVolume": {
+  "handler": "0x3188898",
+  "min_token_count": 7,
+  "regions": [
+   "0x3188898",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   2,
+   4,
+   6
+  ],
+  "equality_at": [
+   [
+    1,
+    51939520
+   ],
+   [
+    3,
+    51939560
+   ],
+   [
+    5,
+    51939600
+   ]
+  ],
+  "context_apis": []
+ },
+ "cueVoice": {
+  "handler": "0x317cef8",
+  "min_token_count": 3,
+  "regions": [
+   "0x317cef8",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51892000
+   ],
+   [
+    3,
+    51892064
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "cueVoiceStop": {
+  "handler": "0x3179ed0",
+  "min_token_count": null,
+  "regions": [
+   "0x3179ed0",
+   "0x318e7a4",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51879692
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "SoundManager$$stopVoice",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$GetFSCommandOffsetX",
+   "ScriptCharaData$$MoveReturnPosition",
+   "ScriptCharaData$$MovePosition",
+   "ScriptManager$$GetSwitchSelection",
+   "ScriptManager$$ReplaceHiddenFlagText",
+   "ScriptManager$$SetSelectLogMessage",
+   "ScriptManager$$ShouldSetScriptRouteSelectParam"
+  ]
+ },
+ "cueVoiceVolume": {
+  "handler": "0x317b954",
+  "min_token_count": 5,
+  "regions": [
+   "0x317b954",
+   "0x318d244",
+   "0x3193e94",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 10,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51959184,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4,
+   5,
+   6,
+   8,
+   10,
+   12
+  ],
+  "equality_at": [
+   [
+    1,
+    51886460
+   ],
+   [
+    3,
+    51886504
+   ],
+   [
+    4,
+    51958424
+   ],
+   [
+    5,
+    51958900
+   ],
+   [
+    7,
+    51959068
+   ],
+   [
+    9,
+    51959144
+   ],
+   [
+    11,
+    51959240
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertColor",
+   "ScriptCharaData$$SetEffectEdgeBlur",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetDisable",
+   "ScriptFsmObjectData$$SendEvent",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptFsmObjectData$$Skip",
+   "ScriptPosition$$GetCharaOffset",
+   "ScriptCharaData$$Destroy",
+   "ScriptManager$$ScriptCommandExecute"
+  ]
+ },
+ "voice": {
+  "handler": "0x317d5b0",
+  "min_token_count": 1,
+  "regions": [
+   "0x317d5b0",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51893760
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ConvertNameString",
+   "SoundManager$$playCharaVoice"
+  ]
+ },
+ "voiceStop": {
+  "handler": "0x317d8c8",
+  "min_token_count": null,
+  "regions": [
+   "0x317d8c8",
+   "0x318e7f4",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51894532
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "SoundManager$$stopVoice",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$GetFSCommandOffsetX",
+   "ScriptCharaData$$MoveReturnPosition",
+   "ScriptCharaData$$MovePosition",
+   "ScriptManager$$GetSwitchSelection",
+   "ScriptManager$$ReplaceHiddenFlagText",
+   "ScriptManager$$SetSelectLogMessage",
+   "ScriptManager$$ShouldSetScriptRouteSelectParam",
+   "ScriptManager$$SetScriptRouteSelectParam",
+   "ScriptManager$$JumpScriptSwitchCase"
+  ]
+ },
+ "voiceVolume": {
+  "handler": "0x317e3ec",
+  "min_token_count": 5,
+  "regions": [
+   "0x317e3ec",
+   "0x3193e80",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51897448,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51897364
+   ],
+   [
+    3,
+    51897408
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "SoundManager$$changeVolumeVoice"
+  ]
+ },
+ "tVoice": {
+  "handler": "0x317cc08",
+  "min_token_count": 7,
+  "regions": [
+   "0x317cc08",
+   "0x318c730",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51891240,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "SoundManager$$stopVoiceAll",
+   "SoundManager$$playVoice",
+   "ScriptLogMessage$$AddPlayVoice",
+   "ScriptLogMessage$$AddText",
+   "ScriptSubLayer$$SetRendering"
+  ]
+ },
+ "tVoiceUser": {
+  "handler": "0x317ae9c",
+  "min_token_count": 9,
+  "regions": [
+   "0x317ae9c",
+   "0x318c460",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51883764,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   2
+  ],
+  "equality_at": [
+   [
+    0,
+    51955176
+   ],
+   [
+    0,
+    51955220
+   ],
+   [
+    1,
+    51955540
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ScriptCommandExecute",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "SoundManager$$stopVoiceAll",
+   "SoundManager$$playVoice",
+   "ScriptLogMessage$$AddPlayVoice",
+   "ScriptMessageCommonManager$$ResetLongPress",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptMessageCommonManager$$SetForcedDisableTurnPage"
+  ]
+ },
+ "jingle": {
+  "handler": "0x3186b70",
+  "min_token_count": 1,
+  "regions": [
+   "0x3186b70",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51932096
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ConvertNameString",
+   "SoundManager$$playJingle"
+  ]
+ },
+ "jingleStop": {
+  "handler": "0x31846c0",
+  "min_token_count": null,
+  "regions": [
+   "0x31846c0",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "SoundManager$$isPlayJingle",
+    "at": 51922684,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "SoundManager$$isPlayJingle"
+  ]
+ },
+ "advSoundSet": {
+  "handler": "0x3182018",
+  "min_token_count": null,
+  "regions": [
+   "0x3182018",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "soundStopAll": {
+  "handler": "0x3188554",
+  "min_token_count": null,
+  "regions": [
+   "0x3188554",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$SoundStopAll"
+  ]
+ },
+ "soundStopAllEnd": {
+  "handler": "0x3187494",
+  "min_token_count": null,
+  "regions": [
+   "0x3187494",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$GetNonStopEndBgm",
+   "ScriptManager$$SoundStopAllEnd"
+  ]
+ },
+ "soundStopAllFade": {
+  "handler": "0x3181c98",
+  "min_token_count": 1,
+  "regions": [
+   "0x3181c98",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$SoundStopAllFade"
+  ]
+ },
+ "messageOn": {
+  "handler": "0x317bc58",
+  "min_token_count": null,
+  "regions": [
+   "0x317bc58",
+   "0x318244c",
+   "0x3193efc"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptMessageCommonManager$$OffScreen",
+   "ScriptMessageCommonManager$$ClearText",
+   "ScriptLogMessage$$ReturnText"
+  ]
+ },
+ "messageOff": {
+  "handler": "0x318152c",
+  "min_token_count": null,
+  "regions": [
+   "0x318152c",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptMessageCommonManager$$OffScreen",
+   "ScriptMessageCommonManager$$ClearText",
+   "ScriptLogMessage$$ReturnText"
+  ]
+ },
+ "messageStart": {
+  "handler": "0x317f98c",
+  "min_token_count": null,
+  "regions": [
+   "0x317f98c",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptMessageCommonManager$$CalcMessageVerticalAlign"
+  ]
+ },
+ "messageChange": {
+  "handler": "0x31852b8",
+  "min_token_count": 1,
+  "regions": [
+   "0x31852b8",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertMessageWindowName",
+    "at": 51925752,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptMessageCommonManager$$ResetLongPress",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptManager$$ConvertMessageWindowName",
+   "ScriptMessageCommonManager$$ChangeMessageWindow"
+  ]
+ },
+ "messageAlign": {
+  "handler": "0x3186e48",
+  "min_token_count": null,
+  "regions": [
+   "0x3186e48",
+   "0x318b2a8",
+   "0x318b300",
+   "0x3193f04"
+  ],
+  "flows": [],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51951164
+   ],
+   [
+    3,
+    51951164
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$InitCameraRoll",
+   "ScriptManager$$InitCamera",
+   "SoundManager$$stopSe",
+   "ScriptMessageCommonManager$$SetTapSkip",
+   "ScriptManager$$IsFastPlaySpeed",
+   "CommonEffectManager$$Resume",
+   "CommonEffectManager$$Stop",
+   "ScriptManager$$StartCameraRoll",
+   "ScriptManager$$EndExecuteScript",
+   "ScriptMessageCommonManager$$ResetMessageWindow",
+   "CommonEffectManager$$CreateParam",
+   "BgmManager$$PlayMainBgm"
+  ]
+ },
+ "messageShake": {
+  "handler": "0x3182074",
+  "min_token_count": 7,
+  "regions": [
+   "0x3182074",
+   "0x318d244",
+   "0x3193e94",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 10,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51959184,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4,
+   5,
+   6,
+   8,
+   10,
+   12
+  ],
+  "equality_at": [
+   [
+    1,
+    51912860
+   ],
+   [
+    3,
+    51912904
+   ],
+   [
+    5,
+    51912948
+   ],
+   [
+    4,
+    51958424
+   ],
+   [
+    5,
+    51958900
+   ],
+   [
+    7,
+    51959068
+   ],
+   [
+    9,
+    51959144
+   ],
+   [
+    11,
+    51959240
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptMessageCommonManager$$Shake",
+   "ScriptManager$$ConvertColor",
+   "ScriptCharaData$$SetEffectEdgeBlur",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetDisable",
+   "ScriptFsmObjectData$$SendEvent",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptFsmObjectData$$Skip",
+   "ScriptPosition$$GetCharaOffset",
+   "ScriptCharaData$$Destroy",
+   "ScriptManager$$ScriptCommandExecute"
+  ]
+ },
+ "messageShakeStop": {
+  "handler": "0x317e89c",
+  "min_token_count": null,
+  "regions": [
+   "0x317e89c",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptMessageCommonManager$$Shake"
+  ]
+ },
+ "messageSpeedForcedNormal": {
+  "handler": "0x3184204",
+  "min_token_count": 1,
+  "regions": [
+   "0x3184204",
+   "0x318c2bc",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1,
+   2
+  ],
+  "equality_at": [
+   [
+    0,
+    51921452
+   ],
+   [
+    0,
+    51954400
+   ],
+   [
+    0,
+    51954512
+   ],
+   [
+    1,
+    51954820
+   ],
+   [
+    0,
+    51955176
+   ],
+   [
+    0,
+    51955220
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetMessageSpeedForcedNormal",
+   "ScriptSubLayerManager$$SetSubStretch",
+   "ScriptManager$$ConvertCharaIndexTalk",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "SoundManager$$stopVoiceAll",
+   "SoundManager$$playVoice",
+   "ScriptLogMessage$$AddPlayVoice",
+   "ScriptMessageCommonManager$$ResetLongPress",
+   "ScriptManager$$ModifyPlaySpeed"
+  ]
+ },
+ "scrollStop": {
+  "handler": "0x317f1a0",
+  "min_token_count": null,
+  "regions": [
+   "0x317f1a0",
+   "0x3193f04"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "effectmessageStop": {
+  "handler": "0x31814c4",
+  "min_token_count": 1,
+  "regions": [
+   "0x31814c4",
+   "0x318b040",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertTalkEffectName",
+    "at": 51909860,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptMessageCommonManager$$MessageEffectStop",
+   "CommonEffectManager$$Stop",
+   "ScriptManager$$RenderCameraSubStart",
+   "CommonEffectManager$$ForceStop",
+   "SoundManager$$stopJingle",
+   "ScriptMessageCommonManager$$SetTalkNameBack",
+   "ScriptManager$$InitCameraRoll",
+   "ScriptManager$$InitCamera",
+   "SoundManager$$stopSe",
+   "ScriptMessageCommonManager$$SetTapSkip",
+   "CommonEffectManager$$Resume"
+  ]
+ },
+ "effectmessageDestroy": {
+  "handler": "0x3181ce4",
+  "min_token_count": 1,
+  "regions": [
+   "0x3181ce4",
+   "0x318b05c",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertTalkEffectName",
+    "at": 51911940,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$ConvertTalkEffectName",
+   "ScriptMessageCommonManager$$MessageEffectStop",
+   "ScriptManager$$IsFastPlaySpeed",
+   "CommonEffectManager$$Stop",
+   "ScriptManager$$RenderCameraSubStart",
+   "CommonEffectManager$$ForceStop",
+   "SoundManager$$stopJingle",
+   "ScriptMessageCommonManager$$SetTalkNameBack",
+   "ScriptManager$$InitCameraRoll",
+   "ScriptManager$$InitCamera",
+   "SoundManager$$stopSe",
+   "ScriptMessageCommonManager$$SetTapSkip",
+   "CommonEffectManager$$Resume",
+   "ScriptManager$$StartCameraRoll"
+  ]
+ },
+ "talkName": {
+  "handler": "0x3187bf0",
+  "min_token_count": null,
+  "regions": [
+   "0x3187bf0",
+   "0x3188c90",
+   "0x3193efc"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1,
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51941168
+   ],
+   [
+    0,
+    51941292
+   ],
+   [
+    1,
+    51941432
+   ],
+   [
+    3,
+    51941476
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetFontSize",
+   "ScriptMessageCommonManager$$SetSpeed",
+   "ScriptMessageCommonManager$$SetBetweenLineHeight",
+   "ScriptLogMessage$$SetBetweenLineHeight",
+   "ScriptManager$$IsFastPlaySpeed"
+  ]
+ },
+ "talkNameBack": {
+  "handler": "0x3184900",
+  "min_token_count": 1,
+  "regions": [
+   "0x3184900",
+   "0x318b1b8",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetTalkNameBack",
+   "ScriptManager$$IsFastPlaySpeed",
+   "CommonEffectManager$$Stop",
+   "ScriptManager$$InitCameraRoll",
+   "ScriptManager$$InitCamera",
+   "SoundManager$$stopSe",
+   "ScriptMessageCommonManager$$SetTapSkip",
+   "CommonEffectManager$$Resume",
+   "ScriptManager$$StartCameraRoll",
+   "ScriptManager$$EndExecuteScript",
+   "ScriptMessageCommonManager$$ResetMessageWindow",
+   "CommonEffectManager$$CreateParam"
+  ]
+ },
+ "talkStart": {
+  "handler": "0x3182bc4",
+  "min_token_count": null,
+  "regions": [
+   "0x3182bc4",
+   "0x3193efc"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "talkEnd": {
+  "handler": "0x3180268",
+  "min_token_count": null,
+  "regions": [
+   "0x3180268",
+   "0x3193e94",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "page": {
+  "handler": "0x3182038",
+  "min_token_count": null,
+  "regions": [
+   "0x3182038",
+   "0x3192e70",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51982052,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51982104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertCharaIndex",
+    "at": 51982572,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51982532
+   ],
+   [
+    1,
+    51982840
+   ],
+   [
+    3,
+    51982880
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertColor",
+   "ScriptManager$$StartFlash",
+   "ScriptPosition$$GetCharaOffset",
+   "ScriptCharaData$$SetEffect",
+   "ScriptCharaData$$ChangeCharacter",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "clear": {
+  "handler": "0x3182038",
+  "min_token_count": null,
+  "regions": [
+   "0x3182038",
+   "0x3192e70",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51982052,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51982104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertCharaIndex",
+    "at": 51982572,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51982532
+   ],
+   [
+    1,
+    51982840
+   ],
+   [
+    3,
+    51982880
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertColor",
+   "ScriptManager$$StartFlash",
+   "ScriptPosition$$GetCharaOffset",
+   "ScriptCharaData$$SetEffect",
+   "ScriptCharaData$$ChangeCharacter",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "fontSize": {
+  "handler": "0x3187928",
+  "min_token_count": null,
+  "regions": [
+   "0x3187928",
+   "0x31894ac",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "sizeName",
+    "param_type": "string",
+    "callee": "ScriptMessageCommonManager$$SetFontSize",
+    "at": 51935568,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51942696,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopSubBgm",
+    "at": 51943112,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopBgm",
+    "at": 51943196,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51943324
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetFontSize",
+   "ScriptLogMessage$$SetFontSize",
+   "ScriptManager.NotificationInfoManager$$HasCurrentNotificationInfo",
+   "ScriptManager$$ConvertNameString",
+   "SoundManager$$stopVoiceAll",
+   "ScriptManager$$ResetWipeFilter",
+   "ScriptMessageCommonManager$$SetFontType",
+   "ScriptManager$$IsFastPlaySpeed",
+   "BgmManager$$PlaySubBgm",
+   "BgmManager$$StopSubBgm",
+   "BgmManager$$StopBgm",
+   "ScriptManager$$GetFSCommandOffsetX",
+   "ScriptCharaData$$SetPosition"
+  ]
+ },
+ "betweenHeight": {
+  "handler": "0x318472c",
+  "min_token_count": null,
+  "regions": [
+   "0x318472c",
+   "0x3188db4",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51941632,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   2,
+   4,
+   6
+  ],
+  "equality_at": [
+   [
+    0,
+    51922772
+   ],
+   [
+    3,
+    51941168
+   ],
+   [
+    0,
+    51941292
+   ],
+   [
+    1,
+    51941432
+   ],
+   [
+    3,
+    51941476
+   ],
+   [
+    5,
+    51941520
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetBetweenLineHeight",
+   "ScriptLogMessage$$SetBetweenLineHeight",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$ChangeCharacter",
+   "ScriptManager$$ModifyPlaySpeed"
+  ]
+ },
+ "font": {
+  "handler": "0x3187928",
+  "min_token_count": null,
+  "regions": [
+   "0x3187928",
+   "0x31894ac",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "sizeName",
+    "param_type": "string",
+    "callee": "ScriptMessageCommonManager$$SetFontSize",
+    "at": 51935568,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51942696,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopSubBgm",
+    "at": 51943112,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopBgm",
+    "at": 51943196,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51943324
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetFontSize",
+   "ScriptLogMessage$$SetFontSize",
+   "ScriptManager.NotificationInfoManager$$HasCurrentNotificationInfo",
+   "ScriptManager$$ConvertNameString",
+   "SoundManager$$stopVoiceAll",
+   "ScriptManager$$ResetWipeFilter",
+   "ScriptMessageCommonManager$$SetFontType",
+   "ScriptManager$$IsFastPlaySpeed",
+   "BgmManager$$PlaySubBgm",
+   "BgmManager$$StopSubBgm",
+   "BgmManager$$StopBgm",
+   "ScriptManager$$GetFSCommandOffsetX",
+   "ScriptCharaData$$SetPosition"
+  ]
+ },
+ "fontType": {
+  "handler": "0x31795f8",
+  "min_token_count": null,
+  "regions": [
+   "0x31795f8",
+   "0x318f98c",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertFontName",
+    "at": 51877492,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51968648,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51969252,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    0,
+    51877448
+   ],
+   [
+    1,
+    51968480
+   ],
+   [
+    3,
+    51968520
+   ],
+   [
+    1,
+    51968816
+   ],
+   [
+    1,
+    51969100
+   ],
+   [
+    3,
+    51969140
+   ],
+   [
+    1,
+    51969348
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertFontName",
+   "ScriptMessageCommonManager$$SetFontType",
+   "ScriptLogMessage$$SetFontType",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$CheckSameIdSeContinue",
+   "ScriptManager$$ConvertNameString"
+  ]
+ },
+ "screen": {
+  "handler": "0x31804c8",
+  "min_token_count": 9,
+  "regions": [
+   "0x31804c8",
+   "0x318a2a0",
+   "0x3192e64",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51982052,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51982104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertCharaIndex",
+    "at": 51982572,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51905776
+   ],
+   [
+    1,
+    51946704
+   ],
+   [
+    3,
+    51946764
+   ],
+   [
+    1,
+    51946936
+   ],
+   [
+    1,
+    51982532
+   ],
+   [
+    1,
+    51982840
+   ],
+   [
+    3,
+    51982880
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetScreen",
+   "ScriptLogMessage$$SetHomePosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptCharaData$$StopEffect",
+   "ScriptManager$$ConvertColor",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$ScriptCommandExecute",
+   "ScriptManager$$StartFlash",
+   "ScriptPosition$$GetCharaOffset",
+   "ScriptCharaData$$SetEffect",
+   "ScriptCharaData$$ChangeCharacter",
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptManager$$ConvertCharaIndex"
+  ]
+ },
+ "faceTalkScreen": {
+  "handler": "0x317cd60",
+  "min_token_count": null,
+  "regions": [
+   "0x317cd60",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptMessageCommonManager$$GetMessageBackSprite",
+   "ScriptMessageCommonManager$$GetTalkNameBackSprite"
+  ]
+ },
+ "label": {
+  "handler": "0x317b600",
+  "min_token_count": 1,
+  "regions": [
+   "0x317b600",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetTapSkip"
+  ]
+ },
+ "jump": {
+  "handler": "0x31801a4",
+  "min_token_count": 3,
+  "regions": [
+   "0x31801a4",
+   "0x318c280",
+   "0x318cb98",
+   "0x3193f04"
+  ],
+  "flows": [
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51905052,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   2,
+   3,
+   6
+  ],
+  "equality_at": [
+   [
+    1,
+    51904972
+   ],
+   [
+    0,
+    51954400
+   ],
+   [
+    0,
+    51954512
+   ],
+   [
+    1,
+    51954820
+   ],
+   [
+    0,
+    51955176
+   ],
+   [
+    0,
+    51955220
+   ],
+   [
+    2,
+    51956824
+   ],
+   [
+    5,
+    51957352
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$LoadExecuteScript",
+   "ScriptManager$$ExecuteScript",
+   "ScriptMessageCommonManager$$SetMessageSpeedForcedNormal",
+   "ScriptSubLayerManager$$SetSubStretch",
+   "ScriptManager$$ConvertCharaIndexTalk",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "SoundManager$$stopVoiceAll",
+   "SoundManager$$playVoice",
+   "ScriptLogMessage$$AddPlayVoice",
+   "ScriptActionRenderEffectController.StopFunction$$.ctor",
+   "ScriptActionRenderEffectController$$StopGaussianBlur",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptSubLayer$$SetBackgroundColor",
+   "ScriptActionRenderEffectController$$SetGaussianBlur",
+   "ScriptActionRenderEffectController$$StartGaussianBlur",
+   "ScriptSubLayer$$StartSubStretch",
+   "ScriptActionRenderEffectController$$StopMotionBlur"
+  ]
+ },
+ "skip": {
+  "handler": "0x317b3f4",
+  "min_token_count": 1,
+  "regions": [
+   "0x317b3f4",
+   "0x318c5c4",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1,
+   2
+  ],
+  "equality_at": [
+   [
+    0,
+    51885088
+   ],
+   [
+    0,
+    51955176
+   ],
+   [
+    0,
+    51955220
+   ],
+   [
+    1,
+    51955540
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$ResetLongPress",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptMessageCommonManager$$SetForcedDisableTurnPage",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "SoundManager$$stopVoiceAll",
+   "SoundManager$$playVoice",
+   "ScriptLogMessage$$AddPlayVoice",
+   "ScriptLogMessage$$AddText"
+  ]
+ },
+ "wait": {
+  "handler": "0x31874f4",
+  "min_token_count": 1,
+  "regions": [
+   "0x31874f4",
+   "0x31938b4",
+   "0x31939cc",
+   "0x3193f04"
+  ],
+  "flows": [
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertCharaIndex",
+    "at": 51984664,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51984792,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51984624
+   ],
+   [
+    1,
+    51984712
+   ],
+   [
+    3,
+    51984752
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetPosition",
+   "ScriptCharaData$$SetSortingOrder",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptCharaData$$MoveAlpha",
+   "ScriptCharaData$$ChangeCharacter",
+   "ScriptCharaData$$SetCharacter",
+   "ScriptCharaData$$SetFace",
+   "ScriptManager$$IsFastPlaySpeed"
+  ]
+ },
+ "delay": {
+  "handler": "0x3182768",
+  "min_token_count": 5,
+  "regions": [
+   "0x3182768",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$GetNextDelayEnd",
+   "ScriptManager$$DelayStop",
+   "ScriptManager$$IsMessageLine",
+   "ScriptManager$$TDelayJumpScript",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "tdelay": {
+  "handler": "0x3182768",
+  "min_token_count": 5,
+  "regions": [
+   "0x3182768",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$GetNextDelayEnd",
+   "ScriptManager$$DelayStop",
+   "ScriptManager$$IsMessageLine",
+   "ScriptManager$$TDelayJumpScript",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "delayEnd": {
+  "handler": "0x3182018",
+  "min_token_count": null,
+  "regions": [
+   "0x3182018",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "delayStop": {
+  "handler": "0x31886a0",
+  "min_token_count": 3,
+  "regions": [
+   "0x31886a0",
+   "0x318b804",
+   "0x3191830",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertBackTextureName",
+    "at": 51952492,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51951748
+   ],
+   [
+    3,
+    51951956
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$DelayStop",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$StartCameraRoll",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$SetCameraRoll",
+   "ScriptActionRenderEffectController.StopFunction$$.ctor",
+   "ScriptActionRenderEffectController$$StopMotionBlur",
+   "ScriptManager$$ConvertBackTextureName",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "delayStopAll": {
+  "handler": "0x317fcbc",
+  "min_token_count": null,
+  "regions": [
+   "0x317fcbc",
+   "0x318c230",
+   "0x318f114"
+  ],
+  "flows": [
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51967048,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51967208,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   2,
+   4,
+   6,
+   8
+  ],
+  "equality_at": [
+   [
+    0,
+    51954400
+   ],
+   [
+    0,
+    51954512
+   ],
+   [
+    1,
+    51954820
+   ],
+   [
+    0,
+    51955176
+   ],
+   [
+    0,
+    51955220
+   ],
+   [
+    3,
+    51966932
+   ],
+   [
+    5,
+    51967008
+   ],
+   [
+    7,
+    51967104
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$DelayStop",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$ExecuteScript",
+   "ScriptMessageCommonManager$$SetMessageSpeedForcedNormal",
+   "ScriptSubLayerManager$$SetSubStretch",
+   "ScriptManager$$ConvertCharaIndexTalk",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "SoundManager$$stopVoiceAll",
+   "SoundManager$$playVoice",
+   "ScriptLogMessage$$AddPlayVoice",
+   "ScriptCharaData$$SetEffect",
+   "SoundManager$$playJingle",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$ConvertColor",
+   "ScriptManager$$ConvertEffectFlipKind"
+  ]
+ },
+ "end": {
+  "handler": "0x317f9c4",
+  "min_token_count": null,
+  "regions": [
+   "0x317f9c4",
+   "0x318b4f0",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51951164
+   ],
+   [
+    3,
+    51951748
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$EndExecuteScript",
+   "ScriptMessageCommonManager$$ResetMessageWindow",
+   "CommonEffectManager$$CreateParam",
+   "BgmManager$$PlayMainBgm",
+   "ScriptManager$$DelayStop",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$StartCameraRoll"
+  ]
+ },
+ "interruption": {
+  "handler": "0x317f9c4",
+  "min_token_count": null,
+  "regions": [
+   "0x317f9c4",
+   "0x318b4f0",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51951164
+   ],
+   [
+    3,
+    51951748
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$EndExecuteScript",
+   "ScriptMessageCommonManager$$ResetMessageWindow",
+   "CommonEffectManager$$CreateParam",
+   "BgmManager$$PlayMainBgm",
+   "ScriptManager$$DelayStop",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptManager$$StartCameraRoll"
+  ]
+ },
+ "backlogStart": {
+  "handler": "0x31813e0",
+  "min_token_count": null,
+  "regions": [
+   "0x31813e0",
+   "0x3193f04"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "backlogEnd": {
+  "handler": "0x317c1ec",
+  "min_token_count": null,
+  "regions": [
+   "0x317c1ec",
+   "0x3193f04"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "autoAndBackLog": {
+  "handler": "0x317923c",
+  "min_token_count": 1,
+  "regions": [
+   "0x317923c",
+   "0x318d244",
+   "0x3193e94",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 10,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51959184,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   5,
+   6,
+   8,
+   10,
+   12
+  ],
+  "equality_at": [
+   [
+    0,
+    51876460
+   ],
+   [
+    0,
+    51876508
+   ],
+   [
+    4,
+    51958424
+   ],
+   [
+    5,
+    51958900
+   ],
+   [
+    7,
+    51959068
+   ],
+   [
+    9,
+    51959144
+   ],
+   [
+    11,
+    51959240
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$ResetLongPress",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptMessageCommonManager$$SetActiveAutoMessageButton",
+   "ScriptMessageCommonManager$$SetActiveBackLogButton",
+   "ScriptManager$$ConvertColor",
+   "ScriptCharaData$$SetEffectEdgeBlur",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetDisable",
+   "ScriptFsmObjectData$$SendEvent",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptFsmObjectData$$Skip",
+   "ScriptPosition$$GetCharaOffset",
+   "ScriptCharaData$$Destroy",
+   "ScriptManager$$ScriptCommandExecute"
+  ]
+ },
+ "tapSkip": {
+  "handler": "0x317bba0",
+  "min_token_count": 5,
+  "regions": [
+   "0x317bba0",
+   "0x31903e8",
+   "0x318b370",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51971944,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   3,
+   4,
+   6,
+   10
+  ],
+  "equality_at": [
+   [
+    2,
+    51971120
+   ],
+   [
+    5,
+    51971516
+   ],
+   [
+    9,
+    51971696
+   ],
+   [
+    3,
+    51951164
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetTapSkip",
+   "ScriptMessageCommonManager$$ResetLongPress",
+   "ScriptManager$$ModifyPlaySpeed",
+   "ScriptManager$$SetCharaSpotlight",
+   "ScriptCharaData$$.ctor",
+   "ScriptCharaData$$SetAlpha",
+   "ScriptCharaData$$SetPosition",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager$$JumpScript",
+   "ScriptManager$$IsFastPlaySpeed",
+   "CommonEffectManager$$Resume",
+   "CommonEffectManager$$Stop",
+   "ScriptManager$$StartCameraRoll",
+   "ScriptManager$$EndExecuteScript",
+   "ScriptMessageCommonManager$$ResetMessageWindow",
+   "CommonEffectManager$$CreateParam",
+   "BgmManager$$PlayMainBgm"
+  ]
+ },
+ "speed": {
+  "handler": "0x3184a58",
+  "min_token_count": null,
+  "regions": [
+   "0x3184a58",
+   "0x318f114"
+  ],
+  "flows": [
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51967048,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51967208,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   4,
+   6,
+   8
+  ],
+  "equality_at": [
+   [
+    0,
+    51923584
+   ],
+   [
+    3,
+    51966932
+   ],
+   [
+    5,
+    51967008
+   ],
+   [
+    7,
+    51967104
+   ]
+  ],
+  "context_apis": [
+   "ScriptCharaData$$SetEffect",
+   "ScriptManager$$ConvertNameString",
+   "SoundManager$$playJingle",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$ConvertColor",
+   "ScriptManager$$ConvertEffectFlipKind"
+  ]
+ },
+ "selectionUse": {
+  "handler": "0x317d28c",
+  "min_token_count": null,
+  "regions": [
+   "0x317d28c",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$CheckSwitchType",
+   "ScriptManager$$JumpScriptCommand"
+  ]
+ },
+ "selectionCentering": {
+  "handler": "0x317f90c",
+  "min_token_count": 1,
+  "regions": [
+   "0x317f90c",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "input": {
+  "handler": "0x317a800",
+  "min_token_count": 1,
+  "regions": [
+   "0x317a800",
+   "0x318d9b8",
+   "0x318f018",
+   "0x3193e94"
+  ],
+  "flows": [
+   {
+    "pd": 4,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "conditionScript",
+    "param_type": "string",
+    "callee": "ScriptManager$$IsWithInScriptCondition",
+    "at": 51882360,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51966036,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   3
+  ],
+  "equality_at": [
+   [
+    0,
+    51882028
+   ],
+   [
+    0,
+    51882056
+   ],
+   [
+    0,
+    51882148
+   ],
+   [
+    0,
+    51882272
+   ],
+   [
+    2,
+    51882320
+   ],
+   [
+    0,
+    51960592
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ResumePlaySpeed",
+   "ScriptManager$$IsWithInScriptCondition",
+   "ScriptSubLayerManager$$RemoveCharaData",
+   "ScriptCharaData$$SetLayer",
+   "ScriptActionRenderEffectController.StopFunction$$.ctor",
+   "ScriptActionRenderEffectController$$StopFrostedGlass",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptCharaData$$SetEffect"
+  ]
+ },
+ "menu": {
+  "handler": "0x317fa74",
+  "min_token_count": null,
+  "regions": [
+   "0x317fa74",
+   "0x317fbc4",
+   "0x318f114"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51903340,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51967048,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51967208,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   1,
+   4,
+   6,
+   8
+  ],
+  "equality_at": [
+   [
+    0,
+    51903216
+   ],
+   [
+    0,
+    51903292
+   ],
+   [
+    3,
+    51966932
+   ],
+   [
+    5,
+    51967008
+   ],
+   [
+    7,
+    51967104
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetEffect",
+   "SoundManager$$playJingle",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$ConvertColor",
+   "ScriptManager$$ConvertEffectFlipKind"
+  ]
+ },
+ "branch": {
+  "handler": "0x317b498",
+  "min_token_count": 3,
+  "regions": [
+   "0x317b498",
+   "0x318c6a0",
+   "0x318f09c",
+   "0x318f114"
+  ],
+  "flows": [
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51967048,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51967208,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4,
+   6,
+   8
+  ],
+  "equality_at": [
+   [
+    1,
+    51885248
+   ],
+   [
+    3,
+    51885332
+   ],
+   [
+    1,
+    51955540
+   ],
+   [
+    3,
+    51966932
+   ],
+   [
+    5,
+    51967008
+   ],
+   [
+    7,
+    51967104
+   ],
+   [
+    3,
+    51966932
+   ],
+   [
+    5,
+    51967008
+   ],
+   [
+    7,
+    51967104
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$SearchFlag",
+   "ScriptMessageCommonManager$$SetForcedDisableTurnPage",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "SoundManager$$stopVoiceAll",
+   "SoundManager$$playVoice",
+   "ScriptLogMessage$$AddPlayVoice",
+   "ScriptLogMessage$$AddText",
+   "ScriptSubLayer$$SetRendering",
+   "ScriptCharaData$$SetEffect",
+   "ScriptManager$$ConvertNameString",
+   "SoundManager$$playJingle",
+   "ScriptPosition$$GetPosition",
+   "ScriptManager$$ConvertColor",
+   "ScriptManager$$ConvertEffectFlipKind"
+  ]
+ },
+ "branchMaterial": {
+  "handler": "0x31802b0",
+  "min_token_count": 1,
+  "regions": [
+   "0x31802b0",
+   "0x3184684",
+   "0x3193cd4",
+   "0x3193d6c"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1
+  ],
+  "equality_at": [
+   [
+    0,
+    51985924
+   ],
+   [
+    0,
+    51985924
+   ]
+  ],
+  "context_apis": []
+ },
+ "branchHaveSvtEquip": {
+  "handler": "0x318459c",
+  "min_token_count": 3,
+  "regions": [
+   "0x318459c",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51922372
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "branchNotHaveSvtEquip": {
+  "handler": "0x318459c",
+  "min_token_count": 3,
+  "regions": [
+   "0x318459c",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51922372
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "branchNotMaterial": {
+  "handler": "0x31802b0",
+  "min_token_count": 1,
+  "regions": [
+   "0x31802b0",
+   "0x3184684",
+   "0x3193cd4",
+   "0x3193d6c"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1
+  ],
+  "equality_at": [
+   [
+    0,
+    51985924
+   ],
+   [
+    0,
+    51985924
+   ]
+  ],
+  "context_apis": []
+ },
+ "branchQuestClear": {
+  "handler": "0x317bdd0",
+  "min_token_count": 3,
+  "regions": [
+   "0x317bdd0",
+   "0x3193e80",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51887608
+   ],
+   [
+    3,
+    51887692
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$GetQuestId"
+  ]
+ },
+ "branchQuestNotClear": {
+  "handler": "0x317bdd0",
+  "min_token_count": 3,
+  "regions": [
+   "0x317bdd0",
+   "0x3193e80",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51887608
+   ],
+   [
+    3,
+    51887692
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$GetQuestId"
+  ]
+ },
+ "branchRouteSelect": {
+  "handler": "0x31834e4",
+  "min_token_count": 5,
+  "regions": [
+   "0x31834e4",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51918092
+   ],
+   [
+    3,
+    51918136
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$GetQuestId",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "branchRouteSelectCount": {
+  "handler": "0x317c85c",
+  "min_token_count": 9,
+  "regions": [
+   "0x317c85c",
+   "0x3193e80",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1,
+   2,
+   4,
+   6
+  ],
+  "equality_at": [
+   [
+    1,
+    51890308
+   ],
+   [
+    3,
+    51890352
+   ],
+   [
+    5,
+    51890396
+   ],
+   [
+    0,
+    51890736
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$GetQuestId"
+  ]
+ },
+ "branchNotRouteSelect": {
+  "handler": "0x31834e4",
+  "min_token_count": 5,
+  "regions": [
+   "0x31834e4",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51918092
+   ],
+   [
+    3,
+    51918136
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$GetQuestId",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "branchNotRouteSelectCount": {
+  "handler": "0x317c85c",
+  "min_token_count": 9,
+  "regions": [
+   "0x317c85c",
+   "0x3193e80",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1,
+   2,
+   4,
+   6
+  ],
+  "equality_at": [
+   [
+    1,
+    51890308
+   ],
+   [
+    3,
+    51890352
+   ],
+   [
+    5,
+    51890396
+   ],
+   [
+    0,
+    51890736
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$GetQuestId"
+  ]
+ },
+ "branchSetGrandSvtCount": {
+  "handler": "0x317e20c",
+  "min_token_count": 5,
+  "regions": [
+   "0x317e20c",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51896884
+   ],
+   [
+    3,
+    51896928
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "revivalBranch": {
+  "handler": "0x31853a4",
+  "min_token_count": 3,
+  "regions": [
+   "0x31853a4",
+   "0x3191820",
+   "0x3193efc"
+  ],
+  "flows": [
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertPictureFrameImageName",
+    "at": 51976700,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 8,
+    "conv": [],
+    "reg": "x5",
+    "arg_index": 5,
+    "param": "flip",
+    "param_type": "CommonEffectManager.FlipKind",
+    "callee": "CommonEffectManager$$CreateParam",
+    "at": 51977104,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertEffectFlipKind",
+    "at": 51977164,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2
+  ],
+  "equality_at": [
+   [
+    1,
+    51925964
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetFrostedGlass",
+   "ScriptActionRenderEffectController$$StartFrostedGlass",
+   "ScriptManager$$ConvertPictureFrameImageName",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptActionRenderEffectController$$SkipBlur",
+   "ScriptPosition$$GetPosition",
+   "CommonEffectManager$$CreateParam",
+   "ScriptManager$$ConvertEffectFlipKind",
+   "ScriptManager$$ConvertNameString",
+   "ScriptCharaData$$SetCharacter"
+  ]
+ },
+ "flag": {
+  "handler": "0x3188a44",
+  "min_token_count": 3,
+  "regions": [
+   "0x3188a44",
+   "0x3193f04"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "ScriptManager$$SearchFlag",
+    "at": 51939984,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   3
+  ],
+  "equality_at": [
+   [
+    1,
+    51939948
+   ],
+   [
+    2,
+    51940112
+   ],
+   [
+    2,
+    51940216
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$SearchFlag"
+  ]
+ },
+ "flagRandom": {
+  "handler": "0x3184ed4",
+  "min_token_count": 5,
+  "regions": [
+   "0x3184ed4",
+   "0x3193e80",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "ScriptManager$$SearchFlag",
+    "at": 51924816,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51924732
+   ],
+   [
+    3,
+    51924776
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$SearchFlag"
+  ]
+ },
+ "masterBranch": {
+  "handler": "0x3179bb8",
+  "min_token_count": 3,
+  "regions": [
+   "0x3179bb8",
+   "0x318d244",
+   "0x3193e94",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 10,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertColor",
+    "at": 51959184,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   5,
+   6,
+   8,
+   10,
+   12
+  ],
+  "equality_at": [
+   [
+    1,
+    51878880
+   ],
+   [
+    4,
+    51958424
+   ],
+   [
+    5,
+    51958900
+   ],
+   [
+    7,
+    51959068
+   ],
+   [
+    9,
+    51959144
+   ],
+   [
+    11,
+    51959240
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ScriptCommandExecute",
+   "ScriptManager$$ConvertColor",
+   "ScriptCharaData$$SetEffectEdgeBlur",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptActionRenderEffectController$$SetDisable",
+   "ScriptFsmObjectData$$SendEvent",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptFsmObjectData$$Skip",
+   "ScriptPosition$$GetCharaOffset",
+   "ScriptCharaData$$Destroy"
+  ]
+ },
+ "questMessageOverwrite": {
+  "handler": "0x317d710",
+  "min_token_count": null,
+  "regions": [
+   "0x317d710",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$GetOverwriteText"
+  ]
+ },
+ "rewardSwitch": {
+  "handler": "0x318522c",
+  "min_token_count": null,
+  "regions": [
+   "0x318522c",
+   "0x3193f04"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1
+  ],
+  "equality_at": [
+   [
+    0,
+    51925636
+   ]
+  ],
+  "context_apis": []
+ },
+ "notification": {
+  "handler": "0x317af78",
+  "min_token_count": 3,
+  "regions": [
+   "0x317af78",
+   "0x31894b8",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51883980,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51884060,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopSubBgm",
+    "at": 51943112,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x0",
+    "arg_index": 0,
+    "param": "name",
+    "param_type": "string",
+    "callee": "BgmManager$$StopBgm",
+    "at": 51943196,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    1,
+    51883936
+   ],
+   [
+    3,
+    51943324
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString",
+   "ScriptManager.NotificationInfoManager$$HasCurrentNotificationInfo",
+   "SoundManager$$stopVoiceAll",
+   "ScriptManager$$ResetWipeFilter",
+   "ScriptMessageCommonManager$$SetFontType",
+   "ScriptManager$$IsFastPlaySpeed",
+   "BgmManager$$PlaySubBgm",
+   "BgmManager$$StopSubBgm",
+   "BgmManager$$StopBgm",
+   "ScriptManager$$GetFSCommandOffsetX",
+   "ScriptCharaData$$SetPosition"
+  ]
+ },
+ "enableWaitLoadAssetWhenResume": {
+  "handler": "0x3182018",
+  "min_token_count": null,
+  "regions": [
+   "0x3182018",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "enableFullScreen": {
+  "handler": "0x3182018",
+  "min_token_count": null,
+  "regions": [
+   "0x3182018",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "useSimpleMeshFigure": {
+  "handler": "0x317ba14",
+  "min_token_count": null,
+  "regions": [
+   "0x317ba14",
+   "0x3193f04"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$ConvertNameString"
+  ]
+ },
+ "switchCase": {
+  "handler": "0x31875c4",
+  "min_token_count": null,
+  "regions": [
+   "0x31875c4",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$JumpScriptCommand"
+  ]
+ },
+ "switchCaseEnd": {
+  "handler": "0x3188c58",
+  "min_token_count": null,
+  "regions": [
+   "0x3188c58",
+   "0x3193f04"
+  ],
+  "flows": [],
+  "optional_pd": [
+   1,
+   2,
+   4
+  ],
+  "equality_at": [
+   [
+    3,
+    51941168
+   ],
+   [
+    0,
+    51941292
+   ],
+   [
+    1,
+    51941432
+   ]
+  ],
+  "context_apis": [
+   "ScriptMessageCommonManager$$SetFontSize",
+   "ScriptMessageCommonManager$$SetSpeed",
+   "ScriptMessageCommonManager$$SetBetweenLineHeight",
+   "ScriptLogMessage$$SetBetweenLineHeight",
+   "ScriptManager$$IsFastPlaySpeed"
+  ]
+ },
+ "warEventScript": {
+  "handler": "0x317a1bc",
+  "min_token_count": 1,
+  "regions": [
+   "0x317a1bc",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "movie": {
+  "handler": "0x3183c38",
+  "min_token_count": null,
+  "regions": [
+   "0x3183c38",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptManager$$IsJumpLine",
+   "ScriptManager$$ConvertCRIMovieName",
+   "ScriptManager$$PlayCRIMovie"
+  ]
+ },
+ "criMovie": {
+  "handler": "0x3183c38",
+  "min_token_count": null,
+  "regions": [
+   "0x3183c38",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptManager$$IsFastPlaySpeed",
+   "ScriptManager$$IsJumpLine",
+   "ScriptManager$$ConvertCRIMovieName",
+   "ScriptManager$$PlayCRIMovie"
+  ]
+ },
+ "warEffectPiece": {
+  "handler": "0x317fd14",
+  "min_token_count": 9,
+  "regions": [
+   "0x317fd14",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "key",
+    "param_type": "string",
+    "callee": "WarBoardManager$$PlayEffectPieceScript",
+    "at": 51903996,
+    "script_api": false,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 1,
+    "param": "effectName",
+    "param_type": "string",
+    "callee": "WarBoardManager$$PlayEffectPieceScript",
+    "at": 51903996,
+    "script_api": false,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "warEffectPos": {
+  "handler": "0x3186664",
+  "min_token_count": 7,
+  "regions": [
+   "0x3186664",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "key",
+    "param_type": "string",
+    "callee": "WarBoardManager$$PlayEffectPosScript",
+    "at": 51930844,
+    "script_api": false,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 1,
+    "param": "effectName",
+    "param_type": "string",
+    "callee": "WarBoardManager$$PlayEffectPosScript",
+    "at": 51930844,
+    "script_api": false,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "warEffectOff": {
+  "handler": "0x317fc60",
+  "min_token_count": 1,
+  "regions": [
+   "0x317fc60",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "key",
+    "param_type": "string",
+    "callee": "WarBoardManager$$StopEffectScript",
+    "at": 51903636,
+    "script_api": false,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "warEffectSquare": {
+  "handler": "0x317f470",
+  "min_token_count": 5,
+  "regions": [
+   "0x317f470",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "key",
+    "param_type": "string",
+    "callee": "WarBoardManager$$PlayEffectSquareScript",
+    "at": 51901636,
+    "script_api": false,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 1,
+    "param": "effectName",
+    "param_type": "string",
+    "callee": "WarBoardManager$$PlayEffectSquareScript",
+    "at": 51901636,
+    "script_api": false,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "warMoveCameraPiece": {
+  "handler": "0x3187cec",
+  "min_token_count": 9,
+  "regions": [
+   "0x3187cec",
+   "0x318cb24",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51957268,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   3,
+   6
+  ],
+  "equality_at": [
+   [
+    2,
+    51956824
+   ],
+   [
+    5,
+    51957352
+   ]
+  ],
+  "context_apis": [
+   "ScriptActionRenderEffectController.StopFunction$$.ctor",
+   "ScriptActionRenderEffectController$$StopGaussianBlur",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptSubLayer$$SetBackgroundColor",
+   "ScriptActionRenderEffectController$$SetGaussianBlur",
+   "ScriptActionRenderEffectController$$StartGaussianBlur",
+   "ScriptManager$$ConvertNameString",
+   "ScriptSubLayer$$StartSubStretch"
+  ]
+ },
+ "warMoveCameraPos": {
+  "handler": "0x317df90",
+  "min_token_count": 7,
+  "regions": [
+   "0x317df90",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 3,
+    "param": "easeType",
+    "param_type": "string",
+    "callee": "WarBoardManager$$MoveCameraPosScript",
+    "at": 51896448,
+    "script_api": false,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "warMoveCameraSquare": {
+  "handler": "0x3183030",
+  "min_token_count": 9,
+  "regions": [
+   "0x3183030",
+   "0x3193f00"
+  ],
+  "flows": [
+   {
+    "pd": 6,
+    "conv": [],
+    "reg": "x2",
+    "arg_index": 3,
+    "param": "easeType",
+    "param_type": "string",
+    "callee": "WarBoardManager$$MoveCameraSquareScript",
+    "at": 51917052,
+    "script_api": false,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": []
+ },
+ "warCharaFadein": {
+  "handler": "0x317ac68",
+  "min_token_count": null,
+  "regions": [
+   "0x317ac68",
+   "0x318438c",
+   "0x3187c7c",
+   "0x318cb9c"
+  ],
+  "flows": [
+   {
+    "pd": 0,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertCharaIndex",
+    "at": 51883144,
+    "script_api": true,
+    "raw_pd": true
+   },
+   {
+    "pd": 2,
+    "conv": [],
+    "reg": "x1",
+    "arg_index": 0,
+    "param": "s",
+    "param_type": "string",
+    "callee": "ScriptManager$$ConvertNameString",
+    "at": 51957268,
+    "script_api": true,
+    "raw_pd": true
+   }
+  ],
+  "optional_pd": [
+   3,
+   6
+  ],
+  "equality_at": [
+   [
+    2,
+    51956824
+   ],
+   [
+    5,
+    51957352
+   ]
+  ],
+  "context_apis": [
+   "ScriptManager$$ConvertCharaIndex",
+   "ScriptCharaData$$IsMoveAlpha",
+   "ScriptManager$$IsNormalPlaySpeed",
+   "ScriptCharaData$$SetPosition",
+   "ScriptActionRenderEffectController.StopFunction$$.ctor",
+   "ScriptActionRenderEffectController$$StopGaussianBlur",
+   "ScriptManager$$SetCameraFilter",
+   "ScriptSubLayer$$SetBackgroundColor",
+   "ScriptActionRenderEffectController$$SetGaussianBlur",
+   "ScriptActionRenderEffectController$$StartGaussianBlur",
+   "ScriptManager$$ConvertNameString",
+   "ScriptSubLayer$$StartSubStretch",
+   "ScriptActionRenderEffectController$$StopMotionBlur"
+  ]
+ },
+ "warBoardTalkScreen": {
+  "handler": "0x317cd60",
+  "min_token_count": null,
+  "regions": [
+   "0x317cd60",
+   "0x3193f00"
+  ],
+  "flows": [],
+  "optional_pd": [],
+  "equality_at": [],
+  "context_apis": [
+   "ScriptMessageCommonManager$$GetMessageBackSprite",
+   "ScriptMessageCommonManager$$GetTalkNameBackSprite"
+  ]
+ }
+}

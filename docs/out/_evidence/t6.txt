@@ -1,0 +1,2 @@
+input selectBranch 0 はい いいえ
+input selectBranchSkipTrueColor 1 A B

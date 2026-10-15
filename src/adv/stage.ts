@@ -1,307 +1,167 @@
 import type { CharacterPosition } from "../types";
-import {
-  EFFECT_ONLY_CHARACTER_IDS,
-  EFFECT_ONLY_NAME,
-  POSITION_SIDE_X,
-} from "./constants";
+import { POSITION_LIST } from "./constants";
 
-/**
- * Live stage state (docs/FGO_Story_Reader_Standard.md S-R2 合成层栈).
- *
- * The executor mutates this state directly; commands launch tweens against it
- * and the renderer receives an immutable snapshot each version bump.
- * L0 background / L1 characters / L2 effects / L3 transitions / L4 picture
- * frame / L5 message window / L6 system UI (the last one lives in React).
- */
-
-export interface CharacterSlotState {
+export interface TransformState { x: number; y: number; scale: number; rotation: number }
+export interface CameraState extends TransformState { filter: string | null; pivot: { x: number; y: number } }
+export interface CharacterSlotState extends TransformState {
   slot: string;
   id: string;
   name: string;
   face: number;
-  /** Fade visibility (engine isWaitTalkMoveAlpha equivalent). */
-  visible: boolean;
-  onStage: boolean;
+  kind: "figure" | "background" | "image";
   position: CharacterPosition;
-  x: number;
-  y: number;
-  scale: number;
-  rotation: number;
+  alpha: number;
+  visible: boolean;
   silhouette: boolean;
   shadow: boolean;
-  layer: "main" | "sub";
-  depth: number | null;
-  effectOnly: boolean;
-}
-
-export interface StageLayerSlotState {
-  slot: string;
-  id: string;
-  source: "background" | "image";
-  visible: boolean;
-  onStage: boolean;
-  position: CharacterPosition;
-  x: number;
-  y: number;
-  scale: number;
-  layer: "main" | "sub";
-  depth: number | null;
-}
-
-export interface CameraState {
-  x: number;
-  y: number;
-  scale: number;
-  rotation: number;
   filter: string | null;
-}
-
-export interface BackgroundState {
-  /** Back buffer A — the visible scene id. */
-  current: string | null;
-  /** Back buffer B — the scene being cross-faded away from. */
-  previous: string | null;
-  /** Cross-fade progress 0..1 (buffer B is fully gone at 1). */
-  crossfade: number;
-  /** Cross-fade duration in seconds; 0 means a hard cut. */
-  crossfadeDuration: number;
-  /** Bumped on every scene change so React remounts the image. */
-  seq: number;
-  /** Last transition requested alongside a scene change. */
-  transition: "fade" | "wipe" | "none";
-}
-
-export interface FadeOverlayState {
   color: string | null;
-  /** 0 → transparent, 1 → fully covered (meshFadeBase alpha). */
+  layer: "main" | "sub";
+  group: string;
+  depth: number;
+  mode: string;
+  shakeX: number;
+  shakeY: number;
+  basePosition: { x: number; y: number };
+  rollAxis: { x: number; y: number; z: number; stopAngle: number; wait: boolean };
+  pivot: { x: number; y: number };
+  cut: { name: string; progress: number; paused: boolean; duration: number; level: number } | null;
+  change: { id: string; face: number; progress: number } | null;
+  maskInteraction: "none" | "inside" | "outside";
+  fullScreenScale: string;
+  alphaLoop: { infinite: boolean; last: number } | null;
+  relativeLoopOrigin: { x: number; y: number } | null;
+}
+export type StageLayerSlotState = CharacterSlotState;
+export interface SubLayerState extends TransformState {
+  key: string;
+  camera: CameraState;
+  cameraEnabled: boolean;
+  visible: boolean;
   alpha: number;
-  /** Bumped whenever a new fade starts; React keys the overlay animation on it. */
-  seq: number;
-  direction: "in" | "out" | "move";
+  depth: number;
+  blur: number | null;
+  mask: string | null;
+  maskEdge: { width: number; color: string } | null;
+  shakeX: number;
+  shakeY: number;
+  stretch: TransformState;
+  blurKind: string;
+}
+export interface FadeOverlayState { color: string | null; alpha: number; seq: number }
+export interface WipeOverlayState extends FadeOverlayState { kind: string; name: string; progress: number; level: number }
+export interface FlashState extends FadeOverlayState { mode: string; slot?: string }
+export interface ShakeState { seq: number; x: number; y: number }
+export interface EffectInstance {
+  id: number; container: string; name: string; assetName: string; x: number; y: number;
+  flip: string; status: "loading" | "paused" | "start" | "loop" | "end";
+  loading: boolean; busy: boolean; progress: number; opacity: number; elapsed: number;
+  preset: "particles" | "slash" | "rays" | "smoke" | "rain" | "noise" | "ring";
+  color: string; markKey?: string;
+  parameters: Record<string, string>;
   duration: number;
+  range: number;
 }
-
-export interface WipeOverlayState {
-  color: string | null;
-  seq: number;
-  kind: "in" | "out" | "filter" | "ex";
-  duration: number;
+export interface CommunicationState {
+  svtId: string; limitCount: number; face: number; x: number; y: number; depth: number;
+  noiseKind: number; loop: boolean; loaded: boolean; busy: boolean; opacity: number; elapsed: number;
 }
+export interface InsertionState extends TransformState { name: string; active: boolean; loading: boolean; phase: "ready" | "in" | "out"; progress: number; images: string[] }
+export interface FsmState { assetName: string; objectName: string; loading: boolean; playing: boolean; state: string; events: string[]; variables: Record<string, boolean | number | string>; x: number; y: number; layer: string }
+export interface MovieState { name: string; blocking: boolean; elapsed: number; duration: number; bgmPause: boolean; sePause: boolean; voicePause: boolean; ready: boolean }
+export const homeTransform = (): TransformState => ({ x: 0, y: 0, scale: 1, rotation: 0 });
+export const homeCamera = (): CameraState => ({ ...homeTransform(), filter: null, pivot: { x: 0, y: 0 } });
+export const positionKind = (x: number): CharacterPosition => x < -96 ? "left" : x > 96 ? "right" : "center";
 
-export interface FlashState {
-  color: string | null;
-  seq: number;
-  duration: number;
+export function resolvePlacement(token = "1") {
+  const pair = token.includes(",") ? token.split(",").map(Number) : POSITION_LIST[Number(token)] ?? POSITION_LIST[0];
+  const x = Number.isFinite(pair[0]) ? pair[0] : 0, y = Number.isFinite(pair[1]) ? pair[1] : 0;
+  return { x, y, position: positionKind(x), onStage: true };
 }
-
-export interface ShakeState {
-  seq: number;
-  amplitudeX: number;
-  amplitudeY: number;
-  cycle: number;
-  duration: number;
-}
-
-export interface StageAudioState {
-  bgm: string | null;
-  bgmVolume: number | null;
-}
-
-export interface StageEffectState {
-  effectName: string | null;
-  overlaySeq: number;
-}
-
-export function isEffectOnlyCharacter(id: string, name: string): boolean {
-  return EFFECT_ONLY_CHARACTER_IDS.has(id) || EFFECT_ONLY_NAME.test(name);
-}
-
-/**
- * Resolves a placement token: either a slot-table index (0-6), an explicit
- * `X,Y` coordinate, or a raw coordinate value. Returns the stage-space
- * position plus the reader's left/center/right classification.
- */
-export function resolvePlacement(token?: string): {
-  position: CharacterPosition;
-  onStage: boolean;
-  x: number;
-  y: number;
-} {
-  let x = 0;
-  let y = 0;
-  if (token?.includes(",")) {
-    const [rawX, rawY] = token.split(",", 2);
-    x = Number.parseFloat(rawX);
-    y = Number.parseFloat(rawY);
-  } else {
-    const index = Number.parseInt(token ?? "1", 10);
-    x = Number.isFinite(index) ? resolveSlotIndex(Number.isFinite(index) ? index : 1) : 0;
-  }
-  if (!Number.isFinite(x)) x = 0;
-  if (!Number.isFinite(y)) y = 0;
-
-  if (Math.abs(x) >= 1000) {
-    return { position: x < 0 ? "left" : "right", onStage: false, x, y };
-  }
-  if (x < -POSITION_SIDE_X) return { position: "left", onStage: true, x, y };
-  if (x > POSITION_SIDE_X) return { position: "right", onStage: true, x, y };
-  return { position: "center", onStage: true, x, y };
-}
-
-function resolveSlotIndex(index: number): number {
-  // Slot table per docs §8; out-of-range indexes fall back to 0 (engine).
-  const table = [-256, 0, 256, -438, -512, 438, 512];
-  return table[index] ?? table[0];
-}
-
 export function parseCoordinateToken(token?: string): { x: number; y: number } | null {
   if (!token?.includes(",")) return null;
-  const [rawX, rawY] = token.split(",", 2);
-  const x = Number.parseFloat(rawX);
-  const y = Number.parseFloat(rawY);
+  const [x, y] = token.split(",").map(Number);
   return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
 }
-
 export function parseBlurIntensity(args: readonly string[], typeIndex: number): number | null {
-  // `blur` is `[blur type intensity ...]`; `subBlur`/`subBlur2` add a layer
-  // argument before the type.
-  const token = args[typeIndex + 1]?.trim();
-  if (!token) return null;
-  const intensity = Number(token);
-  return Number.isFinite(intensity) && intensity >= 0 ? intensity : null;
+  const n = Number(args[typeIndex + 1]);
+  return Number.isFinite(n) && n >= 0 ? n : null;
 }
 
+/** Unity figure/background/image kinds share a single A–Z slot pool. */
 export class Stage {
-  background: BackgroundState = {
-    current: null,
-    previous: null,
-    crossfade: 1,
-    crossfadeDuration: 0,
-    seq: 0,
-    transition: "none",
-  };
-
-  characters = new Map<string, CharacterSlotState>();
-  layers = new Map<string, StageLayerSlotState>();
-  camera: CameraState = { x: 0, y: 0, scale: 1, rotation: 0, filter: null };
-
-  /** L5 message window visibility ([messageOff]/[messageOn]). */
+  slots = new Map<string, CharacterSlotState>();
+  subLayers = new Map<string, SubLayerState>();
+  background = { current: null as string | null, previous: null as string | null, crossfade: 1, seq: 0, mode: "DEFAULT" };
+  camera = homeCamera();
+  fullScreen = false;
   messageVisible = true;
-  /** Sub-render layer visibility ([charaTalk depthOn]/[subRenderOn]/[subCameraOn]). */
-  subRenderVisible = false;
-  /** Active speaker slots (＠ talkName matching + [charaTalk A,B]). */
+  messageFont = 29;
+  messageFontAlign: "top" | "center" | "bottom" | undefined = undefined;
+  messageAlign: "left" | "center" | "right" = "left";
   talkSlots: string[] = [];
-
+  talkDepth = true;
+  talkMask = true;
   blur: number | null = null;
-  screenEffect: StageEffectState = { effectName: null, overlaySeq: 0 };
   pictureFrame: string | null = null;
-  movie: string | null = null;
-
-  fade: FadeOverlayState = { color: null, alpha: 0, seq: 0, direction: "in", duration: 0.5 };
-  wipe: WipeOverlayState = { color: null, seq: 0, kind: "in", duration: 0.5 };
-  flash: FlashState = { color: null, seq: 0, duration: 0.3 };
-  shake: ShakeState = { seq: 0, amplitudeX: 0, amplitudeY: 0, cycle: 0, duration: 0 };
-
-  audio: StageAudioState = { bgm: null, bgmVolume: null };
-
-  /** Bumped on every visible mutation; the snapshot cache keys off it. */
+  pictureFrameTop = false;
+  movie: MovieState | null = null;
+  audio = { bgm: null as string | null, bgmVolume: null as number | null, fade: 0.9, keepSubBgm: 0 };
+  audioStopAtEnd = false;
+  effects = new Map<number, EffectInstance>();
+  effectSequence = 0;
+  communication: CommunicationState | null = null;
+  fsm = new Map<string, FsmState>();
+  insertions = new Map<string, InsertionState>();
+  adv = { setup: false, name: "", object: "", actors: new Map<string, { visible: boolean; goNext: boolean; trigger: string }>() };
+  backColor: string | null = "#000";
+  capture: { slots: CharacterSlotState[]; subLayers: SubLayerState[]; background: string | null; camera: CameraState; effects: EffectInstance[]; communication: CommunicationState | null; blur: number | null; stretch: TransformState; fade: FadeOverlayState; mask: FadeOverlayState; wipe: WipeOverlayState; flash: FlashState } | null = null;
+  simpleMeshFigures: string[] = [];
+  spriteMask: string | null = null;
+  distortion = { enabled: false, centerX: 0, centerY: 0, strength: 0, range: 0, coefficient: 0 };
+  stretch = homeTransform();
+  subStretch = true;
+  blurKind = "GaussianBlur";
+  messageStyle = { verticalAlign: "top" as "top" | "center" | "bottom", lineHeight: null as number | null, font: "normal", skin: "normal", nameBack: null as string | null, shake: { x: 0, y: 0 }, screen: null as { background: boolean; x: number; y: number; width: number; height: number } | null, speedForcedNormal: false, turnPageDisabled: false, turnPageForce: false, scrollStop: false };
+  policy = { skip: false, tapSkipLabel: null as string | null, tapSkipFade: null as string | null, dontResetPress: false, backLog: true, backlogOnly: false, hideAuto: false, hideLog: false, selectionCentering: true, reward: true };
+  notification: { title: string; text: string } | null = null;
+  endFade: "clear" | "black" | "white" = "clear";
+  screenEffect: string | null = null;
+  screenEffectSeq = 0;
+  fade: FadeOverlayState = { color: null, alpha: 0, seq: 0 };
+  mask: FadeOverlayState = { color: null, alpha: 0, seq: 0 };
+  wipe: WipeOverlayState = { color: null, alpha: 0, seq: 0, kind: "in", name: "", progress: 1, level: 1 };
+  flash: FlashState = { color: null, alpha: 0, seq: 0, mode: "once" };
+  shake: ShakeState = { seq: 0, x: 0, y: 0 };
   version = 0;
-
-  touch(): void {
-    this.version += 1;
+  touch(): void { this.version++; }
+  reset(): void {
+    const version = this.version + 1;
+    Object.assign(this, new Stage());
+    this.version = version;
   }
-
-  getStageSlot(slot: string): CharacterSlotState | StageLayerSlotState | undefined {
-    return this.characters.get(slot) ?? this.layers.get(slot);
-  }
-
-  /**
-   * Applies a placement token to any stage slot; shared by charaPut/charaMove/
-   * charaFadein/overlayFadein families.
-   */
-  applyPlacement(
-    target: CharacterSlotState | StageLayerSlotState,
-    token?: string,
-    visible?: boolean,
-  ): void {
-    const placement = resolvePlacement(token);
-    target.position = placement.position;
-    target.onStage = placement.onStage;
-    target.x = placement.x;
-    target.y = placement.y;
-    if (visible !== undefined) target.visible = visible;
-    this.touch();
-  }
-
-  /** Reveals a slot at a position; both an omitted token and `1` resolve center. */
-  applyFadein(
-    target: CharacterSlotState | StageLayerSlotState,
-    token?: string,
-  ): void {
-    this.applyPlacement(target, token, true);
-  }
-
-  requestFade(options: Partial<FadeOverlayState> & { color?: string | null }): void {
-    this.fade = {
-      color: options.color ?? this.fade.color,
-      alpha: options.alpha ?? this.fade.alpha,
-      seq: this.fade.seq + 1,
-      direction: options.direction ?? this.fade.direction,
-      duration: options.duration ?? this.fade.duration,
-    };
-    this.touch();
-  }
-
-  requestFlash(color: string | null, duration = 0.3): void {
-    this.flash = { color, seq: this.flash.seq + 1, duration };
-    this.touch();
-  }
-
-  requestWipe(options: { color?: string | null; kind?: WipeOverlayState["kind"]; duration?: number }): void {
-    this.wipe = {
-      color: options.color ?? this.wipe.color,
-      seq: this.wipe.seq + 1,
-      kind: options.kind ?? this.wipe.kind,
-      duration: options.duration ?? this.wipe.duration,
-    };
-    this.touch();
-  }
-
-  requestShake(amplitudeX = 0, amplitudeY = 0, cycle = 0, duration = 0): void {
-    this.shake = { seq: this.shake.seq + 1, amplitudeX, amplitudeY, cycle, duration };
-    this.touch();
-  }
-
-  setScene(id: string | null, transition: "fade" | "wipe" | "none", crossfadeDuration: number): void {
-    if (this.background.current === id) {
-      // Same id re-request: still refresh the transition beat if animated.
-      if (transition !== "none" && crossfadeDuration > 0) {
-        this.background = { ...this.background, transition, seq: this.background.seq + 1 };
-        this.touch();
-      }
-      return;
+  getStageSlot(slot: string): CharacterSlotState | undefined { return this.slots.get(slot); }
+  subLayer(key = "#A"): SubLayerState {
+    let group = this.subLayers.get(key);
+    if (!group) {
+      // Setting up a camera or assigning sprites must not expose its window
+      // before the script's first subRenderFadein.
+      group = { ...homeTransform(), key, camera: homeCamera(), cameraEnabled: true, visible: false, alpha: 0, depth: 1, blur: null, mask: null, maskEdge: null, shakeX: 0, shakeY: 0, stretch: homeTransform(), blurKind: "GaussianBlurThrough" };
+      this.subLayers.set(key, group);
     }
-    this.background = {
-      previous: crossfadeDuration > 0 ? this.background.current : null,
-      current: id,
-      crossfade: crossfadeDuration > 0 ? 0 : 1,
-      crossfadeDuration,
-      seq: this.background.seq + 1,
-      transition,
-    };
-    this.touch();
+    return group;
   }
-
-  setBgm(name: string | null, volume: number | null): void {
-    this.audio = { bgm: name, bgmVolume: volume };
+  setSlot(slot: string, id: string, kind: CharacterSlotState["kind"], placement = "1", name = "", mode = "1"): CharacterSlotState | null {
+    if (!/^[A-Z]$/.test(slot)) return null;
+    const point = resolvePlacement(placement);
+    const state: CharacterSlotState = { ...homeTransform(), ...point, slot, id, kind, name, face: 0, alpha: 0, visible: false, silhouette: false, shadow: false, filter: null, color: null, layer: "main", group: "#A", depth: 0, mode, shakeX: 0, shakeY: 0, basePosition: { x: point.x, y: point.y }, rollAxis: { x: 0, y: 0, z: 1, stopAngle: 0, wait: false }, pivot: { x: 0, y: 0 }, cut: null, change: null, maskInteraction: "none", fullScreenScale: "0", alphaLoop: null, relativeLoopOrigin: null };
+    this.slots.set(slot, state);
     this.touch();
+    return state;
   }
-
-  setScreenEffect(name: string | null): void {
-    this.screenEffect = {
-      effectName: name,
-      overlaySeq: name ? this.screenEffect.overlaySeq + 1 : this.screenEffect.overlaySeq,
-    };
+  applyPlacement(target: CharacterSlotState, token?: string, visible?: boolean): void {
+    Object.assign(target, resolvePlacement(token));
+    if (visible !== undefined) { target.visible = visible; target.alpha = visible ? 1 : 0; }
     this.touch();
   }
 }

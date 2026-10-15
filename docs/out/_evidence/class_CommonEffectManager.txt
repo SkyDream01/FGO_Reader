@@ -1,0 +1,179 @@
+==============================================================================
+// CommonEffectManager  (dump.cs line 148830)
+public class CommonEffectManager : SingletonMonoBehaviour<CommonEffectManager> // TypeDefIndex: 4302
+{
+	// Fields
+	[SerializeField]
+	protected GameObject loadEffectPrefab; // 0x20
+	[SerializeField]
+	protected GameObject communicationCharaEffectPrefab; // 0x28
+	[SerializeField]
+	protected CommonEffectManager.skinLoadEffect[] skinEffectLoadLists; // 0x30
+	protected static string effectAssetStoragePath; // 0x0
+	protected static string skinEffectAssetStoragePath; // 0x8
+	protected static GameObject testEffectPrefab; // 0x10
+	protected static GameObject testBackEffectPrefab; // 0x18
+	protected static GameObject testCharaEffectPrefab; // 0x20
+	protected static GameObject testCharaBackEffectPrefab; // 0x28
+	private Dictionary<string, GameObject> skinedEffects; // 0x38
+	private string loadedSkinAssetName; // 0x40
+	private Action callbackAfterSkinLoad; // 0x48
+	[CompilerGenerated]
+	private int <LoadedSkinAssetIndex>k__BackingField; // 0x50
+
+	// Properties
+	public int LoadedSkinAssetIndex { get; set; }
+
+	// Methods
+
+	[CompilerGenerated]
+	// RVA: 0x30BFB68 Offset: 0x30BBB68 VA: 0x30BFB68
+	public int get_LoadedSkinAssetIndex() { }
+
+	[CompilerGenerated]
+	// RVA: 0x30BFB70 Offset: 0x30BBB70 VA: 0x30BFB70
+	private void set_LoadedSkinAssetIndex(int value) { }
+
+	// RVA: 0x30BF908 Offset: 0x30BB908 VA: 0x30BF908
+	public static Quaternion GetFlipQuaternion(CommonEffectManager.FlipKind flip) { }
+
+	// RVA: 0x30BFB78 Offset: 0x30BBB78 VA: 0x30BFB78
+	public static string GetAssetName(string effectName) { }
+
+	// RVA: 0x30BFBDC Offset: 0x30BBBDC VA: 0x30BFBDC
+	public static CommonEffectComponent[] Get(GameObject parent) { }
+
+	// RVA: 0x30B632C Offset: 0x30B232C VA: 0x30B632C
+	public static bool IsBusy(GameObject parent) { }
+
+	// RVA: 0x30BFDC8 Offset: 0x30BBDC8 VA: 0x30BFDC8
+	public static bool IsBusy(GameObject parent, string effectName) { }
+
+	// RVA: 0x30BFFDC Offset: 0x30BBFDC VA: 0x30BFFDC
+	public static bool IsStart(GameObject parent) { }
+
+	// RVA: 0x30C0168 Offset: 0x30BC168 VA: 0x30C0168
+	public static bool IsStart(GameObject parent, string effectName) { }
+
+	// RVA: 0x30C0384 Offset: 0x30BC384 VA: 0x30C0384
+	public static CommonEffectComponent Create(GameObject parent, string effectName, GameObject prefab) { }
+
+	// RVA: 0x30C0640 Offset: 0x30BC640 VA: 0x30C0640
+	public static CommonEffectComponent Create(GameObject parent, string effectName, GameObject prefab, bool isSkip) { }
+
+	// RVA: 0x30C0708 Offset: 0x30BC708 VA: 0x30C0708
+	public static CommonEffectComponent Create(GameObject parent, string effectName, GameObject prefab, Vector3 pos) { }
+
+	// RVA: 0x30C044C Offset: 0x30BC44C VA: 0x30C044C
+	public static CommonEffectComponent Create(GameObject parent, string effectName, GameObject prefab, Vector3 pos, bool isSkip, CommonEffectManager.FlipKind flip) { }
+
+	// RVA: 0x30C07D0 Offset: 0x30BC7D0 VA: 0x30C07D0
+	public static CommonEffectComponent Create(GameObject parent, AssetData data, GameObject prefab) { }
+
+	// RVA: 0x30C0A74 Offset: 0x30BCA74 VA: 0x30C0A74
+	public static CommonEffectComponent Create(GameObject parent, AssetData data, GameObject prefab, bool isSkip) { }
+
+	// RVA: 0x30C0B3C Offset: 0x30BCB3C VA: 0x30C0B3C
+	public static CommonEffectComponent Create(GameObject parent, AssetData data, GameObject prefab, Vector3 pos) { }
+
+	// RVA: 0x30C0898 Offset: 0x30BC898 VA: 0x30C0898
+	public static CommonEffectComponent Create(GameObject parent, AssetData data, GameObject prefab, Vector3 pos, bool isSkip, CommonEffectManager.FlipKind flip) { }
+
+	// RVA: 0x30C0BD8 Offset: 0x30BCBD8 VA: 0x30C0BD8
+	public static void Create(GameObject parent, string effectName, bool isSkip = False, bool isPause = False, CommonEffectManager.FlipKind flip = 0) { }
+
+	// RVA: 0x30B90B8 Offset: 0x30B50B8 VA: 0x30B90B8
+	public static void Create(GameObject parent, string effectName, CommonEffectLoadComponent.LoadEndHandler callback, bool isSkip = False, bool isPause = False, CommonEffectManager.FlipKind flip = 0) { }
+
+	// RVA: 0x30C1174 Offset: 0x30BD174 VA: 0x30C1174
+	public static void Create(GameObject parent, string effectName, Vector3 pos, bool isSkip = False, bool isPause = False, CommonEffectManager.FlipKind flip = 0) { }
+
+	// RVA: 0x30B7BEC Offset: 0x30B3BEC VA: 0x30B7BEC
+	public static void Create(GameObject parent, string effectName, Vector3 pos, CommonEffectLoadComponent.LoadEndHandler callback, bool isSkip = False, bool isPause = False, CommonEffectManager.FlipKind flip = 0) { }
+
+	// RVA: 0x30C1234 Offset: 0x30BD234 VA: 0x30C1234
+	public static void CreateParam(GameObject parent, string effectName, object param, bool isSkip = False, bool isPause = False, CommonEffectManager.FlipKind flip = 0) { }
+
+	// RVA: 0x30C1318 Offset: 0x30BD318 VA: 0x30C1318
+	public static void CreateParam(GameObject parent, string effectName, object param, CommonEffectLoadComponent.LoadEndHandler callback, bool isSkip = False, bool isPause = False, CommonEffectManager.FlipKind flip = 0) { }
+
+	// RVA: 0x30C1400 Offset: 0x30BD400 VA: 0x30C1400
+	public static void CreateParam(GameObject parent, string effectName, Vector3 pos, object param, bool isSkip = False, bool isPause = False, CommonEffectManager.FlipKind flip = 0) { }
+
+	// RVA: 0x30C14CC Offset: 0x30BD4CC VA: 0x30C14CC
+	public static void CreateParam(GameObject parent, string effectName, Vector3 pos, object param, CommonEffectLoadComponent.LoadEndHandler callback, bool isSkip = False, bool isPause = False, CommonEffectManager.FlipKind flip = 0) { }
+
+	// RVA: 0x30C159C Offset: 0x30BD59C VA: 0x30C159C
+	public static void Resume(GameObject parent, bool isSkip = False) { }
+
+	// RVA: 0x30C1738 Offset: 0x30BD738 VA: 0x30C1738
+	public static void Resume(GameObject parent, string effectName, bool isSkip = False) { }
+
+	// RVA: 0x30B60E8 Offset: 0x30B20E8 VA: 0x30B60E8
+	public static bool Stop(GameObject parent, bool isSkip = False, bool isLoadStop = False, string markKey) { }
+
+	// RVA: 0x30C1C54 Offset: 0x30BDC54 VA: 0x30C1C54
+	public static bool Stop(GameObject parent, string effectName, bool isSkip = False, bool isLoadStop = False, string markKey) { }
+
+	// RVA: 0x30C1CDC Offset: 0x30BDCDC VA: 0x30C1CDC
+	public static bool ForceStop(GameObject parent, bool isSkip = False, bool isLoadStop = False, string markKey) { }
+
+	// RVA: 0x30C1D60 Offset: 0x30BDD60 VA: 0x30C1D60
+	public static bool ForceStop(GameObject parent, string effectName, bool isSkip = False, bool isLoadStop = False, string markKey) { }
+
+	// RVA: 0x30C1978 Offset: 0x30BD978 VA: 0x30C1978
+	public static bool StopInternal(bool force, GameObject parent, string effectName, bool isSkip = False, bool isLoadStop = False, string markKey) { }
+
+	// RVA: 0x30C1E40 Offset: 0x30BDE40 VA: 0x30C1E40
+	public static void Destroy(GameObject parent) { }
+
+	// RVA: 0x30C217C Offset: 0x30BE17C VA: 0x30C217C
+	public static void Destroy(GameObject parent, string effectName) { }
+
+	// RVA: 0x30C256C Offset: 0x30BE56C VA: 0x30C256C
+	public static void DestroyByMark(GameObject parent, string markKey) { }
+
+	// RVA: 0x30C2B0C Offset: 0x30BEB0C VA: 0x30C2B0C
+	public static void SetTestEffectPrefab(GameObject effectPrefab, GameObject backEffectPrefab, GameObject charaEffectPrefab, GameObject charaBackEffectPrefab) { }
+
+	// RVA: 0x30C0CB0 Offset: 0x30BCCB0 VA: 0x30C0CB0
+	protected void LoadCreateLocal(GameObject parent, string effectName, Vector3 pos, object param, CommonEffectLoadComponent.LoadEndHandler callback, bool isSkip, bool isPause, CommonEffectManager.FlipKind flip) { }
+
+	// RVA: 0x30C2BC4 Offset: 0x30BEBC4 VA: 0x30C2BC4
+	public static void Reboot() { }
+
+	// RVA: 0x30C2E10 Offset: 0x30BEE10 VA: 0x30C2E10
+	public void LoadSkinEffectsLocal(Action callback, int loadParallelMax = 1) { }
+
+	// RVA: 0x30C2C10 Offset: 0x30BEC10 VA: 0x30C2C10
+	public void ReleaseSkinEffectsLocal() { }
+
+	// RVA: 0x30C30CC Offset: 0x30BF0CC VA: 0x30C30CC
+	private List<GameObject> SetSkinEffectsLocal(string[] effectNameArray, GameObject parent, bool doSetDepthZero) { }
+
+	// RVA: 0x30C3340 Offset: 0x30BF340 VA: 0x30C3340
+	public GameObject SetSkinEffectLocal(string effect, GameObject parent) { }
+
+	// RVA: 0x30C3448 Offset: 0x30BF448 VA: 0x30C3448
+	public bool IsSkinEffectLoaded() { }
+
+	// RVA: 0x30C3458 Offset: 0x30BF458 VA: 0x30C3458
+	public static void LoadSkinEffects(Action callback, int loadParallelMax = 1) { }
+
+	// RVA: 0x30C34BC Offset: 0x30BF4BC VA: 0x30C34BC
+	public static void ReleaseSkinEffects() { }
+
+	// RVA: 0x30C3508 Offset: 0x30BF508 VA: 0x30C3508
+	public static List<GameObject> SetSkinEffects(string[] effectNameArray, GameObject parent, bool doSetDepthZero) { }
+
+	// RVA: 0x30C3574 Offset: 0x30BF574 VA: 0x30C3574
+	public static GameObject SetSkinEffect(string effects, GameObject parent) { }
+
+	// RVA: 0x30C35D8 Offset: 0x30BF5D8 VA: 0x30C35D8
+	public static bool IsLoadedSkinData() { }
+
+	// RVA: 0x30C3630 Offset: 0x30BF630 VA: 0x30C3630
+	public void .ctor() { }
+
+	// RVA: 0x30C3678 Offset: 0x30BF678 VA: 0x30C3678
+	private static void .cctor() { }

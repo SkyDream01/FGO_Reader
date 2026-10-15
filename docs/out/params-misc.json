@@ -1,0 +1,2752 @@
+{
+ "commands": {
+  "bgm": {
+   "handler": "0x31824fc",
+   "summary": "BGM 播放。带可选音量；由 tag 决定主 BGM(subBgm 走 SubBgmPlayArgs+BgmManager.PlaySubBgm)。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "BGM 名（字符串名，可被 ConvertNameString 改写成资源名）",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x318251c ConvertNameString;0x3189608 SubBgmPlayArgs..ctor;0x318962c PlaySubBgm"
+    },
+    {
+     "pd": 2,
+     "means": "音量(volume)；省略时按 0（默认音量）处理",
+     "type": "float",
+     "values": "0.0–1.0（0=默认）",
+     "confidence": "medium",
+     "evidence": "0x31893f8 Single::Parse;s0→ctor 的 volume 参数 0x3189608"
+    }
+   ],
+   "unknown": [
+    "pd[2] 为 0 时是‘默认音量’还是‘静音’未区分（SubBgmPlayArgs 的 volume 是 Nullable<float>，需要看 PlaySubBgm 内部）"
+   ]
+  },
+  "subBgm": {
+   "handler": "0x31824fc",
+   "summary": "副 BGM（sub 通道）播放，与 bgm 共用函数体，运行时按 tag 分支。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "BGM 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x318251c;0x31895d4 tag=='subBgm'"
+    },
+    {
+     "pd": 2,
+     "means": "音量；0=默认",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "medium",
+     "evidence": "0x31893f8"
+    }
+   ],
+   "unknown": []
+  },
+  "bgmStop": {
+   "handler": "0x3181900",
+   "summary": "停止 BGM（bgmStop/bgmStopEnd/subBgmStop 共用体，内部按 tag 分派）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "BGM 名；` ` (单空格)=省略（用当前 BGM/默认目标）",
+     "type": "string",
+     "values": "资源名 / ` `",
+     "confidence": "medium",
+     "evidence": "0x3189674 pd[2]→Single 之前的 pd[0];0x31896c8 StopSubBgm(name)"
+    }
+   ],
+   "unknown": [
+    "参数个数与 tag 分支的组合未逐条跟完（共有 3 个 tag 别名）"
+   ]
+  },
+  "bgmStopEnd": {
+   "handler": "0x3181900",
+   "summary": "BGM 停止（结束段）：与 bgmStop 共用体，语义为‘到脚本结束时再停’。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "BGM 名 / ` `",
+     "type": "string",
+     "values": "资源名 / ` `",
+     "confidence": "low",
+     "evidence": "0x3181900 共用体;0x3189708 tag=='bgmStopEnd'"
+    }
+   ],
+   "unknown": [
+    "与 bgmStop 的差异由 tag 分支处理，未逐指令确认"
+   ]
+  },
+  "subBgmStop": {
+   "handler": "0x3181900",
+   "summary": "停止副 BGM。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "BGM 名 / ` `",
+     "type": "string",
+     "values": "资源名 / ` `",
+     "confidence": "low",
+     "evidence": "0x31896b8 tag=='subBgmStop'"
+    }
+   ],
+   "unknown": [
+    "同上"
+   ]
+  },
+  "keepSubBgmOn": {
+   "handler": "0x3181fd4",
+   "summary": "允许副 BGM 在场景切换后继续播放（BgmManager.Enable_KeepSubBgm(true)），无参数。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "keepSubBgmOff": {
+   "handler": "0x31797d0",
+   "summary": "禁止副 BGM 跨场景继续（Enable_KeepSubBgm(false)），无参数。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "se": {
+   "handler": "0x3180760",
+   "summary": "播放 SE。1 个值=默认音量；3 个值=name+volume；5 个值=name+fadeinTime+volume（实参顺序已核对：pd[2] 是淡入时间、pd[4] 才是音量）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名（ConvertNameString）",
+     "confidence": "high",
+     "evidence": "0x318dfec;OverwriteAssetSoundName.PlaySe 0x2E7FBA0/0x2E80224"
+    },
+    {
+     "pd": 2,
+     "means": "3 值形式：音量 volume；5 值形式：淡入时间 fadeinTime",
+     "type": "float",
+     "values": "0.0-1.0 / 秒",
+     "confidence": "high",
+     "evidence": "5 值:0x3180830->s1(fadeinTime);3 值:0x318e010->s0(volume)"
+    },
+    {
+     "pd": 4,
+     "means": "音量 volume（5 值形式）",
+     "type": "float",
+     "values": "0.0-1.0",
+     "confidence": "high",
+     "evidence": "0x318080c->s8->s0（PlaySe 第 3 实参 volume）0x3180838"
+    }
+   ],
+   "unknown": []
+  },
+  "seStop": {
+   "handler": "0x3180a80",
+   "summary": "停止 SE。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x318bd5c OverwriteAssetSoundName.StopSe(name)"
+    },
+    {
+     "pd": 2,
+     "means": "淡出时间 fadeoutTime",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x3188c2c Single::Parse"
+    }
+   ],
+   "unknown": []
+  },
+  "seLoop": {
+   "handler": "0x31833e0",
+   "summary": "循环播放 SE（OverwriteAssetSoundName.PlaySeLoop(name, volume, fadeInTime)）；与 se 共用尾部，数值顺序同 se（pd[2]=淡入时间、pd[4]=音量）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x318e10c ConvertNameString;tag=='seLoop' 分支"
+    },
+    {
+     "pd": 2,
+     "means": "淡入时间 fadeInTime",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x318349c Single::Parse;s1"
+    },
+    {
+     "pd": 4,
+     "means": "音量 volume",
+     "type": "float",
+     "values": "0.0-1.0",
+     "confidence": "medium",
+     "evidence": "0x3183478 Single::Parse;s0;PlaySeLoop 0x2E804CC"
+    }
+   ],
+   "unknown": [
+    "函数体与 se 共用尾部，顺序沿用 se 的结论（未单独核对 seLoop 调用点）"
+   ]
+  },
+  "seVolume": {
+   "handler": "0x3181dd0",
+   "summary": "改变正在播放的 SE 音量（SoundManager.changeVolumeSe）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x3181ea8 changeVolumeSe(name)"
+    },
+    {
+     "pd": 2,
+     "means": "淡出/渐变时间 fadeTime",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x3181e78→s1（第 3 实参 fadeTime）"
+    },
+    {
+     "pd": 4,
+     "means": "音量 volume",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "medium",
+     "evidence": "0x3181e54→s0（第 2 实参 volume）"
+    }
+   ],
+   "unknown": []
+  },
+  "seContinue": {
+   "handler": "0x3180310",
+   "summary": "播放可续播 SE（跨场景/跨脚本延续，OverwriteAssetSoundName.PlaySeContinue）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x3180418 x22=pd[0]→PlaySeContinue(name)"
+    },
+    {
+     "pd": 2,
+     "means": "淡入时间 fadeinTime",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x3180470 解析后→s1（第 5 实参 fadeinTime）"
+    },
+    {
+     "pd": 4,
+     "means": "音量 volume",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "medium",
+     "evidence": "0x3180420 解析后→s0（第 3 实参 volume）"
+    },
+    {
+     "pd": 6,
+     "means": "续播编号 id（脚本内唯一键）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x31803cc Int32::Parse;ScriptManager.CheckSameIdSeContinue 0x31803e0"
+    }
+   ],
+   "unknown": []
+  },
+  "seContinueStop": {
+   "handler": "0x31838c8",
+   "summary": "停止可续播 SE（与 cueSeContinueStop 共用体）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x318bc58 tail→OverwriteAssetSoundName.StopSe 0x318bd5c"
+    },
+    {
+     "pd": 2,
+     "means": "淡出时间",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x31839a8/0x318bd1c Single::Parse"
+    },
+    {
+     "pd": 4,
+     "means": "续播编号 id",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x3183964 Int32::Parse"
+    }
+   ],
+   "unknown": [
+    "pd[4] 的用途（是否 id）未确认"
+   ]
+  },
+  "seContinueVolume": {
+   "handler": "0x3188898",
+   "summary": "改变可续播 SE 的音量。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "low",
+     "evidence": "0x3188898"
+    },
+    {
+     "pd": 2,
+     "means": "渐变时间 fadeTime",
+     "type": "float",
+     "values": "秒",
+     "confidence": "low",
+     "evidence": "0x31889a0 Single::Parse"
+    },
+    {
+     "pd": 4,
+     "means": "音量 volume",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "low",
+     "evidence": "0x318897c Single::Parse"
+    },
+    {
+     "pd": 6,
+     "means": "续播编号 id",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x3188938 Int32::Parse"
+    }
+   ],
+   "unknown": [
+    "函数体内未见直接 API 调用（可能走 ScriptSubLayer/Delay 机制），参数与 seContinue 保持一致才合理"
+   ]
+  },
+  "cueSe": {
+   "handler": "0x3186434",
+   "summary": "按 asset+object 对播放 SE（OverwriteAssetSoundName.PlaySe(assetName,objectName,...)）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "资源名 assetName",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x3186504 ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "对象名 objectName",
+     "type": "string",
+     "values": "对象名",
+     "confidence": "high",
+     "evidence": "0x318652c ConvertNameString"
+    },
+    {
+     "pd": 4,
+     "means": "参数 A",
+     "type": "float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x3186574 Single::Parse"
+    },
+    {
+     "pd": 6,
+     "means": "参数 B",
+     "type": "float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x3186550 Single::Parse"
+    }
+   ],
+   "unknown": [
+    "pd[4]/pd[6] 对应 volume/fadeinTime 中的哪一个未确认"
+   ]
+  },
+  "cueSeStop": {
+   "handler": "0x3188bb0",
+   "summary": "停止 cue SE。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x3188bb0 头部+0x318bd5c StopSe"
+    },
+    {
+     "pd": 2,
+     "means": "淡出时间",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x3188c2c Single::Parse"
+    }
+   ],
+   "unknown": []
+  },
+  "cueSeVolume": {
+   "handler": "0x318440c",
+   "summary": "改变 cue SE 音量（changeVolumeSe，参数顺序同 seVolume）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x31844e4 changeVolumeSe"
+    },
+    {
+     "pd": 2,
+     "means": "渐变时间 fadeTime",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x31844b4→与 seVolume 同构"
+    },
+    {
+     "pd": 4,
+     "means": "音量 volume",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "medium",
+     "evidence": "0x3184490"
+    }
+   ],
+   "unknown": []
+  },
+  "cueSeContinue": {
+   "handler": "0x317ffa4",
+   "summary": "cue 版可续播 SE（5 个值）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x317ffa4"
+    },
+    {
+     "pd": 2,
+     "means": "SE 名/对象名（PlaySeContinue(name)）",
+     "type": "string",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x3180154 PlaySeContinue(arg x1=pd2)"
+    },
+    {
+     "pd": 4,
+     "means": "参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x31800e4 Single::Parse"
+    },
+    {
+     "pd": 6,
+     "means": "参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318007c"
+    },
+    {
+     "pd": 8,
+     "means": "续播编号 id",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x318008c Int32::Parse"
+    }
+   ],
+   "unknown": [
+    "与 seContinue 的对应关系只确认到 pd[0]/pd[2]"
+   ]
+  },
+  "cueSeContinueStop": {
+   "handler": "0x31838c8",
+   "summary": "cue 版续播 SE 停止（与 seContinueStop 同一函数体）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "low",
+     "evidence": "0x31838c8"
+    },
+    {
+     "pd": 2,
+     "means": "淡出时间",
+     "type": "float",
+     "values": "秒",
+     "confidence": "low",
+     "evidence": "0x31839a8"
+    },
+    {
+     "pd": 4,
+     "means": "续播编号",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x3183964"
+    }
+   ],
+   "unknown": []
+  },
+  "cueSeContinueVolume": {
+   "handler": "0x3188898",
+   "summary": "cue 版续播 SE 音量（与 seContinueVolume 同一函数体）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "SE 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "low",
+     "evidence": "0x3188898"
+    },
+    {
+     "pd": 2,
+     "means": "渐变时间",
+     "type": "float",
+     "values": "秒",
+     "confidence": "low",
+     "evidence": "0x31889a0"
+    },
+    {
+     "pd": 4,
+     "means": "音量",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "low",
+     "evidence": "0x318897c"
+    },
+    {
+     "pd": 6,
+     "means": "续播编号",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x3188938"
+    }
+   ],
+   "unknown": []
+  },
+  "cueVoice": {
+   "handler": "0x317cef8",
+   "summary": "cue 版语音播放。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "语音名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "low",
+     "evidence": "0x317cef8"
+    },
+    {
+     "pd": 2,
+     "means": "对象名/参数",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x317cf8c ConvertNameString"
+    },
+    {
+     "pd": 4,
+     "means": "参数",
+     "type": "string/float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x317cf20 pd1==' ' 守卫"
+    }
+   ],
+   "unknown": [
+    "函数体未跟完；参数布局与 cueSe 类似（asset/object）"
+   ]
+  },
+  "cueVoiceStop": {
+   "handler": "0x3179ed0",
+   "summary": "cue 版语音停止。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "语音名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "low",
+     "evidence": "0x318e7bc ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "淡出时间",
+     "type": "float",
+     "values": "秒",
+     "confidence": "low",
+     "evidence": "0x3179f58 Single::Parse"
+    }
+   ],
+   "unknown": []
+  },
+  "cueVoiceVolume": {
+   "handler": "0x317b954",
+   "summary": "cue 版语音音量。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "语音名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "low",
+     "evidence": "0x317b954"
+    },
+    {
+     "pd": 2,
+     "means": "渐变时间",
+     "type": "float",
+     "values": "秒",
+     "confidence": "low",
+     "evidence": "0x317b97c pd1==' ' 守卫"
+    },
+    {
+     "pd": 4,
+     "means": "音量",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "low",
+     "evidence": "0x317b9a8 pd3==' ' 守卫"
+    }
+   ],
+   "unknown": [
+    "与 voiceVolume 同构的推测，未定位到 changeVolumeVoice 调用点"
+   ]
+  },
+  "voice": {
+   "handler": "0x317d5b0",
+   "summary": "播放角色语音 SoundManager.playCharaVoice(name, volume, ignorePreDelay)。快速播放模式下直接跳过。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "语音名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x317d628 ConvertNameString;0x317d67c playCharaVoice"
+    },
+    {
+     "pd": 2,
+     "means": "音量 volume",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "high",
+     "evidence": "0x317d64c Single::Parse→s0（第 2 实参）"
+    }
+   ],
+   "unknown": []
+  },
+  "voiceStop": {
+   "handler": "0x317d8c8",
+   "summary": "停止语音（SoundManager.stopVoice(name, fadeoutTime)）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "语音名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x318e80c ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "淡出时间",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x317d950 Single::Parse"
+    }
+   ],
+   "unknown": []
+  },
+  "voiceVolume": {
+   "handler": "0x317e3ec",
+   "summary": "改变语音音量（SoundManager.changeVolumeVoice(name, volume, fadeTime)）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "语音名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x317e468 ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "渐变时间 fadeTime",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x317e4b0（与 seVolume 同构：s1）"
+    },
+    {
+     "pd": 4,
+     "means": "音量 volume",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "medium",
+     "evidence": "0x317e48c（s0）"
+    }
+   ],
+   "unknown": []
+  },
+  "tVoice": {
+   "handler": "0x317cc08",
+   "summary": "临时/教程语音（TVoice），≥4 个值；pd[0] 名字、pd[2] 对象名、pd[4] 浮点、pd[6..] 多个 int 参。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "语音名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x317cc28 ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "对象名",
+     "type": "string",
+     "values": "对象名（未转换，原样）",
+     "confidence": "medium",
+     "evidence": "0x317cc40 ldr x23,[x8,#0x30]"
+    },
+    {
+     "pd": 4,
+     "means": "浮点参数（时长/音量）",
+     "type": "float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318c77c Single::Parse"
+    },
+    {
+     "pd": 6,
+     "means": "布尔参数（'true' 比较）",
+     "type": "string",
+     "values": "true/false",
+     "confidence": "low",
+     "evidence": "0x318c8c0 String::Equals('true')"
+    },
+    {
+     "pd": 14,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318cab0 Int32::Parse"
+    },
+    {
+     "pd": 16,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318cae0"
+    },
+    {
+     "pd": 18,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318cb10"
+    }
+   ],
+   "unknown": [
+    "pd[8]/pd[10]/pd[12] 未见消费点（可能被跳过）；pd[4]/pd[6] 语义未确认"
+   ]
+  },
+  "tVoiceUser": {
+   "handler": "0x317ae9c",
+   "summary": "用户（自定义）语音；pd.Length≥7。内含 pd[0]=='false'/'allFalse' 特判。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "语音名/条件",
+     "type": "string",
+     "values": "资源名 / false / allFalse",
+     "confidence": "medium",
+     "evidence": "0x317aef4 ConvertNameString;0x318c5e8/0x318c614 String 比较"
+    },
+    {
+     "pd": 2,
+     "means": "参数",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x317af10 pd 起点"
+    },
+    {
+     "pd": 4,
+     "means": "浮点参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318c77c Single::Parse"
+    },
+    {
+     "pd": 8,
+     "means": "浮点参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318c4a8 Single::Parse"
+    }
+   ],
+   "unknown": [
+    "完整参数表未读完；仅确认 pd0/pd8 与 false/allFalse 特判"
+   ]
+  },
+  "jingle": {
+   "handler": "0x3186b70",
+   "summary": "播放 jingle（SoundManager.playJingle/ BgmManager.PlayJingle(name, volume)）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "jingle 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x3186be8 ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "音量",
+     "type": "float",
+     "values": "0.0–1.0",
+     "confidence": "medium",
+     "evidence": "0x3186c0c Single::Parse"
+    }
+   ],
+   "unknown": []
+  },
+  "jingleStop": {
+   "handler": "0x31846c0",
+   "summary": "停止 jingle（BgmManager.IsPlayJingle(name) 判定后 StopJingle）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "jingle 名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x31846fc isPlayJingle(name)"
+    }
+   ],
+   "unknown": []
+  },
+  "advSoundSet": {
+   "handler": "0x3182018",
+   "summary": "空实现：函数体只有 `b #0x3193f00`（返回 Normal），本版本不消费任何参数。",
+   "params": [],
+   "unknown": [
+    "与 delayEnd/enableFullScreen/enableWaitLoadAssetWhenResume 共用空体；如旧脚本带参会被直接忽略"
+   ]
+  },
+  "soundStopAll": {
+   "handler": "0x3188554",
+   "summary": "停止所有声音（ScriptManager.SoundStopAll()），无参数。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "soundStopAllEnd": {
+   "handler": "0x3187494",
+   "summary": "脚本结束时停止所有声音；参数由 GetNonStopEndBgm() 内部决定，无脚本参数。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "soundStopAllFade": {
+   "handler": "0x3181c98",
+   "summary": "带淡出的全停止。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "淡出时间（秒）",
+     "type": "float",
+     "values": "秒",
+     "confidence": "high",
+     "evidence": "0x3181cb4 Single::Parse→SoundStopAllFade(fade)"
+    }
+   ],
+   "unknown": []
+  },
+  "messageOn": {
+   "handler": "0x317bc58",
+   "summary": "打开消息窗；必须无参数（pd.Length!=0 报参数错误）。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "messageOff": {
+   "handler": "0x318152c",
+   "summary": "关闭消息窗（OffScreen+ClearText+记录 back log），必须无参数（否则 parameter error 0x3193e80）。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "messageStart": {
+   "handler": "0x317f98c",
+   "summary": "把当前行整段交给消息系统（CalcMessageVerticalAlign(pd[])），可带可选参数（vertical align 数据）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "消息垂直对齐用参数数组（整段 pd 传入，解释在消息管理侧）",
+     "type": "string[]",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x317f99c CalcMessageVerticalAlign(dataList)"
+    }
+   ],
+   "unknown": [
+    "消息系统内部的用法未展开（在 ScriptMessageCommonManager 侧）"
+   ]
+  },
+  "messageChange": {
+   "handler": "0x31852b8",
+   "summary": "切换消息窗 prefab。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "消息窗名（ScriptUI/MessageWindow/<name>）",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x31852f8 ConvertMessageWindowName"
+    }
+   ],
+   "unknown": []
+  },
+  "messageAlign": {
+   "handler": "0x3186e48",
+   "summary": "消息文本对齐/排布设置；<1 或 ≥3 个值均可（1 值时走另一条参数路径）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "对齐/行首参数（int 或对齐数据）",
+     "type": "int/string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x3186e5c（pd.Length==1 路径）;0x318b478 Int32::Parse"
+    },
+    {
+     "pd": 2,
+     "means": "浮点参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318b660 Single::Parse"
+    },
+    {
+     "pd": 4,
+     "means": "浮点参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318b684 Single::Parse"
+    }
+   ],
+   "unknown": [
+    "未定位到 SetMessageVerticalAlign/SetHorizontalAlign 的调用点；pd[2]/pd[4] 是否属于本命令存疑"
+   ]
+  },
+  "messageShake": {
+   "handler": "0x3182074",
+   "summary": "消息窗震动（ScriptMessageCommonManager.Shake(duration, cycle, x, y)，4 个浮点值）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "持续时间 duration",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x3182118 Single::Parse"
+    },
+    {
+     "pd": 2,
+     "means": "周期 cycle",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x3182190 Single::Parse"
+    },
+    {
+     "pd": 4,
+     "means": "X 振幅",
+     "type": "float",
+     "values": "像素",
+     "confidence": "low",
+     "evidence": "0x31821b4 Single::Parse"
+    },
+    {
+     "pd": 6,
+     "means": "Y 振幅",
+     "type": "float",
+     "values": "像素",
+     "confidence": "low",
+     "evidence": "0x3182148 Single::Parse"
+    }
+   ],
+   "unknown": [
+    "pd[0]/2/4/6 与 Shake(duration,cycle,x,y) 的一一对应未逐条确认（顺序疑为 0,6,2,4）"
+   ]
+  },
+  "messageShakeStop": {
+   "handler": "0x317e89c",
+   "summary": "停止消息窗震动，无参数。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "messageSpeedForcedNormal": {
+   "handler": "0x3184204",
+   "summary": "强制消息文字速度恢复正常；参数为 on/off。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "开关",
+     "type": "string",
+     "values": "on / off",
+     "confidence": "high",
+     "evidence": "0x318422c pd0=='on';0x318c2e0 pd0=='off'"
+    }
+   ],
+   "unknown": []
+  },
+  "scrollStop": {
+   "handler": "0x317f1a0",
+   "summary": "禁止消息滚动（isScrollStop=1），必须无参数；返回 Continue。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "effectmessageStop": {
+   "handler": "0x31814c4",
+   "summary": "停止对话特效消息（talk effect）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "特效名（Talk/<name>）",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x31814e4 ConvertTalkEffectName"
+    }
+   ],
+   "unknown": []
+  },
+  "effectmessageDestroy": {
+   "handler": "0x3181ce4",
+   "summary": "销毁对话特效消息。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "特效名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x3181d04 ConvertTalkEffectName"
+    }
+   ],
+   "unknown": []
+  },
+  "talkName": {
+   "handler": "0x3187bf0",
+   "summary": "设置说话人名。状态置 WAIT(4) 并把整段 pd 存入 waitType/waitMessage，由消息系统接手。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "说话人显示文本（含 [image]/[#ruby]/称号等标记，由 GetTalkName 解析）",
+     "type": "string",
+     "values": "文本",
+     "confidence": "medium",
+     "evidence": "0x3187bf0;0x3188c90 存 waitType(0x3d8)/waitMessage(0x3f8)"
+    }
+   ],
+   "unknown": [
+    "参数的拆分规则（imageName/classname/charaname/index）在 ScriptMessageCommonManager.SetTalkName(imageName,classname,charaname,index) 内部，未在脚本侧完成"
+   ]
+  },
+  "talkNameBack": {
+   "handler": "0x3184900",
+   "summary": "设置说话人名牌的底图。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "图片名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x318b1bc SetTalkNameBack(imageName)"
+    }
+   ],
+   "unknown": []
+  },
+  "talkStart": {
+   "handler": "0x3182bc4",
+   "summary": "开始对话（把整行交给消息系统），状态置 WAIT(4)。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "整行文本（原样存入 waitType/waitMessage，由消息系统解析）",
+     "type": "string",
+     "values": "文本",
+     "confidence": "medium",
+     "evidence": "0x3182bd4 str pd 到 0x3d8;0x3182be4 0x3f8"
+    }
+   ],
+   "unknown": []
+  },
+  "talkEnd": {
+   "handler": "0x3180268",
+   "summary": "结束对话（状态 WAIT(4)，取 backLogTalkEndString 作为等待消息，返回 Normal）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "整行；实际使用 backLogTalkEndString 常量覆盖",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x3180280 ldr x1,[x19,#0x6b8]"
+    }
+   ],
+   "unknown": []
+  },
+  "page": {
+   "handler": "0x3182038",
+   "summary": "翻页/等待点击（page 与 clear 共用体；page 保存整行 pd 后交给消息系统）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "整段 pd（存入 waitType）",
+     "type": "string[]",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x3182054 b #0x3192e70 → str x1,[x19,#0x3d8]"
+    }
+   ],
+   "unknown": []
+  },
+  "clear": {
+   "handler": "0x3182038",
+   "summary": "清屏（clear/clear2）：清消息并翻页。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "整段 pd（同 page）",
+     "type": "string[]",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x3182038"
+    }
+   ],
+   "unknown": [
+    "clear 与 page 的差异在消息系统（clear2 在 CommonMessageManager 侧），脚本侧体相同"
+   ]
+  },
+  "fontSize": {
+   "handler": "0x3187928",
+   "summary": "消息字号（可带垂直对齐）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "字号名 / 字体名",
+     "type": "string",
+     "values": "small/medium/large/x-small/x-large/normal",
+     "confidence": "high",
+     "evidence": "0x3187950 SetFontSize(sizeName,verticalAlign)"
+    },
+    {
+     "pd": 2,
+     "means": "垂直对齐名（仅 ≥2 值时）",
+     "type": "string",
+     "values": "top/center/bottom",
+     "confidence": "medium",
+     "evidence": "0x31894b0 SetFontSize(...,verticalAlign)"
+    }
+   ],
+   "unknown": []
+  },
+  "font": {
+   "handler": "0x3187928",
+   "summary": "与 fontSize 共用体；字体设置（等同 fontSize）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "字号/字体名",
+     "type": "string",
+     "values": "同 fontSize",
+     "confidence": "low",
+     "evidence": "0x3187928"
+    }
+   ],
+   "unknown": [
+    "font 与 fontSize 是别名（同一 handler）"
+   ]
+  },
+  "fontType": {
+   "handler": "0x31795f8",
+   "summary": "字体类型（normal 之外的名字走 ConvertFontName(Font/<name>)）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "字体名；normal=默认字体",
+     "type": "string",
+     "values": "normal / 资源名",
+     "confidence": "high",
+     "evidence": "0x3179614 IsNullOrEmpty;0x3179648 pd0=='normal';0x3179674 ConvertFontName"
+    }
+   ],
+   "unknown": []
+  },
+  "betweenHeight": {
+   "handler": "0x318472c",
+   "summary": "设置行间距。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "行高；'-' 表示 -1（默认）",
+     "type": "float",
+     "values": "-1 / 像素",
+     "confidence": "high",
+     "evidence": "0x3184754 pd0=='-'→-1.0;0x3184788 SetBetweenLineHeight"
+    }
+   ],
+   "unknown": []
+  },
+  "screen": {
+   "handler": "0x31804c8",
+   "summary": "消息窗屏幕区域（5 个 int + 可选布尔）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "布尔/开关（'true' 比较）",
+     "type": "string",
+     "values": "true/false",
+     "confidence": "medium",
+     "evidence": "0x3180630 pd0=='true'（对应 SetScreen 的 isWindowBack）"
+    },
+    {
+     "pd": 2,
+     "means": "x",
+     "type": "int",
+     "values": "像素",
+     "confidence": "medium",
+     "evidence": "0x31805a4 Int32::Parse（SetScreen(x,y,w,h,...) 0x31dxxxx）"
+    },
+    {
+     "pd": 4,
+     "means": "y",
+     "type": "int",
+     "values": "像素",
+     "confidence": "medium",
+     "evidence": "0x31805c8"
+    },
+    {
+     "pd": 6,
+     "means": "w",
+     "type": "int",
+     "values": "像素",
+     "confidence": "medium",
+     "evidence": "0x31805ec"
+    },
+    {
+     "pd": 8,
+     "means": "h",
+     "type": "int",
+     "values": "像素",
+     "confidence": "medium",
+     "evidence": "0x3180610"
+    }
+   ],
+   "unknown": [
+    "pd[0] 与 pd[2..8] 的实参顺序（SetScreen(x,y,w,h,isWindowBack)）按顺序对应推断，medium"
+   ]
+  },
+  "faceTalkScreen": {
+   "handler": "0x317cd60",
+   "summary": "战棋/对话画面用固定背景图（img_talk_textbg/img_talk_namebg），无参数。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "message2": {
+   "handler": "(内联比较 0x317b20c/0x3168448)",
+   "summary": "消息体行：<tag> <参数...> <文本>。由消息系统处理（ScriptCommandExecute 返回 ReturnFalse 后 CommonMessageManager.ProcessScript 接手）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "第一个值（编号/字符数等预处理数据，逐行可变）",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x3168448 ProcessScript 的 message2 比较"
+    },
+    {
+     "pd": -1,
+     "means": "正文 = pd 的最后一个值（整段原文，含 [#RRGGBB]/[r]/[image]/[tRoute] 标记）",
+     "type": "string",
+     "values": "文本",
+     "confidence": "medium",
+     "evidence": "out/script-format.md §3/§5（解析器原型已实现）"
+    }
+   ],
+   "unknown": [
+    "message2/message3 的完整参数表在 CommonMessageManager.ProcessScript 内按行变化（未逐行读完）"
+   ]
+  },
+  "message3": {
+   "handler": "(内联比较 0x317b20c/0x3168448)",
+   "summary": "消息体行（同 message2，另一通道）。",
+   "params": [
+    {
+     "pd": -1,
+     "means": "正文 = pd 的最后一个值",
+     "type": "string",
+     "values": "文本",
+     "confidence": "medium",
+     "evidence": "0x3168490 'message3' 字面量"
+    }
+   ],
+   "unknown": [
+    "同 message2"
+   ]
+  },
+  "label": {
+   "handler": "0x317b600",
+   "summary": "定义标签（跳转目标）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "标签名；特殊值 'skip'（=跳转时跳过标记）",
+     "type": "string",
+     "values": "标签名 / skip",
+     "confidence": "high",
+     "evidence": "0x317b624 op_Equality(标签表);0x317b68c op_Equality(pd0,'skip')"
+    }
+   ],
+   "unknown": []
+  },
+  "jump": {
+   "handler": "0x31801a4",
+   "summary": "跳转到标签/脚本。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "目标标签名（第 1 值）",
+     "type": "string",
+     "values": "标签名",
+     "confidence": "medium",
+     "evidence": "0x31801cc pd1==' ';0x318c29c ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "脚本名（第 2 值，可为 ` `）",
+     "type": "string",
+     "values": "资源名 / ` `",
+     "confidence": "low",
+     "evidence": "0x318021c ConvertNameString;0x318c29c LoadExecuteScript"
+    }
+   ],
+   "unknown": [
+    "pd[0]/pd[2] 谁是 label 谁是 script 未完全确认（LoadExecuteScript 在 0x318c29c 附近）"
+   ]
+  },
+  "skip": {
+   "handler": "0x317b3f4",
+   "summary": "跳过设置/清除（'true'/'false'/'allFalse'）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "跳过开关",
+     "type": "string",
+     "values": "true / false / allFalse",
+     "confidence": "high",
+     "evidence": "0x317b420 pd0=='true';0x318c5e8/0x318c614"
+    }
+   ],
+   "unknown": []
+  },
+  "wait": {
+   "handler": "0x31874f4",
+   "summary": "阻塞等待。pd[0] 是等待类型关键字（72 个：12 个时间/对象关键字 + 60 个命令名）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "等待类型 waitType（写入 ScriptManager.waitType）",
+     "type": "string",
+     "values": "见 conventions.wait_pd0_keys（72 个）",
+     "confidence": "high",
+     "evidence": "0x31874f4 存 [x19,#0x3d8] 并 ComputeStringHash 后查 0x318753c 树;out/_evidence/wait_keys.json"
+    },
+    {
+     "pd": 2,
+     "means": "等待量：time/frame/skippableTime=数值(秒/帧)；为 0 时改按名字等待；命令名时=角色槽 index",
+     "type": "float/int/string",
+     "values": "秒 / 帧 / A-Z 槽位 / 名称",
+     "confidence": "medium",
+     "evidence": "0x3193790 Single::Parse+fcmp 0;0x3193854 ConvertNameString;0x3193918 ConvertCharaIndex"
+    },
+    {
+     "pd": 4,
+     "means": "命令名等待时的第二参数（int；如帧数/编号）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x31939c8 Int32::Parse"
+    }
+   ],
+   "unknown": [
+    "72 个关键字中 12 个纯等待键的 pd[2] 语义（time=秒、frame=帧、rtime=真实时间）由 0x3193728/0x31937dc 分支给出；其余 60 个命令名共用 0x31938c8 体，pd[2]=角色槽，pd[4]=int"
+   ]
+  },
+  "delay": {
+   "handler": "0x3182768",
+   "summary": "延迟区间：把当前行到下一个 delayEnd 之间的执行延迟 N 秒（可异步，不等）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "延迟槽编号（executeDelayParam 数组下标）",
+     "type": "int",
+     "values": "0..上限",
+     "confidence": "high",
+     "evidence": "0x31827a8 Int32::Parse→w25 作为数组下标 0x3182830;DelayStop(index) 0x31c5ab4"
+    },
+    {
+     "pd": 2,
+     "means": "延迟秒数",
+     "type": "float",
+     "values": "秒",
+     "confidence": "high",
+     "evidence": "0x31827cc Single::Parse→s0（ScriptCommandDelayParam.ctor 第 3 实参 delaySecond 0x3170f44）"
+    },
+    {
+     "pd": 4,
+     "means": "标志(0/1)：skipDropFlag = (值==0)",
+     "type": "int",
+     "values": "0 或 1",
+     "confidence": "medium",
+     "evidence": "0x31827f0 Int32::Parse→w26;cmp #0;cset w3,eq 0x318288c"
+    }
+   ],
+   "unknown": [
+    "pd[4]==0 → skipDropFlag=true 的语义方向（0 表示‘跳过时丢弃’还是相反）未在 ProcessDelayScript 中逐条确认"
+   ]
+  },
+  "tdelay": {
+   "handler": "0x3182768",
+   "summary": "同 delay，但不受文字速度影响（checkTextSpeed=false）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "延迟槽编号",
+     "type": "int",
+     "values": "整数",
+     "confidence": "high",
+     "evidence": "0x3182810 op_Inequality(tag,'tdelay')→cflag"
+    },
+    {
+     "pd": 2,
+     "means": "延迟秒数",
+     "type": "float",
+     "values": "秒",
+     "confidence": "high",
+     "evidence": "0x31827cc"
+    },
+    {
+     "pd": 4,
+     "means": "标志(0/1)",
+     "type": "int",
+     "values": "0/1",
+     "confidence": "medium",
+     "evidence": "0x31827f0"
+    }
+   ],
+   "unknown": [
+    "tdelay 与 delay 共用体，唯一差别是 cflag 取反"
+   ]
+  },
+  "delayEnd": {
+   "handler": "0x3182018",
+   "summary": "延迟区间终点。本版本为空体（只返回 Normal）；区间终点由 GetNextDelayEnd 扫描 'delayEnd' 标签确定。",
+   "params": [],
+   "unknown": [
+    "空实现（与 advSoundSet 共用）；标签本身仍被 GetNextDelayEnd 字符串比较使用 0x31b276c"
+   ]
+  },
+  "delayStop": {
+   "handler": "0x31886a0",
+   "summary": "停止指定延迟槽。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "延迟槽编号 index",
+     "type": "int",
+     "values": "整数",
+     "confidence": "high",
+     "evidence": "0x31886bc Int32::Parse→DelayStop(index)"
+    },
+    {
+     "pd": 2,
+     "means": "skipFlag（1/2 等，传给 DelayStop 的 skipFlag）",
+     "type": "int",
+     "values": "1/2",
+     "confidence": "medium",
+     "evidence": "0x31886e0 Int32::Parse;0x3182850 DelayStop(i,2)"
+    }
+   ],
+   "unknown": []
+  },
+  "delayStopAll": {
+   "handler": "0x317fcbc",
+   "summary": "停止所有延迟槽。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "起始编号（int，用作循环起点）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x317fce8 Int32::Parse"
+    }
+   ],
+   "unknown": [
+    "函数体只解析 pd[0]，未见循环调用（可能共用尾部），需复核"
+   ]
+  },
+  "end": {
+   "handler": "0x317f9c4",
+   "summary": "结束脚本（end/interruption 共用体；pd0=='interruption' 会置 ScriptManager.isScriptInterruption=1 0x459）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "结束淡出颜色",
+     "type": "string",
+     "values": "white / black / 空(\\` \\`)",
+     "confidence": "high",
+     "evidence": "0x318b4f4 EndExecuteScript(endFadeColor);0x317f9dc op_Equality('interruption')"
+    }
+   ],
+   "unknown": []
+  },
+  "interruption": {
+   "handler": "0x317f9c4",
+   "summary": "中断脚本（同 end 体；tag 为 interruption 时 isScriptInterruption=1）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "结束淡出颜色",
+     "type": "string",
+     "values": "white/black/` `",
+     "confidence": "medium",
+     "evidence": "0x317f9dc;0x318b4f4"
+    }
+   ],
+   "unknown": []
+  },
+  "backlogStart": {
+   "handler": "0x31813e0",
+   "summary": "开始记录 back log（无参数，函数体外未见 pd 访问）。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "backlogEnd": {
+   "handler": "0x317c1ec",
+   "summary": "结束 back log 记录（无参数）。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "autoAndBackLog": {
+   "handler": "0x317923c",
+   "summary": "自动播放/back log 按钮开关。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "开关",
+     "type": "string",
+     "values": "true/false",
+     "confidence": "high",
+     "evidence": "0x317926c pd0=='true';0x317929c pd0=='false'"
+    }
+   ],
+   "unknown": []
+  },
+  "tapSkip": {
+   "handler": "0x317bba0",
+   "summary": "点击跳过设置；第 2 个值可为 dontResetPress。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "跳过名/标签",
+     "type": "string",
+     "values": "资源名 / ` `",
+     "confidence": "medium",
+     "evidence": "0x3190768 ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "子关键词",
+     "type": "string",
+     "values": "dontResetPress",
+     "confidence": "medium",
+     "evidence": "0x3190430 pd2=='dontResetPress'"
+    },
+    {
+     "pd": 4,
+     "means": "int 参数",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x31906cc Int32::Parse"
+    },
+    {
+     "pd": 6,
+     "means": "int 参数",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x3190614 Int32::Parse"
+    },
+    {
+     "pd": 8,
+     "means": "int 参数",
+     "type": "int",
+     "values": "整数",
+     "confidence": "low",
+     "evidence": "0x3190638 Int32::Parse"
+    }
+   ],
+   "unknown": [
+    "dontResetPress 分支之外的第 4/6/8 值语义未确认"
+   ]
+  },
+  "speed": {
+   "handler": "0x3184a58",
+   "summary": "脚本播放速度倍率；'-' = -1（恢复默认）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "速度倍率；'-' → -1.0",
+     "type": "float",
+     "values": "-1 / 倍率",
+     "confidence": "high",
+     "evidence": "0x3184a80 pd0=='-'→-1.0;0x3184aa4 Single::Parse;ModifyPlaySpeed"
+    }
+   ],
+   "unknown": []
+  },
+  "selectionUse": {
+   "handler": "0x317d28c",
+   "summary": "启用选择分支（selection）功能（无参数）。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "selectionCentering": {
+   "handler": "0x317f90c",
+   "summary": "选择项居中开关，参数必须是可解析的 bool。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "是否居中",
+     "type": "bool",
+     "values": "true/false（Boolean.TryParse）",
+     "confidence": "high",
+     "evidence": "0x317f948 Boolean::TryParse→[x19,#0x58]→0x90"
+    }
+   ],
+   "unknown": []
+  },
+  "input": {
+   "handler": "0x317a800",
+   "summary": "输入等待；pd[0] 为子关键词（selectBranch / selectBranchSkipTrueColor / skipStop 等）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "子关键词",
+     "type": "string",
+     "values": "selectBranch / selectBranchSkipTrueColor",
+     "confidence": "high",
+     "evidence": "0x317a82c/0x317a848 op_Equality"
+    },
+    {
+     "pd": 2,
+     "means": "selectBranch 时：子模式（skipStop=检查条件后跳过）",
+     "type": "string",
+     "values": "skipStop（0x317a950）",
+     "confidence": "medium",
+     "evidence": "0x317a950 pd2=='skipStop'"
+    },
+    {
+     "pd": 4,
+     "means": "条件脚本名（skipStop 模式，IsWithInScriptCondition）",
+     "type": "string",
+     "values": "条件表达式",
+     "confidence": "medium",
+     "evidence": "0x317a978 IsWithInScriptCondition(conditionScript)"
+    }
+   ],
+   "unknown": [
+    "input 支持的全部子关键词列表未穷举（其他值落到 0x318d9b8 的通用分支，含 'subBlur2Off' 等无关字面量，疑似邻居代码）"
+   ]
+  },
+  "menu": {
+   "handler": "0x317fa74",
+   "summary": "菜单显示；选项行以 `key=value` 形式（pd[0] 可能为 '=' 或 ' '）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "菜单键/标签 或 ' '/'='",
+     "type": "string",
+     "values": "键名 / ` ` / =",
+     "confidence": "medium",
+     "evidence": "0x317faf0 pd0==' ';0x317fb3c pd0=='=';0x317fb6c/0x317fba8 ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "菜单标签名",
+     "type": "string",
+     "values": "标签名",
+     "confidence": "medium",
+     "evidence": "0x317fb6c/0x317fba8 ConvertNameString→menuLabelList"
+    }
+   ],
+   "unknown": [
+    "menu 的多行选项解析在 AnalysScript/AnalysText 侧完成，未展开"
+   ]
+  },
+  "branch": {
+   "handler": "0x317b498",
+   "summary": "条件分支：flag 名 + 比较值。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "flag 名",
+     "type": "string",
+     "values": "flag 名",
+     "confidence": "high",
+     "evidence": "0x317b4ec SearchFlag(name)"
+    },
+    {
+     "pd": 2,
+     "means": "比较值（'=' 比较）",
+     "type": "string",
+     "values": "true/false/数值",
+     "confidence": "high",
+     "evidence": "0x317b544 ScriptFlagData.Comp(value)"
+    },
+    {
+     "pd": 4,
+     "means": "第二比较值/备用",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x317b498 中的 pd3==' ' 守卫"
+    }
+   ],
+   "unknown": [
+    "pd[4] 用途未见消费（可能是另一分支形式）"
+   ]
+  },
+  "branchMaterial": {
+   "handler": "0x31802b0",
+   "summary": "按素材持有情况分支；必须 0 参数（pd.Length!=0 报错）。用 isCollection/script 状态比较。",
+   "params": [],
+   "unknown": [
+    "参数为 0：分支条件由 AnalysText/collection 状态（0x371）决定，0x31802d0 op_Equality(tag,'branchMaterial')"
+   ]
+  },
+  "branchNotMaterial": {
+   "handler": "0x31802b0",
+   "summary": "按素材不持有分支（与 branchMaterial 共用体，比较取反）。",
+   "params": [],
+   "unknown": [
+    "同 branchMaterial"
+   ]
+  },
+  "branchHaveSvtEquip": {
+   "handler": "0x318459c",
+   "summary": "是否有从者礼装。",
+   "params": [
+    {
+     "pd": 2,
+     "means": "装备/礼装编号（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x31845ec Int32::Parse"
+    }
+   ],
+   "unknown": [
+    "pd[0] 是否为 0 值（可选）由 0x31845c4 pd1==' ' 守卫暗示 pd[2] 可省略"
+   ]
+  },
+  "branchNotHaveSvtEquip": {
+   "handler": "0x318459c",
+   "summary": "没有从者礼装（取反）。",
+   "params": [
+    {
+     "pd": 2,
+     "means": "装备/礼装编号（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x31845ec"
+    }
+   ],
+   "unknown": []
+  },
+  "branchQuestClear": {
+   "handler": "0x317bdd0",
+   "summary": "任务已通关分支。",
+   "params": [
+    {
+     "pd": 4,
+     "means": "任务 ID（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x317be74 Int32::Parse"
+    }
+   ],
+   "unknown": [
+    "pd[0]/pd[2] 未消费（可能形态为 `branchQuestClear <label> <questId>`；Int32 在 pd[4]）"
+   ]
+  },
+  "branchQuestNotClear": {
+   "handler": "0x317bdd0",
+   "summary": "任务未通关分支（取反）。",
+   "params": [
+    {
+     "pd": 4,
+     "means": "任务 ID（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x317be74"
+    }
+   ],
+   "unknown": [
+    "同 branchQuestClear"
+   ]
+  },
+  "branchRouteSelect": {
+   "handler": "0x31834e4",
+   "summary": "路线已选分支。",
+   "params": [
+    {
+     "pd": 4,
+     "means": "路线 ID（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x3183588 Int32::Parse"
+    }
+   ],
+   "unknown": []
+  },
+  "branchNotRouteSelect": {
+   "handler": "0x31834e4",
+   "summary": "路线未选分支（取反）。",
+   "params": [
+    {
+     "pd": 4,
+     "means": "路线 ID（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x3183588"
+    }
+   ],
+   "unknown": []
+  },
+  "branchRouteSelectCount": {
+   "handler": "0x317c85c",
+   "summary": "已选路线数量分支。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "比较表达式/标签（String::Equals）",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x317ca04 String::Equals"
+    },
+    {
+     "pd": 2,
+     "means": "数量（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x317c904 Int32::Parse"
+    },
+    {
+     "pd": 4,
+     "means": "枚举/比较符（Enum.Parse）",
+     "type": "int/enum",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317c978 Enum::Parse"
+    }
+   ],
+   "unknown": [
+    "pd[0] 的语义（可能是 label）未确认"
+   ]
+  },
+  "branchNotRouteSelectCount": {
+   "handler": "0x317c85c",
+   "summary": "未选路线数量分支（取反）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "比较表达式/标签",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x317ca04"
+    },
+    {
+     "pd": 2,
+     "means": "数量（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x317c904"
+    },
+    {
+     "pd": 4,
+     "means": "枚举/比较符",
+     "type": "int/enum",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317c978"
+    }
+   ],
+   "unknown": [
+    "同 branchRouteSelectCount"
+   ]
+  },
+  "branchSetGrandSvtCount": {
+   "handler": "0x317e20c",
+   "summary": "设置大支援从者数量条件。",
+   "params": [
+    {
+     "pd": 2,
+     "means": "数量（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x317e288 Int32::Parse"
+    },
+    {
+     "pd": 4,
+     "means": "枚举/比较符",
+     "type": "int/enum",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317e2fc Enum::Parse"
+    }
+   ],
+   "unknown": []
+  },
+  "revivalBranch": {
+   "handler": "0x31853a4",
+   "summary": "复活（续关）分支。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "分支值/名称",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x31853a4 pd1==' ' 守卫"
+    }
+   ],
+   "unknown": [
+    "pd[0]/pd[2] 语义未定位（尾部混入邻居体）"
+   ]
+  },
+  "flag": {
+   "handler": "0x3188a44",
+   "summary": "设置/清除脚本 flag。名字含 'Loop'/'isEnableLoopLogLaterErase' 时走特殊分支。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "flag 名",
+     "type": "string",
+     "values": "flag 名（SearchFlag）",
+     "confidence": "high",
+     "evidence": "0x3188a90 SearchFlag(name);0x3188ae0 Contains('Loop')"
+    },
+    {
+     "pd": 2,
+     "means": "设置值",
+     "type": "string",
+     "values": "true/false",
+     "confidence": "high",
+     "evidence": "0x3188ab4 ScriptFlagData.Set(value);0x3188b10 pd2=='true'"
+    }
+   ],
+   "unknown": []
+  },
+  "flagRandom": {
+   "handler": "0x3184ed4",
+   "summary": "随机 flag（SetRahdom）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "flag 名",
+     "type": "string",
+     "values": "flag 名",
+     "confidence": "high",
+     "evidence": "0x3184f50 SearchFlag"
+    },
+    {
+     "pd": 2,
+     "means": "随机下限/权重",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x3184f80 SetRahdom(arg1)"
+    },
+    {
+     "pd": 4,
+     "means": "随机上限",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x3184f80 SetRahdom(arg2)"
+    }
+   ],
+   "unknown": []
+  },
+  "masterBranch": {
+   "handler": "0x3179bb8",
+   "summary": "Master(御主)性别/形象分支。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "分支键",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x3179bb8 pd1==' '"
+    },
+    {
+     "pd": 2,
+     "means": "分支值",
+     "type": "string",
+     "values": "—",
+     "confidence": "low",
+     "evidence": "0x318d244 通用体（含 SendEvent 等，疑似邻居）"
+    }
+   ],
+   "unknown": [
+    "函数体与邻居混叠，参数语义未确认"
+   ]
+  },
+  "questMessageOverwrite": {
+   "handler": "0x317d710",
+   "summary": "覆盖任务消息文本。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "文本键/文本",
+     "type": "string",
+     "values": "文本（与常量 'QuestMessageAdd' 拼接）",
+     "confidence": "medium",
+     "evidence": "0x317d764 String.Concat('QuestMessageAdd', pd0)"
+    }
+   ],
+   "unknown": []
+  },
+  "rewardSwitch": {
+   "handler": "0x318522c",
+   "summary": "报酬切换开关（'true' 比较；≥2 个值）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "开关",
+     "type": "string",
+     "values": "true/false",
+     "confidence": "medium",
+     "evidence": "0x3185284 pd0=='true'"
+    }
+   ],
+   "unknown": []
+  },
+  "notification": {
+   "handler": "0x317af78",
+   "summary": "通知对话框。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "标题",
+     "type": "string",
+     "values": "文本",
+     "confidence": "medium",
+     "evidence": "0x317b01c ConvertNameString"
+    },
+    {
+     "pd": 2,
+     "means": "正文",
+     "type": "string",
+     "values": "文本",
+     "confidence": "medium",
+     "evidence": "0x317afcc ConvertNameString"
+    }
+   ],
+   "unknown": []
+  },
+  "enableWaitLoadAssetWhenResume": {
+   "handler": "0x3182018",
+   "summary": "空实现（返回 Normal），本版本不消费参数；字段 enableWaitLoadAssetWhenResume(0x270) 不在该体内写。",
+   "params": [],
+   "unknown": [
+    "空实现；如需旧行为请对照其他版本"
+   ]
+  },
+  "enableFullScreen": {
+   "handler": "0x3182018",
+   "summary": "空实现（返回 Normal），本版本不消费参数。",
+   "params": [],
+   "unknown": [
+    "空实现"
+   ]
+  },
+  "useSimpleMeshFigure": {
+   "handler": "0x317ba14",
+   "summary": "使用简化 mesh 立绘（无参数）。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "switchCase": {
+   "handler": "0x31875c4",
+   "summary": "选择分支块开始（isSwitchCase 置位；已处于 switch 时跳到 switchCaseEnd）。",
+   "params": [],
+   "unknown": [
+    "pd 未消费：分支项由 ScriptLoop/switchCaseMessage 机制承载（switchCaseEnd 通过 JumpScriptCommand 跳转 0x31875e0）"
+   ]
+  },
+  "switchCaseEnd": {
+   "handler": "0x3188c58",
+   "summary": "选择分支块结束。",
+   "params": [],
+   "unknown": [
+    "体内未见 pd 消费（0x3188c58 起点，尾部为邻居 fontSize 体）"
+   ]
+  },
+  "warEventScript": {
+   "handler": "0x317a1bc",
+   "summary": "战棋事件脚本编号。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "事件脚本编号（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "high",
+     "evidence": "0x317a1d8 Int32::Parse"
+    }
+   ],
+   "unknown": []
+  },
+  "movie": {
+   "handler": "0x3183c38",
+   "summary": "播放影片（movie/criMovie 共用体，ConvertCRIMovieName + PlayCRIMovie）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "影片名（CRI）",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "handler 头部 pd0 消费（ConvertCRIMovieName）"
+    }
+   ],
+   "unknown": [
+    "函数体未跟完（0x3183c38 起 9 个值以上的分支）"
+   ]
+  },
+  "criMovie": {
+   "handler": "0x3183c38",
+   "summary": "播放 CRI 影片（与 movie 共用体）。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "影片名（CRI）",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "medium",
+     "evidence": "0x3183c38"
+    }
+   ],
+   "unknown": [
+    "同 movie"
+   ]
+  },
+  "warEffectPiece": {
+   "handler": "0x317fd14",
+   "summary": "战棋棋子特效。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "key（特效键）",
+     "type": "string",
+     "values": "键名",
+     "confidence": "high",
+     "evidence": "0x317fdfc PlayEffectPieceScript(key,effectName)"
+    },
+    {
+     "pd": 2,
+     "means": "特效名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x317fdfc"
+    },
+    {
+     "pd": 4,
+     "means": "int 参数",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x317fd64 Int32::Parse"
+    },
+    {
+     "pd": 6,
+     "means": "int 参数",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x317fd94"
+    },
+    {
+     "pd": 8,
+     "means": "int 参数",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x317fdc4"
+    }
+   ],
+   "unknown": []
+  },
+  "warEffectPos": {
+   "handler": "0x3186664",
+   "summary": "战棋坐标特效。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "key",
+     "type": "string",
+     "values": "键名",
+     "confidence": "high",
+     "evidence": "0x31866dc PlayEffectPosScript"
+    },
+    {
+     "pd": 2,
+     "means": "特效名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x31866dc"
+    },
+    {
+     "pd": 4,
+     "means": "x（float）",
+     "type": "float",
+     "values": "坐标",
+     "confidence": "medium",
+     "evidence": "0x3186688 Single::Parse"
+    },
+    {
+     "pd": 6,
+     "means": "y（float）",
+     "type": "float",
+     "values": "坐标",
+     "confidence": "medium",
+     "evidence": "0x31866ac"
+    }
+   ],
+   "unknown": []
+  },
+  "warEffectOff": {
+   "handler": "0x317fc60",
+   "summary": "停止战棋特效。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "key",
+     "type": "string",
+     "values": "键名",
+     "confidence": "high",
+     "evidence": "0x317fc94 StopEffectScript(key)"
+    }
+   ],
+   "unknown": []
+  },
+  "warEffectSquare": {
+   "handler": "0x317f470",
+   "summary": "格子特效。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "key",
+     "type": "string",
+     "values": "键名",
+     "confidence": "high",
+     "evidence": "0x317f4c4 PlayEffectSquareScript"
+    },
+    {
+     "pd": 2,
+     "means": "特效名",
+     "type": "string",
+     "values": "资源名",
+     "confidence": "high",
+     "evidence": "0x317f4c4"
+    },
+    {
+     "pd": 4,
+     "means": "int 参数",
+     "type": "int",
+     "values": "整数",
+     "confidence": "medium",
+     "evidence": "0x317f494"
+    }
+   ],
+   "unknown": []
+  },
+  "warMoveCameraPiece": {
+   "handler": "0x3187cec",
+   "summary": "战棋相机移动到棋子。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "棋子编号（int）",
+     "type": "int",
+     "values": "整数",
+     "confidence": "high",
+     "evidence": "0x3187d08 Int32::Parse"
+    },
+    {
+     "pd": 2,
+     "means": "float 参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x3187d2c"
+    },
+    {
+     "pd": 4,
+     "means": "float 参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x3187d50"
+    },
+    {
+     "pd": 8,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x3187da4"
+    },
+    {
+     "pd": 10,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x3187dd4"
+    },
+    {
+     "pd": 12,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x3187e04"
+    }
+   ],
+   "unknown": [
+    "easeType 在共享尾 0x318cb54 MoveCameraPieceScript(easeType) 传入（pd[6] 候选）"
+   ]
+  },
+  "warMoveCameraPos": {
+   "handler": "0x317df90",
+   "summary": "战棋相机移动到坐标。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317dfac Int32::Parse"
+    },
+    {
+     "pd": 2,
+     "means": "float 参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317dfd0"
+    },
+    {
+     "pd": 4,
+     "means": "float 参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317dff4"
+    },
+    {
+     "pd": 6,
+     "means": "easeType（缓动类型）",
+     "type": "string",
+     "values": "缓动名",
+     "confidence": "medium",
+     "evidence": "0x317e080 MoveCameraPosScript(easeType)"
+    },
+    {
+     "pd": 8,
+     "means": "float 参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317e024"
+    },
+    {
+     "pd": 10,
+     "means": "float 参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317e048"
+    }
+   ],
+   "unknown": []
+  },
+  "warMoveCameraSquare": {
+   "handler": "0x3183030",
+   "summary": "战棋相机移动到格子。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x318304c Int32::Parse"
+    },
+    {
+     "pd": 2,
+     "means": "float 参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x3183070"
+    },
+    {
+     "pd": 4,
+     "means": "float 参数",
+     "type": "float",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x3183094"
+    },
+    {
+     "pd": 6,
+     "means": "easeType",
+     "type": "string",
+     "values": "缓动名",
+     "confidence": "medium",
+     "evidence": "0x31830fc MoveCameraSquareScript(easeType)"
+    },
+    {
+     "pd": 8,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x31830c4"
+    }
+   ],
+   "unknown": []
+  },
+  "warCharaFadein": {
+   "handler": "0x317ac68",
+   "summary": "战棋角色淡入。",
+   "params": [
+    {
+     "pd": 0,
+     "means": "角色槽（A-Z/数字→槽位号）",
+     "type": "string",
+     "values": "A-Z / 数字",
+     "confidence": "high",
+     "evidence": "0x317ac88 ConvertCharaIndex"
+    },
+    {
+     "pd": 2,
+     "means": "float 参数（淡入时间）",
+     "type": "float",
+     "values": "秒",
+     "confidence": "medium",
+     "evidence": "0x317acf4 Single::Parse"
+    },
+    {
+     "pd": 4,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317ad18"
+    },
+    {
+     "pd": 6,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317ad3c"
+    },
+    {
+     "pd": 8,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317ad7c"
+    },
+    {
+     "pd": 10,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317adac"
+    },
+    {
+     "pd": 12,
+     "means": "int 参数",
+     "type": "int",
+     "values": "—",
+     "confidence": "medium",
+     "evidence": "0x317addc"
+    }
+   ],
+   "unknown": [
+    "int 参数的语义（行列/方向/等级）未逐一定名"
+   ]
+  },
+  "warBoardTalkScreen": {
+   "handler": "0x317cd60",
+   "summary": "战棋对话画面（与 faceTalkScreen 同体，无参数）。",
+   "params": [],
+   "unknown": [
+    "无"
+   ]
+  },
+  "gender": {
+   "handler": "(未在 366 命令表)",
+   "summary": "性别切换。**本版本不在哈希命令表中**：仅作为 AnalysText 字面量/maleImageId 属性出现。",
+   "params": [],
+   "unknown": [
+    "命令不存在于 2.139.3 的 366 条表内；如脚本使用 gender/maleImageId/form，会作为未知行返回 ReturnFalse"
+   ]
+  },
+  "maleImageId": {
+   "handler": "(未在 366 命令表)",
+   "summary": "男性形象 ID。**本版本不是命令**（是属性名/字面量）。",
+   "params": [],
+   "unknown": [
+    "同 gender"
+   ]
+  },
+  "form": {
+   "handler": "(未在 366 命令表)",
+   "summary": "形态切换。**本版本不是命令**（AnalysText 字面量）。",
+   "params": [],
+   "unknown": [
+    "同 gender"
+   ]
+  },
+  "effectmessage": {
+   "handler": "(未在 366 命令表)",
+   "summary": "**本版本没有独立 effectmessage 命令**：它只作为 `wait` 的 pd[0] 关键字（0x318f2ac 节点）出现；命令行请用 effectmessageStart/Stop/Destroy。",
+   "params": [],
+   "unknown": [
+    "作为命令不存在"
+   ]
+  },
+  "detail": {
+   "handler": "(未在 366 命令表)",
+   "summary": "细节显示开关。**不是哈希命令**：'detail' 只出现在 AnalysText 的已知标签表字面量里；本版本不作为命令处理（会走消息/未知行路径）。",
+   "params": [],
+   "unknown": [
+    "未在 ScriptCommandExecute 中命中"
+   ]
+  },
+  "checkOn": {
+   "handler": "(未在 366 命令表)",
+   "summary": "调试检查开关。**不是哈希命令**：'checkOn' 只在 AnalysText 字面量/调试字段（isDetectionDebugCheckOn 0x5d0）出现。",
+   "params": [],
+   "unknown": [
+    "未在 ScriptCommandExecute 中命中"
+   ]
+  },
+  "dontResetPress": {
+   "handler": "tapSkip 的子关键词 (0x3190430)",
+   "summary": "**不是命令**，是 `tapSkip` 的 pd[2] 值：`tapSkip <name> dontResetPress`。",
+   "params": [
+    {
+     "pd": 2,
+     "means": "子关键词（在 tapSkip 条目中）",
+     "type": "string",
+     "values": "dontResetPress",
+     "confidence": "medium",
+     "evidence": "0x3190430 pd2=='dontResetPress'"
+    }
+   ],
+   "unknown": [
+    "作为命令不存在"
+   ]
+  },
+  "page2": {
+   "handler": "CommonMessageManager$$ProcessScript (0x3168448 比较)",
+   "summary": "**不是命令**：消息系统的翻页标签变体，出现在 ProcessScript 的字面量表（0x31684b8 附近）。",
+   "params": [],
+   "unknown": [
+    "脚本侧命令请用 page/clear"
+   ]
+  },
+  "clear2": {
+   "handler": "CommonMessageManager$$ProcessScript (0x3168504 字面量 'clear2')",
+   "summary": "**不是命令**：消息系统的清屏标签变体（0x31684c0 字面量）。",
+   "params": [],
+   "unknown": [
+    "脚本侧命令请用 page/clear"
+   ]
+  }
+ },
+ "conventions": {
+  "pd_layout": "参数数组 pd 由 ScriptManager.AnalysParam 切分：偶数下标=值，奇数下标=分隔符（' ' / ',' / '='）。第 k 个值在 pd[2k]。",
+  "min_token_count": "处理块开头 `ldr wK,[pd,#0x18]; cmp wK,#N` 是最少元素数检查（commands.json.min_token_count）。",
+  "optional_pd": "可选值由 `pd[2k-1] == \" \"`（String::op_Equality）守卫；单空格字符串作为值表示‘省略/默认’。",
+  "bool_literals": "布尔参数是字符串 'true'/'false'（个别为 'on'/'off'、'allFalse'），用 String.op_Equality 比较。",
+  "sentinel_dash": "'-' 作为数值参数时表示 -1.0（betweenHeight 0x3184754、speed 0x3184a80：比较后直接 fmov s8,#-1.0）。",
+  "comma_eq": "',' 也是合法分隔符（messageShake pd5==',' 0x318d474）；menu 用 '=' 连接 key/value（pd0=='=' 0x317fb3c）。",
+  "return_codes": "0x3193f00 = Normal(0)；0x3193f04 = Continue(1)（把行交给消息系统/需要点击推进）；0x3188c6c = ReturnFalse(2)；0x3193e80 = 参数错误（写入 'parameter error' 到 scriptErrorMessage 后返回 Normal）。",
+  "wait_fields": "等待状态字段：state(0x288=State.WAIT=4)、waitType(0x3d8)、waitIndex(0x3e0)、waitCount(0x3e4)、waitName(0x3e8)、waitMessage(0x3f8)、waitTime(0x400)。",
+  "wait_pd0_keys": {
+   "note": "wait 的 pd[0] 是 72 个关键字的哈希树（根 0x318753c，x22=pd[0]）；12 个纯等待键 + 60 个命令名（等该命令/动画完成）。完整表在 out/_evidence/wait_keys.json。",
+   "pure_keywords": [
+    "charaCut",
+    "charaCutStart",
+    "charaFade",
+    "communicatioChara",
+    "effectmessage",
+    "effectmessageStart",
+    "fastPlayDraw",
+    "frame",
+    "fsmObjFinished",
+    "masterverticalImageSet",
+    "rtime",
+    "time",
+    "skippableTime"
+   ],
+   "command_names": 60,
+   "all_keys_file": "out/_evidence/wait_keys.json",
+   "pd2_meaning": "time/skippableTime=秒(float)；frame=帧(float)；rtime=真实秒；数值为 0 时改按名称等待（ConvertNameString，0x3193854）；命令名=角色槽 index（ConvertCharaIndex 0x3193918），pd[4]=int。"
+  },
+  "delay_model": {
+   "struct": "ScriptCommandDelayParam{executeIndex:int, executeIndexMax:int, delaySecond:float, skipDropFlag:bool, messageFlag:bool, checkTextSpeed:bool}（构造签名 index,indexMax,second,sflag,mflag,cflag @0x3170f44）",
+   "delay_cmd": "delay/tdelay：index=pd[0]，indexMax=GetNextDelayEnd(当前行)（向前扫描 'delayEnd' 标签 0x31b2710），second=pd[2]，sflag=(pd[4]==0)，mflag=IsMessageLine(当前行)，cflag=(tag!='tdelay')；随后 TDelayJumpScript(indexMax+1) 跳到 delayEnd 之后。",
+   "update": "UpdateDelayScript(delta) 0x31b576c：checkTextSpeed 且非 messageFlag 时按 GetTextSpeed() 缩放 delta，否则用原始 delta；delaySecond 递减到 0 后 ProcessDelayScript 执行区间。",
+   "stop": "DelayStop(index, skipFlag) 0x31c5ab4：skipFlag==1 强制中断；delayStop 命令传 2。",
+   "delay_end": "delayEnd 在本版本是空体（0x3182018），仅作为标签被 GetNextDelayEnd 使用。"
+  },
+  "auto_wait": {
+   "set_auto_wait": "SetAutoWait(stringData) 0x31b1974：先看 autoWaitTime(0x6f8)>0 且 scenarioTextWaitTimeSecond(0x720) 之类；用正则匹配 setAutoWaitTarget；再由 CheckNotSetAutoWaitCommand(notSetAutoWaitCommands, line) 决定该行是否参与计数。",
+   "get_auto_wait_time": "GetAutoWaitTime(charCount) 0x31b2038 = autoWaitTime(0x6f8) + scenarioTextWaitTimeSecond(0x720) * charCount / GetTextSpeed()。",
+   "not_count": "CheckNotSetAutoWaitCommand 0x31b1eac：命令名数组里任一命令用 String::Contains 命中则返回 false（该行不计入自动等待）。"
+  },
+  "audio_layer_model": {
+   "se": "se/seLoop 走 OverwriteAssetSoundName（可被表覆盖资源名），seContinue/cueSe 走 SePlayer；seVolume 用 SoundManager.changeVolumeSe(name, volume, fadeTime)。",
+   "volume_order": "注意：seVolume/seContinue/voiceVolume/cueSeContinue 的 pd[2] 是渐变时间(fadeTime)、pd[4] 才是音量 volume（实参 s0/s1 顺序已核对）。"
+  },
+  "evidence_files": [
+   "out/_evidence/misc_distill.txt",
+   "out/_evidence/misc_dump2.txt",
+   "out/_evidence/misc_dump3.txt",
+   "out/_evidence/wait_tree.txt",
+   "out/_evidence/wait_keys.json",
+   "out/_evidence/wait_vocab.txt",
+   "out/_evidence/mgr_time.txt",
+   "out/_evidence/mgr_time2.txt"
+  ],
+  "not_commands": [
+   "gender",
+   "maleImageId",
+   "form",
+   "detail",
+   "dontResetPress",
+   "checkOn",
+   "effectmessage",
+   "page2",
+   "clear2"
+  ]
+ }
+}

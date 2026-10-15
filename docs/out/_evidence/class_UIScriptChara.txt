@@ -1,0 +1,469 @@
+==============================================================================
+// UIScriptChara  (dump.cs line 171674)
+public class UIScriptChara : MonoBehaviour // TypeDefIndex: 4917
+{
+	// Fields
+	protected static readonly float UNIT_SPEED; // 0x0
+	[SerializeField]
+	protected Transform baseRelativePosition; // 0x20
+	[SerializeField]
+	protected Transform baseDepth; // 0x28
+	[SerializeField]
+	protected Transform baseScale; // 0x30
+	[SerializeField]
+	protected Transform baseRoll1; // 0x38
+	[SerializeField]
+	protected Transform baseRoll2; // 0x40
+	[SerializeField]
+	protected Transform baseShake; // 0x48
+	[SerializeField]
+	protected GameObject baseCutEffect; // 0x50
+	[SerializeField]
+	protected GameObject baseSpecialEffect; // 0x58
+	[SerializeField]
+	protected GameObject baseEffect; // 0x60
+	[SerializeField]
+	protected GameObject baseEffectBack; // 0x68
+	[SerializeField]
+	protected GameObject baseShadowEffect; // 0x70
+	protected bool isDisp; // 0x78
+	protected bool isShadow; // 0x79
+	protected bool isShadowEffect; // 0x7A
+	protected Vector3 basePosition; // 0x7C
+	protected Vector3 baseScaleSize; // 0x88
+	protected string filterName; // 0x98
+	protected Color filterColor; // 0xA0
+	protected UIScriptChara.ChangeKind changeKind; // 0xB0
+	protected float changeSpeed; // 0xB4
+	protected int changeCount; // 0xB8
+	protected float changeRange; // 0xBC
+	protected float changeTotal; // 0xC0
+	protected float changeStep; // 0xC4
+	protected bool isChangeContinueSilhouette; // 0xC8
+	protected Action setCallback; // 0xD0
+	protected Action changeCallback; // 0xD8
+	protected int mainIndex; // 0xE0
+	protected int backIndex; // 0xE4
+	protected bool isMove; // 0xE8
+	protected bool isRoll; // 0xE9
+	protected float returnDuration; // 0xEC
+	protected string returnEaseType; // 0xF0
+	protected bool isMoveRelativePosition; // 0xF8
+	protected int currentMoveRelativeIndex; // 0xFC
+	protected Vector2[] moveRelativePositions; // 0x100
+	protected float[] moveRelativeDurations; // 0x108
+	protected int moveRelativeLoopNum; // 0x110
+	protected int currentMoveRelativeLoopNum; // 0x114
+	protected string moveRelativeEaseType; // 0x118
+	protected bool isMoveAlphaLoop; // 0x120
+	protected int currentMoveAlphaIndex; // 0x124
+	protected float[] moveAlphaDurations; // 0x128
+	protected float[] moveAlphaValues; // 0x130
+	protected int moveAlphaLoopNum; // 0x138
+	protected int currentMoveAlphaLoopNum; // 0x13C
+	protected float shakeTime; // 0x140
+	protected float shakeCycle; // 0x144
+	protected float shakeX; // 0x148
+	protected float shakeY; // 0x14C
+	private SortingGroup sortingGroup; // 0x150
+	private string rollAxis; // 0x158
+	private Vector3 initAngle; // 0x160
+	private float rollAngle; // 0x16C
+	private float rollDuration; // 0x170
+	private bool isRollLoop; // 0x174
+	private bool isRollWait; // 0x175
+	private Quaternion stopLocalRotationLoopEnd; // 0x178
+	private Coroutine runningRotationCoroutine; // 0x188
+
+	// Properties
+	public bool IsDisp { get; }
+	protected virtual string MoveAlphaLoopCallbackName { get; }
+
+	// Methods
+
+	// RVA: 0x31E0010 Offset: 0x31DC010 VA: 0x31E0010
+	public bool get_IsDisp() { }
+
+	// RVA: 0x31E0018 Offset: 0x31DC018 VA: 0x31E0018
+	public bool IsChange() { }
+
+	// RVA: 0x31E0028 Offset: 0x31DC028 VA: 0x31E0028
+	public void ChangeCharacter(string kind, float speed, string imageName, Face.Type faceType, Action callback, bool isContinueSilhouette = False) { }
+
+	// RVA: 0x31E013C Offset: 0x31DC13C VA: 0x31E013C
+	public void SetEffectEdgeBlur(string effectName, Color color, Color particleColor, bool isSkip, bool isPause, CommonEffectManager.FlipKind flip, int level, float thick) { }
+
+	// RVA: 0x31E0390 Offset: 0x31DC390 VA: 0x31E0390 Slot: 4
+	public virtual Vector3 GetOffsetEdgeBlur() { }
+
+	// RVA: 0x31E03D4 Offset: 0x31DC3D4 VA: 0x31E03D4 Slot: 5
+	public virtual Rect GetRectEdgeBlur() { }
+
+	// RVA: 0x31E03E8 Offset: 0x31DC3E8 VA: 0x31E03E8 Slot: 6
+	public virtual Rect GetHighRectEdgeBlur() { }
+
+	// RVA: 0x31E03FC Offset: 0x31DC3FC VA: 0x31E03FC Slot: 7
+	public virtual Texture GetBodySubTexture() { }
+
+	// RVA: 0x31E0404 Offset: 0x31DC404 VA: 0x31E0404 Slot: 8
+	public virtual Transform GetBody() { }
+
+	// RVA: 0x31E040C Offset: 0x31DC40C VA: 0x31E040C Slot: 9
+	public virtual Vector2 GetSizeEdgeBlur() { }
+
+	// RVA: 0x31E041C Offset: 0x31DC41C VA: 0x31E041C Slot: 10
+	public virtual void ChangeCharacter(UIScriptChara.ChangeKind kind, float speed, string imageName, Face.Type faceType, Action callback, bool isContinueSilhouette = False) { }
+
+	// RVA: 0x31E04A4 Offset: 0x31DC4A4 VA: 0x31E04A4 Slot: 11
+	public virtual void SetCharacter(string imageName, Face.Type faceType, Action callback) { }
+
+	// RVA: 0x31E04B0 Offset: 0x31DC4B0 VA: 0x31E04B0 Slot: 12
+	protected virtual void EndSet() { }
+
+	// RVA: 0x31E0668 Offset: 0x31DC668 VA: 0x31E0668 Slot: 13
+	public virtual void SetFace(Face.Type faceType, float fadeTime = 0) { }
+
+	// RVA: 0x31E066C Offset: 0x31DC66C VA: 0x31E066C Slot: 14
+	public virtual void SetFilter(string filterName, Color filterColor) { }
+
+	// RVA: 0x31E06B0 Offset: 0x31DC6B0 VA: 0x31E06B0 Slot: 15
+	public virtual void SetShadow(bool isShadow, bool isSkip) { }
+
+	// RVA: 0x31E06D0 Offset: 0x31DC6D0 VA: 0x31E06D0
+	public void RecoverShadowEffect(bool isSkip = False) { }
+
+	// RVA: 0x31E06E4 Offset: 0x31DC6E4 VA: 0x31E06E4
+	public void StartShadowEffect() { }
+
+	// RVA: 0x31E0790 Offset: 0x31DC790 VA: 0x31E0790
+	public void StopShadowEffect(bool isSkip) { }
+
+	// RVA: 0x31E0808 Offset: 0x31DC808 VA: 0x31E0808 Slot: 16
+	public virtual void SetTalkMask(bool isMask) { }
+
+	// RVA: 0x31E080C Offset: 0x31DC80C VA: 0x31E080C Slot: 17
+	public virtual void SetAlpha(float a) { }
+
+	// RVA: 0x31E0820 Offset: 0x31DC820 VA: 0x31E0820 Slot: 18
+	public virtual void SetDepth(int d) { }
+
+	// RVA: 0x31E086C Offset: 0x31DC86C VA: 0x31E086C
+	public float GetDepth() { }
+
+	// RVA: 0x31E0890 Offset: 0x31DC890 VA: 0x31E0890 Slot: 19
+	public virtual bool IsBusyMoveAlpha() { }
+
+	// RVA: 0x31E0898 Offset: 0x31DC898 VA: 0x31E0898 Slot: 20
+	public virtual void MoveAlpha(float duration, float a) { }
+
+	// RVA: 0x31E08AC Offset: 0x31DC8AC VA: 0x31E08AC Slot: 21
+	public virtual void MoveAlpha(float duration, float a, GameObject callbackObject, string callbackFunc) { }
+
+	// RVA: 0x31E0988 Offset: 0x31DC988 VA: 0x31E0988 Slot: 22
+	public virtual void MoveAlphaSpeed(float speed, float a) { }
+
+	// RVA: 0x31E099C Offset: 0x31DC99C VA: 0x31E099C
+	public bool IsMoveAlphaLoop() { }
+
+	// RVA: 0x31E09A4 Offset: 0x31DC9A4 VA: 0x31E09A4
+	public bool IsMoveAlphaInfiniteLoop() { }
+
+	// RVA: 0x31E09B4 Offset: 0x31DC9B4 VA: 0x31E09B4 Slot: 23
+	protected virtual string get_MoveAlphaLoopCallbackName() { }
+
+	// RVA: 0x31E09F4 Offset: 0x31DC9F4 VA: 0x31E09F4
+	private void MoveAlphaLoop() { }
+
+	// RVA: 0x31E0B38 Offset: 0x31DCB38 VA: 0x31E0B38
+	protected void EndMoveAlphaLoop() { }
+
+	// RVA: 0x31E0BA0 Offset: 0x31DCBA0 VA: 0x31E0BA0
+	public void MoveAlphaLoop(float[] duration, float[] alpha, int loopNum, bool isFastPlay) { }
+
+	// RVA: 0x31E0ABC Offset: 0x31DCABC VA: 0x31E0ABC
+	public void StopMoveAlphaLoop() { }
+
+	// RVA: 0x31E0D18 Offset: 0x31DCD18 VA: 0x31E0D18
+	public Vector3 GetBasePosition() { }
+
+	// RVA: 0x31E0D24 Offset: 0x31DCD24 VA: 0x31E0D24
+	public void SetBasePosition(Vector3 v) { }
+
+	// RVA: 0x31E0EA4 Offset: 0x31DCEA4 VA: 0x31E0EA4
+	public void SetPosition(Vector3 v) { }
+
+	// RVA: 0x31E0EEC Offset: 0x31DCEEC VA: 0x31E0EEC
+	public void SetScale(float v) { }
+
+	// RVA: 0x31E1068 Offset: 0x31DD068 VA: 0x31E1068 Slot: 24
+	public virtual void SetFullScreenScaleType(int type) { }
+
+	// RVA: 0x31E106C Offset: 0x31DD06C VA: 0x31E106C
+	public bool IsMove() { }
+
+	// RVA: 0x31E0D88 Offset: 0x31DCD88 VA: 0x31E0D88
+	private void StopMoveTween() { }
+
+	// RVA: 0x31E1074 Offset: 0x31DD074 VA: 0x31E1074
+	public void MovePosition(float duration, Vector3 v) { }
+
+	// RVA: 0x31E11C8 Offset: 0x31DD1C8 VA: 0x31E11C8
+	public void MovePositionEase(float time, Vector3 vector, string easetype) { }
+
+	// RVA: 0x31E0E9C Offset: 0x31DCE9C VA: 0x31E0E9C
+	protected void EndMove() { }
+
+	// RVA: 0x31E14AC Offset: 0x31DD4AC VA: 0x31E14AC
+	public void MoveReturnPosition(float duration) { }
+
+	// RVA: 0x31E15B4 Offset: 0x31DD5B4 VA: 0x31E15B4
+	protected void EndMoveReturn() { }
+
+	// RVA: 0x31E15F4 Offset: 0x31DD5F4 VA: 0x31E15F4
+	public void MoveReturnPosition(float duration, Vector3 v) { }
+
+	// RVA: 0x31E1750 Offset: 0x31DD750 VA: 0x31E1750
+	protected void EndMoveReturnHalf() { }
+
+	// RVA: 0x31E1758 Offset: 0x31DD758 VA: 0x31E1758
+	public void MoveReturnPositionEase(float x, float y, float time, string startEaseType, string returnEaseType) { }
+
+	// RVA: 0x31E1A74 Offset: 0x31DDA74 VA: 0x31E1A74
+	protected void EndMoveReturnEaseHalf() { }
+
+	// RVA: 0x31E1A80 Offset: 0x31DDA80 VA: 0x31E1A80
+	public void MoveReturnPositionEase(float time, string returnEaseType) { }
+
+	// RVA: 0x31E0F1C Offset: 0x31DCF1C VA: 0x31E0F1C
+	private void StopMoveScaleTween() { }
+
+	// RVA: 0x31E1D3C Offset: 0x31DDD3C VA: 0x31E1D3C
+	public void MoveScale(float duration, float s) { }
+
+	// RVA: 0x31E1E58 Offset: 0x31DDE58 VA: 0x31E1E58
+	public void MoveScaleEase(float scale, float time, string easetype) { }
+
+	// RVA: 0x31E1038 Offset: 0x31DD038 VA: 0x31E1038
+	protected void EndMoveScale() { }
+
+	// RVA: 0x31E2124 Offset: 0x31DE124 VA: 0x31E2124
+	public bool IsMoveRelativePosition() { }
+
+	// RVA: 0x31E212C Offset: 0x31DE12C VA: 0x31E212C
+	public bool IsMoveRelativePositionLoop() { }
+
+	// RVA: 0x31E213C Offset: 0x31DE13C VA: 0x31E213C
+	public void SetRelativePosition(Vector2 pos) { }
+
+	// RVA: 0x31E217C Offset: 0x31DE17C VA: 0x31E217C
+	private void StopRelativeMoveTween() { }
+
+	// RVA: 0x31E2298 Offset: 0x31DE298 VA: 0x31E2298
+	private void MoveRelativePosition() { }
+
+	// RVA: 0x31E2414 Offset: 0x31DE414 VA: 0x31E2414
+	protected void EndRelativeMove() { }
+
+	// RVA: 0x31E2528 Offset: 0x31DE528 VA: 0x31E2528
+	public void MoveRelativePositionLoop(Vector2[] movePos, float[] duration, int loopNum, bool isFastPlay) { }
+
+	// RVA: 0x31E25A0 Offset: 0x31DE5A0 VA: 0x31E25A0
+	private void MoveRelativePositionEase() { }
+
+	// RVA: 0x31E2918 Offset: 0x31DE918 VA: 0x31E2918
+	protected void EndRelativeMoveEase() { }
+
+	// RVA: 0x31E2974 Offset: 0x31DE974 VA: 0x31E2974
+	public void MoveRelativePositionEaseLoop(Vector2[] movePos, float[] duration, int loopNum, string easeType, bool isFastPlay) { }
+
+	// RVA: 0x31E2470 Offset: 0x31DE470 VA: 0x31E2470
+	public void StopMoveRelativePositionLoop() { }
+
+	// RVA: 0x31E2A0C Offset: 0x31DEA0C VA: 0x31E2A0C
+	public void MoveAttack(string kind, float duration, Vector3 v) { }
+
+	// RVA: 0x31E2BA0 Offset: 0x31DEBA0 VA: 0x31E2BA0
+	protected void EndMoveAttack() { }
+
+	// RVA: 0x31E2BA8 Offset: 0x31DEBA8 VA: 0x31E2BA8
+	public bool IsRoll() { }
+
+	// RVA: 0x31E2BB0 Offset: 0x31DEBB0 VA: 0x31E2BB0
+	public void InitRoll() { }
+
+	// RVA: 0x31E2C08 Offset: 0x31DEC08 VA: 0x31E2C08
+	public bool SetRoll(float rollZ, Vector3 centerOffset) { }
+
+	// RVA: 0x31E2EC8 Offset: 0x31DEEC8 VA: 0x31E2EC8
+	public bool StartRoll(float duration, float rollZ) { }
+
+	// RVA: 0x31E30A4 Offset: 0x31DF0A4 VA: 0x31E30A4
+	public bool StartRollEx(float duration, float rollZ, Vector3 centerOffset) { }
+
+	// RVA: 0x31E333C Offset: 0x31DF33C VA: 0x31E333C
+	protected void EndExecuteCameraRoll() { }
+
+	[IteratorStateMachine(typeof(UIScriptChara.<RollAxis>d__137))]
+	// RVA: 0x31E3344 Offset: 0x31DF344 VA: 0x31E3344
+	private IEnumerator RollAxis(string axis, float angle, float duration) { }
+
+	// RVA: 0x31E3408 Offset: 0x31DF408 VA: 0x31E3408
+	public void StartRollAxis(string axis, float roll, float duration, bool isLoop, bool isWait, float stopAngle) { }
+
+	// RVA: 0x31E366C Offset: 0x31DF66C VA: 0x31E366C
+	protected void EndExecuteRollAxis() { }
+
+	// RVA: 0x31E2D74 Offset: 0x31DED74 VA: 0x31E2D74
+	private void StopRollAxisTween() { }
+
+	// RVA: 0x31E36CC Offset: 0x31DF6CC VA: 0x31E36CC
+	public void StopRollAxisLoop(bool isFastPlay) { }
+
+	// RVA: 0x31E3860 Offset: 0x31DF860 VA: 0x31E3860
+	private float GetConvertedLocalRotationEulerAnglesToAngle(string axis, Vector3 localRotationEulerAngles, Vector3 baseAngles) { }
+
+	// RVA: 0x31E398C Offset: 0x31DF98C VA: 0x31E398C
+	public bool IsShake() { }
+
+	// RVA: 0x31E399C Offset: 0x31DF99C VA: 0x31E399C
+	public void Shake(float duration, float cycle, float x, float y) { }
+
+	// RVA: 0x31E3A00 Offset: 0x31DFA00 VA: 0x31E3A00
+	protected void OnShake() { }
+
+	// RVA: 0x31E3B40 Offset: 0x31DFB40 VA: 0x31E3B40
+	public bool IsCut() { }
+
+	// RVA: 0x31E3C6C Offset: 0x31DFC6C VA: 0x31E3C6C
+	public bool IsCutStart() { }
+
+	// RVA: 0x31E3D94 Offset: 0x31DFD94 VA: 0x31E3D94 Slot: 25
+	public virtual void SetCutin(string n, float time, float mgd, bool isSkip, bool isPause) { }
+
+	// RVA: 0x31E3D98 Offset: 0x31DFD98 VA: 0x31E3D98 Slot: 26
+	public virtual void ResumeCutin(bool isSkip) { }
+
+	// RVA: 0x31E3D9C Offset: 0x31DFD9C VA: 0x31E3D9C Slot: 27
+	public virtual void SetCutout(float time, bool isSkip) { }
+
+	// RVA: 0x31E3DA0 Offset: 0x31DFDA0 VA: 0x31E3DA0 Slot: 28
+	public virtual void StopCut() { }
+
+	// RVA: 0x31E3DA4 Offset: 0x31DFDA4 VA: 0x31E3DA4
+	public bool IsSpecialEffect() { }
+
+	// RVA: 0x31E3DB0 Offset: 0x31DFDB0 VA: 0x31E3DB0
+	public bool IsSpecialEffect(string n) { }
+
+	// RVA: 0x31E3DBC Offset: 0x31DFDBC VA: 0x31E3DBC
+	public bool IsSpecialEffectStart() { }
+
+	// RVA: 0x31E3DC8 Offset: 0x31DFDC8 VA: 0x31E3DC8
+	public bool IsSpecialEffectStart(string n) { }
+
+	// RVA: 0x31E3DD4 Offset: 0x31DFDD4 VA: 0x31E3DD4 Slot: 29
+	public virtual void SetSpecialEffect(string n, Vector3 pos, float time, Color color, float range, bool isSkip, bool isPause, bool isContinueSilhouette, ProgramEffectComponent.Param param) { }
+
+	// RVA: 0x31E4134 Offset: 0x31E0134 VA: 0x31E4134
+	public void ResumeSpecialEffect(bool isSkip) { }
+
+	// RVA: 0x31E4140 Offset: 0x31E0140 VA: 0x31E4140
+	public void ResumeSpecialEffect(string n, bool isSkip) { }
+
+	// RVA: 0x31E414C Offset: 0x31E014C VA: 0x31E414C
+	public void StopSpecialEffect() { }
+
+	// RVA: 0x31E4158 Offset: 0x31E0158 VA: 0x31E4158
+	public void StopSpecialEffect(string n) { }
+
+	// RVA: 0x31E4164 Offset: 0x31E0164 VA: 0x31E4164
+	public bool IsEffect() { }
+
+	// RVA: 0x31E41C0 Offset: 0x31E01C0 VA: 0x31E41C0
+	public bool IsEffect(string n) { }
+
+	// RVA: 0x31E422C Offset: 0x31E022C VA: 0x31E422C
+	public bool IsEffectStart() { }
+
+	// RVA: 0x31E4288 Offset: 0x31E0288 VA: 0x31E4288
+	public bool IsEffectStart(string n) { }
+
+	// RVA: 0x31E42F4 Offset: 0x31E02F4 VA: 0x31E42F4
+	public void SetEffect(string n, bool isSkip, bool isPause, CommonEffectManager.FlipKind flip, bool isOnSublayer) { }
+
+	// RVA: 0x31E4380 Offset: 0x31E0380 VA: 0x31E4380
+	public void SetEffect(string n, Vector3 p, bool isSkip, bool isPause, CommonEffectManager.FlipKind flip, bool isOnSublayer) { }
+
+	// RVA: 0x31E44D4 Offset: 0x31E04D4 VA: 0x31E44D4
+	public void ResumeEffect(bool isSkip) { }
+
+	// RVA: 0x31E4540 Offset: 0x31E0540 VA: 0x31E4540
+	public void ResumeEffect(string n, bool isSkip) { }
+
+	// RVA: 0x31E45B4 Offset: 0x31E05B4 VA: 0x31E45B4
+	public bool StopEffect(bool isSkip, string markKey) { }
+
+	// RVA: 0x31E462C Offset: 0x31E062C VA: 0x31E462C
+	public bool StopEffect(string n, bool isSkip, string markKey) { }
+
+	// RVA: 0x31E46B4 Offset: 0x31E06B4 VA: 0x31E46B4
+	public void DestroyEffectByMark(string markKey) { }
+
+	// RVA: 0x31E4720 Offset: 0x31E0720 VA: 0x31E4720
+	public bool IsBackEffect() { }
+
+	// RVA: 0x31E477C Offset: 0x31E077C VA: 0x31E477C
+	public bool IsBackEffect(string n) { }
+
+	// RVA: 0x31E47E8 Offset: 0x31E07E8 VA: 0x31E47E8
+	public bool IsBackEffectStart() { }
+
+	// RVA: 0x31E4844 Offset: 0x31E0844 VA: 0x31E4844
+	public bool IsBackEffectStart(string n) { }
+
+	// RVA: 0x31E48B0 Offset: 0x31E08B0 VA: 0x31E48B0
+	public void SetBackEffect(string n, bool isSkip, bool isPause, CommonEffectManager.FlipKind flip, bool isOnSublayer) { }
+
+	// RVA: 0x31E493C Offset: 0x31E093C VA: 0x31E493C
+	public void SetBackEffect(string n, Vector3 p, bool isSkip, bool isPause, CommonEffectManager.FlipKind flip, bool isOnSublayer) { }
+
+	// RVA: 0x31E4A90 Offset: 0x31E0A90 VA: 0x31E4A90
+	public void ResumeBackEffect(bool isSkip) { }
+
+	// RVA: 0x31E4AFC Offset: 0x31E0AFC VA: 0x31E4AFC
+	public void ResumeBackEffect(string n, bool isSkip) { }
+
+	// RVA: 0x31E4B70 Offset: 0x31E0B70 VA: 0x31E4B70
+	public bool StopBackEffect(bool isSkip) { }
+
+	// RVA: 0x31E4BE4 Offset: 0x31E0BE4 VA: 0x31E4BE4
+	public bool StopBackEffect(string n, bool isSkip) { }
+
+	// RVA: 0x31E4C60 Offset: 0x31E0C60 VA: 0x31E4C60 Slot: 30
+	public virtual void SetMaterial() { }
+
+	// RVA: 0x31E4C64 Offset: 0x31E0C64 VA: 0x31E4C64 Slot: 31
+	public virtual void SetMaskInteraction(SpriteMaskInteraction maskInteraction) { }
+
+	// RVA: 0x31E4C68 Offset: 0x31E0C68 VA: 0x31E4C68 Slot: 32
+	public virtual void SetSortingOrder(int order) { }
+
+	// RVA: 0x31E4C6C Offset: 0x31E0C6C VA: 0x31E4C6C Slot: 33
+	public virtual void SetUseSimpleMesh(bool useSimpleMesh) { }
+
+	// RVA: 0x31E4C70 Offset: 0x31E0C70 VA: 0x31E4C70
+	public float GetScale() { }
+
+	// RVA: 0x31E4C88 Offset: 0x31E0C88 VA: 0x31E4C88
+	public void .ctor() { }
+
+	// RVA: 0x31E4C98 Offset: 0x31E0C98 VA: 0x31E4C98
+	private static void .cctor() { }
+
+	[CompilerGenerated]
+	// RVA: 0x31E4CE8 Offset: 0x31E0CE8 VA: 0x31E4CE8
+	internal static void <SetEffect>g__Callback|166_0(CommonEffectComponent effect) { }
+
+	[CompilerGenerated]
+	// RVA: 0x31E4D5C Offset: 0x31E0D5C VA: 0x31E4D5C
+	internal static void <SetBackEffect>g__Callback|177_0(CommonEffectComponent effect) { }

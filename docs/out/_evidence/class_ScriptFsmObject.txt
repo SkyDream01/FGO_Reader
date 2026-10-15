@@ -1,0 +1,37 @@
+==============================================================================
+// ScriptFsmObject  (dump.cs line 166434)
+public class ScriptFsmObject : MonoBehaviour // TypeDefIndex: 4819
+{
+	// Fields
+	[SerializeField]
+	private PlayMakerFSM fsm; // 0x20
+	private bool isPlaying; // 0x28
+
+	// Methods
+
+	// RVA: 0x3171AB4 Offset: 0x316DAB4 VA: 0x3171AB4
+	public bool IsPlaying() { }
+
+	// RVA: 0x3171ABC Offset: 0x316DABC VA: 0x3171ABC
+	public void SetState(string stateName) { }
+
+	// RVA: 0x3171B4C Offset: 0x316DB4C VA: 0x3171B4C
+	public void SendEvent(string eventName) { }
+
+	// RVA: 0x3171B88 Offset: 0x316DB88 VA: 0x3171B88
+	public void SetString(string name, string value) { }
+
+	// RVA: 0x3171BE0 Offset: 0x316DBE0 VA: 0x3171BE0
+	public void SetFloat(string name, float value) { }
+
+	// RVA: 0x3171C28 Offset: 0x316DC28 VA: 0x3171C28
+	public void SetBool(string name, bool value) { }
+
+	// RVA: 0x3171AF8 Offset: 0x316DAF8 VA: 0x3171AF8
+	public void Skip() { }
+
+	// RVA: 0x3171C74 Offset: 0x316DC74 VA: 0x3171C74
+	public void OnFinished() { }
+
+	// RVA: 0x3171C7C Offset: 0x316DC7C VA: 0x3171C7C
+	public void .ctor() { }

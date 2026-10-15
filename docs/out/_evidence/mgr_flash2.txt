@@ -1,0 +1,586 @@
+
+==============================================================================
+### ScriptManager$$OnFlashRequest  0x31ba490..0x31ba85c  (size 0x3cc)
+0x31ba490  stp      x30, x21, [sp, #-0x20]!
+0x31ba494  stp      x20, x19, [sp, #0x10]
+0x31ba498  adrp     x20, #0x59c5000
+0x31ba49c  mov      x19, x0
+0x31ba4a0  ldrb     w8, [x20, #0x1f4]
+0x31ba4a4  tbnz     w8, #0, #0x31ba4f8
+0x31ba4a8  adrp     x0, #0x556f000
+0x31ba4ac  ldr      x0, [x0, #0xb90]
+0x31ba4b0  bl       #0x22304a4   CALL 0x22304a4
+0x31ba4b4  adrp     x0, #0x55ca000
+0x31ba4b8  ldr      x0, [x0, #0xbb8]   ; &slot for 'pingpong'
+0x31ba4bc  bl       #0x22304a4   CALL 0x22304a4
+0x31ba4c0  adrp     x0, #0x55ca000
+0x31ba4c4  ldr      x0, [x0, #0xbc0]   ; &slot for 'EndExecuteFlash'
+0x31ba4c8  bl       #0x22304a4   CALL 0x22304a4
+0x31ba4cc  adrp     x0, #0x55ca000
+0x31ba4d0  ldr      x0, [x0, #0xbc8]   ; &slot for 'OnFlashRequest'
+0x31ba4d4  bl       #0x22304a4   CALL 0x22304a4
+0x31ba4d8  adrp     x0, #0x55c9000
+0x31ba4dc  ldr      x0, [x0, #0xdb0]   ; &slot for 'once'
+0x31ba4e0  bl       #0x22304a4   CALL 0x22304a4
+0x31ba4e4  adrp     x0, #0x559d000
+0x31ba4e8  ldr      x0, [x0, #0x370]   ; &slot for 'loop'
+0x31ba4ec  bl       #0x22304a4   CALL 0x22304a4
+0x31ba4f0  mov      w8, #1
+0x31ba4f4  strb     w8, [x20, #0x1f4]
+0x31ba4f8  ldrb     w8, [x19, #0x520]
+0x31ba4fc  cbz      w8, #0x31ba540
+0x31ba500  ldrb     w8, [x19, #0x521]
+0x31ba504  ldr      x20, [x19, #0xd0]
+0x31ba508  cbz      w8, #0x31ba54c
+0x31ba50c  ldr      s0, [x19, #0x530]
+0x31ba510  fcmp     s0, #0.0
+0x31ba514  b.le     #0x31ba634
+0x31ba518  cbz      x20, #0x31ba858
+0x31ba51c  mov      x0, x20
+0x31ba520  mov      x1, xzr
+0x31ba524  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31ba528  ldr      s0, [x19, #0x530]
+0x31ba52c  movi     d1, #0000000000000000
+0x31ba530  movi     d2, #0000000000000000
+0x31ba534  movi     d3, #0000000000000000
+0x31ba538  movi     d4, #0000000000000000
+0x31ba53c  b        #0x31ba5fc
+0x31ba540  ldp      x20, x19, [sp, #0x10]
+0x31ba544  ldp      x30, x21, [sp], #0x20
+0x31ba548  ret      
+0x31ba54c  ldr      w8, [x19, #0x524]
+0x31ba550  cmp      w8, #1
+0x31ba554  b.eq     #0x31ba588
+0x31ba558  cbnz     w8, #0x31ba700
+0x31ba55c  ldr      s0, [x19, #0x528]
+0x31ba560  mov      w8, #1
+0x31ba564  str      w8, [x19, #0x524]
+0x31ba568  fcmp     s0, #0.0
+0x31ba56c  b.le     #0x31ba60c
+0x31ba570  cbz      x20, #0x31ba858
+0x31ba574  mov      x0, x20
+0x31ba578  mov      x1, xzr
+0x31ba57c  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31ba580  ldr      s0, [x19, #0x528]
+0x31ba584  b        #0x31ba5ec
+0x31ba588  adrp     x8, #0x55ca000
+0x31ba58c  mov      x2, xzr
+0x31ba590  ldr      x8, [x8, #0xbb8]   ; &slot for 'pingpong'
+0x31ba594  ldr      x21, [x19, #0x518]
+0x31ba598  ldr      x1, [x8]   ; 'pingpong'
+0x31ba59c  mov      x0, x21
+0x31ba5a0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='pingpong'
+0x31ba5a4  tbz      w0, #0, #0x31ba644
+0x31ba5a8  ldr      s0, [x19, #0x52c]
+0x31ba5ac  fcmp     s0, #0.0
+0x31ba5b0  b.le     #0x31ba6d8
+0x31ba5b4  cbz      x20, #0x31ba858
+0x31ba5b8  ldr      x8, [x20]
+0x31ba5bc  ldr      s3, [x19, #0x550]
+0x31ba5c0  mov      x0, x20
+0x31ba5c4  ldr      s2, [x19, #0x54c]
+0x31ba5c8  ldr      s1, [x19, #0x548]
+0x31ba5cc  ldr      s0, [x19, #0x544]
+0x31ba5d0  ldr      x9, [x8, #0x3a8]
+0x31ba5d4  ldr      x1, [x8, #0x3b0]
+0x31ba5d8  blr      x9   CALL 0x0
+0x31ba5dc  mov      x0, x20
+0x31ba5e0  mov      x1, xzr
+0x31ba5e4  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31ba5e8  ldr      s0, [x19, #0x52c]
+0x31ba5ec  ldr      s1, [x19, #0x534]
+0x31ba5f0  ldr      s2, [x19, #0x538]
+0x31ba5f4  ldr      s3, [x19, #0x53c]
+0x31ba5f8  ldr      s4, [x19, #0x540]
+0x31ba5fc  mov      x1, xzr
+0x31ba600  bl       #0x30e8854   CALL TweenRendererColor$$Begin
+0x31ba604  mov      x20, x0
+0x31ba608  b        #0x31ba704
+0x31ba60c  adrp     x8, #0x55c9000
+0x31ba610  mov      x2, xzr
+0x31ba614  ldr      x8, [x8, #0xdb0]   ; &slot for 'once'
+0x31ba618  ldr      x0, [x19, #0x518]
+0x31ba61c  ldr      x1, [x8]   ; 'once'
+0x31ba620  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='once'
+0x31ba624  tbz      w0, #0, #0x31ba6bc
+0x31ba628  ldr      s0, [x19, #0x52c]
+0x31ba62c  fcmp     s0, #0.0
+0x31ba630  b.ne     #0x31ba6bc
+0x31ba634  mov      x0, x19
+0x31ba638  ldp      x20, x19, [sp, #0x10]
+0x31ba63c  ldp      x30, x21, [sp], #0x20
+0x31ba640  b        #0x31ba85c
+0x31ba644  adrp     x8, #0x559d000
+0x31ba648  mov      x0, x21
+0x31ba64c  mov      x2, xzr
+0x31ba650  ldr      x8, [x8, #0x370]   ; &slot for 'loop'
+0x31ba654  ldr      x1, [x8]   ; 'loop'
+0x31ba658  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='loop'
+0x31ba65c  tbnz     w0, #0, #0x31ba678
+0x31ba660  adrp     x8, #0x55c9000
+0x31ba664  mov      x0, x21
+0x31ba668  mov      x2, xzr
+0x31ba66c  ldr      x8, [x8, #0xdb0]   ; &slot for 'once'
+0x31ba670  ldr      x1, [x8]   ; 'once'
+0x31ba674  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='once'
+0x31ba678  ldr      s0, [x19, #0x52c]
+0x31ba67c  str      wzr, [x19, #0x524]
+0x31ba680  fcmp     s0, #0.0
+0x31ba684  b.le     #0x31ba7c0
+0x31ba688  cbz      x20, #0x31ba858
+0x31ba68c  mov      x0, x20
+0x31ba690  mov      x1, xzr
+0x31ba694  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31ba698  ldr      s0, [x19, #0x52c]
+0x31ba69c  ldr      s1, [x19, #0x544]
+0x31ba6a0  mov      x1, xzr
+0x31ba6a4  ldr      s2, [x19, #0x548]
+0x31ba6a8  ldr      s3, [x19, #0x54c]
+0x31ba6ac  ldr      s4, [x19, #0x550]
+0x31ba6b0  bl       #0x30e8854   CALL TweenRendererColor$$Begin
+0x31ba6b4  mov      x20, x0
+0x31ba6b8  b        #0x31ba7ec
+0x31ba6bc  cbz      x20, #0x31ba858
+0x31ba6c0  ldr      x8, [x20]
+0x31ba6c4  ldr      s3, [x19, #0x540]
+0x31ba6c8  ldr      s2, [x19, #0x53c]
+0x31ba6cc  ldr      s1, [x19, #0x538]
+0x31ba6d0  ldr      s0, [x19, #0x534]
+0x31ba6d4  b        #0x31ba6f0
+0x31ba6d8  cbz      x20, #0x31ba858
+0x31ba6dc  ldr      x8, [x20]
+0x31ba6e0  ldr      s3, [x19, #0x550]
+0x31ba6e4  ldr      s2, [x19, #0x54c]
+0x31ba6e8  ldr      s1, [x19, #0x548]
+0x31ba6ec  ldr      s0, [x19, #0x544]
+0x31ba6f0  ldr      x9, [x8, #0x3a8]
+0x31ba6f4  ldr      x1, [x8, #0x3b0]
+0x31ba6f8  mov      x0, x20
+0x31ba6fc  blr      x9   CALL 0x0
+0x31ba700  mov      x20, xzr
+0x31ba704  adrp     x8, #0x556f000
+0x31ba708  ldr      x8, [x8, #0xb90]
+0x31ba70c  ldr      x0, [x8]
+0x31ba710  ldr      w8, [x0, #0xe4]
+0x31ba714  cbnz     w8, #0x31ba71c
+0x31ba718  bl       #0x22305f4   CALL 0x22305f4
+0x31ba71c  mov      x0, x20
+0x31ba720  mov      x1, xzr
+0x31ba724  mov      x2, xzr
+0x31ba728  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31ba72c  tbz      w0, #0, #0x31ba784
+0x31ba730  mov      x0, x19
+0x31ba734  mov      x1, xzr
+0x31ba738  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31ba73c  cbz      x20, #0x31ba858
+0x31ba740  mov      x1, x0
+0x31ba744  mov      x0, x20
+0x31ba748  str      x1, [x0, #0x50]!
+0x31ba74c  bl       #0x2230448   CALL 0x2230448
+0x31ba750  ldrb     w8, [x19, #0x521]
+0x31ba754  adrp     x9, #0x55ca000
+0x31ba758  adrp     x10, #0x55ca000
+0x31ba75c  ldr      x9, [x9, #0xbc8]   ; &slot for 'OnFlashRequest'
+0x31ba760  ldr      x10, [x10, #0xbc0]   ; &slot for 'EndExecuteFlash'
+0x31ba764  cmp      w8, #0
+0x31ba768  csel     x8, x9, x10, eq
+0x31ba76c  ldr      x1, [x8]
+0x31ba770  str      x1, [x20, #0x58]!
+0x31ba774  mov      x0, x20
+0x31ba778  ldp      x20, x19, [sp, #0x10]
+0x31ba77c  ldp      x30, x21, [sp], #0x20
+0x31ba780  b        #0x2230448
+0x31ba784  ldrb     w8, [x19, #0x521]
+0x31ba788  adrp     x9, #0x55ca000
+0x31ba78c  adrp     x10, #0x55ca000
+0x31ba790  ldr      x9, [x9, #0xbc8]   ; &slot for 'OnFlashRequest'
+0x31ba794  ldr      x10, [x10, #0xbc0]   ; &slot for 'EndExecuteFlash'
+0x31ba798  mov      x0, x19
+0x31ba79c  cmp      w8, #0
+0x31ba7a0  ldp      x20, x19, [sp, #0x10]
+0x31ba7a4  csel     x8, x9, x10, eq
+0x31ba7a8  adrp     x9, #0xee7000
+0x31ba7ac  mov      x2, xzr
+0x31ba7b0  ldr      x1, [x8]
+0x31ba7b4  ldr      s0, [x9, #0x714]
+0x31ba7b8  ldp      x30, x21, [sp], #0x20
+0x31ba7bc  b        #0x4fd6068
+0x31ba7c0  cbz      x20, #0x31ba858
+0x31ba7c4  ldr      x8, [x20]
+0x31ba7c8  ldr      s3, [x19, #0x550]
+0x31ba7cc  mov      x0, x20
+0x31ba7d0  ldr      s2, [x19, #0x54c]
+0x31ba7d4  ldr      s1, [x19, #0x548]
+0x31ba7d8  ldr      s0, [x19, #0x544]
+0x31ba7dc  ldr      x9, [x8, #0x3a8]
+0x31ba7e0  ldr      x1, [x8, #0x3b0]
+0x31ba7e4  blr      x9   CALL 0x0
+0x31ba7e8  mov      x20, xzr
+0x31ba7ec  adrp     x8, #0x55c9000
+0x31ba7f0  mov      x2, xzr
+0x31ba7f4  ldr      x8, [x8, #0xdb0]   ; &slot for 'once'
+0x31ba7f8  ldr      x0, [x19, #0x518]
+0x31ba7fc  ldr      x1, [x8]   ; 'once'
+0x31ba800  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='once'
+0x31ba804  tbz      w0, #0, #0x31ba704
+0x31ba808  ldr      s0, [x19, #0x544]
+0x31ba80c  ldr      d1, [x19, #0x548]
+0x31ba810  adrp     x8, #0xee7000
+0x31ba814  ldr      s2, [x19, #0x550]
+0x31ba818  fmul     s0, s0, s0
+0x31ba81c  fmul     v1.2s, v1.2s, v1.2s
+0x31ba820  fadd     s0, s0, s1
+0x31ba824  mov      s1, v1.s[1]
+0x31ba828  fadd     s0, s1, s0
+0x31ba82c  fmul     s1, s2, s2
+0x31ba830  ldr      s2, [x8, #0x2d0]
+0x31ba834  mov      w8, #1
+0x31ba838  strb     w8, [x19, #0x521]
+0x31ba83c  fadd     s1, s1, s0
+0x31ba840  movi     d0, #0000000000000000
+0x31ba844  fcmp     s1, s2
+0x31ba848  b.mi     #0x31ba850
+0x31ba84c  ldr      s0, [x19, #0x528]
+0x31ba850  str      s0, [x19, #0x530]
+0x31ba854  b        #0x31ba704
+0x31ba858  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$EndFlash  0x31ba8a8..0x31ba8c0  (size 0x18)
+0x31ba8a8  ldrb     w8, [x0, #0x520]
+0x31ba8ac  cbz      w8, #0x31ba8bc
+0x31ba8b0  mov      w8, #1
+0x31ba8b4  str      s0, [x0, #0x530]
+0x31ba8b8  strb     w8, [x0, #0x521]
+0x31ba8bc  ret      
+
+==============================================================================
+### ScriptManager$$OnFlashDepRequest  0x31ba988..0x31bae2c  (size 0x4a4)
+0x31ba988  str      d10, [sp, #-0x40]!
+0x31ba98c  stp      d9, d8, [sp, #8]
+0x31ba990  str      x30, [sp, #0x18]
+0x31ba994  stp      x22, x21, [sp, #0x20]
+0x31ba998  stp      x20, x19, [sp, #0x30]
+0x31ba99c  adrp     x20, #0x59c5000
+0x31ba9a0  mov      x19, x0
+0x31ba9a4  ldrb     w8, [x20, #0x1f5]
+0x31ba9a8  tbnz     w8, #0, #0x31ba9fc
+0x31ba9ac  adrp     x0, #0x556f000
+0x31ba9b0  ldr      x0, [x0, #0xb90]
+0x31ba9b4  bl       #0x22304a4   CALL 0x22304a4
+0x31ba9b8  adrp     x0, #0x55ca000
+0x31ba9bc  ldr      x0, [x0, #0xbd0]   ; &slot for 'EndExecuteFlashDep'
+0x31ba9c0  bl       #0x22304a4   CALL 0x22304a4
+0x31ba9c4  adrp     x0, #0x55ca000
+0x31ba9c8  ldr      x0, [x0, #0xbb8]   ; &slot for 'pingpong'
+0x31ba9cc  bl       #0x22304a4   CALL 0x22304a4
+0x31ba9d0  adrp     x0, #0x55c9000
+0x31ba9d4  ldr      x0, [x0, #0xdb0]   ; &slot for 'once'
+0x31ba9d8  bl       #0x22304a4   CALL 0x22304a4
+0x31ba9dc  adrp     x0, #0x55ca000
+0x31ba9e0  ldr      x0, [x0, #0xbd8]   ; &slot for 'OnFlashDepRequest'
+0x31ba9e4  bl       #0x22304a4   CALL 0x22304a4
+0x31ba9e8  adrp     x0, #0x559d000
+0x31ba9ec  ldr      x0, [x0, #0x370]   ; &slot for 'loop'
+0x31ba9f0  bl       #0x22304a4   CALL 0x22304a4
+0x31ba9f4  mov      w8, #1
+0x31ba9f8  strb     w8, [x20, #0x1f5]
+0x31ba9fc  ldrb     w8, [x19, #0x560]
+0x31baa00  cbz      w8, #0x31bab18
+0x31baa04  adrp     x22, #0x556f000
+0x31baa08  ldr      x22, [x22, #0xb90]
+0x31baa0c  ldr      x20, [x19, #0xf0]
+0x31baa10  ldr      x21, [x19, #0x170]
+0x31baa14  ldr      x0, [x22]
+0x31baa18  ldr      w8, [x0, #0xe4]
+0x31baa1c  cbnz     w8, #0x31baa24
+0x31baa20  bl       #0x22305f4   CALL 0x22305f4
+0x31baa24  mov      x0, x21
+0x31baa28  mov      x1, xzr
+0x31baa2c  mov      x2, xzr
+0x31baa30  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31baa34  movi     d8, #0000000000000000
+0x31baa38  tbz      w0, #0, #0x31baa5c
+0x31baa3c  ldr      x0, [x19, #0x170]
+0x31baa40  cbz      x0, #0x31bae28
+0x31baa44  mov      x1, xzr
+0x31baa48  bl       #0x4fd42c8   CALL UnityEngine.GameObject$$get_transform
+0x31baa4c  cbz      x0, #0x31bae28
+0x31baa50  mov      x1, xzr
+0x31baa54  bl       #0x4fe19e0   CALL UnityEngine.Transform$$get_localPosition
+0x31baa58  fmov     s8, s2
+0x31baa5c  ldr      w8, [x19, #0x594]
+0x31baa60  tbnz     w8, #0x1f, #0x31baa90
+0x31baa64  ldr      x9, [x19, #0x490]
+0x31baa68  cbz      x9, #0x31bae28
+0x31baa6c  ldr      w10, [x9, #0x18]
+0x31baa70  cmp      w8, w10
+0x31baa74  b.ge     #0x31baa90
+0x31baa78  add      x8, x9, x8, lsl #3
+0x31baa7c  ldr      x0, [x8, #0x20]
+0x31baa80  cbz      x0, #0x31baa90
+0x31baa84  mov      x1, xzr
+0x31baa88  bl       #0x3170a88   CALL ScriptCharaData$$GetDepthPos
+0x31baa8c  fmov     s8, s0
+0x31baa90  cbz      x20, #0x31bae28
+0x31baa94  mov      x0, x20
+0x31baa98  mov      x1, xzr
+0x31baa9c  bl       #0x4fd0604   CALL UnityEngine.Component$$get_transform
+0x31baaa0  cbz      x0, #0x31bae28
+0x31baaa4  mov      x1, xzr
+0x31baaa8  bl       #0x4fe19e0   CALL UnityEngine.Transform$$get_localPosition
+0x31baaac  mov      x0, x20
+0x31baab0  mov      x1, xzr
+0x31baab4  fmov     s9, s0
+0x31baab8  fmov     s10, s1
+0x31baabc  bl       #0x4fd0604   CALL UnityEngine.Component$$get_transform
+0x31baac0  cbz      x0, #0x31bae28
+0x31baac4  adrp     x8, #0xee7000
+0x31baac8  fmov     s1, s10
+0x31baacc  mov      x1, xzr
+0x31baad0  ldr      s0, [x8, #0x5e8]
+0x31baad4  fadd     s2, s8, s0
+0x31baad8  fmov     s0, s9
+0x31baadc  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31baae0  ldrb     w8, [x19, #0x561]
+0x31baae4  cbz      w8, #0x31bab30
+0x31baae8  ldr      s0, [x19, #0x570]
+0x31baaec  fcmp     s0, #0.0
+0x31baaf0  b.le     #0x31bac10
+0x31baaf4  mov      x0, x20
+0x31baaf8  mov      x1, xzr
+0x31baafc  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31bab00  ldr      s0, [x19, #0x570]
+0x31bab04  movi     d1, #0000000000000000
+0x31bab08  movi     d2, #0000000000000000
+0x31bab0c  movi     d3, #0000000000000000
+0x31bab10  movi     d4, #0000000000000000
+0x31bab14  b        #0x31babd8
+0x31bab18  ldp      x20, x19, [sp, #0x30]
+0x31bab1c  ldr      x30, [sp, #0x18]
+0x31bab20  ldp      x22, x21, [sp, #0x20]
+0x31bab24  ldp      d9, d8, [sp, #8]
+0x31bab28  ldr      d10, [sp], #0x40
+0x31bab2c  ret      
+0x31bab30  ldr      w8, [x19, #0x564]
+0x31bab34  cmp      w8, #1
+0x31bab38  b.eq     #0x31bab68
+0x31bab3c  cbnz     w8, #0x31bacc4
+0x31bab40  ldr      s0, [x19, #0x568]
+0x31bab44  mov      w8, #1
+0x31bab48  str      w8, [x19, #0x564]
+0x31bab4c  fcmp     s0, #0.0
+0x31bab50  b.le     #0x31babe8
+0x31bab54  mov      x0, x20
+0x31bab58  mov      x1, xzr
+0x31bab5c  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31bab60  ldr      s0, [x19, #0x568]
+0x31bab64  b        #0x31babc8
+0x31bab68  adrp     x8, #0x55ca000
+0x31bab6c  mov      x2, xzr
+0x31bab70  ldr      x8, [x8, #0xbb8]   ; &slot for 'pingpong'
+0x31bab74  ldr      x21, [x19, #0x558]
+0x31bab78  ldr      x1, [x8]   ; 'pingpong'
+0x31bab7c  mov      x0, x21
+0x31bab80  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='pingpong'
+0x31bab84  tbz      w0, #0, #0x31bac2c
+0x31bab88  ldr      x8, [x20]
+0x31bab8c  ldr      s0, [x19, #0x584]
+0x31bab90  mov      x0, x20
+0x31bab94  ldr      s1, [x19, #0x588]
+0x31bab98  ldr      s2, [x19, #0x58c]
+0x31bab9c  ldr      s3, [x19, #0x590]
+0x31baba0  ldr      x9, [x8, #0x3a8]
+0x31baba4  ldr      x1, [x8, #0x3b0]
+0x31baba8  ldr      s8, [x19, #0x56c]
+0x31babac  blr      x9   CALL 0x0
+0x31babb0  fcmp     s8, #0.0
+0x31babb4  b.le     #0x31bacc4
+0x31babb8  mov      x0, x20
+0x31babbc  mov      x1, xzr
+0x31babc0  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31babc4  ldr      s0, [x19, #0x56c]
+0x31babc8  ldr      s1, [x19, #0x574]
+0x31babcc  ldr      s2, [x19, #0x578]
+0x31babd0  ldr      s3, [x19, #0x57c]
+0x31babd4  ldr      s4, [x19, #0x580]
+0x31babd8  mov      x1, xzr
+0x31babdc  bl       #0x30e8854   CALL TweenRendererColor$$Begin
+0x31babe0  mov      x20, x0
+0x31babe4  b        #0x31bacc8
+0x31babe8  adrp     x8, #0x55c9000
+0x31babec  mov      x2, xzr
+0x31babf0  ldr      x8, [x8, #0xdb0]   ; &slot for 'once'
+0x31babf4  ldr      x0, [x19, #0x558]
+0x31babf8  ldr      x1, [x8]   ; 'once'
+0x31babfc  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='once'
+0x31bac00  tbz      w0, #0, #0x31baca0
+0x31bac04  ldr      s0, [x19, #0x56c]
+0x31bac08  fcmp     s0, #0.0
+0x31bac0c  b.ne     #0x31baca0
+0x31bac10  mov      x0, x19
+0x31bac14  ldp      x20, x19, [sp, #0x30]
+0x31bac18  ldp      x22, x21, [sp, #0x20]
+0x31bac1c  ldr      x30, [sp, #0x18]
+0x31bac20  ldp      d9, d8, [sp, #8]
+0x31bac24  ldr      d10, [sp], #0x40
+0x31bac28  b        #0x31bae2c
+0x31bac2c  adrp     x8, #0x559d000
+0x31bac30  mov      x0, x21
+0x31bac34  mov      x2, xzr
+0x31bac38  ldr      x8, [x8, #0x370]   ; &slot for 'loop'
+0x31bac3c  ldr      x1, [x8]   ; 'loop'
+0x31bac40  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='loop'
+0x31bac44  tbnz     w0, #0, #0x31bac60
+0x31bac48  adrp     x8, #0x55c9000
+0x31bac4c  mov      x0, x21
+0x31bac50  mov      x2, xzr
+0x31bac54  ldr      x8, [x8, #0xdb0]   ; &slot for 'once'
+0x31bac58  ldr      x1, [x8]   ; 'once'
+0x31bac5c  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='once'
+0x31bac60  ldr      s0, [x19, #0x56c]
+0x31bac64  str      wzr, [x19, #0x564]
+0x31bac68  fcmp     s0, #0.0
+0x31bac6c  b.le     #0x31bad94
+0x31bac70  mov      x0, x20
+0x31bac74  mov      x1, xzr
+0x31bac78  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31bac7c  ldr      s0, [x19, #0x56c]
+0x31bac80  ldr      s1, [x19, #0x584]
+0x31bac84  mov      x1, xzr
+0x31bac88  ldr      s2, [x19, #0x588]
+0x31bac8c  ldr      s3, [x19, #0x58c]
+0x31bac90  ldr      s4, [x19, #0x590]
+0x31bac94  bl       #0x30e8854   CALL TweenRendererColor$$Begin
+0x31bac98  mov      x20, x0
+0x31bac9c  b        #0x31badbc
+0x31baca0  ldr      x8, [x20]
+0x31baca4  ldr      s0, [x19, #0x574]
+0x31baca8  mov      x0, x20
+0x31bacac  ldr      s1, [x19, #0x578]
+0x31bacb0  ldr      s2, [x19, #0x57c]
+0x31bacb4  ldr      s3, [x19, #0x580]
+0x31bacb8  ldr      x9, [x8, #0x3a8]
+0x31bacbc  ldr      x1, [x8, #0x3b0]
+0x31bacc0  blr      x9   CALL 0x0
+0x31bacc4  mov      x20, xzr
+0x31bacc8  ldr      x0, [x22]
+0x31baccc  ldr      w8, [x0, #0xe4]
+0x31bacd0  cbnz     w8, #0x31bacd8
+0x31bacd4  bl       #0x22305f4   CALL 0x22305f4
+0x31bacd8  mov      x0, x20
+0x31bacdc  mov      x1, xzr
+0x31bace0  mov      x2, xzr
+0x31bace4  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31bace8  tbz      w0, #0, #0x31bad4c
+0x31bacec  mov      x0, x19
+0x31bacf0  mov      x1, xzr
+0x31bacf4  bl       #0x4fd06d4   CALL UnityEngine.Component$$get_gameObject
+0x31bacf8  cbz      x20, #0x31bae28
+0x31bacfc  mov      x1, x0
+0x31bad00  mov      x0, x20
+0x31bad04  str      x1, [x0, #0x50]!
+0x31bad08  bl       #0x2230448   CALL 0x2230448
+0x31bad0c  ldrb     w8, [x19, #0x561]
+0x31bad10  adrp     x9, #0x55ca000
+0x31bad14  adrp     x10, #0x55ca000
+0x31bad18  ldr      x9, [x9, #0xbd8]   ; &slot for 'OnFlashDepRequest'
+0x31bad1c  ldr      x10, [x10, #0xbd0]   ; &slot for 'EndExecuteFlashDep'
+0x31bad20  ldr      x30, [sp, #0x18]
+0x31bad24  cmp      w8, #0
+0x31bad28  ldp      x22, x21, [sp, #0x20]
+0x31bad2c  csel     x8, x9, x10, eq
+0x31bad30  ldp      d9, d8, [sp, #8]
+0x31bad34  ldr      x1, [x8]
+0x31bad38  str      x1, [x20, #0x58]!
+0x31bad3c  mov      x0, x20
+0x31bad40  ldp      x20, x19, [sp, #0x30]
+0x31bad44  ldr      d10, [sp], #0x40
+0x31bad48  b        #0x2230448
+0x31bad4c  ldrb     w8, [x19, #0x561]
+0x31bad50  adrp     x9, #0x55ca000
+0x31bad54  adrp     x10, #0x55ca000
+0x31bad58  ldr      x9, [x9, #0xbd8]   ; &slot for 'OnFlashDepRequest'
+0x31bad5c  ldr      x10, [x10, #0xbd0]   ; &slot for 'EndExecuteFlashDep'
+0x31bad60  mov      x0, x19
+0x31bad64  cmp      w8, #0
+0x31bad68  ldp      x20, x19, [sp, #0x30]
+0x31bad6c  csel     x8, x9, x10, eq
+0x31bad70  adrp     x9, #0xee7000
+0x31bad74  ldr      x30, [sp, #0x18]
+0x31bad78  ldp      x22, x21, [sp, #0x20]
+0x31bad7c  ldr      x1, [x8]
+0x31bad80  ldp      d9, d8, [sp, #8]
+0x31bad84  ldr      s0, [x9, #0x714]
+0x31bad88  mov      x2, xzr
+0x31bad8c  ldr      d10, [sp], #0x40
+0x31bad90  b        #0x4fd6068
+0x31bad94  ldr      x8, [x20]
+0x31bad98  ldr      s0, [x19, #0x584]
+0x31bad9c  mov      x0, x20
+0x31bada0  ldr      s1, [x19, #0x588]
+0x31bada4  ldr      s2, [x19, #0x58c]
+0x31bada8  ldr      s3, [x19, #0x590]
+0x31badac  ldr      x9, [x8, #0x3a8]
+0x31badb0  ldr      x1, [x8, #0x3b0]
+0x31badb4  blr      x9   CALL 0x0
+0x31badb8  mov      x20, xzr
+0x31badbc  adrp     x8, #0x55c9000
+0x31badc0  mov      x2, xzr
+0x31badc4  ldr      x8, [x8, #0xdb0]   ; &slot for 'once'
+0x31badc8  ldr      x0, [x19, #0x558]
+0x31badcc  ldr      x1, [x8]   ; 'once'
+0x31badd0  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='once'
+0x31badd4  tbz      w0, #0, #0x31bacc8
+0x31badd8  ldr      s0, [x19, #0x584]
+0x31baddc  ldr      d1, [x19, #0x588]
+0x31bade0  adrp     x8, #0xee7000
+0x31bade4  ldr      s2, [x19, #0x590]
+0x31bade8  fmul     s0, s0, s0
+0x31badec  fmul     v1.2s, v1.2s, v1.2s
+0x31badf0  fadd     s0, s0, s1
+0x31badf4  mov      s1, v1.s[1]
+0x31badf8  fadd     s0, s1, s0
+0x31badfc  fmul     s1, s2, s2
+0x31bae00  ldr      s2, [x8, #0x2d0]
+0x31bae04  mov      w8, #1
+0x31bae08  strb     w8, [x19, #0x561]
+0x31bae0c  fadd     s1, s1, s0
+0x31bae10  movi     d0, #0000000000000000
+0x31bae14  fcmp     s1, s2
+0x31bae18  b.mi     #0x31bae20
+0x31bae1c  ldr      s0, [x19, #0x568]
+0x31bae20  str      s0, [x19, #0x570]
+0x31bae24  b        #0x31bacc8
+0x31bae28  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$EndFlashDep  0x31bae78..0x31bae90  (size 0x18)
+0x31bae78  ldrb     w8, [x0, #0x560]
+0x31bae7c  cbz      w8, #0x31bae8c
+0x31bae80  mov      w8, #1
+0x31bae84  str      s0, [x0, #0x570]
+0x31bae88  strb     w8, [x0, #0x561]
+0x31bae8c  ret      
+
+==============================================================================
+### ScriptManager$$EndExecuteFlash  0x31ba85c..0x31ba8a8  (size 0x4c)
+0x31ba85c  stp      x30, x19, [sp, #-0x10]!
+0x31ba860  mov      x19, x0
+0x31ba864  str      xzr, [x0, #0x518]
+0x31ba868  add      x0, x0, #0x518
+0x31ba86c  mov      x1, xzr
+0x31ba870  bl       #0x2230448   CALL 0x2230448
+0x31ba874  ldr      x0, [x19, #0xd0]
+0x31ba878  strh     wzr, [x19, #0x520]
+0x31ba87c  cbz      x0, #0x31ba8a4
+0x31ba880  ldr      x8, [x0]
+0x31ba884  movi     d0, #0000000000000000
+0x31ba888  movi     d1, #0000000000000000
+0x31ba88c  movi     d2, #0000000000000000
+0x31ba890  movi     d3, #0000000000000000
+0x31ba894  ldr      x1, [x8, #0x3b0]
+0x31ba898  ldr      x2, [x8, #0x3a8]
+0x31ba89c  ldp      x30, x19, [sp], #0x10
+0x31ba8a0  br       x2
+0x31ba8a4  bl       #0x2230720   CALL 0x2230720

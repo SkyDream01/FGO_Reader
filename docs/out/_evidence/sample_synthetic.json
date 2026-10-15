@@ -1,0 +1,199 @@
+{
+ "lines": [
+  {
+   "index": 0,
+   "raw": "# synthetic sample built only from recovered tag names - NOT a real game script",
+   "kind": "comment",
+   "tag": null,
+   "params": []
+  },
+  {
+   "index": 1,
+   "raw": "label start",
+   "kind": "command",
+   "tag": "label",
+   "params": [
+    "start"
+   ]
+  },
+  {
+   "index": 2,
+   "raw": "bg field_001",
+   "kind": "message",
+   "tag": "bg",
+   "params": [
+    "field_001"
+   ],
+   "markup": [
+    {
+     "type": "text",
+     "value": "field_001"
+    }
+   ],
+   "text": "field_001"
+  },
+  {
+   "index": 3,
+   "raw": "bgm BGM_001 0",
+   "kind": "command",
+   "tag": "bgm",
+   "params": [
+    "BGM_001",
+    "0"
+   ]
+  },
+  {
+   "index": 4,
+   "raw": "char 100100 0 0 0",
+   "kind": "message",
+   "tag": "char",
+   "params": [
+    "100100",
+    "0",
+    "0",
+    "0"
+   ],
+   "markup": [
+    {
+     "type": "text",
+     "value": "100100 0 0 0"
+    }
+   ],
+   "text": "100100 0 0 0"
+  },
+  {
+   "index": 5,
+   "raw": "talkName マシュ・キリエライト",
+   "kind": "structural",
+   "tag": "talkName",
+   "params": [
+    "マシュ・キリエライト"
+   ]
+  },
+  {
+   "index": 6,
+   "raw": "talkStart",
+   "kind": "command",
+   "tag": "talkStart",
+   "params": []
+  },
+  {
+   "index": 7,
+   "raw": "message2 0 0 0 0 0 0 0 1 1 1 先輩、[#ff0000]赤い[/-]です。[r]改行もできます。",
+   "kind": "structural",
+   "tag": "message2",
+   "params": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1",
+    "1",
+    "先輩、[#ff0000]赤い[/-]です。[r]改行もできます。"
+   ]
+  },
+  {
+   "index": 8,
+   "raw": "message2 0 0 0 0 0 0 0 1 1 1 「[#ふりがな:漢字]」テスト",
+   "kind": "structural",
+   "tag": "message2",
+   "params": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1",
+    "1",
+    "「[#ふりがな:漢字]」テスト"
+   ]
+  },
+  {
+   "index": 9,
+   "raw": "talkEnd",
+   "kind": "command",
+   "tag": "talkEnd",
+   "params": []
+  },
+  {
+   "index": 10,
+   "raw": "charaFadeout 0 0.5",
+   "kind": "command",
+   "tag": "charaFadeout",
+   "params": [
+    "0",
+    "0.5"
+   ]
+  },
+  {
+   "index": 11,
+   "raw": "wait 0.5",
+   "kind": "command",
+   "tag": "wait",
+   "params": [
+    "0.5"
+   ]
+  },
+  {
+   "index": 12,
+   "raw": "selectBranch 0 選択肢A 選択肢B",
+   "kind": "structural",
+   "tag": "selectBranch",
+   "params": [
+    "0",
+    "選択肢A",
+    "選択肢B"
+   ]
+  },
+  {
+   "index": 13,
+   "raw": "branch 1",
+   "kind": "command",
+   "tag": "branch",
+   "params": [
+    "1"
+   ]
+  },
+  {
+   "index": 14,
+   "raw": "label routeA",
+   "kind": "command",
+   "tag": "label",
+   "params": [
+    "routeA"
+   ]
+  },
+  {
+   "index": 15,
+   "raw": "clear",
+   "kind": "command",
+   "tag": "clear",
+   "params": []
+  },
+  {
+   "index": 16,
+   "raw": "end",
+   "kind": "command",
+   "tag": "end",
+   "params": []
+  },
+  {
+   "index": 17,
+   "raw": "",
+   "kind": "empty",
+   "tag": null,
+   "params": []
+  }
+ ],
+ "labels": {
+  "start": 1,
+  "routeA": 14
+ }
+}

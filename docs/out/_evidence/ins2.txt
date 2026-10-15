@@ -1,0 +1,35 @@
+
+==============================================================================
+### ScriptManager$$StartLoadAnimationAssetData  0x31a8824..0x31a891c  (size 0xf8)
+0x31a8844  bl       #0x22304a4   CALL 0x22304a4
+0x31a8850  bl       #0x22304a4   CALL 0x22304a4
+0x31a885c  bl       #0x22304a4   CALL 0x22304a4
+0x31a8868  bl       #0x22304a4   CALL 0x22304a4
+0x31a8874  bl       #0x22304a4   CALL 0x22304a4
+0x31a88a0  bl       #0x44c9f14   CALL System.Collections.Generic.List<object>$$ToArray
+0x31a88b0  ldr      x8, [x8]   ; &slot for 'getGoogleAdId'
+0x31a88b8  bl       #0x2230710   CALL 0x2230710
+0x31a88d4  bl       #0x4959620   CALL System.Action$$.ctor
+0x31a88ec  bl       #0x22305f4   CALL 0x22305f4
+
+==============================================================================
+### ScriptManager$$destroyAnimationInsertionObjects  0x31b15e4..0x31b17e8  (size 0x204)
+0x31b160c  bl       #0x22304a4   CALL 0x22304a4
+0x31b1618  bl       #0x22304a4   CALL 0x22304a4
+0x31b1624  bl       #0x22304a4   CALL 0x22304a4
+0x31b1630  bl       #0x22304a4   CALL 0x22304a4
+0x31b163c  bl       #0x22304a4   CALL 0x22304a4
+0x31b1648  bl       #0x22304a4   CALL 0x22304a4
+0x31b1654  bl       #0x22304a4   CALL 0x22304a4
+0x31b1660  bl       #0x22304a4   CALL 0x22304a4
+0x31b16ac  bl       #0x44c8124   CALL System.Collections.Generic.List<object>$$get_Item
+0x31b16c4  bl       #0x22305f4   CALL 0x22305f4
+0x31b16d4  bl       #0x4fd3cbc   CALL UnityEngine.Object$$op_Inequality
+0x31b16ec  bl       #0x44c8124   CALL System.Collections.Generic.List<object>$$get_Item
+0x31b1704  bl       #0x22305f4   CALL 0x22305f4
+0x31b1710  bl       #0x4fda4d8   CALL UnityEngine.Object$$Destroy
+0x31b1744  bl       #0x49f8178   CALL System.Array$$Clear
+0x31b1768  bl       #0x44c8124   CALL System.Collections.Generic.List<object>$$get_Item
+0x31b1780  bl       #0x22305f4   CALL 0x22305f4
+0x31b178c  bl       #0x2da6914   CALL AssetManager$$releaseAssetStorage
+0x31b179c  bl       #0x2230720   CALL 0x2230720

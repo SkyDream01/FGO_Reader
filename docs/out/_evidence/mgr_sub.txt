@@ -1,0 +1,330 @@
+
+==============================================================================
+### ScriptManager$$IsExistTargetSubLayerGroup  0x31c69f8..0x31c6e9c  (size 0x4a4)
+0x31c69f8  stp      x30, x21, [sp, #-0x20]!
+0x31c69fc  stp      x20, x19, [sp, #0x10]
+0x31c6a00  adrp     x21, #0x59c5000
+0x31c6a04  mov      x19, x2
+0x31c6a08  mov      x20, x1
+0x31c6a0c  ldrb     w8, [x21, #0x232]
+0x31c6a10  tbnz     w8, #0, #0x31c6b30
+0x31c6a14  adrp     x0, #0x55c9000
+0x31c6a18  ldr      x0, [x0, #0x748]   ; &slot for 'subCameraMoveEase'
+0x31c6a1c  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a20  adrp     x0, #0x55c9000
+0x31c6a24  ldr      x0, [x0, #0x770]   ; &slot for 'subRenderScale'
+0x31c6a28  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a2c  adrp     x0, #0x5579000
+0x31c6a30  ldr      x0, [x0, #0xae0]   ; &slot for '#'
+0x31c6a34  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a38  adrp     x0, #0x55c9000
+0x31c6a3c  ldr      x0, [x0, #0x850]   ; &slot for 'subRenderMoveFSL'
+0x31c6a40  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a44  adrp     x0, #0x55c9000
+0x31c6a48  ldr      x0, [x0, #0x860]   ; &slot for 'subRenderMoveScale'
+0x31c6a4c  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a50  adrp     x0, #0x55c9000
+0x31c6a54  ldr      x0, [x0, #0x888]   ; &slot for 'subRenderMoveEaseFSR'
+0x31c6a58  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a5c  adrp     x0, #0x55c9000
+0x31c6a60  ldr      x0, [x0, #0x8b8]   ; &slot for 'subRenderMoveFSSideR'
+0x31c6a64  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a68  adrp     x0, #0x55c9000
+0x31c6a6c  ldr      x0, [x0, #0x9f8]   ; &slot for 'subRenderMoveFSSideL'
+0x31c6a70  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a74  adrp     x0, #0x55c9000
+0x31c6a78  ldr      x0, [x0, #0xa20]   ; &slot for 'subRenderFadeinFSR'
+0x31c6a7c  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a80  adrp     x0, #0x55c9000
+0x31c6a84  ldr      x0, [x0, #0xba8]   ; &slot for 'subRenderFadeinFSL'
+0x31c6a88  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a8c  adrp     x0, #0x55c9000
+0x31c6a90  ldr      x0, [x0, #0xc28]   ; &slot for 'subRenderFadeinFSSideR'
+0x31c6a94  bl       #0x22304a4   CALL 0x22304a4
+0x31c6a98  adrp     x0, #0x55c9000
+0x31c6a9c  ldr      x0, [x0, #0xcc8]   ; &slot for 'subRenderMoveEase'
+0x31c6aa0  bl       #0x22304a4   CALL 0x22304a4
+0x31c6aa4  adrp     x0, #0x55c9000
+0x31c6aa8  ldr      x0, [x0, #0xcf0]   ; &slot for 'subRenderMoveEaseFSL'
+0x31c6aac  bl       #0x22304a4   CALL 0x22304a4
+0x31c6ab0  adrp     x0, #0x55c9000
+0x31c6ab4  ldr      x0, [x0, #0xcf8]   ; &slot for 'subCameraFilter'
+0x31c6ab8  bl       #0x22304a4   CALL 0x22304a4
+0x31c6abc  adrp     x0, #0x55c9000
+0x31c6ac0  ldr      x0, [x0, #0xda8]   ; &slot for 'subRenderMove'
+0x31c6ac4  bl       #0x22304a4   CALL 0x22304a4
+0x31c6ac8  adrp     x0, #0x55c9000
+0x31c6acc  ldr      x0, [x0, #0xec8]   ; &slot for 'subRenderMoveScaleEase'
+0x31c6ad0  bl       #0x22304a4   CALL 0x22304a4
+0x31c6ad4  adrp     x0, #0x55c9000
+0x31c6ad8  ldr      x0, [x0, #0xed0]   ; &slot for 'charaLayer'
+0x31c6adc  bl       #0x22304a4   CALL 0x22304a4
+0x31c6ae0  adrp     x0, #0x55c9000
+0x31c6ae4  ldr      x0, [x0, #0xfc0]   ; &slot for 'subRenderMoveFSR'
+0x31c6ae8  bl       #0x22304a4   CALL 0x22304a4
+0x31c6aec  adrp     x0, #0x55c9000
+0x31c6af0  ldr      x0, [x0, #0xfe0]   ; &slot for 'subRenderMoveEaseFSSideR'
+0x31c6af4  bl       #0x22304a4   CALL 0x22304a4
+0x31c6af8  adrp     x0, #0x55ca000
+0x31c6afc  ldr      x0, [x0, #0x40]   ; &slot for 'subRenderMoveEaseFSSideL'
+0x31c6b00  bl       #0x22304a4   CALL 0x22304a4
+0x31c6b04  adrp     x0, #0x55ca000
+0x31c6b08  ldr      x0, [x0, #0x178]   ; &slot for 'subRenderFadeout'
+0x31c6b0c  bl       #0x22304a4   CALL 0x22304a4
+0x31c6b10  adrp     x0, #0x55ca000
+0x31c6b14  ldr      x0, [x0, #0x200]   ; &slot for 'subRenderFadein'
+0x31c6b18  bl       #0x22304a4   CALL 0x22304a4
+0x31c6b1c  adrp     x0, #0x55ca000
+0x31c6b20  ldr      x0, [x0, #0x318]   ; &slot for 'subRenderFadeinFSSideL'
+0x31c6b24  bl       #0x22304a4   CALL 0x22304a4
+0x31c6b28  mov      w8, #1
+0x31c6b2c  strb     w8, [x21, #0x232]
+0x31c6b30  mov      x0, x20
+0x31c6b34  mov      x1, xzr
+0x31c6b38  bl       #0x2cdf448   CALL <PrivateImplementationDetails>$$ComputeStringHash
+0x31c6b3c  mov      w8, #0xc5e0
+0x31c6b40  movk     w8, #0x6627, lsl #16
+0x31c6b44  cmp      w0, w8
+0x31c6b48  b.hi     #0x31c6b98
+0x31c6b4c  mov      w8, #0x1858
+0x31c6b50  movk     w8, #0x2150, lsl #16
+0x31c6b54  cmp      w0, w8
+0x31c6b58  b.hi     #0x31c6be4
+0x31c6b5c  mov      w8, #0x9821
+0x31c6b60  movk     w8, #0x98b, lsl #16
+0x31c6b64  cmp      w0, w8
+0x31c6b68  b.hi     #0x31c6c7c
+0x31c6b6c  mov      w8, #0x6fba
+0x31c6b70  movk     w8, #0x234, lsl #16
+0x31c6b74  cmp      w0, w8
+0x31c6b78  b.eq     #0x31c6d6c
+0x31c6b7c  mov      w8, #0x9821
+0x31c6b80  movk     w8, #0x98b, lsl #16
+0x31c6b84  cmp      w0, w8
+0x31c6b88  b.ne     #0x31c6e84
+0x31c6b8c  adrp     x8, #0x55c9000
+0x31c6b90  ldr      x8, [x8, #0x850]   ; &slot for 'subRenderMoveFSL'
+0x31c6b94  b        #0x31c6e3c
+0x31c6b98  mov      w8, #0x9d2f
+0x31c6b9c  movk     w8, #0xbad7, lsl #16
+0x31c6ba0  cmp      w0, w8
+0x31c6ba4  b.hi     #0x31c6c30
+0x31c6ba8  mov      w8, #0x9c49
+0x31c6bac  movk     w8, #0x787d, lsl #16
+0x31c6bb0  cmp      w0, w8
+0x31c6bb4  b.hi     #0x31c6cb8
+0x31c6bb8  mov      w8, #0x6cec
+0x31c6bbc  movk     w8, #0x6ec0, lsl #16
+0x31c6bc0  cmp      w0, w8
+0x31c6bc4  b.eq     #0x31c6d78
+0x31c6bc8  mov      w8, #0x9c49
+0x31c6bcc  movk     w8, #0x787d, lsl #16
+0x31c6bd0  cmp      w0, w8
+0x31c6bd4  b.ne     #0x31c6e84
+0x31c6bd8  adrp     x8, #0x55c9000
+0x31c6bdc  ldr      x8, [x8, #0x770]   ; &slot for 'subRenderScale'
+0x31c6be0  b        #0x31c6e3c
+0x31c6be4  mov      w8, #0xcb9b
+0x31c6be8  movk     w8, #0x4d06, lsl #16
+0x31c6bec  cmp      w0, w8
+0x31c6bf0  b.hi     #0x31c6cf4
+0x31c6bf4  mov      w8, #0xaf45
+0x31c6bf8  movk     w8, #0x3b06, lsl #16
+0x31c6bfc  cmp      w0, w8
+0x31c6c00  b.eq     #0x31c6dcc
+0x31c6c04  mov      w8, #0xff79
+0x31c6c08  movk     w8, #0x46f3, lsl #16
+0x31c6c0c  cmp      w0, w8
+0x31c6c10  b.eq     #0x31c6d84
+0x31c6c14  mov      w8, #0xcb9b
+0x31c6c18  movk     w8, #0x4d06, lsl #16
+0x31c6c1c  cmp      w0, w8
+0x31c6c20  b.ne     #0x31c6e84
+0x31c6c24  adrp     x8, #0x55c9000
+0x31c6c28  ldr      x8, [x8, #0xa20]   ; &slot for 'subRenderFadeinFSR'
+0x31c6c2c  b        #0x31c6e3c
+0x31c6c30  mov      w8, #0x8946
+0x31c6c34  movk     w8, #0xdc64, lsl #16
+0x31c6c38  cmp      w0, w8
+0x31c6c3c  b.hi     #0x31c6d30
+0x31c6c40  mov      w8, #0xa4a6
+0x31c6c44  movk     w8, #0xc085, lsl #16
+0x31c6c48  cmp      w0, w8
+0x31c6c4c  b.eq     #0x31c6dd8
+0x31c6c50  mov      w8, #0x1398
+0x31c6c54  movk     w8, #0xd7b3, lsl #16
+0x31c6c58  cmp      w0, w8
+0x31c6c5c  b.eq     #0x31c6d90
+0x31c6c60  mov      w8, #0x8946
+0x31c6c64  movk     w8, #0xdc64, lsl #16
+0x31c6c68  cmp      w0, w8
+0x31c6c6c  b.ne     #0x31c6e84
+0x31c6c70  adrp     x8, #0x55c9000
+0x31c6c74  ldr      x8, [x8, #0xc28]   ; &slot for 'subRenderFadeinFSSideR'
+0x31c6c78  b        #0x31c6e3c
+0x31c6c7c  mov      w8, #0x2c21
+0x31c6c80  movk     w8, #0x1b88, lsl #16
+0x31c6c84  cmp      w0, w8
+0x31c6c88  b.eq     #0x31c6de4
+0x31c6c8c  mov      w8, #0xaeb6
+0x31c6c90  movk     w8, #0x1eb3, lsl #16
+0x31c6c94  cmp      w0, w8
+0x31c6c98  b.eq     #0x31c6d9c
+0x31c6c9c  mov      w8, #0x1858
+0x31c6ca0  movk     w8, #0x2150, lsl #16
+0x31c6ca4  cmp      w0, w8
+0x31c6ca8  b.ne     #0x31c6e84
+0x31c6cac  adrp     x8, #0x55c9000
+0x31c6cb0  ldr      x8, [x8, #0xcf8]   ; &slot for 'subCameraFilter'
+0x31c6cb4  b        #0x31c6e3c
+0x31c6cb8  mov      w8, #0xf51a
+0x31c6cbc  movk     w8, #0x8427, lsl #16
+0x31c6cc0  cmp      w0, w8
+0x31c6cc4  b.eq     #0x31c6e1c
+0x31c6cc8  mov      w8, #0x8d71
+0x31c6ccc  movk     w8, #0xb0d7, lsl #16
+0x31c6cd0  cmp      w0, w8
+0x31c6cd4  b.eq     #0x31c6da8
+0x31c6cd8  mov      w8, #0x9d2f
+0x31c6cdc  movk     w8, #0xbad7, lsl #16
+0x31c6ce0  cmp      w0, w8
+0x31c6ce4  b.ne     #0x31c6e84
+0x31c6ce8  adrp     x8, #0x55c9000
+0x31c6cec  ldr      x8, [x8, #0xcf0]   ; &slot for 'subRenderMoveEaseFSL'
+0x31c6cf0  b        #0x31c6e3c
+0x31c6cf4  mov      w8, #0xe8ac
+0x31c6cf8  movk     w8, #0x4d38, lsl #16
+0x31c6cfc  cmp      w0, w8
+0x31c6d00  b.eq     #0x31c6e28
+0x31c6d04  mov      w8, #0xa61d
+0x31c6d08  movk     w8, #0x5cab, lsl #16
+0x31c6d0c  cmp      w0, w8
+0x31c6d10  b.eq     #0x31c6db4
+0x31c6d14  mov      w8, #0xc5e0
+0x31c6d18  movk     w8, #0x6627, lsl #16
+0x31c6d1c  cmp      w0, w8
+0x31c6d20  b.ne     #0x31c6e84
+0x31c6d24  adrp     x8, #0x55c9000
+0x31c6d28  ldr      x8, [x8, #0xfe0]   ; &slot for 'subRenderMoveEaseFSSideR'
+0x31c6d2c  b        #0x31c6e3c
+0x31c6d30  mov      w8, #0x4080
+0x31c6d34  movk     w8, #0xe434, lsl #16
+0x31c6d38  cmp      w0, w8
+0x31c6d3c  b.eq     #0x31c6e34
+0x31c6d40  mov      w8, #0x757f
+0x31c6d44  movk     w8, #0xf38b, lsl #16
+0x31c6d48  cmp      w0, w8
+0x31c6d4c  b.eq     #0x31c6dc0
+0x31c6d50  mov      w8, #0xb234
+0x31c6d54  movk     w8, #0xf664, lsl #16
+0x31c6d58  cmp      w0, w8
+0x31c6d5c  b.ne     #0x31c6e84
+0x31c6d60  adrp     x8, #0x55ca000
+0x31c6d64  ldr      x8, [x8, #0x318]   ; &slot for 'subRenderFadeinFSSideL'
+0x31c6d68  b        #0x31c6e3c
+0x31c6d6c  adrp     x8, #0x55c9000
+0x31c6d70  ldr      x8, [x8, #0x8b8]   ; &slot for 'subRenderMoveFSSideR'
+0x31c6d74  b        #0x31c6e3c
+0x31c6d78  adrp     x8, #0x55c9000
+0x31c6d7c  ldr      x8, [x8, #0xda8]   ; &slot for 'subRenderMove'
+0x31c6d80  b        #0x31c6e3c
+0x31c6d84  adrp     x8, #0x55c9000
+0x31c6d88  ldr      x8, [x8, #0x748]   ; &slot for 'subCameraMoveEase'
+0x31c6d8c  b        #0x31c6e3c
+0x31c6d90  adrp     x8, #0x55ca000
+0x31c6d94  ldr      x8, [x8, #0x200]   ; &slot for 'subRenderFadein'
+0x31c6d98  b        #0x31c6e3c
+0x31c6d9c  adrp     x8, #0x55c9000
+0x31c6da0  ldr      x8, [x8, #0xcc8]   ; &slot for 'subRenderMoveEase'
+0x31c6da4  b        #0x31c6e3c
+0x31c6da8  adrp     x8, #0x55c9000
+0x31c6dac  ldr      x8, [x8, #0x888]   ; &slot for 'subRenderMoveEaseFSR'
+0x31c6db0  b        #0x31c6e3c
+0x31c6db4  adrp     x8, #0x55ca000
+0x31c6db8  ldr      x8, [x8, #0x178]   ; &slot for 'subRenderFadeout'
+0x31c6dbc  b        #0x31c6e3c
+0x31c6dc0  adrp     x8, #0x55c9000
+0x31c6dc4  ldr      x8, [x8, #0xfc0]   ; &slot for 'subRenderMoveFSR'
+0x31c6dc8  b        #0x31c6e3c
+0x31c6dcc  adrp     x8, #0x55c9000
+0x31c6dd0  ldr      x8, [x8, #0xba8]   ; &slot for 'subRenderFadeinFSL'
+0x31c6dd4  b        #0x31c6e3c
+0x31c6dd8  adrp     x8, #0x55c9000
+0x31c6ddc  ldr      x8, [x8, #0x860]   ; &slot for 'subRenderMoveScale'
+0x31c6de0  b        #0x31c6e3c
+0x31c6de4  adrp     x8, #0x55c9000
+0x31c6de8  mov      x0, x20
+0x31c6dec  mov      x2, xzr
+0x31c6df0  ldr      x8, [x8, #0xed0]   ; &slot for 'charaLayer'
+0x31c6df4  ldr      x1, [x8]   ; 'charaLayer'
+0x31c6df8  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='charaLayer'
+0x31c6dfc  tbz      w0, #0, #0x31c6e84
+0x31c6e00  cbz      x19, #0x31c6e94
+0x31c6e04  ldr      w8, [x19, #0x18]
+0x31c6e08  cmp      w8, #5
+0x31c6e0c  b.lt     #0x31c6e84
+0x31c6e10  ldr      x0, [x19, #0x40]
+0x31c6e14  cbnz     x0, #0x31c6e64
+0x31c6e18  b        #0x31c6e94
+0x31c6e1c  adrp     x8, #0x55ca000
+0x31c6e20  ldr      x8, [x8, #0x40]   ; &slot for 'subRenderMoveEaseFSSideL'
+0x31c6e24  b        #0x31c6e3c
+0x31c6e28  adrp     x8, #0x55c9000
+0x31c6e2c  ldr      x8, [x8, #0xec8]   ; &slot for 'subRenderMoveScaleEase'
+0x31c6e30  b        #0x31c6e3c
+0x31c6e34  adrp     x8, #0x55c9000
+0x31c6e38  ldr      x8, [x8, #0x9f8]   ; &slot for 'subRenderMoveFSSideL'
+0x31c6e3c  ldr      x1, [x8]   ; 'subRenderMoveFSSideL'
+0x31c6e40  mov      x0, x20
+0x31c6e44  mov      x2, xzr
+0x31c6e48  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='subRenderMoveFSSideL'
+0x31c6e4c  tbz      w0, #0, #0x31c6e84
+0x31c6e50  cbz      x19, #0x31c6e94
+0x31c6e54  ldr      w8, [x19, #0x18]
+0x31c6e58  cbz      w8, #0x31c6e98
+0x31c6e5c  ldr      x0, [x19, #0x20]
+0x31c6e60  cbz      x0, #0x31c6e94
+0x31c6e64  adrp     x8, #0x5579000
+0x31c6e68  mov      x2, xzr
+0x31c6e6c  ldr      x8, [x8, #0xae0]   ; &slot for '#'
+0x31c6e70  ldr      x1, [x8]   ; '#'
+0x31c6e74  bl       #0x4870d34   CALL System.String$$StartsWith   args: x1='#'
+0x31c6e78  tbz      w0, #0, #0x31c6e84
+0x31c6e7c  mov      w0, #1
+0x31c6e80  b        #0x31c6e88
+0x31c6e84  mov      w0, wzr
+0x31c6e88  ldp      x20, x19, [sp, #0x10]
+0x31c6e8c  ldp      x30, x21, [sp], #0x20
+0x31c6e90  ret      
+0x31c6e94  bl       #0x2230720   CALL 0x2230720
+0x31c6e98  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptManager$$RenderCameraSubInit  0x319ff74..0x319ff8c  (size 0x18)
+0x319ff74  ldr      x0, [x0, #0x260]
+0x319ff78  cbz      x0, #0x319ff84
+0x319ff7c  mov      x1, xzr
+0x319ff80  b        #0x31df610
+0x319ff84  str      x30, [sp, #-0x10]!
+0x319ff88  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$RenderCameraSubStart  0x31a00e8..0x31a010c  (size 0x24)
+0x31a00e8  mov      x8, x0
+0x31a00ec  ldr      x0, [x0, #0x260]
+0x31a00f0  cbz      x0, #0x31a0104
+0x31a00f4  mov      w2, w1
+0x31a00f8  ldr      x1, [x8, #0x138]
+0x31a00fc  mov      x3, xzr
+0x31a0100  b        #0x31df614
+0x31a0104  str      x30, [sp, #-0x10]!
+0x31a0108  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$RenderCameraSubQuit  0x31a00d0..0x31a00e8  (size 0x18)
+0x31a00d0  ldr      x0, [x0, #0x260]
+0x31a00d4  cbz      x0, #0x31a00e0
+0x31a00d8  mov      x1, xzr
+0x31a00dc  b        #0x31dfb08
+0x31a00e0  str      x30, [sp, #-0x10]!
+0x31a00e4  bl       #0x2230720   CALL 0x2230720

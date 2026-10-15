@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+ <filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".73" numOctaves="3" seed="27"/><feColorMatrix type="saturate" values="0"/></filter>
+ <path fill="#d3f9ff" opacity=".2" d="M0 0h256v256H0z" filter="url(#n)"/>
+ <path stroke="#c4f5ff" stroke-opacity=".22" stroke-width="1" d="M0 12h256M0 24h256M0 36h256M0 48h256M0 60h256M0 72h256M0 84h256M0 96h256M0 108h256M0 120h256M0 132h256M0 144h256M0 156h256M0 168h256M0 180h256M0 192h256M0 204h256M0 216h256M0 228h256M0 240h256M0 252h256"/>
+</svg>

@@ -6,6 +6,7 @@ interface UseCustomAssetUrlOptions {
   assetPath?: string | null;
   preloadedUrl?: string | null;
   fallbackUrl: string;
+  fallbackUrls?: readonly string[];
 }
 
 interface LocalAssetUrl {
@@ -23,7 +24,12 @@ export function useCustomAssetUrl({
   assetPath = null,
   preloadedUrl = null,
   fallbackUrl,
+  fallbackUrls = [],
 }: UseCustomAssetUrlOptions) {
+  const remoteUrls = [fallbackUrl, ...fallbackUrls];
+  const remoteKey = remoteUrls.join("\u0000");
+  const [remoteFallback, setRemoteFallback] = useState({ key: "", index: 0 });
+  const remoteIndex = remoteFallback.key === remoteKey ? remoteFallback.index : 0;
   const assetKey = useMemo(
     () => packageId && assetPath ? `${packageId}\u0000${assetPath}` : "",
     [assetPath, packageId],
@@ -67,11 +73,19 @@ export function useCustomAssetUrl({
   );
 
   return {
-    url: usingLocalAsset ? localUrl : loadingLocalAsset ? "" : fallbackUrl,
+    url: usingLocalAsset ? localUrl : loadingLocalAsset ? "" : remoteUrls[remoteIndex],
     usingLocalAsset,
     loadingLocalAsset,
     useFallback: () => {
-      if (assetKey) setFallbackAssetKey(assetKey);
+      if (usingLocalAsset || loadingLocalAsset) {
+        setFallbackAssetKey(assetKey);
+        return true;
+      }
+      if (remoteIndex + 1 < remoteUrls.length) {
+        setRemoteFallback({ key: remoteKey, index: remoteIndex + 1 });
+        return true;
+      }
+      return false;
     },
   };
 }

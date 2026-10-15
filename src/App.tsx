@@ -13,6 +13,8 @@ import {
 } from "./lib/storyPreparation";
 import { getNextStoryLaunch } from "./lib/storyQueue";
 import type { StoryLaunch } from "./types";
+import { AudioContinuationPool } from "./adv/audio";
+import { BgmPlaybackSession } from "./hooks/useBgm";
 
 interface ActiveStory {
   launch: StoryLaunch;
@@ -45,10 +47,19 @@ function currentMasterName() {
   return "御主";
 }
 
+function currentMasterGender(): "male" | "female" {
+  try {
+    const value = JSON.parse(localStorage.getItem("fgo-reader-settings") || "{}");
+    return value?.masterGender === "female" ? "female" : "male";
+  } catch { return "male"; }
+}
+
 export default function App() {
   const [activeStory, setActiveStory] = useState<ActiveStory | null>(null);
   const [preload, setPreload] = useState<StoryPreloadState | null>(null);
   const activeStoryRef = useRef<ActiveStory | null>(null);
+  const audioContinuations = useRef(new AudioContinuationPool());
+  const bgmSession = useRef(new BgmPlaybackSession());
   const preparationRef = useRef<{
     id: number;
     controller: AbortController;
@@ -65,6 +76,8 @@ export default function App() {
     const current = activeStoryRef.current;
     activeStoryRef.current = null;
     current?.prepared.dispose();
+    audioContinuations.current.enabled = false; audioContinuations.current.clear();
+    bgmSession.current.enabled = false; bgmSession.current.clear();
   }, []);
 
   const cancelPreload = useCallback(() => {
@@ -75,6 +88,8 @@ export default function App() {
   }, []);
 
   const closeStory = useCallback(() => {
+    audioContinuations.current.enabled = false; audioContinuations.current.clear();
+    bgmSession.current.enabled = false; bgmSession.current.clear();
     cancelPreload();
     const previous = activeStoryRef.current;
     activeStoryRef.current = null;
@@ -102,6 +117,7 @@ export default function App() {
       const prepared = await prepareStory(story, {
         signal: controller.signal,
         masterName: currentMasterName(),
+        masterGender: currentMasterGender(),
         onProgress: (progress) => {
           if (requestIdRef.current !== id) return;
           setPreload((current) => current
@@ -115,6 +131,8 @@ export default function App() {
       }
 
       const previous = activeStoryRef.current;
+      audioContinuations.current.enabled = true;
+      bgmSession.current.enabled = true;
       const next = { launch: story, prepared };
       activeStoryRef.current = next;
       saveLastObservation(createLastObservation(story, prepared.startIndex));
@@ -146,6 +164,8 @@ export default function App() {
             story={activeStory.launch}
             prepared={activeStory.prepared}
             nextStory={nextStory}
+            audioContinuations={audioContinuations.current}
+            bgmSession={bgmSession.current}
             onNext={() => nextStory && openStory(nextStory)}
             onExit={closeStory}
           />

@@ -1,0 +1,132 @@
+{
+ "lines": [
+  {
+   "index": 0,
+   "raw": "input selectBranch 0 はい いいえ",
+   "kind": "command",
+   "tag": "input",
+   "params": [
+    "selectBranch",
+    "0",
+    "はい",
+    "いいえ"
+   ],
+   "pd": [
+    "selectBranch",
+    " ",
+    "0",
+    " ",
+    "はい",
+    " ",
+    "いいえ"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "selectBranch",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    },
+    {
+     "pd": 2,
+     "value": "0",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    },
+    {
+     "pd": 4,
+     "value": "はい",
+     "omitted": false,
+     "meaning": "传给 IsWithInScriptCondition() 的参数 `conditionScript`(string)",
+     "type": "string",
+     "confidence": "high(受限扫描)",
+     "documented": true
+    },
+    {
+     "pd": 6,
+     "value": "いいえ",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    }
+   ],
+   "subcommand": "selectBranch"
+  },
+  {
+   "index": 1,
+   "raw": "input selectBranchSkipTrueColor 1 A B",
+   "kind": "command",
+   "tag": "input",
+   "params": [
+    "selectBranchSkipTrueColor",
+    "1",
+    "A",
+    "B"
+   ],
+   "pd": [
+    "selectBranchSkipTrueColor",
+    " ",
+    "1",
+    " ",
+    "A",
+    " ",
+    "B"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "selectBranchSkipTrueColor",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    },
+    {
+     "pd": 2,
+     "value": "1",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    },
+    {
+     "pd": 4,
+     "value": "A",
+     "omitted": false,
+     "meaning": "传给 IsWithInScriptCondition() 的参数 `conditionScript`(string)",
+     "type": "string",
+     "confidence": "high(受限扫描)",
+     "documented": true
+    },
+    {
+     "pd": 6,
+     "value": "B",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    }
+   ],
+   "subcommand": "selectBranchSkipTrueColor"
+  },
+  {
+   "index": 2,
+   "raw": "",
+   "kind": "empty",
+   "tag": null,
+   "params": []
+  }
+ ],
+ "labels": {}
+}

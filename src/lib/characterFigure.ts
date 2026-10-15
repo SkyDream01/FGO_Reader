@@ -1,4 +1,5 @@
 import type { CharacterFigureMetadata } from "../data/atlas";
+import { STAGE_HEIGHT } from "../adv/constants";
 
 const FACE_PAGE_SIZE = 1024;
 const DEFAULT_FACE_SIZE = 256;
@@ -88,6 +89,22 @@ export function resolveCharacterCenterCorrection(
  */
 export function resolveCharacterCanvasSize(figureWidth: number, figureHeight: number) {
   return Math.max(FACE_PAGE_SIZE, figureWidth, figureHeight);
+}
+
+/** Atlas Scene places the source bitmap at the stage's top minus offsetY.
+ * Keep transparent margins: they are part of the authored figure placement. */
+export function resolveCharacterFigurePlacement(
+  figureWidth: number,
+  figureHeight: number,
+  metadata: CharacterFigureMetadata | null,
+) {
+  const canvasSize = resolveCharacterCanvasSize(figureWidth, figureHeight);
+  return {
+    canvasSize,
+    // Atlas Scene applies offsetX to both its wrapper and the source bitmap.
+    left: (canvasSize - figureWidth) / 2 + 2 * (metadata?.offsetX ?? 0),
+    top: (canvasSize - STAGE_HEIGHT) / 2 - (metadata?.offsetY ?? 0),
+  };
 }
 
 export function resolveCharacterBodyHeight(

@@ -1,0 +1,548 @@
+
+==============================================================================
+### ScriptManager$$OnShake  0x31ba0c0..0x31ba200  (size 0x140)
+0x31ba0c0  str      d8, [sp, #-0x30]!
+0x31ba0c4  stp      x30, x21, [sp, #0x10]
+0x31ba0c8  stp      x20, x19, [sp, #0x20]
+0x31ba0cc  adrp     x20, #0x59c5000
+0x31ba0d0  mov      x19, x0
+0x31ba0d4  ldrb     w8, [x20, #0x1f1]
+0x31ba0d8  tbnz     w8, #0, #0x31ba0f0
+0x31ba0dc  adrp     x0, #0x55ca000
+0x31ba0e0  ldr      x0, [x0, #0xbb0]   ; &slot for 'OnShake'
+0x31ba0e4  bl       #0x22304a4   CALL 0x22304a4
+0x31ba0e8  mov      w8, #1
+0x31ba0ec  strb     w8, [x20, #0x1f1]
+0x31ba0f0  ldr      s0, [x19, #0x4ec]
+0x31ba0f4  adrp     x21, #0x55ca000
+0x31ba0f8  ldr      x21, [x21, #0xbb0]   ; &slot for 'OnShake'
+0x31ba0fc  fcmp     s0, #0.0
+0x31ba100  b.le     #0x31ba18c
+0x31ba104  ldr      s0, [x19, #0x4e8]
+0x31ba108  fcmp     s0, #0.0
+0x31ba10c  b.eq     #0x31ba124
+0x31ba110  mov      x0, xzr
+0x31ba114  bl       #0x4fde4a8   CALL UnityEngine.Time$$get_time
+0x31ba118  ldr      s1, [x19, #0x4e8]
+0x31ba11c  fcmp     s0, s1
+0x31ba120  b.pl     #0x31ba18c
+0x31ba124  ldr      s1, [x19, #0x4f0]
+0x31ba128  ldr      x20, [x19, #0xc0]
+0x31ba12c  mov      x0, xzr
+0x31ba130  fneg     s0, s1
+0x31ba134  bl       #0x4fcbda8   CALL UnityEngine.Random$$Range
+0x31ba138  ldr      s1, [x19, #0x4f4]
+0x31ba13c  fmov     s8, s0
+0x31ba140  mov      x0, xzr
+0x31ba144  fneg     s2, s1
+0x31ba148  fmov     s0, s2
+0x31ba14c  bl       #0x4fcbda8   CALL UnityEngine.Random$$Range
+0x31ba150  cbz      x20, #0x31ba1fc
+0x31ba154  fmov     s1, s0
+0x31ba158  movi     d2, #0000000000000000
+0x31ba15c  mov      x0, x20
+0x31ba160  fmov     s0, s8
+0x31ba164  mov      x1, xzr
+0x31ba168  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31ba16c  ldr      s0, [x19, #0x4ec]
+0x31ba170  ldr      x1, [x21]   ; 'OnShake'
+0x31ba174  mov      x0, x19
+0x31ba178  ldp      x20, x19, [sp, #0x20]
+0x31ba17c  mov      x2, xzr
+0x31ba180  ldp      x30, x21, [sp, #0x10]
+0x31ba184  ldr      d8, [sp], #0x30
+0x31ba188  b        #0x4fd6068
+0x31ba18c  ldr      x1, [x21]   ; 'OnShake'
+0x31ba190  mov      x0, x19
+0x31ba194  mov      x2, xzr
+0x31ba198  bl       #0x4fd6334   CALL UnityEngine.MonoBehaviour$$CancelInvoke   args: x1='OnShake'
+0x31ba19c  adrp     x21, #0x59bc000
+0x31ba1a0  ldr      x20, [x19, #0xc0]
+0x31ba1a4  ldrb     w8, [x21, #0x290]
+0x31ba1a8  cbnz     w8, #0x31ba1c0
+0x31ba1ac  adrp     x0, #0x5571000
+0x31ba1b0  ldr      x0, [x0, #0xa88]
+0x31ba1b4  bl       #0x22304a4   CALL 0x22304a4
+0x31ba1b8  mov      w8, #1
+0x31ba1bc  strb     w8, [x21, #0x290]
+0x31ba1c0  cbz      x20, #0x31ba1fc
+0x31ba1c4  adrp     x8, #0x5571000
+0x31ba1c8  mov      x0, x20
+0x31ba1cc  mov      x1, xzr
+0x31ba1d0  ldr      x8, [x8, #0xa88]
+0x31ba1d4  ldr      x8, [x8]
+0x31ba1d8  ldr      x8, [x8, #0xb8]   ; &slot for '[CRIWARE] Internal: Duplicated object GUID'
+0x31ba1dc  ldp      s1, s2, [x8, #4]
+0x31ba1e0  ldr      s0, [x8]   ; '[CRIWARE] Internal: Duplicated object GUID'
+0x31ba1e4  bl       #0x4fe1abc   CALL UnityEngine.Transform$$set_localPosition
+0x31ba1e8  str      wzr, [x19, #0x4ec]
+0x31ba1ec  ldp      x20, x19, [sp, #0x20]
+0x31ba1f0  ldp      x30, x21, [sp, #0x10]
+0x31ba1f4  ldr      d8, [sp], #0x30
+0x31ba1f8  ret      
+0x31ba1fc  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptManager$$EndExecuteCamera  0x31b97a8..0x31b97b0  (size 0x8)
+0x31b97a8  strb     wzr, [x0, #0x4f8]
+0x31b97ac  ret      
+
+==============================================================================
+### ScriptManager$$InitEffect  0x31a1bec..0x31a1c80  (size 0x94)
+0x31a1bec  stp      x30, x21, [sp, #-0x20]!
+0x31a1bf0  stp      x20, x19, [sp, #0x10]
+0x31a1bf4  adrp     x21, #0x59c5000
+0x31a1bf8  adrp     x20, #0x5593000
+0x31a1bfc  mov      x19, x0
+0x31a1c00  ldrb     w8, [x21, #0x1e4]
+0x31a1c04  ldr      x20, [x20, #0x440]
+0x31a1c08  tbnz     w8, #0, #0x31a1c20
+0x31a1c0c  adrp     x0, #0x5593000
+0x31a1c10  ldr      x0, [x0, #0x440]
+0x31a1c14  bl       #0x22304a4   CALL 0x22304a4
+0x31a1c18  mov      w8, #1
+0x31a1c1c  strb     w8, [x21, #0x1e4]
+0x31a1c20  ldr      x0, [x19, #0x160]
+0x31a1c24  mov      x1, xzr
+0x31a1c28  bl       #0x30c994c   CALL ProgramEffectManager$$Destory
+0x31a1c2c  ldr      x0, [x20]
+0x31a1c30  ldr      x20, [x19, #0x168]
+0x31a1c34  ldr      w8, [x0, #0xe4]
+0x31a1c38  cbnz     w8, #0x31a1c40
+0x31a1c3c  bl       #0x22305f4   CALL 0x22305f4
+0x31a1c40  mov      x0, x20
+0x31a1c44  mov      x1, xzr
+0x31a1c48  bl       #0x30c1e40   CALL CommonEffectManager$$Destroy
+0x31a1c4c  ldr      x0, [x19, #0x170]
+0x31a1c50  mov      x1, xzr
+0x31a1c54  bl       #0x30c1e40   CALL CommonEffectManager$$Destroy
+0x31a1c58  ldr      x0, [x19, #0x178]
+0x31a1c5c  mov      x1, xzr
+0x31a1c60  bl       #0x30c1e40   CALL CommonEffectManager$$Destroy
+0x31a1c64  ldr      x0, [x19, #0x158]
+0x31a1c68  mov      x1, xzr
+0x31a1c6c  bl       #0x30c1e40   CALL CommonEffectManager$$Destroy
+0x31a1c70  strb     wzr, [x19, #0x498]
+0x31a1c74  ldp      x20, x19, [sp, #0x10]
+0x31a1c78  ldp      x30, x21, [sp], #0x20
+0x31a1c7c  ret      
+
+==============================================================================
+### ScriptManager$$DestroyStoppedCharaEffect  0x31b5450..0x31b5500  (size 0xb0)
+0x31b5450  str      x30, [sp, #-0x30]!
+0x31b5454  stp      x22, x21, [sp, #0x10]
+0x31b5458  stp      x20, x19, [sp, #0x20]
+0x31b545c  adrp     x20, #0x59c5000
+0x31b5460  mov      x19, x0
+0x31b5464  ldrb     w8, [x20, #0x1e6]
+0x31b5468  tbnz     w8, #0, #0x31b5480
+0x31b546c  adrp     x0, #0x557a000
+0x31b5470  ldr      x0, [x0, #0xc8]
+0x31b5474  bl       #0x22304a4   CALL 0x22304a4
+0x31b5478  mov      w8, #1
+0x31b547c  strb     w8, [x20, #0x1e6]
+0x31b5480  ldr      x8, [x19, #0x490]
+0x31b5484  cbz      x8, #0x31b54ec
+0x31b5488  adrp     x21, #0x557a000
+0x31b548c  mov      x22, xzr
+0x31b5490  ldr      x21, [x21, #0xc8]
+0x31b5494  ldr      w9, [x8, #0x18]
+0x31b5498  cmp      x22, w9, sxtw
+0x31b549c  b.ge     #0x31b54ec
+0x31b54a0  cmp      x22, x9
+0x31b54a4  b.hs     #0x31b54fc
+0x31b54a8  add      x9, x8, x22, lsl #3
+0x31b54ac  ldr      x20, [x9, #0x20]
+0x31b54b0  cbz      x20, #0x31b54e0
+0x31b54b4  ldr      x0, [x21]
+0x31b54b8  ldr      w8, [x0, #0xe4]
+0x31b54bc  cbnz     w8, #0x31b54c8
+0x31b54c0  bl       #0x22305f4   CALL 0x22305f4
+0x31b54c4  ldr      x0, [x21]
+0x31b54c8  ldr      x8, [x0, #0xb8]
+0x31b54cc  mov      x0, x20
+0x31b54d0  mov      x2, xzr
+0x31b54d4  ldr      x1, [x8, #0x158]
+0x31b54d8  bl       #0x31708c0   CALL ScriptCharaData$$DestroyEffectByMark
+0x31b54dc  ldr      x8, [x19, #0x490]
+0x31b54e0  add      x22, x22, #1
+0x31b54e4  cbnz     x8, #0x31b5494
+0x31b54e8  bl       #0x2230720   CALL 0x2230720
+0x31b54ec  ldp      x20, x19, [sp, #0x20]
+0x31b54f0  ldp      x22, x21, [sp, #0x10]
+0x31b54f4  ldr      x30, [sp], #0x30
+0x31b54f8  ret      
+0x31b54fc  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptManager$$GetSpriteScriptActionRenderShader  0x31a0608..0x31a065c  (size 0x54)
+0x31a0608  stp      x30, x21, [sp, #-0x20]!
+0x31a060c  stp      x20, x19, [sp, #0x10]
+0x31a0610  adrp     x20, #0x59c5000
+0x31a0614  adrp     x21, #0x55ca000
+0x31a0618  mov      x19, x1
+0x31a061c  ldrb     w8, [x20, #0x183]
+0x31a0620  ldr      x21, [x21, #0x780]   ; &slot for 'Custom/Sprite-ScriptActionRender'
+0x31a0624  tbnz     w8, #0, #0x31a063c
+0x31a0628  adrp     x0, #0x55ca000
+0x31a062c  ldr      x0, [x0, #0x780]   ; &slot for 'Custom/Sprite-ScriptActionRender'
+0x31a0630  bl       #0x22304a4   CALL 0x22304a4
+0x31a0634  mov      w8, #1
+0x31a0638  strb     w8, [x20, #0x183]
+0x31a063c  ldr      x0, [x21]   ; 'Custom/Sprite-ScriptActionRender'
+0x31a0640  mov      x1, x19
+0x31a0644  mov      x2, xzr
+0x31a0648  bl       #0x4867ef8   CALL System.String$$Concat   args: x0='Custom/Sprite-ScriptActionRender'
+0x31a064c  ldp      x20, x19, [sp, #0x10]
+0x31a0650  mov      x1, xzr
+0x31a0654  ldp      x30, x21, [sp], #0x20
+0x31a0658  b        #0x4fac830
+
+==============================================================================
+### ScriptManager$$GetStringWithFirstLetterChangedToUpperCase  0x31a0578..0x31a0608  (size 0x90)
+0x31a0578  str      x30, [sp, #-0x20]!
+0x31a057c  stp      x20, x19, [sp, #0x10]
+0x31a0580  mov      x19, x1
+0x31a0584  mov      x0, x1
+0x31a0588  mov      x1, xzr
+0x31a058c  bl       #0x4871c3c   CALL System.String$$IsNullOrEmpty
+0x31a0590  tbnz     w0, #0, #0x31a05f4
+0x31a0594  cbz      x19, #0x31a0604
+0x31a0598  mov      x0, x19
+0x31a059c  mov      w1, wzr
+0x31a05a0  mov      w2, #1
+0x31a05a4  mov      x3, xzr
+0x31a05a8  bl       #0x48746b4   CALL System.String$$Substring
+0x31a05ac  cbz      x0, #0x31a0604
+0x31a05b0  mov      x1, xzr
+0x31a05b4  bl       #0x4876c04   CALL System.String$$ToUpper
+0x31a05b8  ldr      w8, [x19, #0x10]
+0x31a05bc  mov      x20, x0
+0x31a05c0  cmp      w8, #2
+0x31a05c4  b.lt     #0x31a05f0
+0x31a05c8  mov      x0, x19
+0x31a05cc  mov      w1, #1
+0x31a05d0  mov      x2, xzr
+0x31a05d4  bl       #0x4876934   CALL System.String$$Substring
+0x31a05d8  mov      x1, x0
+0x31a05dc  mov      x0, x20
+0x31a05e0  mov      x2, xzr
+0x31a05e4  ldp      x20, x19, [sp, #0x10]
+0x31a05e8  ldr      x30, [sp], #0x20
+0x31a05ec  b        #0x4867ef8
+0x31a05f0  mov      x19, x20
+0x31a05f4  mov      x0, x19
+0x31a05f8  ldp      x20, x19, [sp, #0x10]
+0x31a05fc  ldr      x30, [sp], #0x20
+0x31a0600  ret      
+0x31a0604  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptPosition$$GetPosition  0x31d8d88..0x31d8e3c  (size 0xb4)
+0x31d8d88  stp      x30, x21, [sp, #-0x20]!
+0x31d8d8c  stp      x20, x19, [sp, #0x10]
+0x31d8d90  adrp     x21, #0x59c5000
+0x31d8d94  adrp     x20, #0x55c9000
+0x31d8d98  mov      w19, w0
+0x31d8d9c  ldrb     w8, [x21, #0x2e0]
+0x31d8da0  ldr      x20, [x20, #0x340]
+0x31d8da4  tbnz     w8, #0, #0x31d8dbc
+0x31d8da8  adrp     x0, #0x55c9000
+0x31d8dac  ldr      x0, [x0, #0x340]
+0x31d8db0  bl       #0x22304a4   CALL 0x22304a4
+0x31d8db4  mov      w8, #1
+0x31d8db8  strb     w8, [x21, #0x2e0]
+0x31d8dbc  ldr      x0, [x20]
+0x31d8dc0  tbnz     w19, #0x1f, #0x31d8df0
+0x31d8dc4  ldr      w8, [x0, #0xe4]
+0x31d8dc8  cbnz     w8, #0x31d8dd4
+0x31d8dcc  bl       #0x22305f4   CALL 0x22305f4
+0x31d8dd0  ldr      x0, [x20]
+0x31d8dd4  ldr      x8, [x0, #0xb8]
+0x31d8dd8  ldr      x8, [x8]
+0x31d8ddc  cbz      x8, #0x31d8e34
+0x31d8de0  ldr      w8, [x8, #0x18]
+0x31d8de4  cmp      w8, w19
+0x31d8de8  csel     w19, w19, wzr, gt
+0x31d8dec  b        #0x31d8df4
+0x31d8df0  mov      w19, wzr
+0x31d8df4  ldr      w8, [x0, #0xe4]
+0x31d8df8  cbnz     w8, #0x31d8e04
+0x31d8dfc  bl       #0x22305f4   CALL 0x22305f4
+0x31d8e00  ldr      x0, [x20]
+0x31d8e04  ldr      x8, [x0, #0xb8]
+0x31d8e08  ldr      x8, [x8]
+0x31d8e0c  cbz      x8, #0x31d8e34
+0x31d8e10  ldr      w9, [x8, #0x18]
+0x31d8e14  cmp      w19, w9
+0x31d8e18  b.hs     #0x31d8e38
+0x31d8e1c  add      x8, x8, w19, uxtw #3
+0x31d8e20  ldp      x20, x19, [sp, #0x10]
+0x31d8e24  movi     d2, #0000000000000000
+0x31d8e28  ldp      s0, s1, [x8, #0x20]
+0x31d8e2c  ldp      x30, x21, [sp], #0x20
+0x31d8e30  ret      
+0x31d8e34  bl       #0x2230720   CALL 0x2230720
+0x31d8e38  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptPosition$$GetPosition  0x31d8e3c..0x31d8e44  (size 0x8)
+0x31d8e3c  movi     d2, #0000000000000000
+0x31d8e40  ret      
+
+==============================================================================
+### ScriptManager$$ConvertWipeName  0x31b3a00..0x31b3ad0  (size 0xd0)
+0x31b3a00  str      x30, [sp, #-0x20]!
+0x31b3a04  stp      x20, x19, [sp, #0x10]
+0x31b3a08  adrp     x20, #0x59c5000
+0x31b3a0c  mov      x19, x1
+0x31b3a10  ldrb     w8, [x20, #0x1bb]
+0x31b3a14  tbnz     w8, #0, #0x31b3a2c
+0x31b3a18  adrp     x0, #0x55c5000
+0x31b3a1c  ldr      x0, [x0, #0x8c8]   ; &slot for 'Wipe/'
+0x31b3a20  bl       #0x22304a4   CALL 0x22304a4
+0x31b3a24  mov      w8, #1
+0x31b3a28  strb     w8, [x20, #0x1bb]
+0x31b3a2c  cbz      x19, #0x31b3ac0
+0x31b3a30  ldr      w8, [x19, #0x10]
+0x31b3a34  adrp     x20, #0x55c5000
+0x31b3a38  ldr      x20, [x20, #0x8c8]   ; &slot for 'Wipe/'
+0x31b3a3c  cmp      w8, #3
+0x31b3a40  b.lt     #0x31b3aa8
+0x31b3a44  mov      x0, x19
+0x31b3a48  mov      w1, wzr
+0x31b3a4c  mov      x2, xzr
+0x31b3a50  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b3a54  and      w8, w0, #0xffff
+0x31b3a58  cmp      w8, #0x22
+0x31b3a5c  b.ne     #0x31b3aa8
+0x31b3a60  ldr      w8, [x19, #0x10]
+0x31b3a64  mov      x0, x19
+0x31b3a68  mov      x2, xzr
+0x31b3a6c  sub      w1, w8, #1
+0x31b3a70  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b3a74  and      w8, w0, #0xffff
+0x31b3a78  cmp      w8, #0x22
+0x31b3a7c  b.ne     #0x31b3aa8
+0x31b3a80  ldr      w8, [x19, #0x10]
+0x31b3a84  mov      x0, x19
+0x31b3a88  mov      w1, #1
+0x31b3a8c  mov      x3, xzr
+0x31b3a90  sub      w2, w8, #2
+0x31b3a94  bl       #0x48746b4   CALL System.String$$Substring
+0x31b3a98  ldr      x8, [x20]   ; 'Wipe/'
+0x31b3a9c  mov      x1, x0
+0x31b3aa0  mov      x0, x8
+0x31b3aa4  b        #0x31b3ab0
+0x31b3aa8  ldr      x0, [x20]   ; 'Wipe/'
+0x31b3aac  mov      x1, x19
+0x31b3ab0  ldp      x20, x19, [sp, #0x10]
+0x31b3ab4  mov      x2, xzr
+0x31b3ab8  ldr      x30, [sp], #0x20
+0x31b3abc  b        #0x4867ef8
+0x31b3ac0  ldp      x20, x19, [sp, #0x10]
+0x31b3ac4  mov      x0, xzr
+0x31b3ac8  ldr      x30, [sp], #0x20
+0x31b3acc  ret      
+
+==============================================================================
+### ScriptManager$$ConvertEffectFlipKind  0x31b3ad0..0x31b3b94  (size 0xc4)
+0x31b3ad0  stp      x30, x21, [sp, #-0x20]!
+0x31b3ad4  stp      x20, x19, [sp, #0x10]
+0x31b3ad8  adrp     x21, #0x59c5000
+0x31b3adc  adrp     x20, #0x55ca000
+0x31b3ae0  mov      x19, x1
+0x31b3ae4  ldrb     w8, [x21, #0x1bc]
+0x31b3ae8  ldr      x20, [x20, #0xa10]   ; &slot for 'H'
+0x31b3aec  tbnz     w8, #0, #0x31b3b1c
+0x31b3af0  adrp     x0, #0x55ca000
+0x31b3af4  ldr      x0, [x0, #0xa10]   ; &slot for 'H'
+0x31b3af8  bl       #0x22304a4   CALL 0x22304a4
+0x31b3afc  adrp     x0, #0x55ca000
+0x31b3b00  ldr      x0, [x0, #0xa18]   ; &slot for 'V'
+0x31b3b04  bl       #0x22304a4   CALL 0x22304a4
+0x31b3b08  adrp     x0, #0x55ca000
+0x31b3b0c  ldr      x0, [x0, #0xa20]   ; &slot for 'F'
+0x31b3b10  bl       #0x22304a4   CALL 0x22304a4
+0x31b3b14  mov      w8, #1
+0x31b3b18  strb     w8, [x21, #0x1bc]
+0x31b3b1c  mov      x1, x19
+0x31b3b20  bl       #0x31b1530   CALL ScriptManager$$ConvertNameString
+0x31b3b24  ldr      x1, [x20]   ; 'H'
+0x31b3b28  mov      x2, xzr
+0x31b3b2c  mov      x19, x0
+0x31b3b30  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='H'
+0x31b3b34  tbz      w0, #0, #0x31b3b40
+0x31b3b38  mov      w0, #1
+0x31b3b3c  b        #0x31b3b88
+0x31b3b40  adrp     x8, #0x55ca000
+0x31b3b44  mov      x0, x19
+0x31b3b48  mov      x2, xzr
+0x31b3b4c  ldr      x8, [x8, #0xa18]   ; &slot for 'V'
+0x31b3b50  ldr      x1, [x8]   ; 'V'
+0x31b3b54  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='V'
+0x31b3b58  tbz      w0, #0, #0x31b3b64
+0x31b3b5c  mov      w0, #2
+0x31b3b60  b        #0x31b3b88
+0x31b3b64  adrp     x8, #0x55ca000
+0x31b3b68  mov      x0, x19
+0x31b3b6c  mov      x2, xzr
+0x31b3b70  ldr      x8, [x8, #0xa20]   ; &slot for 'F'
+0x31b3b74  ldr      x1, [x8]   ; 'F'
+0x31b3b78  bl       #0x4870cc0   CALL System.String$$op_Equality   args: x1='F'
+0x31b3b7c  mov      w8, #3
+0x31b3b80  tst      w0, #1
+0x31b3b84  csel     w0, w8, wzr, ne
+0x31b3b88  ldp      x20, x19, [sp, #0x10]
+0x31b3b8c  ldp      x30, x21, [sp], #0x20
+0x31b3b90  ret      
+
+==============================================================================
+### ScriptManager$$ConvertSpriteMaskName  0x31b39b4..0x31b3a00  (size 0x4c)
+0x31b39b4  stp      x30, x21, [sp, #-0x20]!
+0x31b39b8  stp      x20, x19, [sp, #0x10]
+0x31b39bc  adrp     x20, #0x59c5000
+0x31b39c0  adrp     x21, #0x55ca000
+0x31b39c4  mov      x19, x1
+0x31b39c8  ldrb     w8, [x20, #0x1ba]
+0x31b39cc  ldr      x21, [x21, #0xa08]   ; &slot for 'Image/mask_{0}'
+0x31b39d0  tbnz     w8, #0, #0x31b39e8
+0x31b39d4  adrp     x0, #0x55ca000
+0x31b39d8  ldr      x0, [x0, #0xa08]   ; &slot for 'Image/mask_{0}'
+0x31b39dc  bl       #0x22304a4   CALL 0x22304a4
+0x31b39e0  mov      w8, #1
+0x31b39e4  strb     w8, [x20, #0x1ba]
+0x31b39e8  mov      x1, x19
+0x31b39ec  ldp      x20, x19, [sp, #0x10]
+0x31b39f0  ldr      x0, [x21]   ; 'Image/mask_{0}'
+0x31b39f4  mov      x2, xzr
+0x31b39f8  ldp      x30, x21, [sp], #0x20
+0x31b39fc  b        #0x4868ad0
+
+==============================================================================
+### ScriptManager$$ConvertBackTextureName  0x31b3930..0x31b39b4  (size 0x84)
+0x31b3930  sub      sp, sp, #0x30
+0x31b3934  stp      x30, x21, [sp, #0x10]
+0x31b3938  stp      x20, x19, [sp, #0x20]
+0x31b393c  adrp     x21, #0x59c5000
+0x31b3940  adrp     x20, #0x55aa000
+0x31b3944  mov      x19, x1
+0x31b3948  ldrb     w8, [x21, #0x1b9]
+0x31b394c  ldr      x20, [x20, #0xd68]   ; &slot for 'Back/back{0:D5}'
+0x31b3950  tbnz     w8, #0, #0x31b3968
+0x31b3954  adrp     x0, #0x55aa000
+0x31b3958  ldr      x0, [x0, #0xd68]   ; &slot for 'Back/back{0:D5}'
+0x31b395c  bl       #0x22304a4   CALL 0x22304a4
+0x31b3960  mov      w8, #1
+0x31b3964  strb     w8, [x21, #0x1b9]
+0x31b3968  mov      x0, x19
+0x31b396c  mov      x1, xzr
+0x31b3970  bl       #0x49d31f4   CALL System.Int32$$Parse
+0x31b3974  adrp     x8, #0x556f000
+0x31b3978  add      x1, sp, #0xc
+0x31b397c  ldr      x8, [x8, #0xbc8]
+0x31b3980  str      w0, [sp, #0xc]
+0x31b3984  ldr      x8, [x8, #0x48]
+0x31b3988  mov      x0, x8
+0x31b398c  bl       #0x22305fc   CALL 0x22305fc
+0x31b3990  ldr      x8, [x20]   ; 'Back/back{0:D5}'
+0x31b3994  mov      x1, x0
+0x31b3998  mov      x2, xzr
+0x31b399c  mov      x0, x8
+0x31b39a0  bl       #0x4868ad0   CALL System.String$$Format
+0x31b39a4  ldp      x20, x19, [sp, #0x20]
+0x31b39a8  ldp      x30, x21, [sp, #0x10]
+0x31b39ac  add      sp, sp, #0x30
+0x31b39b0  ret      
+
+==============================================================================
+### ScriptManager$$ConvertInsertionAnimationName  0x31b3f20..0x31b3f6c  (size 0x4c)
+0x31b3f20  stp      x30, x21, [sp, #-0x20]!
+0x31b3f24  stp      x20, x19, [sp, #0x10]
+0x31b3f28  adrp     x20, #0x59c5000
+0x31b3f2c  adrp     x21, #0x55ca000
+0x31b3f30  mov      x19, x1
+0x31b3f34  ldrb     w8, [x20, #0x1c6]
+0x31b3f38  ldr      x21, [x21, #0xa48]   ; &slot for 'InsertionAnimations/{0}/{0}'
+0x31b3f3c  tbnz     w8, #0, #0x31b3f54
+0x31b3f40  adrp     x0, #0x55ca000
+0x31b3f44  ldr      x0, [x0, #0xa48]   ; &slot for 'InsertionAnimations/{0}/{0}'
+0x31b3f48  bl       #0x22304a4   CALL 0x22304a4
+0x31b3f4c  mov      w8, #1
+0x31b3f50  strb     w8, [x20, #0x1c6]
+0x31b3f54  mov      x1, x19
+0x31b3f58  ldp      x20, x19, [sp, #0x10]
+0x31b3f5c  ldr      x0, [x21]   ; 'InsertionAnimations/{0}/{0}'
+0x31b3f60  mov      x2, xzr
+0x31b3f64  ldp      x30, x21, [sp], #0x20
+0x31b3f68  b        #0x4868ad0
+
+==============================================================================
+### ScriptManager$$ConvertPictureFrameImageName  0x31b38e4..0x31b3930  (size 0x4c)
+0x31b38e4  stp      x30, x21, [sp, #-0x20]!
+0x31b38e8  stp      x20, x19, [sp, #0x10]
+0x31b38ec  adrp     x20, #0x59c5000
+0x31b38f0  adrp     x21, #0x55ca000
+0x31b38f4  mov      x19, x1
+0x31b38f8  ldrb     w8, [x20, #0x1b8]
+0x31b38fc  ldr      x21, [x21, #0xa00]   ; &slot for 'Image/{0}'
+0x31b3900  tbnz     w8, #0, #0x31b3918
+0x31b3904  adrp     x0, #0x55ca000
+0x31b3908  ldr      x0, [x0, #0xa00]   ; &slot for 'Image/{0}'
+0x31b390c  bl       #0x22304a4   CALL 0x22304a4
+0x31b3910  mov      w8, #1
+0x31b3914  strb     w8, [x20, #0x1b8]
+0x31b3918  mov      x1, x19
+0x31b391c  ldp      x20, x19, [sp, #0x10]
+0x31b3920  ldr      x0, [x21]   ; 'Image/{0}'
+0x31b3924  mov      x2, xzr
+0x31b3928  ldp      x30, x21, [sp], #0x20
+0x31b392c  b        #0x4868ad0
+
+==============================================================================
+### ScriptManager$$ConvertNameString  0x31b1530..0x31b15e4  (size 0xb4)
+0x31b1530  str      x30, [sp, #-0x20]!
+0x31b1534  stp      x20, x19, [sp, #0x10]
+0x31b1538  adrp     x20, #0x59c5000
+0x31b153c  mov      x19, x1
+0x31b1540  ldrb     w8, [x20, #0x1b4]
+0x31b1544  tbnz     w8, #0, #0x31b155c
+0x31b1548  adrp     x0, #0x5570000
+0x31b154c  ldr      x0, [x0, #0x458]   ; &slot for ''
+0x31b1550  bl       #0x22304a4   CALL 0x22304a4
+0x31b1554  mov      w8, #1
+0x31b1558  strb     w8, [x20, #0x1b4]
+0x31b155c  cbz      x19, #0x31b15c8
+0x31b1560  ldr      w8, [x19, #0x10]
+0x31b1564  cmp      w8, #3
+0x31b1568  b.lt     #0x31b15d4
+0x31b156c  mov      x0, x19
+0x31b1570  mov      w1, wzr
+0x31b1574  mov      x2, xzr
+0x31b1578  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b157c  and      w8, w0, #0xffff
+0x31b1580  cmp      w8, #0x22
+0x31b1584  b.ne     #0x31b15d4
+0x31b1588  ldr      w8, [x19, #0x10]
+0x31b158c  mov      x0, x19
+0x31b1590  mov      x2, xzr
+0x31b1594  sub      w1, w8, #1
+0x31b1598  bl       #0x486c8a8   CALL System.String$$get_Chars
+0x31b159c  and      w8, w0, #0xffff
+0x31b15a0  cmp      w8, #0x22
+0x31b15a4  b.ne     #0x31b15d4
+0x31b15a8  ldr      w8, [x19, #0x10]
+0x31b15ac  mov      x0, x19
+0x31b15b0  mov      w1, #1
+0x31b15b4  ldp      x20, x19, [sp, #0x10]
+0x31b15b8  mov      x3, xzr
+0x31b15bc  sub      w2, w8, #2
+0x31b15c0  ldr      x30, [sp], #0x20
+0x31b15c4  b        #0x48746b4
+0x31b15c8  adrp     x8, #0x5570000
+0x31b15cc  ldr      x8, [x8, #0x458]   ; &slot for ''
+0x31b15d0  ldr      x19, [x8]   ; ''
+0x31b15d4  mov      x0, x19
+0x31b15d8  ldp      x20, x19, [sp, #0x10]
+0x31b15dc  ldr      x30, [sp], #0x20
+0x31b15e0  ret      

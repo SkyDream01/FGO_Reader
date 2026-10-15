@@ -14,6 +14,10 @@
 
 立绘支持 `charaFace` 表情差分合成，会依据 Atlas 角色立绘元数据从合并图叠加对应的表情区域。
 
+ADV 内核已依据 `docs/out` 的逆向补充卷重写，保留原始命令大小写、标签跳转和行内执行顺序，并采用独立子层、实时透明度与显式等待。详见 [重构说明与实现边界](docs/adv-reconstruction.md)；Unity 特效、FSM 和 3D 演出尚需原始资源及对应后端。
+
+按补齐指南接入了 154 条原缺口命令的处理/降级路径，并提供自制 SVG 演出、通讯窗口、消息框控制、菜单、影片播放器及跨剧情音频续播。当前验证和资源边界见 [ADV 补齐开发状态](docs/adv-implementation-status.md)，离线体验可导入 [补齐功能演示包](examples/adv-supplement.zip)。
+
 ## 视频介绍
 
 [在哔哩哔哩观看项目介绍视频](https://www.bilibili.com/video/av116969256787693/)

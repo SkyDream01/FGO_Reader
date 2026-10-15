@@ -33,7 +33,6 @@ import {
 import {
   CSSProperties,
   ChangeEvent,
-  Fragment,
   MouseEvent,
   useCallback,
   useEffect,
@@ -43,42 +42,25 @@ import {
 } from "react";
 import {
   backgroundUrl,
-  characterTextureUrl,
-  characterUrl,
-  getCharacterFigureMetadata,
+  fallbackBgmUrl,
 } from "../data/atlas";
-import { useBgm } from "../hooks/useBgm";
+import { useBgm, type BgmPlaybackSession } from "../hooks/useBgm";
+import type { GameStateProvider } from "../adv/gameState";
 import { useCustomAssetUrl } from "../hooks/useCustomAssetUrl";
 import { useManualTranslations } from "../hooks/useManualTranslations";
 import { useStoryTranslations } from "../hooks/useStoryTranslations";
-import { addChoiceDecision } from "../lib/choiceTrail";
 import { useExecutor } from "../adv/useExecutor";
-import { AudioChannels } from "../adv/audio";
-import type {
-  CharacterView,
-  StageLayerView,
-  StageSnapshot,
-} from "../adv/executor";
+import type { ScriptExecutor } from "../adv/executor";
+import { AudioChannels, type AudioContinuationPool } from "../adv/audio";
+import { StoryStage } from "./StoryStage";
+import { RichMessageLines } from "./RichMessageLines";
+import { MoviePlayer, RuntimeEffects } from "./RuntimeEffects";
+import { stageCoordinateToViewport } from "../lib/stageCoordinates";
 import type { MessageLineView } from "../adv/message";
 import {
   autoPlaybackDelayMs,
   choiceAutoPlaybackCharacterCount,
 } from "../lib/autoPlayback";
-import { blurFilterCss } from "../lib/blurFilter";
-import {
-  resolveCharacterBaselineTop,
-  resolveCharacterAlphaContentRect,
-  resolveCharacterCenterCorrection,
-  resolveCharacterCanvasSize,
-  resolveCharacterBodyHeight,
-  resolveCharacterFaceRegion,
-  type CharacterCenterCorrection,
-} from "../lib/characterFigure";
-import {
-  STAGE_CALIBRATION_RATIOS,
-  stageRatioToViewport,
-  stageCoordinateToViewport,
-} from "../lib/stageCoordinates";
 import {
   clearLastObservation,
   createLastObservation,
@@ -140,6 +122,9 @@ interface ReaderViewProps {
   story: StoryLaunch;
   prepared: PreparedStory;
   nextStory: StoryLaunch | null;
+  audioContinuations?: AudioContinuationPool;
+  bgmSession?: BgmPlaybackSession;
+  gameState?: GameStateProvider;
   onNext: () => void;
   onExit: () => void;
 }
@@ -152,6 +137,7 @@ const defaultSettings: ReaderSettings = {
   skipUnread: false,
   reduceMotion: false,
   masterName: "御主",
+  masterGender: "male",
 };
 
 const thinkingLevelOptions: Array<{ value: ThinkingLevel; label: string }> = [
@@ -169,480 +155,6 @@ function loadSettings(): ReaderSettings {
   } catch {
     return defaultSettings;
   }
-}
-
-const FIGURE_CANVAS_SIZE = 1024;
-const defaultCharacterX: Record<CharacterView["position"], number> = {
-  left: -256,
-  center: 0,
-  right: 256,
-};
-
-const ZERO_CHARACTER_CENTER_CORRECTION: CharacterCenterCorrection = { x: 0, y: 0 };
-
-const DEFAULT_CAMERA = {
-  x: 0,
-  y: 0,
-  scale: 1,
-  rotation: 0,
-  filter: null,
-} as const;
-
-function stageLayerAssetId(layer: StageLayerView) {
-  return layer.id.replace(/^back/i, "");
-}
-
-function cameraFilterCss(value: string | null | undefined) {
-  switch (value?.toLowerCase()) {
-    case "gray":
-      return "grayscale(1)";
-    case "darkred":
-      return "sepia(0.72) saturate(1.7) hue-rotate(300deg) brightness(0.72)";
-    case "inversion":
-      return "invert(1)";
-    case "normal":
-    case undefined:
-    case null:
-      return "none";
-    default:
-      return "none";
-  }
-}
-
-function visualEffectClass(value: string | null | undefined) {
-  const normalized = value?.toLowerCase() ?? "";
-  if (normalized.includes("sepia")) return "sepia";
-  if (normalized.includes("rubble") || normalized.includes("noise")) return "noise";
-  if (normalized.includes("security")) return "security";
-  return "";
-}
-
-function loadBrowserImage(url: string) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`立绘资源读取失败：${url}`));
-    image.src = url;
-  });
-}
-
-function resolveImageCharacterCenterCorrection(
-  image: HTMLImageElement,
-  fit: "contain" | "cover",
-) {
-  const width = image.naturalWidth;
-  const height = image.naturalHeight;
-  if (width <= 0 || height <= 0) return ZERO_CHARACTER_CENTER_CORRECTION;
-
-  const stageSize = FIGURE_CANVAS_SIZE;
-  const scale = fit === "cover"
-    ? Math.max(stageSize / width, stageSize / height)
-    : Math.min(stageSize / width, stageSize / height);
-  const renderedWidth = width * scale;
-  const renderedHeight = height * scale;
-  const fallback = resolveCharacterCenterCorrection({
-    left: (stageSize - renderedWidth) / 2,
-    top: stageSize - renderedHeight,
-    width: renderedWidth,
-    height: resolveCharacterBodyHeight(height, null) * scale,
-  }, stageSize);
-
-  try {
-    const scanCanvas = document.createElement("canvas");
-    scanCanvas.width = stageSize;
-    scanCanvas.height = stageSize;
-    const context = scanCanvas.getContext("2d");
-    if (!context) return fallback;
-
-    context.save();
-    context.beginPath();
-    context.rect(0, 0, stageSize, stageSize * 0.75);
-    context.clip();
-    context.drawImage(
-      image,
-      0,
-      0,
-      width,
-      height,
-      (stageSize - renderedWidth) / 2,
-      stageSize - renderedHeight,
-      renderedWidth,
-      renderedHeight,
-    );
-    context.restore();
-
-    const visibleContent = resolveCharacterAlphaContentRect(
-      context.getImageData(0, 0, stageSize, stageSize).data,
-      stageSize,
-      stageSize,
-    );
-    return visibleContent
-      ? resolveCharacterCenterCorrection(visibleContent, stageSize)
-      : fallback;
-  } catch {
-    // A cross-origin image without CORS headers can be drawn but not inspected.
-    return fallback;
-  }
-}
-
-function AtlasCharacterFigure({
-  character,
-  region,
-  mergedUrl,
-  onError,
-  onVisibleCenterCorrection,
-}: {
-  character: CharacterView;
-  region: StoryLaunch["region"];
-  mergedUrl: string;
-  onError: () => void;
-  onVisibleCenterCorrection: (correction: CharacterCenterCorrection) => void;
-}) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [resources, setResources] = useState<{
-    merged: HTMLImageElement;
-    figureWidth: number;
-    figureHeight: number;
-    metadata: Awaited<ReturnType<typeof getCharacterFigureMetadata>>;
-  } | null>(null);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    setResources(null);
-    setReady(false);
-
-    Promise.all([
-      loadBrowserImage(mergedUrl),
-      loadBrowserImage(characterTextureUrl(region, character.id)).catch(() => null),
-      getCharacterFigureMetadata(region, character.id).catch(() => null),
-    ])
-      .then(([merged, texture, metadata]) => {
-        if (cancelled) return;
-        setResources({
-          merged,
-          figureWidth: texture?.naturalWidth || merged.naturalWidth || FIGURE_CANVAS_SIZE,
-          figureHeight: texture?.naturalHeight || FIGURE_CANVAS_SIZE,
-          metadata,
-        });
-      })
-      .catch(() => {
-        if (!cancelled) onError();
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [character.id, mergedUrl, region]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !resources) return;
-    const context = canvas.getContext("2d");
-    if (!context) {
-      onError();
-      return;
-    }
-
-    const { merged, figureWidth, figureHeight, metadata } = resources;
-    const canvasSize = resolveCharacterCanvasSize(figureWidth, figureHeight);
-    const canvasScale = canvasSize / FIGURE_CANVAS_SIZE;
-    const figureLeft = (canvasSize - figureWidth) / 2 + (metadata?.offsetX ?? 0);
-    const bodyHeight = resolveCharacterBodyHeight(figureHeight, metadata);
-    const figureTop = resolveCharacterBaselineTop(
-      bodyHeight,
-      FIGURE_CANVAS_SIZE * canvasScale * 0.75,
-    );
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.imageSmoothingEnabled = true;
-    context.imageSmoothingQuality = "high";
-    context.drawImage(
-      merged,
-      0,
-      0,
-      figureWidth,
-      bodyHeight,
-      figureLeft,
-      figureTop,
-      figureWidth,
-      bodyHeight,
-    );
-
-    if (metadata) {
-      const face = resolveCharacterFaceRegion(character.face, figureHeight, metadata);
-      if (
-        face &&
-        face.sourceX + face.width <= merged.naturalWidth &&
-        face.sourceY + face.height <= merged.naturalHeight
-      ) {
-        context.drawImage(
-          merged,
-          face.sourceX,
-          face.sourceY,
-          face.width,
-          face.height,
-          figureLeft + metadata.faceX,
-          figureTop + metadata.faceY,
-          face.width,
-          face.height,
-        );
-      }
-    }
-    const fallbackCenterCorrection = resolveCharacterCenterCorrection({
-      left: figureLeft,
-      top: figureTop,
-      width: figureWidth,
-      height: bodyHeight,
-    }, canvasSize);
-    let centerCorrection = fallbackCenterCorrection;
-    try {
-      const visibleContent = resolveCharacterAlphaContentRect(
-        context.getImageData(0, 0, canvasSize, canvasSize).data,
-        canvasSize,
-        canvasSize,
-      );
-      if (visibleContent) {
-        centerCorrection = resolveCharacterCenterCorrection(visibleContent, canvasSize);
-      }
-    } catch {
-      // Keep the geometric correction if the remote Atlas image taints canvas.
-    }
-    onVisibleCenterCorrection(centerCorrection);
-    setReady(true);
-  }, [character.face, onError, onVisibleCenterCorrection, resources]);
-
-  const canvasSize = resources
-    ? resolveCharacterCanvasSize(resources.figureWidth, resources.figureHeight)
-    : FIGURE_CANVAS_SIZE;
-
-  return (
-    <canvas
-      ref={canvasRef}
-      width={canvasSize}
-      height={canvasSize}
-      className={ready ? "ready" : ""}
-      aria-label={character.name}
-    />
-  );
-}
-
-function StageLayerSprite({
-  layer,
-  region,
-  customPackage,
-}: {
-  layer: StageLayerView;
-  region: StoryLaunch["region"];
-  customPackage: PreparedCustomPackage | null;
-}) {
-  const [failed, setFailed] = useState(false);
-  const assetId = stageLayerAssetId(layer);
-  const fallbackUrl = backgroundUrl(region, assetId);
-  const {
-    url,
-    usingLocalAsset,
-    useFallback,
-  } = useCustomAssetUrl({
-    packageId: customPackage?.id,
-    assetPath: customPackage?.assets?.backgrounds?.[assetId] ?? customPackage?.assets?.backgrounds?.[layer.id],
-    preloadedUrl: customPackage?.assetUrls.backgrounds[assetId] ?? customPackage?.assetUrls.backgrounds[layer.id],
-    fallbackUrl,
-  });
-  useEffect(() => {
-    setFailed(false);
-  }, [url]);
-  const style = {
-    "--stage-layer-x": stageCoordinateToViewport(layer.x, "x"),
-    "--stage-layer-y": stageCoordinateToViewport(layer.y, "y"),
-    "--stage-layer-scale": String(layer.scale),
-    "--stage-layer-depth": String(layer.depth ?? 0),
-  } as CSSProperties;
-
-  return url && !failed ? (
-    <img
-      className={`stage-layer-sprite ${layer.layer === "sub" ? "sub" : "main"}`}
-      data-slot={layer.slot}
-      src={url}
-      alt=""
-      style={style}
-      onError={() => {
-        if (usingLocalAsset) useFallback();
-        else setFailed(true);
-      }}
-      draggable={false}
-    />
-  ) : null;
-}
-
-function CharacterSprite({
-  character,
-  region,
-  customPackage,
-  characterCalibrationOffset,
-  characterDebugOffset,
-  showCharacterOrigin,
-}: {
-  character: CharacterView;
-  region: StoryLaunch["region"];
-  customPackage: PreparedCustomPackage | null;
-  characterCalibrationOffset: { x: number; y: number };
-  characterDebugOffset: { x: number; y: number };
-  showCharacterOrigin: boolean;
-}) {
-  const [failed, setFailed] = useState(false);
-  const [wideAtlas, setWideAtlas] = useState(false);
-  const [characterCenterCorrection, setCharacterCenterCorrection] = useState<CharacterCenterCorrection>(
-    ZERO_CHARACTER_CENTER_CORRECTION,
-  );
-  const fallbackUrl = characterUrl(region, character.id);
-  const characterX = Number.isFinite(character.x)
-    ? character.x
-    : defaultCharacterX[character.position];
-  const characterY = Number.isFinite(character.y) ? character.y : 0;
-  const characterScale = Number.isFinite(character.scale) && character.scale > 0
-    ? character.scale
-    : 1;
-  const characterStyle = {
-    "--character-x": stageCoordinateToViewport(characterX, "x"),
-    "--character-y": stageCoordinateToViewport(characterY, "y"),
-    "--character-calibration-x": stageRatioToViewport(
-      characterCalibrationOffset.x,
-      "x",
-      "character",
-    ),
-    "--character-calibration-y": stageRatioToViewport(
-      characterCalibrationOffset.y,
-      "y",
-      "character",
-    ),
-    "--character-debug-x": stageRatioToViewport(
-      characterDebugOffset.x,
-      "x",
-      "character",
-    ),
-    "--character-debug-y": stageRatioToViewport(
-      characterDebugOffset.y,
-      "y",
-      "character",
-    ),
-    "--character-visual-correction-x": stageRatioToViewport(
-      characterCenterCorrection.x * characterScale,
-      "x",
-      "character",
-    ),
-    "--character-visual-correction-y": stageRatioToViewport(
-      characterCenterCorrection.y * characterScale,
-      "y",
-      "character",
-    ),
-    "--character-scale": String(characterScale),
-    "--character-rotation": `${character.rotation ?? 0}deg`,
-  } as CSSProperties;
-  const characterOriginStyle = {
-    "--character-x": stageCoordinateToViewport(characterX, "x"),
-    "--character-y": stageCoordinateToViewport(characterY, "y"),
-    "--character-calibration-x": stageRatioToViewport(
-      characterCalibrationOffset.x,
-      "x",
-      "character",
-    ),
-    "--character-calibration-y": stageRatioToViewport(
-      characterCalibrationOffset.y,
-      "y",
-      "character",
-    ),
-    "--character-debug-x": stageRatioToViewport(
-      characterDebugOffset.x,
-      "x",
-      "character",
-    ),
-    "--character-debug-y": stageRatioToViewport(
-      characterDebugOffset.y,
-      "y",
-      "character",
-    ),
-  } as CSSProperties;
-  const {
-    url,
-    usingLocalAsset,
-    useFallback,
-  } = useCustomAssetUrl({
-    packageId: customPackage?.id,
-    assetPath: customPackage?.assets?.characters?.[character.id],
-    preloadedUrl: customPackage?.assetUrls.characters[character.id],
-    fallbackUrl,
-  });
-
-  useEffect(() => {
-    setFailed(false);
-    setWideAtlas(false);
-    setCharacterCenterCorrection(ZERO_CHARACTER_CENTER_CORRECTION);
-  }, [url]);
-
-  const handleVisibleCenterCorrection = useCallback(
-    (correction: CharacterCenterCorrection) => {
-      setCharacterCenterCorrection(correction);
-    },
-    [],
-  );
-  const handleAtlasError = useCallback(() => setFailed(true), []);
-
-  return (
-    <>
-      <div
-        className={`character-sprite ${character.active ? "active" : "inactive"} ${character.silhouette ? "silhouette" : ""} ${character.shadow ? "with-shadow" : ""} ${usingLocalAsset && wideAtlas ? "wide-atlas" : ""}`}
-        data-position={character.position}
-        data-slot={character.slot}
-        style={characterStyle}
-      >
-        {!failed && url && usingLocalAsset ? (
-          <img
-            src={url}
-            alt={character.name}
-            onLoad={(event) => {
-              const image = event.currentTarget;
-              const wide = image.naturalWidth / image.naturalHeight > 1.25;
-              setWideAtlas(wide);
-              setCharacterCenterCorrection(
-                resolveImageCharacterCenterCorrection(image, wide ? "cover" : "contain"),
-              );
-            }}
-            onError={() => {
-              if (usingLocalAsset) {
-                useFallback();
-                return;
-              }
-              setFailed(true);
-            }}
-            draggable={false}
-          />
-        ) : !failed && url ? (
-          <AtlasCharacterFigure
-          character={character}
-          region={region}
-          mergedUrl={url}
-          onError={handleAtlasError}
-          onVisibleCenterCorrection={handleVisibleCenterCorrection}
-        />
-        ) : failed ? (
-          <div className="character-fallback" aria-label={`${character.name} 立绘不可用`}>
-            <span>{character.name.slice(0, 1)}</span>
-            <small>{character.name}</small>
-          </div>
-        ) : null}
-      </div>
-      {showCharacterOrigin && (
-        <span
-          className="coordinate-origin-debug character-origin-debug"
-          style={characterOriginStyle}
-          aria-hidden="true"
-        >
-          <i />
-          <small>角色 0,0</small>
-        </span>
-      )}
-    </>
-  );
 }
 
 function ToggleButton({
@@ -737,30 +249,15 @@ function plainTextToLines(text: string): MessageLineView[] {
   }));
 }
 
-/** Renders revealed message lines with color and ruby annotations. */
-function RichMessageLines({ lines }: { lines: MessageLineView[] }) {
-  return (
-    <>
-      {lines.map((line, lineIndex) => (
-        <Fragment key={lineIndex}>
-          {lineIndex > 0 && <br />}
-          {line.spans.map((span, spanIndex) => (
-            span.ruby
-              ? <ruby key={spanIndex} style={span.color ? { color: span.color } : undefined}>{span.text}<rt>{span.ruby}</rt></ruby>
-              : <span key={spanIndex} style={span.color ? { color: span.color } : undefined}>{span.text}</span>
-          ))}
-        </Fragment>
-      ))}
-    </>
-  );
-}
-
 export function ReaderView({
   story,
   prepared,
   nextStory,
   onNext,
   onExit,
+  audioContinuations,
+  bgmSession,
+  gameState,
 }: ReaderViewProps) {
   const [settings, setSettings] = useState<ReaderSettings>(loadSettings);
   // DEBUG ONLY: this is intentionally session-local so calibration changes
@@ -782,8 +279,8 @@ export function ReaderView({
   const [skipMode, setSkipMode] = useState(false);
   const [ctrlHeld, setCtrlHeld] = useState(false);
   const [uiHidden, setUiHidden] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const [audioUnlocked, setAudioUnlocked] = useState(false);
+  const [muted, setMuted] = useState(audioContinuations?.muted ?? false);
+  const [audioUnlocked, setAudioUnlocked] = useState(audioContinuations?.unlocked || (typeof navigator !== "undefined" && navigator.userActivation?.hasBeenActive) || false);
   const [windowFocused, setWindowFocused] = useState(document.hasFocus());
   const [choiceFocus, setChoiceFocus] = useState(0);
   const [toast, setToast] = useState("");
@@ -791,6 +288,7 @@ export function ReaderView({
   const japaneseStoryLoaded = prepared.japaneseStoryLoaded;
   const remoteTranslationEligible = prepared.remoteTranslationEligible;
   const [loadedMasterName] = useState(settings.masterName);
+  const [loadedMasterGender] = useState(settings.masterGender);
   const [openAiDraftDirty, setOpenAiDraftDirty] = useState(false);
   const [clearOpenAiApiKey, setClearOpenAiApiKey] = useState(false);
   const [translationConfigSaving, setTranslationConfigSaving] = useState(false);
@@ -804,14 +302,17 @@ export function ReaderView({
   const toastTimer = useRef<number | null>(null);
   const manualTranslationInputRef = useRef<HTMLInputElement>(null);
   const oneShotTranslationControllerRef = useRef<AbortController | null>(null);
-  const mergedDecisionsRef = useRef(0);
+  const audioDiagnosticTarget = useRef<ScriptExecutor | null>(null);
+  const audioChannels = useMemo(() => new AudioChannels(story.region, (region, channel, name) => (
+    customPackage?.assetUrls.sounds?.[name] ?? (channel === "subBgm" ? customPackage?.assetUrls.bgm[name] || fallbackBgmUrl(region, name) : null)
+  ), name => audioDiagnosticTarget.current?.reportDiagnostic("audio", `音频资源缺失：${name}，静音继续`)), [story.region, customPackage]);
 
   // ③ Executor-driven playback (docs/FGO_Story_Reader_Standard §1.1 / S-E).
   const effectiveTextSpeed = settings.reduceMotion ? 2 : settings.textSpeed;
   const { executor, snapshot, tap, selectChoice, goBack, jumpToMessage, replay } = useExecutor({
     program: prepared.program,
     masterName: loadedMasterName,
-    masterGender: "male",
+    masterGender: loadedMasterGender,
     startIndex: prepared.startIndex,
     choiceTrail: prepared.choiceTrail,
     textSpeedMs: effectiveTextSpeed,
@@ -819,6 +320,16 @@ export function ReaderView({
     // matching the old reader's reduceMotion pacing.
     timeScale: settings.reduceMotion ? 60 : 1,
     reduceMotion: settings.reduceMotion,
+    gameState,
+    initialBgm: bgmSession?.file ? { name: bgmSession.file, volume: bgmSession.volume } : undefined,
+    configureExecutor: runtime => {
+      audioDiagnosticTarget.current = runtime;
+      if (audioContinuations) audioChannels.restoreContinuations(audioContinuations);
+      audioChannels.setUnlocked(audioUnlocked); audioChannels.setMuted(muted); audioChannels.setBaseVolume(settings.bgmVolume);
+      runtime.onAudioIntent = intent => audioChannels.handle(intent);
+      runtime.onAudioTick = (game, real) => audioChannels.tick(game, real);
+      runtime.isExternalBusy = (type, name) => type === "se" || type === "voice" || type === "jingle" || type === "subBgm" ? audioChannels.isScriptBusy(type, name) : undefined;
+    },
   });
   const phase = snapshot.phase;
   const completed = phase === "ended";
@@ -826,20 +337,38 @@ export function ReaderView({
   const currentChoice = snapshot.choice;
 
   // Audio intents route through the S-A channel model (BGM keeps useBgm).
-  const audioChannels = useMemo(() => new AudioChannels(story.region, () => null), [story.region]);
   useEffect(() => {
+    if (audioContinuations) audioChannels.restoreContinuations(audioContinuations);
     executor.onAudioIntent = (intent) => audioChannels.handle(intent);
+    executor.onAudioTick = (game, real) => audioChannels.tick(game, real);
+    executor.isExternalBusy = (type, name) => type === "se" || type === "voice" || type === "jingle" || type === "subBgm" ? audioChannels.isScriptBusy(type, name) : undefined;
     return () => {
       executor.onAudioIntent = null;
+      executor.onAudioTick = null;
+      executor.isExternalBusy = null;
     };
-  }, [executor, audioChannels]);
+  }, [executor, audioChannels, audioContinuations]);
   useEffect(() => {
     audioChannels.setUnlocked(audioUnlocked);
+    if (audioContinuations) audioContinuations.unlocked = audioUnlocked;
   }, [audioChannels, audioUnlocked]);
   useEffect(() => {
     audioChannels.setMuted(muted);
+    if (audioContinuations) audioContinuations.muted = muted;
   }, [audioChannels, muted]);
-  useEffect(() => () => audioChannels.dispose(), [audioChannels]);
+  useEffect(() => { audioChannels.setBaseVolume(settings.bgmVolume); }, [audioChannels, settings.bgmVolume]);
+  useEffect(() => () => { if (audioContinuations) audioChannels.saveContinuations(audioContinuations); audioChannels.dispose(); }, [audioChannels, audioContinuations]);
+  useEffect(() => {
+    executor.setFastPlay(skipMode || ctrlHeld);
+  }, [executor, skipMode, ctrlHeld]);
+  useEffect(() => {
+    const paused = new Set<"se" | "voice" | "subBgm" | "jingle">();
+    if (snapshot.movie?.sePause) paused.add("se");
+    if (snapshot.movie?.voicePause) paused.add("voice");
+    if (snapshot.movie?.bgmPause) paused.add("subBgm");
+    audioChannels.setPaused(paused);
+  }, [audioChannels, snapshot.movie?.sePause, snapshot.movie?.voicePause, snapshot.movie?.bgmPause]);
+  useEffect(() => { if (snapshot.policy.hideAuto) setAutoMode(false); if (snapshot.policy.hideLog && panel === "log") setPanel("none"); }, [snapshot.policy.hideAuto, snapshot.policy.hideLog, panel]);
 
   const manualTranslation = useManualTranslations({
     eligible: japaneseStoryLoaded,
@@ -851,9 +380,9 @@ export function ReaderView({
   // The readable-step lookahead (current + upcoming) feeds prefetching.
   const translationSteps = useMemo<TranslatableStep[]>(
     () => executor.currentTranslationSteps(TRANSLATION_AHEAD_FRAME_COUNT),
-    // snapshot.version marks executor progress changes (message/choice moves).
+    // Only changes in script position/path invalidate lookahead; art ticks do not.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [executor, snapshot.version],
+    [executor, snapshot.position, snapshot.choice?.key, snapshot.choiceTrail.length],
   );
   const translation = useStoryTranslations({
     scriptId: story.scriptId,
@@ -921,10 +450,9 @@ export function ReaderView({
   }, [currentMessage, translatedTextValue]);
   const textComplete = Boolean(currentChoice) || !currentMessage || currentMessage.complete;
   const sceneId = snapshot.background.id;
-  const backgroundFallbackUrl = backgroundUrl(story.region, sceneId);
+  const backgroundFallbackUrl = backgroundUrl(story.region, sceneId, snapshot.fullScreen);
   const {
     url: currentBackground,
-    usingLocalAsset: usingLocalBackground,
     useFallback: useBackgroundFallback,
   } = useCustomAssetUrl({
     packageId: customPackage?.id,
@@ -935,9 +463,10 @@ export function ReaderView({
       ? customPackage?.assetUrls.backgrounds[sceneId]
       : undefined,
     fallbackUrl: backgroundFallbackUrl,
+    fallbackUrls: snapshot.fullScreen ? [backgroundUrl(story.region, sceneId)] : [],
   });
   const previousSceneId = snapshot.background.previousId;
-  const bgmName = snapshot.bgm?.name ?? null;
+  const bgmName = snapshot.bgm?.name ?? (snapshot.phase === "idle" ? bgmSession?.file ?? null : null);
   const {
     url: localBgmUrl,
     usingLocalAsset: usingLocalBgm,
@@ -965,6 +494,9 @@ export function ReaderView({
     unlocked: audioUnlocked,
     muted,
     volume: snapshot.bgm?.volume ?? settings.bgmVolume,
+    fadeSeconds: snapshot.bgm?.fade ?? executor.stage.audio.fade,
+    paused: !!snapshot.movie?.bgmPause,
+    session: bgmSession,
   });
 
   const showToast = useCallback((message: string) => {
@@ -1375,19 +907,10 @@ export function ReaderView({
     setBackgroundFailed(false);
   }, [currentBackground]);
 
-  // Merge decisions the executor produced this run into the persisted trail.
+  // Persist the executed path, including repeated visits and back-navigation edits.
   useEffect(() => {
-    const decisions = executor.takeNewDecisions();
-    if (decisions.length <= mergedDecisionsRef.current) return;
-    setChoiceTrail((current) => {
-      let next = current;
-      for (let index = mergedDecisionsRef.current; index < decisions.length; index += 1) {
-        next = addChoiceDecision(next, decisions[index]);
-      }
-      return next;
-    });
-    mergedDecisionsRef.current = decisions.length;
-  }, [executor, snapshot.version]);
+    setChoiceTrail((current) => JSON.stringify(current) === JSON.stringify(snapshot.choiceTrail) ? current : snapshot.choiceTrail);
+  }, [snapshot.choiceTrail]);
 
   // Read-progress tracks completed messages; choices count once resolved.
   useEffect(() => {
@@ -1434,6 +957,7 @@ export function ReaderView({
   useEffect(() => {
     if (
       !autoMode
+      || snapshot.policy.hideAuto
       || !windowFocused
       || panel !== "none"
       || uiHidden
@@ -1452,6 +976,7 @@ export function ReaderView({
     return () => window.clearTimeout(timer);
   }, [
     autoMode,
+    snapshot.policy.hideAuto,
     currentChoice,
     currentMessage?.total,
     panel,
@@ -1541,18 +1066,17 @@ export function ReaderView({
   useEffect(() => {
     const keyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
+      if (event.key === "Escape") {
+        target?.blur();
+        setPanel("none");
+        return;
+      }
       if (target?.matches("input, textarea, select, [contenteditable='true']")) {
-        if (event.key === "Escape") (target as HTMLElement).blur();
         return;
       }
 
       if (event.key === "Control") {
         setCtrlHeld(true);
-        return;
-      }
-
-      if (event.key === "Escape") {
-        setPanel("none");
         return;
       }
 
@@ -1598,10 +1122,10 @@ export function ReaderView({
           break;
         case "PageUp":
           event.preventDefault();
-          setPanel("log");
+          if (!snapshot.policy.hideLog) setPanel("log");
           break;
         case "KeyA":
-          setAutoMode((value) => !value);
+          if (!snapshot.policy.hideAuto) setAutoMode((value) => !value);
           setSkipMode(false);
           break;
         case "KeyS":
@@ -1609,7 +1133,7 @@ export function ReaderView({
           setAutoMode(false);
           break;
         case "KeyL":
-          setPanel("log");
+          if (!snapshot.policy.hideLog) setPanel("log");
           break;
         case "KeyH":
           setUiHidden((value) => !value);
@@ -1638,7 +1162,7 @@ export function ReaderView({
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
-  }, [advance, choiceFocus, currentChoice, handleGoBack, panel, phase, resolveChoice, saveBookmark, toggleFullscreen, toggleTranslation]);
+  }, [advance, choiceFocus, currentChoice, handleGoBack, panel, phase, resolveChoice, saveBookmark, toggleFullscreen, toggleTranslation, snapshot.policy.hideAuto, snapshot.policy.hideLog]);
 
   useEffect(() => () => {
     if (toastTimer.current) window.clearTimeout(toastTimer.current);
@@ -1651,48 +1175,8 @@ export function ReaderView({
     "--stage-background": currentBackground ? `url("${currentBackground}")` : "none",
     "--story-progress": `${progress}%`,
   } as CSSProperties;
-  const camera = snapshot.camera;
-  const effectClass = visualEffectClass(snapshot.screenEffect);
-  const worldStyle = {
-    "--camera-x": stageCoordinateToViewport(camera.x, "x"),
-    "--camera-y": stageCoordinateToViewport(camera.y, "y"),
-    "--camera-scale": String(camera.scale > 0 ? camera.scale : 1),
-    "--camera-rotation": `${camera.rotation}deg`,
-    "--camera-filter": cameraFilterCss(camera.filter),
-    "--world-blur": blurFilterCss(snapshot.blur),
-    "--screen-effect-filter": effectClass === "sepia" ? "sepia(0.82) saturate(0.82)" : "none",
-  } as CSSProperties;
   const activeCoordinateDebugSettings = COORDINATE_DEBUG_ENABLED
-    ? coordinateDebugOffsets
-    : DISABLED_COORDINATE_DEBUG_SETTINGS;
-  // Keep production calibration separate from the opt-in debug adjustments.
-  // The calibration values remain active in every build and mode.
-  const screenCalibrationOffset = STAGE_CALIBRATION_RATIOS.screen;
-  const screenDebugOffset = activeCoordinateDebugSettings.screenOrigin;
-  const characterCalibrationOffset = STAGE_CALIBRATION_RATIOS.character;
-  const characterDebugOffset = activeCoordinateDebugSettings.characterOrigin;
-  const characterLayerStyle = {
-    "--screen-calibration-x": stageRatioToViewport(
-      screenCalibrationOffset.x,
-      "x",
-      "screen",
-    ),
-    "--screen-calibration-y": stageRatioToViewport(
-      screenCalibrationOffset.y,
-      "y",
-      "screen",
-    ),
-    "--screen-debug-x": stageRatioToViewport(
-      screenDebugOffset.x,
-      "x",
-      "screen",
-    ),
-    "--screen-debug-y": stageRatioToViewport(
-      screenDebugOffset.y,
-      "y",
-      "screen",
-    ),
-  } as CSSProperties;
+    ? coordinateDebugOffsets : DISABLED_COORDINATE_DEBUG_SETTINGS;
 
   const updateCoordinateDebugOffset = (
     group: "screenOrigin" | "characterOrigin",
@@ -1733,143 +1217,27 @@ export function ReaderView({
     setChoiceTrail([]);
     setAutoMode(false);
     setSkipMode(false);
-    mergedDecisionsRef.current = 0;
   };
 
-  // One-shot CSS effects (shake/flash/wipe) replay by flipping a short-lived
-  // active flag whenever their seq counter advances.
-  const [shakeActive, setShakeActive] = useState(false);
-  const [flashActive, setFlashActive] = useState(false);
-  const [wipeActive, setWipeActive] = useState(false);
-  const lastShakeSeq = useRef(0);
-  const lastFlashSeq = useRef(0);
-  const lastWipeSeq = useRef(0);
-  useEffect(() => {
-    if (snapshot.shake.seq === lastShakeSeq.current) return;
-    lastShakeSeq.current = snapshot.shake.seq;
-    if (snapshot.shake.seq === 0 || settings.reduceMotion) return;
-    setShakeActive(true);
-    const timer = window.setTimeout(() => setShakeActive(false), 340);
-    return () => window.clearTimeout(timer);
-  }, [settings.reduceMotion, snapshot.shake.seq]);
-  useEffect(() => {
-    if (snapshot.flash.seq === lastFlashSeq.current) return;
-    lastFlashSeq.current = snapshot.flash.seq;
-    if (snapshot.flash.seq === 0 || settings.reduceMotion) return;
-    setFlashActive(true);
-    const timer = window.setTimeout(() => setFlashActive(false), 380);
-    return () => window.clearTimeout(timer);
-  }, [settings.reduceMotion, snapshot.flash.seq]);
-  useEffect(() => {
-    if (snapshot.wipe.seq === lastWipeSeq.current) return;
-    lastWipeSeq.current = snapshot.wipe.seq;
-    if (snapshot.wipe.seq === 0 || settings.reduceMotion) return;
-    setWipeActive(true);
-    const timer = window.setTimeout(() => setWipeActive(false), 560);
-    return () => window.clearTimeout(timer);
-  }, [settings.reduceMotion, snapshot.wipe.seq]);
-
   return (
-    <div className={`reader-shell ${settings.reduceMotion ? "reduce-motion" : ""}`} style={stageStyle}>
-      <div className="letterbox-background" aria-hidden="true" />
+    <div className={`reader-shell ${settings.reduceMotion ? "reduce-motion" : ""}`} style={{ ...stageStyle, backgroundColor: snapshot.presentation.backColor ?? undefined }}>
+      <div className="letterbox-background" aria-hidden="true" style={{ background: snapshot.presentation.backColor ?? "transparent" }} />
       <div
-        className={`reader-stage ${shakeActive ? "shake" : "none"} ${effectClass ? `screen-effect-${effectClass}` : ""} ${flashActive ? "flash" : ""} ${uiHidden ? "ui-hidden" : ""}`}
+        className={`reader-stage ${uiHidden ? "ui-hidden" : ""}`}
         onClick={stageClick}
       >
-        <div className="world-layer" style={worldStyle}>
-          <div className="scene-layer">
-            {previousSceneId && !backgroundFailed && snapshot.background.crossfade < 1 && (
-              <img
-                className="scene-image scene-image-previous"
-                style={{ opacity: 1 - snapshot.background.crossfade }}
-                src={backgroundUrl(story.region, previousSceneId)}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-              />
-            )}
-            {currentBackground && !backgroundFailed && (
-              <img
-                key={`${currentBackground}-${snapshot.background.seq}`}
-                className={`scene-image transition-${snapshot.background.transition}`}
-                src={currentBackground}
-                alt="剧情背景"
-                onError={() => {
-                  if (usingLocalBackground) {
-                    useBackgroundFallback();
-                    return;
-                  }
-                  setBackgroundFailed(true);
-                }}
-                draggable={false}
-              />
-            )}
-            <div className="scene-fallback" />
-            <div className="scene-vignette" />
-            <div className="scene-scanlines" />
-          </div>
-
-          <div className="stage-image-layer" aria-hidden="true">
-            {snapshot.stageLayers.map((layer) => (
-              <StageLayerSprite
-                key={`${layer.slot}-${layer.id}`}
-                layer={layer}
-                region={story.region}
-                customPackage={customPackage}
-              />
-            ))}
-          </div>
-
-          <div className="character-layer" style={characterLayerStyle} aria-live="off">
-            {COORDINATE_DEBUG_ENABLED && activeCoordinateDebugSettings.showScreenOrigin && (
-              <span className="coordinate-origin-debug screen-origin-debug" aria-hidden="true">
-                <i />
-                <small>画面 0,0</small>
-              </span>
-            )}
-            {snapshot.characters.map((character) => (
-              <CharacterSprite
-                key={`${character.slot}-${character.id}`}
-                character={character}
-                region={story.region}
-                customPackage={customPackage}
-                characterCalibrationOffset={characterCalibrationOffset}
-                characterDebugOffset={characterDebugOffset}
-                showCharacterOrigin={COORDINATE_DEBUG_ENABLED && activeCoordinateDebugSettings.showCharacterOrigin}
-              />
-            ))}
-          </div>
-
-          {snapshot.pictureFrame && (
-            <div className="picture-frame-overlay" data-frame={snapshot.pictureFrame} aria-hidden="true" />
-          )}
-          {snapshot.movie && (
-            <div className="movie-overlay" aria-hidden="true">
-              <span>FILM / {snapshot.movie}</span>
-            </div>
-          )}
-        </div>
-
-        {/* L3 transition meshes: the fade mesh is tween-driven state; wipe and
-            flash remain one-shot CSS overlays keyed by their seq counters. */}
-        {snapshot.fade.color && snapshot.fade.alpha > 0.005 && (
-          <div
-            className="transition-overlay"
-            style={{
-              opacity: snapshot.fade.alpha,
-              backgroundColor: snapshot.fade.color,
-            }}
-            aria-hidden="true"
-          />
-        )}
-        {wipeActive && snapshot.wipe.color && (
-          <div
-            key={`wipe-${snapshot.wipe.seq}`}
-            className="transition-overlay transition-wipe"
-            style={{ backgroundColor: snapshot.wipe.color }}
-            aria-hidden="true"
-          />
-        )}
+        <StoryStage
+          snapshot={snapshot}
+          region={story.region}
+          customPackage={customPackage}
+          currentBackground={backgroundFailed ? "" : currentBackground}
+          onBackgroundError={() => {
+            if (!useBackgroundFallback()) setBackgroundFailed(true);
+          }}
+          debug={activeCoordinateDebugSettings}
+        />
+        {snapshot.movie && <MoviePlayer movie={snapshot.movie} customPackage={customPackage} onFinish={() => executor.finishMovie()} onProgress={(name, elapsed, duration) => executor.updateMovie(name, elapsed, duration)} />}
+        {snapshot.notification && <div className="adv-notification" role="dialog" aria-modal="true" aria-label={snapshot.notification.title} onClick={event => event.stopPropagation()}><article><h2>{snapshot.notification.title}</h2><p>{snapshot.notification.text}</p><button onClick={tap}>确定</button></article></div>}
 
         {!uiHidden && (
           <>
@@ -1889,7 +1257,7 @@ export function ReaderView({
                   onClick={handleGoBack}
                   disabled={snapshot.boundaryCount < 2}
                 />
-                <ToggleButton label="记录" shortcut="L" icon={<MessageSquareText size={16} />} onClick={() => setPanel("log")} />
+                {!snapshot.policy.hideLog && <ToggleButton label="记录" shortcut="L" icon={<MessageSquareText size={16} />} onClick={() => setPanel("log")} />}
                 {japaneseStoryLoaded && (
                   <ToggleButton
                     active={translatedMode}
@@ -1901,12 +1269,18 @@ export function ReaderView({
                     onClick={toggleTranslation}
                   />
                 )}
-                <ToggleButton active={autoMode} label="自动" shortcut="A" icon={autoMode ? <Pause size={16} /> : <Play size={16} />} onClick={() => { setAutoMode((value) => !value); setSkipMode(false); }} />
+                {!snapshot.policy.hideAuto && <ToggleButton active={autoMode} label="自动" shortcut="A" icon={autoMode ? <Pause size={16} /> : <Play size={16} />} onClick={() => { setAutoMode((value) => !value); setSkipMode(false); }} />}
                 <ToggleButton active={skipMode} label="跳读" shortcut="S" icon={<SkipForward size={16} />} onClick={() => { setSkipMode((value) => !value); setAutoMode(false); }} />
                 <button className={`round-tool ${muted ? "active" : ""}`} onClick={() => { setMuted((value) => !value); setAudioUnlocked(true); }} aria-label={muted ? "恢复声音" : "静音"}>{muted ? <VolumeX size={18} /> : <Volume2 size={18} />}</button>
                 <button className="round-tool" onClick={openSettings} aria-label="设置"><Settings size={18} /></button>
               </div>
             </header>
+
+            {snapshot.diagnostics.length > 0 && (
+              <button className="reader-compatibility" onClick={openSettings}>
+                演出兼容提示 · {snapshot.diagnostics.length} 项
+              </button>
+            )}
 
             <div className="reader-side-status">
               <span>{String(Math.min(snapshot.messageOrdinal + (phase === "message" ? 0 : 1), Math.max(snapshot.messageTotal, 1))).padStart(3, "0")}</span>
@@ -1915,7 +1289,7 @@ export function ReaderView({
             </div>
 
             {phase === "choice" && currentChoice && (
-              <div className="choice-menu" onClick={(event) => event.stopPropagation()}>
+              <div className="choice-menu" data-centering={snapshot.policy.selectionCentering} onClick={(event) => event.stopPropagation()}>
                 <p>SELECT RESPONSE</p>
                 {currentChoice.options.map((option, optionIndex) => (
                   <button
@@ -1942,20 +1316,24 @@ export function ReaderView({
             {(phase === "message" || phase === "choice") && (
               <div
                 className="dialogue-wrap"
+                data-skin={snapshot.messageStyle.skin}
+                data-screen-background={snapshot.messageStyle.screen?.background}
+                style={{ transform: `translate(${stageCoordinateToViewport(snapshot.messageStyle.shake.x, "x")}, ${stageCoordinateToViewport(snapshot.messageStyle.shake.y, "y")})`, fontFamily: snapshot.messageStyle.font === "normal" ? undefined : "serif", ...(snapshot.messageStyle.screen ? { left: `calc(50% + ${stageCoordinateToViewport(snapshot.messageStyle.screen.x, "x")})`, top: `calc(50% + ${stageCoordinateToViewport(snapshot.messageStyle.screen.y, "y")})`, bottom: "auto", width: stageCoordinateToViewport(snapshot.messageStyle.screen.width, "x"), height: stageCoordinateToViewport(snapshot.messageStyle.screen.height, "x") } : {}) }}
               >
                 <div className="dialogue-track" aria-hidden="true">
                   <span className="track-fill" />
                   {Array.from({ length: 13 }).map((_, nodeIndex) => <i key={nodeIndex} />)}
                 </div>
-                <div className="speaker-plate">
+                <div className="speaker-plate" data-name-back={snapshot.messageStyle.nameBack ?? undefined} style={{ backgroundImage: snapshot.messageStyle.nameBack && customPackage?.assetUrls.images?.[snapshot.messageStyle.nameBack] ? `url("${customPackage.assetUrls.images[snapshot.messageStyle.nameBack]}")` : undefined }}>
                   <small>{phase === "choice" ? "MASTER" : "SPEAKER"}</small>
                   <strong>{displaySpeaker}</strong>
                 </div>
-                <div className="dialogue-box">
-                  <p className="dialogue-text">
+                <div className="dialogue-box" data-vertical-align={snapshot.messageStyle.verticalAlign}>
+                  <RuntimeEffects snapshot={snapshot} region={story.region} customPackage={customPackage} scope="message" />
+                  <p className="dialogue-text" style={{ lineHeight: snapshot.messageStyle.lineHeight === null ? undefined : `calc(${Math.max(1, snapshot.messageStyle.lineHeight)} * var(--adv-unit))` }}>
                     {phase === "choice"
                       ? "请选择你的回应。"
-                      : <RichMessageLines lines={displayLines} />}
+                      : <RichMessageLines lines={displayLines} region={story.region} customPackage={customPackage} />}
                   </p>
                   {phase === "message" && textComplete && !translation.preparing && (
                     <span className="advance-indicator" aria-label="继续"><ChevronDown size={20} /></span>
@@ -2076,7 +1454,7 @@ export function ReaderView({
                           ? translation.translatedSpeaker(step) ?? entry.speaker
                           : entry.speaker}
                       </strong>
-                      <p>
+                      <p className="adv-log-text" style={{ fontFamily: snapshot.messageStyle.font === "normal" ? undefined : "serif", lineHeight: snapshot.messageStyle.lineHeight === null ? undefined : `${Math.max(1, snapshot.messageStyle.lineHeight) / 29}em` }}>
                         {entryTranslated
                           ? translation.translatedText(step) ?? entry.text
                           : entry.text}
@@ -2096,6 +1474,12 @@ export function ReaderView({
               <button onClick={() => setPanel("none")}><X size={20} /></button>
             </div>
             <div className="settings-list">
+              {snapshot.diagnostics.length > 0 && (
+                <div className="settings-info">
+                  <span><strong>演出兼容性</strong><small>以下指令需要额外资源或实现</small></span>
+                  <p>{snapshot.diagnostics.map((item) => `${item.tag}（第 ${item.line} 行）：${item.reason}`).join("\n")}</p>
+                </div>
+              )}
               <label>
                 <span><strong>文字速度</strong><small>{settings.textSpeed} ms / 字</small></span>
                 <input type="range" min="10" max="70" step="2" value={settings.textSpeed} onChange={(event) => setSettings((value) => ({ ...value, textSpeed: Number(event.target.value) }))} />
@@ -2111,6 +1495,12 @@ export function ReaderView({
               <label className="text-setting">
                 <span><strong>御主名称</strong><small>下次载入脚本时生效</small></span>
                 <input value={settings.masterName} maxLength={16} onChange={(event) => setSettings((value) => ({ ...value, masterName: event.target.value || "御主" }))} />
+              </label>
+              <label className="text-setting">
+                <span><strong>御主性别</strong><small>下次载入脚本时生效</small></span>
+                <select value={settings.masterGender} onChange={(event) => setSettings((value) => ({ ...value, masterGender: event.target.value === "female" ? "female" : "male" }))}>
+                  <option value="male">男性</option><option value="female">女性</option>
+                </select>
               </label>
               <label className="switch-setting">
                 <span><strong>允许跳过未读</strong><small>开启后，跳读不会在新内容前停下</small></span>
@@ -2128,7 +1518,7 @@ export function ReaderView({
                 <section className="coordinate-debug-section" aria-label="坐标调试">
                   <div className="coordinate-debug-heading">
                     <span><Gauge size={17} /><strong>坐标调试</strong></span>
-                    <small>BASE · 画面 Y -0.25 / 角色 Y 0.1</small>
+                    <small>原生坐标 · 原点 0,0</small>
                   </div>
                   <div className="coordinate-debug-grid">
                     <label className="coordinate-debug-field">
@@ -2621,7 +2011,6 @@ export function ReaderView({
           </div>
         )}
 
-        <div className="effect-flash" aria-hidden="true" />
       </div>
 
       <nav className="desktop-quickbar" aria-label="阅读器快捷操作">

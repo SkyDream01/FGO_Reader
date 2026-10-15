@@ -1,0 +1,2424 @@
+[
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 1,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 1.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "3DCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UICamera",
+  "depth": 5.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UIFrontEffectCamera",
+  "depth": 6.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UIFrontCamera",
+  "depth": 7.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UIBackCamera",
+  "depth": 4.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 12.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "UICamera",
+  "depth": 3.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UIWaterCamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "WorldBgCamera",
+  "depth": 0.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "EarthCamera",
+  "depth": 1.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": -1.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "EarthEffCamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UICamera",
+  "depth": 5.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "CutInCamera",
+  "depth": 3.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UICamera",
+  "depth": 3.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BoardCamera",
+  "depth": -1.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UICamera",
+  "depth": 3.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BoardCamera",
+  "depth": 0.5,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "GrandBoardCamera",
+  "depth": 0.699999988079071,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "GrandBoardBgCamera",
+  "depth": 0.6000000238418579,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 1.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UICamera",
+  "depth": 5.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UIFrontCamera",
+  "depth": 7.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "UIBackCamera",
+  "depth": 4.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FigureCamera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MargeCamera",
+  "depth": 8.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SystemUICamera",
+  "depth": 14.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "TouchCamera",
+  "depth": 15.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "BgCamera",
+  "depth": -1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "FrontCommonUICamera",
+  "depth": 11.0,
+  "clear": 4,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "CommonUICamera",
+  "depth": 10.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "2DUICamera",
+  "depth": 2.0,
+  "clear": 3,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "MapCamera",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "ActionCameraSub",
+  "depth": 1.0,
+  "clear": 2,
+  "ortho": true,
+  "keys": null
+ },
+ {
+  "go": "SummonBGCamera",
+  "depth": 0.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "BattleChrCamera",
+  "depth": 11.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 30.0,
+  "clear": 3,
+  "ortho": false,
+  "keys": null
+ },
+ {
+  "go": "Camera",
+  "depth": 0.0,
+  "clear": 2,
+  "ortho": false,
+  "keys": null
+ }
+]

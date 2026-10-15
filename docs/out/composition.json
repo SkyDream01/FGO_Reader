@@ -1,0 +1,1053 @@
+{
+  "meta": {
+    "target": "Fate/Grand Order Android arm64 v2.139.3",
+    "binary": "extract/lib/arm64-v8a/libil2cpp.so",
+    "il2cpp_dump": "il2cpp_out/dump.cs, script.json, stringliteral.json",
+    "dispatcher": "ScriptManager$$ScriptCommandExecute VA 0x3177290..0x319402c",
+    "evidence_rule": "every entry carries the VA where the literal / float / field is used",
+    "note": "literal values are the IL2CPP string literals referenced by the code; 'slot' VAs in .got/.data are the metadata usage slots"
+  },
+  "asset_paths": [
+    {
+      "kind": "background (Back)",
+      "api": "ScriptManager.ConvertBackTextureName(string id) @0x31b3930",
+      "code": "System.Int32.Parse(id) -> String.Format(\"Back/back{0:D5}\", intVal)",
+      "template": "Back/back{0:D5}",
+      "examples": [
+        "Back/back00001",
+        "Back/back10500"
+      ],
+      "proven": true,
+      "ev": [
+        [
+          "0x31b394c",
+          "literal 'Back/back{0:D5}'"
+        ],
+        [
+          "0x31b3988",
+          "call String.Format"
+        ],
+        [
+          "0x31b39a0",
+          "call String.Format"
+        ]
+      ],
+      "notes": "id is the numeric image id from the script (e.g. sceneSet/bScene arg). Same literal also referenced by TitleInfoEventTowerReward..cctor (0x2d05a10) and each battle/scene variant uses 'Back/back{0}' (12 refs, e.g. MyRoomBackGroundManager.GetBgImgName 0x2622dbc)"
+    },
+    {
+      "kind": "background fallback / scene-name construction",
+      "api": "ScriptManager.GetBackTextureNameScene @0x31c7b28",
+      "code": "input is a multi-entry string: String.Split(',') -> per entry String.Split(':'/fullwidth) -> String.Split(' ') -> ConvertBackTextureName(+ CondType.IsQuestPhaseClear(questId,phase,-1,false))",
+      "template": "Back/back{0:D5}",
+      "proven": true,
+      "ev": [
+        [
+          "0x31c7b84",
+          "mov w1,#0x2c (',')"
+        ],
+        [
+          "0x31c7bdc",
+          "mov w1,#0xff1a (']'? actually 0xff1a full-width colon)"
+        ],
+        [
+          "0x31c7c00",
+          "call ConvertBackTextureName"
+        ],
+        [
+          "0x31c7cdc",
+          "call CondType.IsQuestPhaseClear"
+        ]
+      ],
+      "notes": "sceneSet can carry several candidate backgrounds with quest-clear conditions separated by ',' and ':'"
+    },
+    {
+      "kind": "character figure (servant standing art)",
+      "api": "UIStandFigureRender.GetAssetNameWithForm(servantId, formId) @0x310c31c / GetAssetName @0x31116d0",
+      "code": "prefix = formId>0 ? String.Format(\"Form/{0}/\", formId) : \"\"; name = \"CharaFigure/\" + prefix + servantId; if(!AssetManager.isExistAssetStorage(name)) name = \"CharaFigure/\"+servantId; if(!exists) name = \"CharaFigure/1000000\"",
+      "template": "CharaFigure/[Form/{form}/]{servantId}",
+      "fallback": "CharaFigure/1000000",
+      "proven": true,
+      "ev": [
+        [
+          "0x310c34c",
+          "'Form/{0}/'"
+        ],
+        [
+          "0x310c360",
+          "'CharaFigure/'"
+        ],
+        [
+          "0x310c358",
+          "'CharaFigure/1000000'"
+        ],
+        [
+          "0x310c3e8",
+          "Int32.ToString of servantId"
+        ],
+        [
+          "0x310c400",
+          "String.Concat(prefix,'CharaFigure/',id)"
+        ],
+        [
+          "0x310c424",
+          "AssetManager.isExistAssetStorage"
+        ],
+        [
+          "0x31116c4",
+          "GetAssetName uses 'CharaFigure/1000000' fallback"
+        ]
+      ]
+    },
+    {
+      "kind": "character figure name+form parsing inside script",
+      "api": "ScriptManager.GetCharaImageNameAndFormId @0x31c5f4c",
+      "code": "s=ConvertNameString(name); i=s.IndexOf(\"form\"); if found: formId=int.Parse(s.Substring(i+4)); imageName=s.Substring(0,i)",
+      "example": "\"100100form2\" -> imageName=\"100100\", formId=2",
+      "proven": true,
+      "ev": [
+        [
+          "0x31c5fa4",
+          "String.IndexOf(\"form\")"
+        ],
+        [
+          "0x31c5fd0",
+          "Int32.Parse(substring after 'form')"
+        ],
+        [
+          "0x31c5ff8",
+          "Substring(0, idx)"
+        ]
+      ],
+      "used_by": "charaChange handler @0x317ee34"
+    },
+    {
+      "kind": "servant card art / equip graphic (CharaGraph)",
+      "api": "UICharaGraphRender.GetAssetName @0x30e93c8, GetExCharaGraphAssetName @0x30e9bec, UIEquipGraphRender.GetAssetNameList @0x30f1b98, UIEquipGraphViewerRender.GetAssetNameList @0x30f3f70",
+      "code": "String.Concat(\"CharaGraph/\", id); ex-variant: \"CharaGraph/CharaGraphEx/\"+id",
+      "template": "CharaGraph/{id}",
+      "fallback": "CharaGraph/100000 (servant), CharaGraph/9400010 (equip)",
+      "proven": true,
+      "ev": [
+        [
+          "0x30e93f4",
+          "'CharaGraph/'"
+        ],
+        [
+          "0x30e93dc",
+          "'CharaGraph/100000'"
+        ],
+        [
+          "0x30e9c00",
+          "'CharaGraph/CharaGraphEx/'"
+        ],
+        [
+          "0x30f1b90",
+          "'CharaGraph/9400010'"
+        ],
+        [
+          "0x30f1b9c",
+          "'CharaGraph/'"
+        ]
+      ],
+      "notes": "equip art shares the CharaGraph category with servant art"
+    },
+    {
+      "kind": "narrow figure (battle/select UI)",
+      "api": "UINarrowFigureRender.GetAssetName @0x3104e1c",
+      "template": "NarrowFigure/{id}",
+      "fallback": "NarrowFigure/100000",
+      "proven": true,
+      "ev": [
+        [
+          "0x3104e3c",
+          "'NarrowFigure/{0}'"
+        ],
+        [
+          "0x3104e30",
+          "'NarrowFigure/100000'"
+        ]
+      ]
+    },
+    {
+      "kind": "script image (imageSet / verticalImageSet / horizontalImageSet)",
+      "api": "UIImageRender.GetAssetNameList @0x30fac0c, UIVerticalImageRender.GetAssetNameList @0x311c594, UIHorizontalImageRender.GetAssetNameList @0x30f8558",
+      "template": "Image/{id}",
+      "fallback": "Image/00001",
+      "proven": true,
+      "ev": [
+        [
+          "0x30fac28",
+          "'Image/'"
+        ],
+        [
+          "0x30fac1c",
+          "'Image/00001'"
+        ],
+        [
+          "0x311c5b0",
+          "'Image/'"
+        ],
+        [
+          "0x30f8568",
+          "'Image/'"
+        ]
+      ]
+    },
+    {
+      "kind": "picture frame image",
+      "api": "ScriptManager.ConvertPictureFrameImageName @0x31b38e4",
+      "template": "Image/{0}",
+      "proven": true,
+      "ev": [
+        [
+          "0x31b38fc",
+          "'Image/{0}'"
+        ],
+        [
+          "0x31b392c",
+          "tail-call String.Format"
+        ]
+      ]
+    },
+    {
+      "kind": "sprite mask",
+      "api": "ScriptManager.ConvertSpriteMaskName @0x31b39b4",
+      "template": "Image/mask_{0}",
+      "proven": true,
+      "ev": [
+        [
+          "0x31b39cc",
+          "'Image/mask_{0}'"
+        ],
+        [
+          "0x31b39fc",
+          "tail-call String.Format"
+        ]
+      ]
+    },
+    {
+      "kind": "wipe",
+      "api": "ScriptManager.ConvertWipeName @0x31b3a00",
+      "code": "\"Wipe/\" + ConvertNameString(name)  (name with leading/trailing double quotes stripped)",
+      "template": "Wipe/{name}",
+      "proven": true,
+      "ev": [
+        [
+          "0x31b3a1c",
+          "'Wipe/'"
+        ],
+        [
+          "0x31b3a58",
+          "cmp with 0x22 '\"'"
+        ],
+        [
+          "0x31b3a94",
+          "String.Substring(1,len-2)"
+        ],
+        [
+          "0x31b3abc",
+          "String.Concat"
+        ],
+        [
+          "0x31afcd8/0x31afd04",
+          "AnalysText: ConvertWipeName -> CommonEffectManager.GetAssetName => Effect/Wipe/{name}"
+        ]
+      ],
+      "notes": "the actual wipe sprites are MeshWipe components inside the ScriptAction prefab (loade by CharaWipeEffectComponent etc.)"
+    },
+    {
+      "kind": "chara effect (talk effect)",
+      "api": "ScriptManager.ConvertTalkEffectName @0x31b37c8",
+      "template": "Talk/{name}",
+      "proven": true,
+      "ev": [
+        [
+          "0x31b37e4",
+          "'Talk/'"
+        ],
+        [
+          "0x31b3804",
+          "length>=3 & quote check"
+        ],
+        [
+          "0x31b3870..",
+          "String.Concat"
+        ]
+      ],
+      "notes": "used by charaCut/charaCutin/backEffect/effect; CommonEffectManager prepends its own 'Effect/' root (0x2a0? see effect_system) so the real bundle path is Effect/Talk/{name} - e.g. literals 'Effect/Talk/bit_talk_10', 'Effect/Talk/communicationCharaEffect'"
+    },
+    {
+      "kind": "effect prefab root (proven composition)",
+      "api": "CommonEffectManager.GetAssetName @0x30bfb78 = String.Concat(<static prefix>, name) ; prefix set from literal 'Effect/' in CommonEffectManager..cctor @0x30c36b8",
+      "template": "Effect/{category}/{name}",
+      "proven": true,
+      "ev": [
+        [
+          "0x30bfb78..0x30bfbd8",
+          "GetAssetName = String.Concat(staticField, arg)"
+        ],
+        [
+          "0x30c36b8",
+          "slot 'Effect/' in .cctor"
+        ],
+        [
+          "0x31afcd8",
+          "AnalysText: bl ConvertWipeName (0x31b3a00)"
+        ],
+        [
+          "0x31afd04",
+          "AnalysText: bl CommonEffectManager.GetAssetName"
+        ],
+        [
+          "=> Effect/Wipe/{name}"
+        ],
+        [
+          "'Effect/Talk/bit_talk_10','Effect/Talk/bit_harvest_get{0}','Effect/Talk/GetTitleSprites/','Effect/SideEffect/','Effect/Skin/{0:D2}' literals exist"
+        ]
+      ],
+      "notes": "the script-level effect/wipe names are therefore 'Effect/Talk/...' and 'Effect/Wipe/...' bundles; the same 'Wipe/{name}' string is also used directly by the in-prefab mesh wipe components (CharaWipeEffectComponent.WipeStart etc.)"
+    },
+    {
+      "kind": "scene image (bScene/sceneSet)",
+      "api": "ScriptManager.SetSceneImage @0x31b7d68 / OnLoadEndScene @0x31b7fc0",
+      "code": "uses ConvertBackTextureName for the default (\"0\") and a back-sprite pair (backSprite1/backSprite2) + ExUISpriteRenderer.SetAssetImageBackFS",
+      "proven": true,
+      "ev": [
+        [
+          "0x31b7e88",
+          "call ConvertBackTextureName"
+        ],
+        [
+          "0x31b7fb0",
+          "ExUISpriteRenderer.SetAssetImageBackFS"
+        ],
+        [
+          "0x31b8000",
+          "'OnCrossFadeEndScene'"
+        ]
+      ],
+      "notes": "scene = background texture on the back sprite pair, cross-faded"
+    },
+    {
+      "kind": "insertion animation",
+      "api": "ScriptManager.ConvertInsertionAnimationName @0x31b3f20",
+      "template": "InsertionAnimations/{0}/{0}",
+      "proven": true,
+      "ev": [
+        [
+          "0x31b3f38",
+          "'InsertionAnimations/{0}/{0}'"
+        ],
+        [
+          "0x31b3f44",
+          "String.Format"
+        ]
+      ],
+      "notes": "the id is used twice (dir/name); handler insertionAnimationSet @0x3188158 calls AssetManager.loadAssetStorage on it"
+    },
+    {
+      "kind": "movie (UNITY video / CRI usm)",
+      "api": "ScriptManager.ConvertMovieName @0x31b3c38, ConvertCRIMovieName @0x31b3c84",
+      "template": "Movie/{0}.mp4  |  Movie/{0}.usm  |  Movie/ops{0:00000}.usm",
+      "proven": true,
+      "ev": [
+        [
+          "0x31b3c50",
+          "'Movie/{0}.mp4'"
+        ],
+        [
+          "0x31b3c9c",
+          "'Movie/{0}.usm'"
+        ],
+        [
+          "'Movie/ops{0:00000}.usm' literal (OpeningMovieData.OnStartBootMovie etc.)"
+        ],
+        [
+          "'CommonUI$$CreateMoviePath' uses 'Movie/{0}.usm'"
+        ]
+      ]
+    },
+    {
+      "kind": "font",
+      "api": "ScriptManager.ConvertFontName @0x31b3898",
+      "template": "Font/{name}",
+      "proven": true,
+      "ev": [
+        [
+          "0x31b38b0",
+          "'Font/{0}'"
+        ],
+        [
+          "0x31b38e0",
+          "String.Format"
+        ],
+        [
+          "fontType handler 0x3179674 calls ConvertFontName, 0x31796c8 GameObject.GetComponent, 0x31796d4 UILabel.get_trueTypeFont"
+        ]
+      ],
+      "notes": "special value 'normal' (compared at 0x3179648) restores the default font; UI default fonts are Fonts/FGO-Main-Font (UILabel.Awake 0x362ca5c), Fonts/FGO-NumberFont-02, Fonts/TextAtlas1/3, Fonts/BitmapFontProperties"
+    },
+    {
+      "kind": "audio: se / bgm / voice",
+      "api": "SeManager.GetPathName @0x2e911bc ('Se/'), SoundManager.CpkLoader.setupCpkAssetPath ('Audio','Bgm','.cpk.bytes'), WellFired.USFGOPlayAudioEvent.GetAudioAssetPath ('ChrVoice/')",
+      "template": "Se/{name}  |  Audio/{Bgm|Se|Voice}/{name}.cpk.bytes  |  ChrVoice/{name}",
+      "proven": true,
+      "ev": [
+        [
+          "0x2e911c4",
+          "'Se/'"
+        ],
+        [
+          "0x2e9b1a8",
+          "'Audio/'"
+        ],
+        [
+          "0x2e9b1c8",
+          "'.cpk.bytes'"
+        ],
+        [
+          "0x2e9b1d4",
+          "'Audio/Bgm/'"
+        ],
+        [
+          "0x2e9d32c",
+          "'Audio'"
+        ],
+        [
+          "0x2e9d338",
+          "'Bgm'"
+        ],
+        [
+          "'ChrVoice/' @WellFired.USFGOPlayAudioEvent.GetAudioAssetPath"
+        ]
+      ]
+    },
+    {
+      "kind": "message window",
+      "api": "ScriptManager.ConvertMessageWindowName @0x31b3ed4 (dead code in 2.139.3: only referenced by itself)",
+      "template": "ScriptUI/MessageWindow/{name}",
+      "proven": true,
+      "ev": [
+        [
+          "0x31b3eec",
+          "'ScriptUI/MessageWindow/'"
+        ],
+        [
+          "0x31b3f1c",
+          "tail-call String.Concat"
+        ],
+        [
+          "litq: only 1 reference (self)"
+        ]
+      ],
+      "notes": "actual windows are prefabs referenced by ScriptMessageCommonManager SerializeField: defaultMessageWindow(ScriptMessageWindow), mainPrefab, rubyPrefab, imagePrefab, rootPanel(UIPanel) - so the runtime composition uses inspector references, not this helper"
+    },
+    {
+      "kind": "script prefab (whole ADV scene prefab root)",
+      "api": "ScriptManager$$.cctor static fields",
+      "template": "ScriptAction/  |  ScriptActionEncrypt/",
+      "proven": true,
+      "ev": [
+        [
+          "0x31c94cc",
+          "'ScriptAction/'"
+        ],
+        [
+          "0x31c94d0",
+          "'ScriptActionEncrypt/'"
+        ],
+        [
+          "0x31c95b0 / 0x31c953c",
+          "stored into static fields alongside 'Dummy'"
+        ]
+      ],
+      "notes": "the ScriptAction prefab contains the whole scene hierarchy (also carries ScriptActionSetRenderTextureComponent); shader names prove the figure objects: Custom/Sprite-ScriptActionFigureNormal/CrossFade/Cut/Erasure/Flash/Summon/Silhouette/Wipe, Custom/Sprite-ScriptActionEquipNormal, Custom/Sprites-StandFigureRender"
+    },
+    {
+      "kind": "misc asset literals useful for a reader",
+      "template": "Bg/{0} | Bg/10500 | ClassCard/class_g_{0} | CommandSpellEffect/ef_commandspell{0:D4} | MasterFace/image{0:D5} | MasterFace/equip{0:D5} | MasterFigure/equip{0:D5} | MasterFullFigure/equip{0:D5} | EnemyMasterFigure/figure{0:D5} | EnemyMasterFace/enemyMstFace{0:d5} | Form/{0}/ | AssetStorages/Android/AssetStorage.txt",
+      "proven": true,
+      "ev": [
+        [
+          "stringliteral.json unique values"
+        ],
+        [
+          "AssetData$$.cctor 0x2d9ec88 'CharaFigure/','NarrowFigure/'"
+        ],
+        [
+          "AssetsInfo.AssetsInfoData$$.cctor 0x2df00d4 'CharaFigure/8001000'"
+        ]
+      ]
+    }
+  ],
+  "asset_categories_seen_as_literals": [
+    "Back/",
+    "Back/back{0:D5}",
+    "Back/back{0}",
+    "Bg/",
+    "Bg/{0}",
+    "CharaFigure/",
+    "CharaFigure/Form/",
+    "CharaGraph/",
+    "CharaGraph/CharaGraphEx/",
+    "NarrowFigure/",
+    "Image/",
+    "Image/mask_{0}",
+    "Wipe/",
+    "Talk/",
+    "Effect/",
+    "Effect/Talk/",
+    "Font/",
+    "Fonts/",
+    "ScriptUI/MessageWindow/",
+    "ScriptAction/",
+    "ScriptActionEncrypt/",
+    "InsertionAnimations/",
+    "Movie/",
+    "Se/",
+    "Audio/Bgm/",
+    "ChrVoice/",
+    "MasterFace/",
+    "MasterFigure/",
+    "MasterFullFigure/",
+    "EnemyMasterFace/",
+    "EnemyMasterFigure/",
+    "Battle/",
+    "Servants/",
+    "Terminal/",
+    "CommonUI/",
+    "UI/Window/{0}/{1}",
+    "Assets/AssetStorages/"
+  ],
+  "screen_model": {
+    "render_texture": {
+      "script_action_capture_size": [
+        1344,
+        576
+      ],
+      "ev": [
+        "ScriptActionSetRenderTextureComponent: private const float ScriptActionRenderWidth = 1344 (dump.cs), ScriptActionRenderHeight = 576"
+      ],
+      "notes": "the background+figure+effect body of the scene is rendered into a 21:9-ish RenderTexture (1344x576 = 2.3333) then composited as a sprite in the UI layer"
+    },
+    "ui_base": {
+      "height_constant_used_in_notch_math": 576,
+      "ev": [
+        "FSUtility.GetCalcOffsetX @0x31231c0 mov w8,#0x44100000 = 576.0f"
+      ],
+      "picture_frame_sprite_width": {
+        "16_9": 1025,
+        "21_9": 1346,
+        "ev": [
+          "ScriptManager..cctor @0x31c9600 reads PICTURE_FRAME_SPRITE_WIDTH_16_9/21_9"
+        ]
+      },
+      "derived": "16:9 canvas = 1024x576 (and 21:9 = 1344x576, matching ScriptActionRenderWidth)"
+    },
+    "aspect_ratios": {
+      "RATIO_16_9": 1.7777778,
+      "RATIO_VISTA": 2.0,
+      "RATIO_SCOPE": 2.3333333,
+      "ev": [
+        "FSUtility..cctor @0x31235e0 ldr d0,[0xEA7680], w8=0x40155555 (2.3333333f)"
+      ],
+      "window_util": "FSWindowUtil.windowAspectMin=1.7777778, windowAspectMax=2.3333333 (dump.cs)"
+    },
+    "screen_positions": {
+      "api": "ScriptPosition.GetPosition(int index) @0x31d8d88, positionList = Vector2[7]",
+      "values": [
+        {
+          "index": 0,
+          "x": -256.0,
+          "y": 0.0
+        },
+        {
+          "index": 1,
+          "x": 0.0,
+          "y": 0.0
+        },
+        {
+          "index": 2,
+          "x": 256.0,
+          "y": 0.0
+        },
+        {
+          "index": 3,
+          "x": -438.0,
+          "y": 0.0
+        },
+        {
+          "index": 4,
+          "x": -512.0,
+          "y": 0.0
+        },
+        {
+          "index": 5,
+          "x": 438.0,
+          "y": 0.0
+        },
+        {
+          "index": 6,
+          "x": 512.0,
+          "y": 0.0
+        }
+      ],
+      "ev": [
+        "ScriptPosition..cctor @0x31d8f08..0x31d8fe0: new Vector2[7]; values from .rodata 0xEA7060/EA7FD8/EA6B48/EA7E10/EA8508/EA7E18; index1 = (0,0) (xzr)"
+      ],
+      "units": "UI pixels of the 1024x576 (16:9) reference canvas; y = 0 means the vertical anchor is the prefab pivot, not the screen centre",
+      "chara_offset_list": "charaOffsetList = Vector2[3] all (0,0) @0x31d9018-0x31d9030"
+    },
+    "notch_handling": {
+      "margin_constants": {
+        "SUB_MARGIN_X": 68,
+        "FS_OFFSET_X_MARGIN": 80
+      },
+      "ev": [
+        "FSUtility SUB_MARGIN_X=68 (dump.cs); ScriptManager FS_OFFSET_X_MARGIN=80 (dump.cs); GetFSCommandOffsetX @0x31c5c68 mov w8,#0x42a00000 = 80.0f"
+      ],
+      "GetOffsetX": "FSUtility.GetOffsetX(subMarginX=68, calcNotch=Always) @0x31230bc: if IsUnderVista(aspect<=2.0) return 0; if IsCalcNotch(flag) subMargin=GetNotchSubMarginX(subMargin); return GetCalcOffsetX(subMargin)",
+      "GetCalcOffsetX": "min(aspect,2.3333333) + (-1.7777778) * 576.0 * 0.5 ; if aspect<1.7777778 -> 0.5 ; result -= subMarginX  @0x3123180 (=> 0..160 range for 16:9..21:9)",
+      "GetNotchSubMarginX": "notch>0 ? subMargin*(CalculateNotchWidth()/68.0) : subMargin @0x31222f8",
+      "IsCalcNotch": "flag None->false, Always->true, OnlySpecified->SystemInfo.deviceModel in {iPhone18,1..iPhone18,4} @0x3121854",
+      "GetSafeAreaWidth": "Screen.width - 2*min(safeArea.x, width-safeArea.width-safeArea.x) @0x3121944",
+      "GetScreenToConfigSizeRate": "configHeight/Screen.height @0x3121998",
+      "per_command_offsets": "ScriptManager.GetFSCommandOffsetX(name, prefix, forceObi) @0x31c5b68: if forceObi && CommonUI.GetForceObi_16_9() -> 0; name==prefix+'FSL' -> -ceil(GetOffsetX(80)); 'FSR' -> +ceil(GetOffsetX(80)); also FSSideL/FSSideR/FSLNotNotch/FSRNotNotch variants @0x31c5d94..0x31c5f20",
+      "fullscreen_lists": "FSUtilityList ScriptableObject: legacyBacks(int[]), fullScreenImages(string[]), trimBackRatioY<pair<backId,offsetY>> (max offset 98 at screen edge, 0 centre), legacyMovies(string[]), notFullScreenNpChrs(int[]) - asset 'FullScreen/FSUtilityList'",
+      "notch_commands": "'*NotNotch' command variants (charaPutFSRNotNotch etc.) skip the notch offset; 'enableFullScreen' toggles full-screen mode"
+    },
+    "camera": {
+      "RenderCameraInit": "@0x319f990: creates RenderTextureDescriptor(1024,1024,0,24) via RenderTexture.GetTemporary, names it 'TempScriptActionRednerTexture', toggles camera GameObjects, Camera.depth from UIRootReScale, clearFlags=2 (SolidColor)",
+      "DEPTH_BUFFER_BITS": 24,
+      "RENDER_TEXTURE_CMAERA_DEPTH_DEFAULT": 1,
+      "RenderCameraSwap": "@0x31a010c swaps main/sub render cameras",
+      "RenderCameraSubInit/Start/Quit": "@0x319ff74/0x31a00e8/0x31a00d0",
+      "ScriptActionSetRenderTextureComponent.RenderTextureType": "RenderTarget=0, Capture=1 (captures its TargetObjects children into a texture; fields ScriptActionRenderWidth/Height=1344/576)"
+    }
+  },
+  "layers_z_order": {
+    "picture_frame": {
+      "PICTURE_FRAME_Z_POS_NORMAL": -10.0,
+      "PICTURE_FRAME_Z_POS_TOP": -230.0,
+      "ev": [
+        "ScriptManager static fields 0x10/0x14, values read from .rodata 0xEA7A70 by .cctor @0x31c9600"
+      ]
+    },
+    "chara": {
+      "CHARA_MAX": 26,
+      "FACE_MAX": 133,
+      "commands": [
+        "charaDepth <index> <depth> -> ScriptCharaData.SetDepth (handler @0x3183114, cmp 0x31831b0 Int32.Parse, call 0x316f838)",
+        "charaLayer <index> sub -> ScriptSubLayerManager.RegistCharaData (handler @0x31829e0, calls IsExistTargetSubLayerGroup 0x31c69f8 / RegistCharaData 0x31dfa98)",
+        "subRenderDepth <float> -> ScriptSubLayerManager.SetDepth (handler @0x3182c08, call 0x31dfadc)"
+      ],
+      "chara_data_fields": "ScriptCharaData: kind(FIGURE/EQUIP/IMAGE/VERTICAL_IMAGE/HORIZONTAL_IMAGE), state(LOAD/IDLE/MOVE/DESTROY), defaultDepth(0x54), defaultLayer(0x5C), SetDepth/RecoverDepth/SetTalkDepth"
+    },
+    "panels": {
+      "ScriptManager UIPanel fields": [
+        "blockPanel(0x40)",
+        "normalBlockPanel(0x48)",
+        "faceBlockPanel(0x50)",
+        "systemPanel(0x60)",
+        "actionPanel(0x68)",
+        "renderPanel(0x70)"
+      ],
+      "ev": [
+        "ScriptManager class fields in dump.cs"
+      ],
+      "notes": "renderPanel = ScriptAction render texture host, actionPanel = chara/effect action layer, blockPanel/systemPanel = input blocking/upper UI; NGUI UIPanel.depth drives ordering (values are serialized in the prefab, not in code)"
+    },
+    "implied_composition_order": [
+      "(bottom) ScriptAction render texture: background sprites (backSprite1/2) -> figures by depth -> foreground effects",
+      "picture frame (normal z=-10 / top z=-230 in the actor space)",
+      "message window layer (ScriptMessageCommonManager rootPanel)",
+      "foreground screen effects / wipe / flash / mask (meshWipeBase, meshFadeBase, meshFlashBase)",
+      "selection/menu/system UI (blockPanel/systemPanel)"
+    ],
+    "status": "partially inferred: only the picture-frame z values and the charaDepth/SubLayer mechanisms are proven numerically"
+  },
+  "commands": [
+    {
+      "cmd": "charaChange",
+      "cmp_va": "0x317ec8c",
+      "top_level": true,
+      "calls": [
+        "ConvertCharaIndex 0x31b34f0",
+        "ScriptCharaData.IsLoad 0x316f36c",
+        "ConvertNameString 0x31b1530",
+        "contains 'form' 0x317ee04",
+        "GetCharaImageNameAndFormId 0x31c5f4c",
+        "UIStandFigureRender.GetAssetName 0x3111a14",
+        "Single.Parse 0x49e8728"
+      ],
+      "semantics": "[charaChange <index> <image with optional formNNN> <changeKind> <speed> ...] -> replaces the figure of chara slot <index>; asset CharaFigure/[Form/f/]id",
+      "proven": "partly (call sequence proven, argument order inferred)"
+    },
+    {
+      "cmd": "charaSet/charaPut (family)",
+      "cmp_va": "0x3186fcc",
+      "top_level": false,
+      "calls": [
+        "ConvertCharaIndex",
+        "ScriptCharaData.IsLoad/Destroy 0x316f98c",
+        "ConvertNameString",
+        "Int32.TryParse 0x49d35d8",
+        "DataManager.GetMaster 0x388b208",
+        "DataMasterBase.TryGetEntity 0x3f48494",
+        "UserGameMaster.TryGetSelfUserGame 0x30243a4"
+      ],
+      "semantics": "places figure/equip/image into chara slot; also resolves servant id through master data",
+      "proven": "partly"
+    },
+    {
+      "cmd": "charaFadein/charaFadeout (+FSL/FSR/FSSideL/FSSideR/*NotNotch)",
+      "cmp_va": "0x3178cc0-0x3178cf0 (literals)",
+      "top_level": false,
+      "calls": [
+        "GetFSCommandOffsetX 0x31c5b68 (prefix 'charaFadein')",
+        "ScriptCharaData.SetPosition 0x316fb48 / MoveAlphaSpeed 0x316fd84"
+      ],
+      "semantics": "alpha tween with optional full-screen (21:9) x offset",
+      "proven": "partly"
+    },
+    {
+      "cmd": "charaDepth",
+      "cmp_va": "0x3183114",
+      "top_level": true,
+      "calls": [
+        "ConvertCharaIndex",
+        "Int32.Parse",
+        "ScriptCharaData.SetDepth 0x316f838"
+      ],
+      "semantics": "[charaDepth <index> <depth>] -> per-chara depth override inside the actor space",
+      "proven": true
+    },
+    {
+      "cmd": "charaLayer",
+      "cmp_va": "0x31829e0",
+      "top_level": true,
+      "calls": [
+        "ConvertCharaIndex",
+        "'sub' compare 0x3182a5c",
+        "IsExistTargetSubLayerGroup 0x31c69f8",
+        "ScriptSubLayerManager.RegistCharaData 0x31dfa98"
+      ],
+      "semantics": "[charaLayer <index> sub] -> move chara into a ScriptSubLayer group (UI layer group)",
+      "proven": true
+    },
+    {
+      "cmd": "subRenderDepth",
+      "cmp_va": "0x3182c08",
+      "top_level": true,
+      "calls": [
+        "Single.Parse",
+        "ScriptSubLayerManager.SetDepth 0x31dfadc"
+      ],
+      "semantics": "[subRenderDepth <float>] -> depth of the current sub-layer group",
+      "proven": true
+    },
+    {
+      "cmd": "pictureFrame / pictureFrameTop / pictureFrameLoad",
+      "cmp_va": "0x317e828 (pictureFrame), 0x318c040 (pictureFrameTop)",
+      "top_level": true,
+      "calls": [
+        "pictureFrameTop: compare 'pictureFrameTop' @0x318c040 -> ConvertNameString 0x318c068 -> SetPictureFrameImage 0x31b7bbc @0x318c07c",
+        "ClearPictureFrameImage 0x31b7b3c called @0x31914f4",
+        "z: PICTURE_FRAME_Z_POS_NORMAL -10.0 / PICTURE_FRAME_Z_POS_TOP -230.0"
+      ],
+      "semantics": "[pictureFrame <name> ...] -> decorative frame sprite (Image/{name}) either behind (normal) or above (top) charas; pictureFrameTop = z -230",
+      "proven": "pictureFrameTop chain proven; normal variant inferred"
+    },
+    {
+      "cmd": "bScene / scene / sceneSet / masterScene / sceneLoad / bSceneLoad",
+      "cmp_va": "0x317c58c (bScene), 0x3180e08 (scene), 0x318bb40 (sceneSet), 0x3180a24 (masterScene)",
+      "top_level": "yes/mixed",
+      "calls": [
+        "sceneSet: ConvertBackTextureName 0x31b3930, AssetManager.isExistAssetStorage 0x2da2ba0, ScriptPosition.GetPosition 0x31d8d88, GetFSCommandOffsetX('charaPut'), ScriptCharaData.SetPosition 0x316fbcc, Dictionary.GetEnumerator 0x3fd4610",
+        "masterScene: calls 0x201a774, SingletonMonoBehaviour.get_Instance 0x47e721c, 'fadein'/'effect' sub-kinds",
+        "scene: MoveAlphaSpeed 0x316fd84, IsNormalPlaySpeed 0x31b5324",
+        "sceneLoad/bSceneLoad load chain: GetBackTextureNameScene 0x31c7b28 -> SetbSceneParam 0x31c7d6c (0x318de08) -> IsNormalPlaySpeed 0x31b5324 -> SetSceneImage 0x31b7d68 (0x318de30); 'bSceneLoad' literal compare @0x318de38",
+        "SetbSceneParam: String.Split, Single.Parse (0x31c7e38/0x31c7e50), Type.GetTypeFromHandle (0x31c7e6c), Enum.Parse (0x31c7ef8) with page field name 'page3' (0x31c7f10, family 'page2') => bScene is multi-page background"
+      ],
+      "semantics": "background texture slots (children of ScriptManager.backSprite1/2) with fade/cross-fade; masterScene is the 主人公(master) scene variant; sceneSet = 'load background'",
+      "proven": "partly"
+    },
+    {
+      "cmd": "imageSet / imageChange / verticalImageSet / horizontalImageSet / masterVerticalImageSet / masterHorizontalImageSet / masterImageChange / masterImageSet",
+      "cmp_va": "0x3189734 / 0x3191c34 / 0x318db3c / 0x318f638 / 0x318d6e8 / 0x318ed20 / 0x317fe0c / 0x31939060",
+      "top_level": false,
+      "calls": [
+        "ConvertCharaIndex 0x3187008-area",
+        "ScriptCharaData.IsLoad 0x316f36c",
+        "Int32.Parse",
+        "ScriptCharaData.SetPosition 0x316fbcc",
+        "recursive ScriptCommandExecute 0x3193f9c (masterImageChange)"
+      ],
+      "semantics": "loads Image/{id} into a chara slot (kind IMAGE/VERTICAL_IMAGE/HORIZONTAL_IMAGE); 'master*' variants use the 主人公 image",
+      "proven": "partly: kinds proven by ScriptCharaData.Kind enum, argument order inferred"
+    },
+    {
+      "cmd": "figureSet / figureChange / equipSet / equipChange",
+      "cmp_va": "0x317879c (figureSet literal), 0x31870c8 (equipSet)",
+      "top_level": false,
+      "calls": [
+        "UIStandFigureRender.GetAssetName 0x3111a14 (figure)",
+        "UIEquipGraphRender.GetAssetNameList 0x30f1b98 (equip)"
+      ],
+      "semantics": "figure = CharaFigure/[Form/f/]id, equip = CharaGraph/{equipId}",
+      "proven": "asset naming proven; dispatch position inferred"
+    },
+    {
+      "cmd": "clear",
+      "cmp_va": "0x318202c",
+      "top_level": true,
+      "calls": [
+        "'messageShake' 0x318206c",
+        "Single.Parse x3 0x3182118/0x3182148/0x3182190",
+        "IsFastPlaySpeed 0x31b5344"
+      ],
+      "semantics": "[clear (time)] -> clears all on-screen charas/images/scene with optional fade time; screen returns to black",
+      "proven": "partly"
+    },
+    {
+      "cmd": "charaCutout / charaCut / charaCutin",
+      "cmp_va": "0x317dc7c (charaCutout), 0x3193088 (charaCut), 0x31855e8 (charaCutin)",
+      "top_level": "mixed",
+      "calls": [
+        "ConvertCharaIndex",
+        "Single.Parse",
+        "ScriptCharaData.SetCutout 0x3170578",
+        "effect components: CharaCutEffectComponent.CutinStart, CharaWipeEffectComponent.WipeStart ('Wipe/' 0x31b3a00), CharaFlashEffectComponent.FlashStart, CharaErasureEffectComponent.ErasureStart ('Talk/')"
+      ],
+      "semantics": "figure cut/cutout/cutin transitions = mesh shader effects on the figure mesh (Custom/Sprite-ScriptActionFigureCut/Erasure/Flash/Wipe)",
+      "proven": "partly"
+    },
+    {
+      "cmd": "backEffect / backEffectStart / backEffectStop / backEffectDestroy / backEffectPause",
+      "cmp_va": "0x317c3a8 (backEffect), 0x3182464 (backEffectStart)",
+      "top_level": "mixed",
+      "calls": [
+        "ConvertTalkEffectName 0x31b37c8 -> Talk/{name}",
+        "CommonEffectManager.Resume 0x30c1738",
+        "IsFastPlaySpeed"
+      ],
+      "semantics": "background effect (behind charas) loaded as Effect/Talk/{name}",
+      "proven": "partly"
+    },
+    {
+      "cmd": "effect / effectStart / effectStop / effectPause / effectDestroy / effectForceStop / effectmessage*",
+      "cmp_va": "0x3180b60 (effect), 0x317cc98 (effectStart)",
+      "top_level": true,
+      "calls": [
+        "ConvertTalkEffectName 0x31b37c8",
+        "GetEffectParameter 0x31b8248",
+        "Contains(\"bit_shot_\") 0x3180be4",
+        "CommonEffectLoadComponent.LoadEndHandler..ctor 0x30b7ae4"
+      ],
+      "semantics": "foreground (in front of charas) effect; asset Effect/Talk/{name}",
+      "proven": "partly"
+    },
+    {
+      "cmd": "fowardEffect / fowardEffectStart / fowardEffectStop / fowardEffectDestroy / fowardEffectPause",
+      "cmp_va": "0x3181400 (fowardEffectStart)",
+      "top_level": "mixed",
+      "calls": [
+        "ConvertTalkEffectName",
+        "'capture' compare 0x318144c",
+        "Camera.get_targetTexture 0x4f99b70",
+        "MessageCommonManager.OffScreen 0x31d1da4 / ClearText 0x31d1c1c",
+        "ScriptLogMessage.ReturnText 0x3176848"
+      ],
+      "semantics": "screen-space (overlay) effect; can also capture the camera target texture and hide the message window",
+      "proven": "partly"
+    },
+    {
+      "cmd": "communicationChara / communicationCharaStop / communicationCharaLoop / communicationCharaClear / communicationCharaFace",
+      "cmp_va": "0x317ef00",
+      "top_level": false,
+      "calls": [
+        "Int32.Parse 0x317efd0/0x317eff4",
+        "String.get_Chars 0x317efa4",
+        "ScriptPosition.GetPosition 0x31d8e3c",
+        "Talk/communicationCharaEffect asset"
+      ],
+      "semantics": "communication (bond) chara portrait banner: position from ScriptPosition.GetPosition(x,y), asset Talk/communicationCharaEffect",
+      "proven": "partly"
+    },
+    {
+      "cmd": "insertionAnimationSet / insertionAnimationStart / insertionAnimationEnd",
+      "cmp_va": "0x3188158 (set), 0x3180d00 (start)",
+      "top_level": "mixed",
+      "calls": [
+        "ConvertInsertionAnimationName 0x31b3f20 -> InsertionAnimations/{id}/{id}",
+        "AssetLoader.LoadEndDataHandler..ctor 0x2da0564",
+        "AssetManager.loadAssetStorage 0x2da59ac",
+        "GameObject.Find 0x4fd53c0",
+        "EventPlayAnimationInsertionComponent.ChangeAnimationSprite 0x248e2c8 / PlayAnimation 0x248e168"
+      ],
+      "semantics": "spine/anim insertion animation placed into the scene",
+      "proven": "partly"
+    },
+    {
+      "cmd": "masterBranch / masterImageChange / masterChange / masterNameWidth / masterScene",
+      "cmp_va": "0x3179ba8 (masterBranch), 0x317fe0c (masterImageChange), 0x3187c10 (masterChange)",
+      "top_level": true,
+      "calls": [
+        "masterBranch: recursive ScriptManager.ScriptCommandExecute 0x3193f9c (executes a nested command for the master slot)",
+        "masterChange: ConvertCharaIndex, ScriptCharaData.IsLoad, Int32.Parse, Single.Parse",
+        "masterImageChange: ConvertCharaIndex, IsLoad, recursive ScriptCommandExecute"
+      ],
+      "semantics": "commands operating on the 主人公(master) pseudo-chara slot; masterBranch runs one nested command under a condition",
+      "proven": "partly"
+    },
+    {
+      "cmd": "messageStart / talkStart / talkEnd / talkName / messageOn / messageOff / messageChange / fontSize / fontType / betweenHeight",
+      "cmp_va": "0x317f97c (messageStart), 0x3182bb8 (talkStart), 0x3187be4 (talkName), 0x31795e8 (fontType), 0x3187914 (fontSize)",
+      "top_level": true,
+      "calls": [
+        "ScriptMessageCommonManager.CalcMessageVerticalAlign 0x31d295c",
+        "ConvertFontName 0x31b3898",
+        "UILabel.get_trueTypeFont 0x36276a4",
+        "ConvertCharaIndexTalk 0x31b356c ('on'/'off'/'depthOn'/'depthOff' talk states)"
+      ],
+      "semantics": "message window open/close, name line, per-message font/size/line-height",
+      "proven": "partly"
+    },
+    {
+      "cmd": "capture / captureRelease",
+      "cmp_va": "0x3181448",
+      "top_level": true,
+      "calls": [
+        "Camera.get_targetTexture 0x4f99b70",
+        "Object.op_Equality 0x4fd5da8"
+      ],
+      "semantics": "[capture] freezes the current script camera target texture so it can be used as an image/fowardEffect source",
+      "proven": "partly"
+    },
+    {
+      "cmd": "criMovie / movie",
+      "cmp_va": "0x3183c24 (criMovie)",
+      "top_level": false,
+      "calls": [
+        "ConvertCRIMovieName -> Movie/{0}.usm",
+        "PlayCRIMovie 0x31bbe00"
+      ],
+      "semantics": "full-screen CRI Sofdec movie (Movie/{name}.usm)",
+      "proven": true
+    },
+    {
+      "cmd": "fontType",
+      "cmp_va": "0x31795e8",
+      "top_level": true,
+      "calls": [
+        "IsNullOrEmpty 0x4871c3c",
+        "op_Inequality('normal') 0x4870cc4",
+        "ConvertFontName 0x31b3898",
+        "AssetManager.getAssetStorage 0x2da6474",
+        "AssetData.GetObject 0x3806f00",
+        "GameObject.GetComponent 0x38ebe30",
+        "UILabel.get_trueTypeFont 0x36276a4"
+      ],
+      "semantics": "[fontType <name>] -> switches the message font to Font/{name}; 'normal' restores default",
+      "proven": true
+    },
+    {
+      "cmd": "advSet / advActorShow / advActorHide / advPrepare / advRelease / advPlayAnimator",
+      "cmp_va": "various in dispatcher (e.g. 0x3178???)",
+      "top_level": true,
+      "calls": [
+        "ScriptActionAdvPrefabController / AdvPrefab actor system"
+      ],
+      "semantics": "placeholder for 'Advanced' prefab actors (arbitrary prefab with animator) shown inside the scene",
+      "proven": false
+    }
+  ],
+  "text_markup": {
+    "analyzer": "ScriptManager.AnalysScript @0x31a50ec (splits the raw script into control lines and message lines) + ScriptManager.AnalysText @0x31a920c (collects asset names per command) + ScriptManager.AnalysParam @0x31a7688 (param key=value parsing)",
+    "param_split_literals": {
+      "ev": [
+        "AnalysParam: '=' 0x31a7718, ' ' 0x31a7724, ',' 0x31a7730",
+        "GetPositionParameter/GetStringParameter/GetIntegerParameter/GetFloatParameter compare '=', ' ', ',' and '-' (0x31b33ec)"
+      ],
+      "syntax": "params are space separated, optionally key=value; '-' means 'no value'"
+    },
+    "script_line_tags": {
+      "comment": "#  (AnalysScript 0x31a5250)",
+      "label": "l / label  ('l ' 0x31a52e0, 'label' 0x31a5358)",
+      "branch": "branch / selectBranch / branch* conditions ('branch' 0x31a52d4, 'selectBranch' 0x31a5328, 'selectionUse' 0x31a5310)",
+      "switch": "switchCase / switchCaseEnd 0x31a543c / 0x31a5364",
+      "message": "messageStart / page / line / talkStart / talkEnd / talkName / image / fontSize / betweenHeight / font",
+      "jump": "jump / tRoute ([tRoute (?<id>[0-9]+) (?<text>.+)] regex @0x31a47c0)",
+      "menu": "menu / input / notification / q / i / f / k / r "
+    },
+    "message_inline_tags": {
+      "color": "[#RRGGBB] ... [-] (literals '[#' 0x31a5370, '[-]' inside the sample string)",
+      "ruby": "kanji:kana inside [] - sample literal '[#[FF0000]主[-]人公:しゅじんこう]はぐだぐだな主人公'",
+      "line_break": "[r] (0x31a53e8) and '[r][r]' (prologue literal)",
+      "assign": "[=  (0x31a53c4) - tag with '=' (e.g. [=value] replacement)",
+      "escape": "'%' 0x31a5334 and '&' 0x31a537c are treated specially by AnalysText",
+      "wait": "[wait skippableTime {0:F2}] generated by AUTO_WAIT_TAG_FORMAT (ScriptManager const)",
+      "fullscreen": "[enableFullScreen] (dispatcher command 'enableFullScreen' 0x31912716)",
+      "separator": "'・ ' 0x31a5424 used when joining names",
+      "terminator": "']'  0x31a5418",
+      "note": "tag text is Japanese-heavy; the tags above are exactly the literals AnalysScript/AnalysText compare against"
+    },
+    "replace": "ScriptReplaceString (class @dump.cs 170549 area) : replaceList + playerGenderIndex; Index.USER_NAME = 1 -> [USER_NAME] substitution; ScriptManager.GetReplacedText @0x31c601c / ReplaceHiddenFlagText @0x31c8220 / TextOverwriteRoute @0x31c6e9c / TextOverwriteFlag @0x31c72e8",
+    "placeholder_tags": [
+      "[tRoute <id> <text>]",
+      "[enableFullScreen]",
+      "[wait skippableTime x.xx]",
+      "[#RRGGBB]",
+      "[r]"
+    ]
+  },
+  "open_questions": [
+    "exact script argument order for the *Set family (the dispatcher is one giant if-else chain over parsed tokens; argument order was inferred from the call sequence, not from a single linear parse function)",
+    "DEPTH values of the UIPanel fields (blockPanel/actionPanel/renderPanel/systemPanel) are serialized in the prefab, not present as literals",
+    "the mapping from 'chara index letters' (A-Z) to slot numbers is ConvertCharaIndex = ((c-'A') | (acc<<8)) i.e. multi-letter names map to multi-byte ints; the per-slot default depth/layer come from the prefab",
+    "the exact z/depth ordering between pictureFrame, chara and foreground effects could not be pinned to numeric values except PICTURE_FRAME_Z_POS_NORMAL/TOP",
+    "command boundaries inside ScriptCommandExecute are a compiler-generated switch tree: the 'code right after a comparison' is not always that command's body; per-command bodies in this doc were accepted only when the following call sequence was coherent (Convert* + Set* with the parsed argument)"
+  ],
+  "secondary_apis": [
+    {
+      "api": "ScriptManager.GetUiRootActiveHeight",
+      "va": "0x31c8468",
+      "note": "UIRoot(+0x118).activeHeight via 0x361de70"
+    },
+    {
+      "api": "ScriptManager.IsUseSimpleMeshFigure",
+      "va": "0x31c82d4",
+      "note": "singleton(+0x788) List.Contains (0x44c8790); list is serialized data, no literal"
+    },
+    {
+      "api": "ScriptManager.CheckAssetData/CheckAssetDataList",
+      "va": "0x31b1364/0x31b14c8",
+      "note": "AssetManager.isNeedDownload (0x2da4bac) over the script-collected names -> download list"
+    },
+    {
+      "api": "ScriptManager.CheckAudioData",
+      "va": "0x31b0f80",
+      "note": "same for audio names after SoundManager.getAssetName"
+    },
+    {
+      "api": "SoundManager.getAssetName",
+      "va": "0x2e9b28c",
+      "note": "name.StartsWith('ba') (0x2e9b2a8) -> 'Battle' (0x2e9b2b4) else null => Audio/{Bgm|Se|Voice|Battle}/{name}.cpk.bytes"
+    },
+    {
+      "api": "ScriptManager.AddSwitchCaseAsset",
+      "va": "0x31a90e4",
+      "note": "Split + ConvertNameString x2 + SoundManager.getAssetName + CheckAudioData (switchCase carries preload audio)"
+    },
+    {
+      "api": "ScriptManager.StartLoadAnimationAssetData/StartLoadUIAssetData/StartLoadAudioAssetData",
+      "va": "0x31a8824/0x31a8920/0x31a8a1c",
+      "note": "hand the collected lists to AssetManager (0x2da60c0)"
+    },
+    {
+      "api": "ScriptManager.AnalysText",
+      "va": "0x31a920c",
+      "note": "command switch that builds the asset-name list, e.g. wipe @0x31afcd8 ConvertWipeName -> @0x31afd04 CommonEffectManager.GetAssetName"
+    }
+  ]
+}

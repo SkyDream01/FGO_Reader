@@ -1,0 +1,7393 @@
+{
+ "meta": {
+  "binary": "libil2cpp.so (FGO 2.139.3, arm64-v8a)",
+  "dispatcher": "ScriptManager$$ScriptCommandExecute @0x3177290..0x319402c",
+  "hash": "FNV-1a 32-bit over UTF-16 code units (offset=2166136261, prime=16777619)",
+  "method": "tag switch lowered to a hash decision tree; every leaf re-verifies the tag with System.String.op_Equality against a string literal. A key is accepted only if fnv1a(literal) == the node's hash constant.",
+  "command_count": 366,
+  "body_sharing_groups": {
+   "0x3182018": [
+    "advSoundSet",
+    "delayEnd",
+    "enableFullScreen",
+    "enableWaitLoadAssetWhenResume"
+   ],
+   "0x317c3c0": [
+    "backEffect",
+    "backEffectPause"
+   ],
+   "0x318472c": [
+    "betweenHeight",
+    "l"
+   ],
+   "0x31824fc": [
+    "bgm",
+    "subBgm"
+   ],
+   "0x3181900": [
+    "bgmStop",
+    "bgmStopEnd",
+    "subBgmStop"
+   ],
+   "0x318459c": [
+    "branchHaveSvtEquip",
+    "branchNotHaveSvtEquip"
+   ],
+   "0x31802b0": [
+    "branchMaterial",
+    "branchNotMaterial"
+   ],
+   "0x31834e4": [
+    "branchNotRouteSelect",
+    "branchRouteSelect"
+   ],
+   "0x317c85c": [
+    "branchNotRouteSelectCount",
+    "branchRouteSelectCount"
+   ],
+   "0x317bdd0": [
+    "branchQuestClear",
+    "branchQuestNotClear"
+   ],
+   "0x3181664": [
+    "charaBackEffect",
+    "charaBackEffectPause"
+   ],
+   "0x317ec9c": [
+    "charaChange",
+    "figureChange"
+   ],
+   "0x31855fc": [
+    "charaCutin",
+    "charaCutinPause"
+   ],
+   "0x3187a5c": [
+    "charaEffect",
+    "charaEffectPause"
+   ],
+   "0x3188390": [
+    "charaEffectEdgeBlur",
+    "charaEffectEdgeBlurPause"
+   ],
+   "0x3184fa4": [
+    "charaFadein",
+    "charaFadeinFSL",
+    "charaFadeinFSLNotNotch",
+    "charaFadeinFSR",
+    "charaFadeinFSRNotNotch",
+    "charaFadeinFSSideL",
+    "charaFadeinFSSideR"
+   ],
+   "0x318505c": [
+    "charaMove",
+    "charaMoveFSL",
+    "charaMoveFSR",
+    "charaMoveFSSideL",
+    "charaMoveFSSideR"
+   ],
+   "0x3183e08": [
+    "charaMoveEase",
+    "charaMoveEaseFSL",
+    "charaMoveEaseFSR",
+    "charaMoveEaseFSSideL",
+    "charaMoveEaseFSSideR"
+   ],
+   "0x3184c98": [
+    "charaMoveReturn",
+    "charaMoveReturnFSL",
+    "charaMoveReturnFSR",
+    "charaMoveReturnFSSideL",
+    "charaMoveReturnFSSideR"
+   ],
+   "0x3181a58": [
+    "charaMoveReturnEase",
+    "charaMoveReturnEaseFSL",
+    "charaMoveReturnEaseFSR",
+    "charaMoveReturnEaseFSSideL",
+    "charaMoveReturnEaseFSSideR"
+   ],
+   "0x3186e80": [
+    "charaPut",
+    "charaPutFSL",
+    "charaPutFSLNotNotch",
+    "charaPutFSR",
+    "charaPutFSRNotNotch",
+    "charaPutFSSideL",
+    "charaPutFSSideR"
+   ],
+   "0x3186fe0": [
+    "charaSet",
+    "equipSet",
+    "figureSet",
+    "horizontalImageSet",
+    "imageSet",
+    "sceneSet",
+    "verticalImageSet"
+   ],
+   "0x3184b84": [
+    "charaSpecialEffect",
+    "charaSpecialEffectPause"
+   ],
+   "0x3182038": [
+    "clear",
+    "page"
+   ],
+   "0x317ef18": [
+    "communicationChara",
+    "communicationCharaLoop"
+   ],
+   "0x3183c38": [
+    "criMovie",
+    "movie"
+   ],
+   "0x31838c8": [
+    "cueSeContinueStop",
+    "seContinueStop"
+   ],
+   "0x3188898": [
+    "cueSeContinueVolume",
+    "seContinueVolume"
+   ],
+   "0x3182768": [
+    "delay",
+    "tdelay"
+   ],
+   "0x3180b70": [
+    "effect",
+    "effectPause"
+   ],
+   "0x317f9c4": [
+    "end",
+    "interruption"
+   ],
+   "0x31884b4": [
+    "equipChange",
+    "horizontalImageChange",
+    "imageChange",
+    "verticalImageChange"
+   ],
+   "0x3187928": [
+    "f",
+    "font",
+    "fontSize"
+   ],
+   "0x317cd60": [
+    "faceTalkScreen",
+    "warBoardTalkScreen"
+   ],
+   "0x3180b14": [
+    "fadein",
+    "fadeout"
+   ],
+   "0x318087c": [
+    "fowardEffect",
+    "fowardEffectPause"
+   ],
+   "0x3185e08": [
+    "fsmObjSendEvent",
+    "fsmObjSetState"
+   ],
+   "0x3182adc": [
+    "fsmObjSetBool",
+    "fsmObjSetFloat",
+    "fsmObjSetString"
+   ],
+   "0x318816c": [
+    "insertionAnimationSet",
+    "insertionAnimationSetFSL",
+    "insertionAnimationSetFSR",
+    "insertionAnimationSetFSSideL",
+    "insertionAnimationSetFSSideR"
+   ],
+   "0x3188484": [
+    "maskin",
+    "maskout"
+   ],
+   "0x317fe24": [
+    "masterHorizontalImageChange",
+    "masterImageChange",
+    "masterVerticalImageChange"
+   ],
+   "0x3188708": [
+    "masterHorizontalImageSet",
+    "masterImageSet",
+    "masterSet",
+    "masterVerticalImageSet"
+   ],
+   "0x317e838": [
+    "pictureFrame",
+    "pictureFrameTop"
+   ],
+   "0x3184a58": [
+    "s",
+    "speed"
+   ],
+   "0x3187604": [
+    "specialEffect",
+    "specialEffectPuase"
+   ],
+   "0x3187cbc": [
+    "stretchin",
+    "stretchout"
+   ],
+   "0x3180674": [
+    "subBlur",
+    "subBlur2"
+   ],
+   "0x3183a9c": [
+    "subBlur2Off",
+    "subBlurOff"
+   ],
+   "0x3185f64": [
+    "subRenderFadein",
+    "subRenderFadeinFSL",
+    "subRenderFadeinFSR",
+    "subRenderFadeinFSSideL",
+    "subRenderFadeinFSSideR"
+   ],
+   "0x3180f80": [
+    "subRenderMove",
+    "subRenderMoveFSL",
+    "subRenderMoveFSR",
+    "subRenderMoveFSSideL",
+    "subRenderMoveFSSideR"
+   ],
+   "0x3186c5c": [
+    "subRenderMoveEase",
+    "subRenderMoveEaseFSL",
+    "subRenderMoveEaseFSR",
+    "subRenderMoveEaseFSSideL",
+    "subRenderMoveEaseFSSideR"
+   ],
+   "0x317d3a4": [
+    "subStretchin",
+    "subStretchout"
+   ],
+   "0x317e910": [
+    "wipein",
+    "wipeout"
+   ],
+   "0x318402c": [
+    "wipeinEx",
+    "wipeoutEx"
+   ]
+  }
+ },
+ "commands": [
+  {
+   "name": "advActorHide",
+   "handler": "0x317f138",
+   "case_entry": "0x317955c",
+   "verify_block": "0x317f12c",
+   "case_kind": "b.eq",
+   "hash": "0xf0f908b",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x317f168"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "advActorShow",
+   "handler": "0x318489c",
+   "case_entry": "0x317b0d8",
+   "verify_block": "0x3184894",
+   "case_kind": "b.eq",
+   "hash": "0x55bc150e",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x31848cc"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "advPlayAnimator",
+   "handler": "0x318267c",
+   "case_entry": "0x317d828",
+   "verify_block": "0x3182674",
+   "case_kind": "b.eq",
+   "hash": "0x4c63a509",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "advPrepare",
+   "handler": "0x317d14c",
+   "case_entry": "0x317d11c",
+   "verify_block": "0x317d140",
+   "case_kind": "b.ne",
+   "hash": "0xf1787bc1",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "advRelease",
+   "handler": "0x31839d8",
+   "case_entry": "0x3179dbc",
+   "verify_block": "0x31839d0",
+   "case_kind": "b.eq",
+   "hash": "0xa9e91acb",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "advSet",
+   "handler": "0x317ec04",
+   "case_entry": "0x3179180",
+   "verify_block": "0x317ebf8",
+   "case_kind": "b.eq",
+   "hash": "0x4799d20a",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetAssetName",
+     "evidence": "0x317ec30"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "advSoundSet",
+   "handler": "0x3182018",
+   "case_entry": "0x317b458",
+   "verify_block": "0x3182010",
+   "case_kind": "b.eq",
+   "hash": "0xb64c2567",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "delayEnd",
+    "enableFullScreen",
+    "enableWaitLoadAssetWhenResume"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "autoAndBackLog",
+   "handler": "0x317923c",
+   "case_entry": "0x317920c",
+   "verify_block": "0x3179230",
+   "case_kind": "b.ne",
+   "hash": "0xc00815ca",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "bScene",
+   "handler": "0x317c59c",
+   "case_entry": "0x317c56c",
+   "verify_block": "0x317c590",
+   "case_kind": "b.ne",
+   "hash": "0x26ce7b13",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "backCameraColor",
+   "handler": "0x317cb6c",
+   "case_entry": "0x317cb3c",
+   "verify_block": "0x317cb60",
+   "case_kind": "b.ne",
+   "hash": "0xf4951da4",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "backEffect",
+   "handler": "0x317c3c0",
+   "case_entry": "0x317c390",
+   "verify_block": "0x317c3b4",
+   "case_kind": "b.ne",
+   "hash": "0x4a6c6c2f",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x317c3e0"
+    }
+   ],
+   "aliases": [
+    "backEffectPause"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "backEffectDestroy",
+   "handler": "0x3184ad0",
+   "case_entry": "0x317b6e0",
+   "verify_block": "0x3184ac8",
+   "case_kind": "b.eq",
+   "hash": "0xa7f3d9f",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3184af0"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "backEffectPause",
+   "handler": "0x317c3c0",
+   "case_entry": "0x317956c",
+   "verify_block": "0x317c3b4",
+   "case_kind": "b.ne",
+   "hash": "0x10c8602f",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x317c3e0"
+    }
+   ],
+   "aliases": [
+    "backEffect"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "backEffectStart",
+   "handler": "0x3182470",
+   "case_entry": "0x317d694",
+   "verify_block": "0x3182468",
+   "case_kind": "b.eq",
+   "hash": "0xfa9a46a5",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3182490"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "backEffectStop",
+   "handler": "0x317ebac",
+   "case_entry": "0x3179070",
+   "verify_block": "0x317eba0",
+   "case_kind": "b.eq",
+   "hash": "0x1db4e77",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x317ebcc"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "backlogEnd",
+   "handler": "0x317c1ec",
+   "case_entry": "0x317c1bc",
+   "verify_block": "0x317c1e0",
+   "case_kind": "b.ne",
+   "hash": "0x2e09f6d",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "backlogStart",
+   "handler": "0x31813e0",
+   "case_entry": "0x317c09c",
+   "verify_block": "0x31813d8",
+   "case_kind": "b.eq",
+   "hash": "0xbdb01614",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "betweenHeight",
+   "handler": "0x318472c",
+   "case_entry": "0x317b0a4",
+   "verify_block": "0x3184724",
+   "case_kind": "b.ne",
+   "hash": "0x9859d490",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "l"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "bgm",
+   "handler": "0x31824fc",
+   "case_entry": "0x317bd44",
+   "verify_block": "0x31824f4",
+   "case_kind": "b.eq",
+   "hash": "0x5db2d891",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31893f8"
+    }
+   ],
+   "aliases": [
+    "subBgm"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "bgmStop",
+   "handler": "0x3181900",
+   "case_entry": "0x317c7f0",
+   "verify_block": "0x31818f8",
+   "case_kind": "b.ne",
+   "hash": "0x3b958991",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "bgmStopEnd",
+    "subBgmStop"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "bgmStopEnd",
+   "handler": "0x3181900",
+   "case_entry": "0x317b914",
+   "verify_block": "0x31818f8",
+   "case_kind": "b.eq",
+   "hash": "0xd0ddb2f6",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "bgmStop",
+    "subBgmStop"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "blur",
+   "handler": "0x3181f20",
+   "case_entry": "0x317d004",
+   "verify_block": "0x3181f18",
+   "case_kind": "b.eq",
+   "hash": "0x6bfbd198",
+   "min_token_count": 2,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "blurOff",
+   "handler": "0x3187994",
+   "case_entry": "0x317da70",
+   "verify_block": "0x318798c",
+   "case_kind": "b.eq",
+   "hash": "0x68b6651d",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31879f0"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "branch",
+   "handler": "0x317b498",
+   "case_entry": "0x317b468",
+   "verify_block": "0x317b48c",
+   "case_kind": "b.ne",
+   "hash": "0xb6873945",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "branchHaveSvtEquip",
+   "handler": "0x318459c",
+   "case_entry": "0x317ab50",
+   "verify_block": "0x3184594",
+   "case_kind": "b.eq",
+   "hash": "0x271b37fa",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "branchNotHaveSvtEquip"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "branchMaterial",
+   "handler": "0x31802b0",
+   "case_entry": "0x317da54",
+   "verify_block": "0x31802a4",
+   "case_kind": "b.ne",
+   "hash": "0xa9c7db00",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "op_Equality",
+     "evidence": "0x3193e04"
+    }
+   ],
+   "aliases": [
+    "branchNotMaterial"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "branchNotHaveSvtEquip",
+   "handler": "0x318459c",
+   "case_entry": "0x317cce4",
+   "verify_block": "0x3184594",
+   "case_kind": "b.eq",
+   "hash": "0x4e750e71",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "branchHaveSvtEquip"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "branchNotMaterial",
+   "handler": "0x31802b0",
+   "case_entry": "0x317b048",
+   "verify_block": "0x31802a4",
+   "case_kind": "b.eq",
+   "hash": "0x1604056f",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "op_Equality",
+     "evidence": "0x3193e04"
+    }
+   ],
+   "aliases": [
+    "branchMaterial"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "branchNotRouteSelect",
+   "handler": "0x31834e4",
+   "case_entry": "0x317c768",
+   "verify_block": "0x31834dc",
+   "case_kind": "b.eq",
+   "hash": "0x53f0f90b",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "branchRouteSelect"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "branchNotRouteSelectCount",
+   "handler": "0x317c85c",
+   "case_entry": "0x3179a30",
+   "verify_block": "0x317c850",
+   "case_kind": "b.ne",
+   "hash": "0xf3fd2b9a",
+   "min_token_count": 9,
+   "params": [],
+   "aliases": [
+    "branchRouteSelectCount"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "branchQuestClear",
+   "handler": "0x317bdd0",
+   "case_entry": "0x317bda0",
+   "verify_block": "0x317bdc4",
+   "case_kind": "b.ne",
+   "hash": "0xe4895e3a",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "branchQuestNotClear"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "branchQuestNotClear",
+   "handler": "0x317bdd0",
+   "case_entry": "0x317910c",
+   "verify_block": "0x317bdc4",
+   "case_kind": "b.ne",
+   "hash": "0x83820b5b",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "branchQuestClear"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "branchRouteSelect",
+   "handler": "0x31834e4",
+   "case_entry": "0x317ea7c",
+   "verify_block": "0x31834dc",
+   "case_kind": "b.eq",
+   "hash": "0x81e06266",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "branchNotRouteSelect"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "branchRouteSelectCount",
+   "handler": "0x317c85c",
+   "case_entry": "0x317c82c",
+   "verify_block": "0x317c850",
+   "case_kind": "b.ne",
+   "hash": "0xb55797f5",
+   "min_token_count": 9,
+   "params": [],
+   "aliases": [
+    "branchNotRouteSelectCount"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "branchSetGrandSvtCount",
+   "handler": "0x317e20c",
+   "case_entry": "0x317e1dc",
+   "verify_block": "0x317e200",
+   "case_kind": "b.ne",
+   "hash": "0x3845f2b1",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "cameraFilter",
+   "handler": "0x3181d38",
+   "case_entry": "0x317cb2c",
+   "verify_block": "0x3181d30",
+   "case_kind": "b.eq",
+   "hash": "0xf491b448",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "cameraHome",
+   "handler": "0x3188800",
+   "case_entry": "0x317e7a4",
+   "verify_block": "0x31887f8",
+   "case_kind": "b.eq",
+   "hash": "0x5fd62b01",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3188840"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "cameraMove",
+   "handler": "0x318683c",
+   "case_entry": "0x317cfb0",
+   "verify_block": "0x3186834",
+   "case_kind": "b.eq",
+   "hash": "0xaaf53cdb",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "cameraMoveEase",
+   "handler": "0x317a648",
+   "case_entry": "0x317a618",
+   "verify_block": "0x317a63c",
+   "case_kind": "b.ne",
+   "hash": "0x7df406a9",
+   "min_token_count": 7,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "cameraRoll",
+   "handler": "0x3188238",
+   "case_entry": "0x317e134",
+   "verify_block": "0x3188230",
+   "case_kind": "b.eq",
+   "hash": "0x522663c1",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3188254"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31882f0"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3188314"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "cameraRollMove",
+   "handler": "0x317dddc",
+   "case_entry": "0x317ddac",
+   "verify_block": "0x317ddd0",
+   "case_kind": "b.ne",
+   "hash": "0x437f0700",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317de1c"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317de74"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "capture",
+   "handler": "0x3181454",
+   "case_entry": "0x317c170",
+   "verify_block": "0x318144c",
+   "case_kind": "b.eq",
+   "hash": "0xfc9819c1",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "captureRelease",
+   "handler": "0x31823a4",
+   "case_entry": "0x317d570",
+   "verify_block": "0x318239c",
+   "case_kind": "b.eq",
+   "hash": "0x7f05cc22",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaAttack",
+   "handler": "0x3186270",
+   "case_entry": "0x317c7d0",
+   "verify_block": "0x3186268",
+   "case_kind": "b.eq",
+   "hash": "0x3af68b60",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaBackEffect",
+   "handler": "0x3181664",
+   "case_entry": "0x317c4c8",
+   "verify_block": "0x318165c",
+   "case_kind": "b.eq",
+   "hash": "0xc01f6afa",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaBackEffectPause"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaBackEffectDestroy",
+   "handler": "0x317b2e0",
+   "case_entry": "0x317b2b0",
+   "verify_block": "0x317b2d4",
+   "case_kind": "b.ne",
+   "hash": "0xdb14b6f4",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317b300"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaBackEffectPause",
+   "handler": "0x3181664",
+   "case_entry": "0x317e154",
+   "verify_block": "0x318165c",
+   "case_kind": "b.ne",
+   "hash": "0x5272f94c",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaBackEffect"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaBackEffectStart",
+   "handler": "0x3187fb4",
+   "case_entry": "0x317df40",
+   "verify_block": "0x3187fac",
+   "case_kind": "b.eq",
+   "hash": "0xf6a3c7e2",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsFastPlaySpeed",
+     "evidence": "0x3188000"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3187fd4"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3188058"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaBackEffectStop",
+   "handler": "0x317e538",
+   "case_entry": "0x317e508",
+   "verify_block": "0x317e52c",
+   "case_kind": "b.ne",
+   "hash": "0x6fe20be2",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "bool",
+     "consumer": "ModifyPlaySpeed",
+     "evidence": "0x317e588"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317e558"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaChange",
+   "handler": "0x317ec9c",
+   "case_entry": "0x31793c0",
+   "verify_block": "0x317ec90",
+   "case_kind": "b.eq",
+   "hash": "0xa003d4a4",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x317ecec"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317ecbc"
+    }
+   ],
+   "aliases": [
+    "figureChange"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "charaClear",
+   "handler": "0x3182968",
+   "case_entry": "0x317db2c",
+   "verify_block": "0x3182960",
+   "case_kind": "b.eq",
+   "hash": "0xeb08b389",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "Destroy",
+     "evidence": "0x31829b4"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3182988"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaCrossFade",
+   "handler": "0x317aad0",
+   "case_entry": "0x317aaa0",
+   "verify_block": "0x317aac4",
+   "case_kind": "b.ne",
+   "hash": "0xc3258eaa",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x317ab20"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "op_Equality",
+     "evidence": "0x3193e04"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317aaf0"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetCharaImageNameAndFormId",
+     "evidence": "0x318d1b0"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x318d14c"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318d224"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaCutStop",
+   "handler": "0x31857a8",
+   "case_entry": "0x317c370",
+   "verify_block": "0x31857a0",
+   "case_kind": "b.eq",
+   "hash": "0x485b96b4",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "StopCut",
+     "evidence": "0x31857f0"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31857c8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaCutin",
+   "handler": "0x31855fc",
+   "case_entry": "0x317c100",
+   "verify_block": "0x31855f4",
+   "case_kind": "b.eq",
+   "hash": "0x809ac7b3",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaCutinPause"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaCutinPause",
+   "handler": "0x31855fc",
+   "case_entry": "0x317c778",
+   "verify_block": "0x31855f4",
+   "case_kind": "b.ne",
+   "hash": "0x54abe85b",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaCutin"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaCutinStart",
+   "handler": "0x317d9c8",
+   "case_entry": "0x317d998",
+   "verify_block": "0x317d9bc",
+   "case_kind": "b.ne",
+   "hash": "0x2a64c021",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsFastPlaySpeed",
+     "evidence": "0x317da1c"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317d9e8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaCutout",
+   "handler": "0x317dc8c",
+   "case_entry": "0x317dc5c",
+   "verify_block": "0x317dc80",
+   "case_kind": "b.ne",
+   "hash": "0x595168a0",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaDepth",
+   "handler": "0x3183120",
+   "case_entry": "0x317e188",
+   "verify_block": "0x3183118",
+   "case_kind": "b.eq",
+   "hash": "0xd3b8c0a9",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaEffect",
+   "handler": "0x3187a5c",
+   "case_entry": "0x317c160",
+   "verify_block": "0x3187a54",
+   "case_kind": "b.eq",
+   "hash": "0xfb0c36fd",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3187aa8"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3187aec"
+    }
+   ],
+   "aliases": [
+    "charaEffectPause"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "charaEffectDestroy",
+   "handler": "0x317f398",
+   "case_entry": "0x3179828",
+   "verify_block": "0x317f38c",
+   "case_kind": "b.eq",
+   "hash": "0x39ab340d",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317f3b8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaEffectEdgeBlur",
+   "handler": "0x3188390",
+   "case_entry": "0x317e178",
+   "verify_block": "0x3188388",
+   "case_kind": "b.eq",
+   "hash": "0xd115434d",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31883b0"
+    }
+   ],
+   "aliases": [
+    "charaEffectEdgeBlurPause"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "charaEffectEdgeBlurDestroy",
+   "handler": "0x31865b8",
+   "case_entry": "0x317ca88",
+   "verify_block": "0x31865b0",
+   "case_kind": "b.eq",
+   "hash": "0x7489677d",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "StopEffect",
+     "evidence": "0x3186608"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31865d8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaEffectEdgeBlurPause",
+   "handler": "0x3188390",
+   "case_entry": "0x317c64c",
+   "verify_block": "0x3188388",
+   "case_kind": "b.eq",
+   "hash": "0xe7ddf525",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31883b0"
+    }
+   ],
+   "aliases": [
+    "charaEffectEdgeBlur"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "charaEffectEdgeBlurStart",
+   "handler": "0x317b730",
+   "case_entry": "0x317b700",
+   "verify_block": "0x317b724",
+   "case_kind": "b.ne",
+   "hash": "0xb129a77",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsFastPlaySpeed",
+     "evidence": "0x317b77c"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317b750"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaEffectEdgeBlurStop",
+   "handler": "0x317eabc",
+   "case_entry": "0x317ea8c",
+   "verify_block": "0x317eab0",
+   "case_kind": "b.ne",
+   "hash": "0x82c040dd",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "bool",
+     "consumer": "ModifyPlaySpeed",
+     "evidence": "0x317eb0c"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317eadc"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaEffectPause",
+   "handler": "0x3187a5c",
+   "case_entry": "0x317db1c",
+   "verify_block": "0x3187a54",
+   "case_kind": "b.eq",
+   "hash": "0xea99cd15",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3187aa8"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3187aec"
+    }
+   ],
+   "aliases": [
+    "charaEffect"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "charaEffectStart",
+   "handler": "0x3188090",
+   "case_entry": "0x317e088",
+   "verify_block": "0x3188088",
+   "case_kind": "b.eq",
+   "hash": "0xb718787",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsFastPlaySpeed",
+     "evidence": "0x31880dc"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31880b0"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3188134"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaEffectStop",
+   "handler": "0x317a4d0",
+   "case_entry": "0x317a4a0",
+   "verify_block": "0x317a4c4",
+   "case_kind": "b.ne",
+   "hash": "0xb8f2092d",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "bool",
+     "consumer": "ModifyPlaySpeed",
+     "evidence": "0x317a520"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317a4f0"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaFace",
+   "handler": "0x31847c0",
+   "case_entry": "0x317b038",
+   "verify_block": "0x31847b8",
+   "case_kind": "b.eq",
+   "hash": "0x132e0105",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFaceFade",
+   "handler": "0x3183290",
+   "case_entry": "0x317e69c",
+   "verify_block": "0x3183288",
+   "case_kind": "b.eq",
+   "hash": "0x9f320873",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFaceIcon",
+   "handler": "0x3182e04",
+   "case_entry": "0x317dedc",
+   "verify_block": "0x3182dfc",
+   "case_kind": "b.eq",
+   "hash": "0x7ab7e550",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFadeSpeed",
+   "handler": "0x3180e44",
+   "case_entry": "0x317bcf8",
+   "verify_block": "0x3180e3c",
+   "case_kind": "b.eq",
+   "hash": "0x9ea38ea5",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFadeTime",
+   "handler": "0x3188580",
+   "case_entry": "0x317e614",
+   "verify_block": "0x3188578",
+   "case_kind": "b.eq",
+   "hash": "0xf25efbf3",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsNormalPlaySpeed",
+     "evidence": "0x3188620"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31885f4"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3188648"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318866c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaFadeTimeLoop",
+   "handler": "0x3182fa0",
+   "case_entry": "0x317df50",
+   "verify_block": "0x3182f98",
+   "case_kind": "b.eq",
+   "hash": "0xf71d4141",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "op_Inequality",
+     "evidence": "0x3182fe0"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaFadeTimeLoopStop",
+   "handler": "0x31889d8",
+   "case_entry": "0x317e84c",
+   "verify_block": "0x31889d0",
+   "case_kind": "b.eq",
+   "hash": "0x47259261",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "StopMoveAlphaLoop",
+     "evidence": "0x3188a20"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31889f8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaFadein",
+   "handler": "0x3184fa4",
+   "case_entry": "0x317bb04",
+   "verify_block": "0x3184f9c",
+   "case_kind": "b.eq",
+   "hash": "0x6dc520dd",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaFadeinFSL",
+    "charaFadeinFSLNotNotch",
+    "charaFadeinFSR",
+    "charaFadeinFSRNotNotch",
+    "charaFadeinFSSideL",
+    "charaFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFadeinFSL",
+   "handler": "0x3184fa4",
+   "case_entry": "0x317a130",
+   "verify_block": "0x3184f9c",
+   "case_kind": "b.ne",
+   "hash": "0x1e9814ae",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaFadein",
+    "charaFadeinFSLNotNotch",
+    "charaFadeinFSR",
+    "charaFadeinFSRNotNotch",
+    "charaFadeinFSSideL",
+    "charaFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFadeinFSLNotNotch",
+   "handler": "0x3184fa4",
+   "case_entry": "0x317bd08",
+   "verify_block": "0x3184f9c",
+   "case_kind": "b.ne",
+   "hash": "0x9f05676f",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaFadein",
+    "charaFadeinFSL",
+    "charaFadeinFSR",
+    "charaFadeinFSRNotNotch",
+    "charaFadeinFSSideL",
+    "charaFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFadeinFSR",
+   "handler": "0x3184fa4",
+   "case_entry": "0x3179a6c",
+   "verify_block": "0x3184f9c",
+   "case_kind": "b.eq",
+   "hash": "0x897f20c",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaFadein",
+    "charaFadeinFSL",
+    "charaFadeinFSLNotNotch",
+    "charaFadeinFSRNotNotch",
+    "charaFadeinFSSideL",
+    "charaFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFadeinFSRNotNotch",
+   "handler": "0x3184fa4",
+   "case_entry": "0x317ceb8",
+   "verify_block": "0x3184f9c",
+   "case_kind": "b.eq",
+   "hash": "0x300bbca1",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaFadein",
+    "charaFadeinFSL",
+    "charaFadeinFSLNotNotch",
+    "charaFadeinFSR",
+    "charaFadeinFSSideL",
+    "charaFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFadeinFSSideL",
+   "handler": "0x3184fa4",
+   "case_entry": "0x317e1cc",
+   "verify_block": "0x3184f9c",
+   "case_kind": "b.eq",
+   "hash": "0x36eaa31b",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaFadein",
+    "charaFadeinFSL",
+    "charaFadeinFSLNotNotch",
+    "charaFadeinFSR",
+    "charaFadeinFSRNotNotch",
+    "charaFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFadeinFSSideR",
+   "handler": "0x3184fa4",
+   "case_entry": "0x3179354",
+   "verify_block": "0x3184f9c",
+   "case_kind": "b.eq",
+   "hash": "0x24ea86c5",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaFadein",
+    "charaFadeinFSL",
+    "charaFadeinFSLNotNotch",
+    "charaFadeinFSR",
+    "charaFadeinFSRNotNotch",
+    "charaFadeinFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFadeout",
+   "handler": "0x3187e50",
+   "case_entry": "0x317dd8c",
+   "verify_block": "0x3187e48",
+   "case_kind": "b.eq",
+   "hash": "0x417a2be6",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaFilter",
+   "handler": "0x3187830",
+   "case_entry": "0x317d978",
+   "verify_block": "0x3187828",
+   "case_kind": "b.eq",
+   "hash": "0x29dffd16",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaLayer",
+   "handler": "0x31829ec",
+   "case_entry": "0x317dbb4",
+   "verify_block": "0x31829e4",
+   "case_kind": "b.eq",
+   "hash": "0x1b882c21",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3182a0c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaMask",
+   "handler": "0x3183f88",
+   "case_entry": "0x317a22c",
+   "verify_block": "0x3183f80",
+   "case_kind": "b.eq",
+   "hash": "0x597c9aa4",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3183fa8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaMove",
+   "handler": "0x318505c",
+   "case_entry": "0x317bb50",
+   "verify_block": "0x3185054",
+   "case_kind": "b.eq",
+   "hash": "0xf1c292c1",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMoveFSL",
+    "charaMoveFSR",
+    "charaMoveFSSideL",
+    "charaMoveFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveEase",
+   "handler": "0x3183e08",
+   "case_entry": "0x317aa54",
+   "verify_block": "0x3183e00",
+   "case_kind": "b.ne",
+   "hash": "0x4b3c4b6b",
+   "min_token_count": 9,
+   "params": [],
+   "aliases": [
+    "charaMoveEaseFSL",
+    "charaMoveEaseFSR",
+    "charaMoveEaseFSSideL",
+    "charaMoveEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveEaseFSL",
+   "handler": "0x3183e08",
+   "case_entry": "0x317a9bc",
+   "verify_block": "0x3183e00",
+   "case_kind": "b.ne",
+   "hash": "0x4da5580",
+   "min_token_count": 9,
+   "params": [],
+   "aliases": [
+    "charaMoveEase",
+    "charaMoveEaseFSR",
+    "charaMoveEaseFSSideL",
+    "charaMoveEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveEaseFSR",
+   "handler": "0x3183e08",
+   "case_entry": "0x317e670",
+   "verify_block": "0x3183e00",
+   "case_kind": "b.ne",
+   "hash": "0x22da84ba",
+   "min_token_count": 9,
+   "params": [],
+   "aliases": [
+    "charaMoveEase",
+    "charaMoveEaseFSL",
+    "charaMoveEaseFSSideL",
+    "charaMoveEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveEaseFSSideL",
+   "handler": "0x3183e08",
+   "case_entry": "0x317a16c",
+   "verify_block": "0x3183e00",
+   "case_kind": "b.eq",
+   "hash": "0x99aee291",
+   "min_token_count": 9,
+   "params": [],
+   "aliases": [
+    "charaMoveEase",
+    "charaMoveEaseFSL",
+    "charaMoveEaseFSR",
+    "charaMoveEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveEaseFSSideR",
+   "handler": "0x3183e08",
+   "case_entry": "0x317c5c0",
+   "verify_block": "0x3183e00",
+   "case_kind": "b.eq",
+   "hash": "0xa3aef24f",
+   "min_token_count": 9,
+   "params": [],
+   "aliases": [
+    "charaMoveEase",
+    "charaMoveEaseFSL",
+    "charaMoveEaseFSR",
+    "charaMoveEaseFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveFSL",
+   "handler": "0x318505c",
+   "case_entry": "0x317b6f0",
+   "verify_block": "0x3185054",
+   "case_kind": "b.eq",
+   "hash": "0xa87bbea",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMove",
+    "charaMoveFSR",
+    "charaMoveFSSideL",
+    "charaMoveFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveFSR",
+   "handler": "0x318505c",
+   "case_entry": "0x317e098",
+   "verify_block": "0x3185054",
+   "case_kind": "b.eq",
+   "hash": "0xc87bf10",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMove",
+    "charaMoveFSL",
+    "charaMoveFSSideL",
+    "charaMoveFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveFSSideL",
+   "handler": "0x318505c",
+   "case_entry": "0x317b058",
+   "verify_block": "0x3185054",
+   "case_kind": "b.ne",
+   "hash": "0x1819d1a7",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMove",
+    "charaMoveFSL",
+    "charaMoveFSR",
+    "charaMoveFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveFSSideR",
+   "handler": "0x318505c",
+   "case_entry": "0x317c180",
+   "verify_block": "0x3185054",
+   "case_kind": "b.ne",
+   "hash": "0xfe19a8b9",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMove",
+    "charaMoveFSL",
+    "charaMoveFSR",
+    "charaMoveFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturn",
+   "handler": "0x3184c98",
+   "case_entry": "0x317ae5c",
+   "verify_block": "0x3184c90",
+   "case_kind": "b.eq",
+   "hash": "0x66e03dfb",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMoveReturnFSL",
+    "charaMoveReturnFSR",
+    "charaMoveReturnFSSideL",
+    "charaMoveReturnFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturnEase",
+   "handler": "0x3181a58",
+   "case_entry": "0x317b584",
+   "verify_block": "0x3181a50",
+   "case_kind": "b.ne",
+   "hash": "0x79a1cb89",
+   "min_token_count": 7,
+   "params": [],
+   "aliases": [
+    "charaMoveReturnEaseFSL",
+    "charaMoveReturnEaseFSR",
+    "charaMoveReturnEaseFSSideL",
+    "charaMoveReturnEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturnEaseFSL",
+   "handler": "0x3181a58",
+   "case_entry": "0x31790fc",
+   "verify_block": "0x3181a50",
+   "case_kind": "b.eq",
+   "hash": "0x831f0ab2",
+   "min_token_count": 7,
+   "params": [],
+   "aliases": [
+    "charaMoveReturnEase",
+    "charaMoveReturnEaseFSR",
+    "charaMoveReturnEaseFSSideL",
+    "charaMoveReturnEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturnEaseFSR",
+   "handler": "0x3181a58",
+   "case_entry": "0x317c724",
+   "verify_block": "0x3181a50",
+   "case_kind": "b.eq",
+   "hash": "0x951f2708",
+   "min_token_count": 7,
+   "params": [],
+   "aliases": [
+    "charaMoveReturnEase",
+    "charaMoveReturnEaseFSL",
+    "charaMoveReturnEaseFSSideL",
+    "charaMoveReturnEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturnEaseFSSideL",
+   "handler": "0x3181a58",
+   "case_entry": "0x317a36c",
+   "verify_block": "0x3181a50",
+   "case_kind": "b.eq",
+   "hash": "0x4448155f",
+   "min_token_count": 7,
+   "params": [],
+   "aliases": [
+    "charaMoveReturnEase",
+    "charaMoveReturnEaseFSL",
+    "charaMoveReturnEaseFSR",
+    "charaMoveReturnEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturnEaseFSSideR",
+   "handler": "0x3181a58",
+   "case_entry": "0x317a23c",
+   "verify_block": "0x3181a50",
+   "case_kind": "b.eq",
+   "hash": "0x5a483801",
+   "min_token_count": 7,
+   "params": [],
+   "aliases": [
+    "charaMoveReturnEase",
+    "charaMoveReturnEaseFSL",
+    "charaMoveReturnEaseFSR",
+    "charaMoveReturnEaseFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturnFSL",
+   "handler": "0x3184c98",
+   "case_entry": "0x317b904",
+   "verify_block": "0x3184c90",
+   "case_kind": "b.eq",
+   "hash": "0xcf6a60d0",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMoveReturn",
+    "charaMoveReturnFSR",
+    "charaMoveReturnFSSideL",
+    "charaMoveReturnFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturnFSR",
+   "handler": "0x3184c98",
+   "case_entry": "0x317cd20",
+   "verify_block": "0x3184c90",
+   "case_kind": "b.eq",
+   "hash": "0xcd6a5daa",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMoveReturn",
+    "charaMoveReturnFSL",
+    "charaMoveReturnFSSideL",
+    "charaMoveReturnFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturnFSSideL",
+   "handler": "0x3184c98",
+   "case_entry": "0x317da44",
+   "verify_block": "0x3184c90",
+   "case_kind": "b.eq",
+   "hash": "0xa92c5341",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMoveReturn",
+    "charaMoveReturnFSL",
+    "charaMoveReturnFSR",
+    "charaMoveReturnFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveReturnFSSideR",
+   "handler": "0x3184c98",
+   "case_entry": "0x317e108",
+   "verify_block": "0x3184c90",
+   "case_kind": "b.eq",
+   "hash": "0x932c309f",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "charaMoveReturn",
+    "charaMoveReturnFSL",
+    "charaMoveReturnFSR",
+    "charaMoveReturnFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveScale",
+   "handler": "0x3182550",
+   "case_entry": "0x317d7ec",
+   "verify_block": "0x3182548",
+   "case_kind": "b.eq",
+   "hash": "0x89e0af55",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaMoveScaleEase",
+   "handler": "0x318228c",
+   "case_entry": "0x317d528",
+   "verify_block": "0x3182284",
+   "case_kind": "b.eq",
+   "hash": "0xb98ba0ef",
+   "min_token_count": 7,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaPut",
+   "handler": "0x3186e80",
+   "case_entry": "0x317a9f8",
+   "verify_block": "0x3186e78",
+   "case_kind": "b.eq",
+   "hash": "0x87ab67fd",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaPutFSL",
+    "charaPutFSLNotNotch",
+    "charaPutFSR",
+    "charaPutFSRNotNotch",
+    "charaPutFSSideL",
+    "charaPutFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaPutFSL",
+   "handler": "0x3186e80",
+   "case_entry": "0x317bd54",
+   "verify_block": "0x3186e78",
+   "case_kind": "b.ne",
+   "hash": "0x5e4d168e",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaPut",
+    "charaPutFSLNotNotch",
+    "charaPutFSR",
+    "charaPutFSRNotNotch",
+    "charaPutFSSideL",
+    "charaPutFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaPutFSLNotNotch",
+   "handler": "0x3186e80",
+   "case_entry": "0x317d498",
+   "verify_block": "0x3186e78",
+   "case_kind": "b.eq",
+   "hash": "0x45340d4f",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaPut",
+    "charaPutFSL",
+    "charaPutFSR",
+    "charaPutFSRNotNotch",
+    "charaPutFSSideL",
+    "charaPutFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaPutFSR",
+   "handler": "0x3186e80",
+   "case_entry": "0x3179190",
+   "verify_block": "0x3186e78",
+   "case_kind": "b.ne",
+   "hash": "0x484cf3ec",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaPut",
+    "charaPutFSL",
+    "charaPutFSLNotNotch",
+    "charaPutFSRNotNotch",
+    "charaPutFSSideL",
+    "charaPutFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaPutFSRNotNotch",
+   "handler": "0x3186e80",
+   "case_entry": "0x317ac18",
+   "verify_block": "0x3186e78",
+   "case_kind": "b.eq",
+   "hash": "0xa7254b01",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaPut",
+    "charaPutFSL",
+    "charaPutFSLNotNotch",
+    "charaPutFSR",
+    "charaPutFSSideL",
+    "charaPutFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaPutFSSideL",
+   "handler": "0x3186e80",
+   "case_entry": "0x317c66c",
+   "verify_block": "0x3186e78",
+   "case_kind": "b.ne",
+   "hash": "0xe90139bb",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaPut",
+    "charaPutFSL",
+    "charaPutFSLNotNotch",
+    "charaPutFSR",
+    "charaPutFSRNotNotch",
+    "charaPutFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaPutFSSideR",
+   "handler": "0x3186e80",
+   "case_entry": "0x3179790",
+   "verify_block": "0x3186e78",
+   "case_kind": "b.eq",
+   "hash": "0xd7011d65",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaPut",
+    "charaPutFSL",
+    "charaPutFSLNotNotch",
+    "charaPutFSR",
+    "charaPutFSRNotNotch",
+    "charaPutFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaRelativeLoopMove",
+   "handler": "0x3181190",
+   "case_entry": "0x317bea0",
+   "verify_block": "0x3181188",
+   "case_kind": "b.eq",
+   "hash": "0x47007bd7",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318133c"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31812d0"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31811f0"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaRelativeLoopMoveEase",
+   "handler": "0x31871c4",
+   "case_entry": "0x317d560",
+   "verify_block": "0x31871bc",
+   "case_kind": "b.eq",
+   "hash": "0x8062c6d5",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsFastPlaySpeed",
+     "evidence": "0x31873fc"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3187370"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3187304"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3187224"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaRelativeLoopMoveStop",
+   "handler": "0x3181f68",
+   "case_entry": "0x317d10c",
+   "verify_block": "0x3181f60",
+   "case_kind": "b.eq",
+   "hash": "0xf064676f",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "StopMoveRelativePositionLoop",
+     "evidence": "0x3181fb0"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3181f88"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaRelativePut",
+   "handler": "0x31817d0",
+   "case_entry": "0x317c55c",
+   "verify_block": "0x31817c8",
+   "case_kind": "b.eq",
+   "hash": "0x26c26d0d",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaReturn",
+   "handler": "0x317a3ac",
+   "case_entry": "0x317a37c",
+   "verify_block": "0x317a3a0",
+   "case_kind": "b.ne",
+   "hash": "0x446cbd2a",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317a3cc"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaRoll",
+   "handler": "0x31869d0",
+   "case_entry": "0x317cff4",
+   "verify_block": "0x31869c8",
+   "case_kind": "b.eq",
+   "hash": "0x6b8e2ee7",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": ".ctor",
+     "evidence": "0x3186a18"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31869f0"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3186a78"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3186ad0"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3186af4"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaRollAxis",
+   "handler": "0x3179868",
+   "case_entry": "0x3179838",
+   "verify_block": "0x317985c",
+   "case_kind": "b.ne",
+   "hash": "0x3a4433d2",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3179888"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31798d4"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31798d4"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317990c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaRollAxisLoopStop",
+   "handler": "0x3185968",
+   "case_entry": "0x317c5b0",
+   "verify_block": "0x3185960",
+   "case_kind": "b.eq",
+   "hash": "0xa29f5c88",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsFastPlaySpeed",
+     "evidence": "0x31859b4"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3185988"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaRollMove",
+   "handler": "0x317f4ec",
+   "case_entry": "0x31799c4",
+   "verify_block": "0x317f4e0",
+   "case_kind": "b.eq",
+   "hash": "0x723053de",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaRollMoveEx",
+   "handler": "0x31836ac",
+   "case_entry": "0x317eb60",
+   "verify_block": "0x31836a4",
+   "case_kind": "b.eq",
+   "hash": "0xfee0e57b",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaScale",
+   "handler": "0x31815a4",
+   "case_entry": "0x317c380",
+   "verify_block": "0x318159c",
+   "case_kind": "b.eq",
+   "hash": "0x4982840e",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaSet",
+   "handler": "0x3186fe0",
+   "case_entry": "0x317d518",
+   "verify_block": "0x3186fd8",
+   "case_kind": "b.eq",
+   "hash": "0xb9704d5c",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "equipSet",
+    "figureSet",
+    "horizontalImageSet",
+    "imageSet",
+    "sceneSet",
+    "verticalImageSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaShadow",
+   "handler": "0x317e6dc",
+   "case_entry": "0x317e6ac",
+   "verify_block": "0x317e6d0",
+   "case_kind": "b.ne",
+   "hash": "0x9fd86770",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaShake",
+   "handler": "0x31859e8",
+   "case_entry": "0x317c610",
+   "verify_block": "0x31859e0",
+   "case_kind": "b.eq",
+   "hash": "0x65c88cca",
+   "min_token_count": 9,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaShakeStop",
+   "handler": "0x3184e68",
+   "case_entry": "0x317b9c4",
+   "verify_block": "0x3184e60",
+   "case_kind": "b.eq",
+   "hash": "0x3486b6d2",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "ShakeStop",
+     "evidence": "0x3184eb0"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3184e88"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaSpecialEffect",
+   "handler": "0x3184b84",
+   "case_entry": "0x317b8b0",
+   "verify_block": "0x3184b7c",
+   "case_kind": "b.eq",
+   "hash": "0x4f3fe4c2",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaSpecialEffectPause"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaSpecialEffectPause",
+   "handler": "0x3184b84",
+   "case_entry": "0x3179ac8",
+   "verify_block": "0x3184b7c",
+   "case_kind": "b.ne",
+   "hash": "0x8b071724",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaSpecialEffect"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "charaSpecialEffectStart",
+   "handler": "0x3186754",
+   "case_entry": "0x317cd10",
+   "verify_block": "0x318674c",
+   "case_kind": "b.eq",
+   "hash": "0xccfb6cfa",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3186774"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x31867e8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaSpecialEffectStop",
+   "handler": "0x318198c",
+   "case_entry": "0x317c698",
+   "verify_block": "0x3181984",
+   "case_kind": "b.eq",
+   "hash": "0x119470da",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31819ac"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "charaTalk",
+   "handler": "0x3184a00",
+   "case_entry": "0x317b564",
+   "verify_block": "0x31849f8",
+   "case_kind": "b.eq",
+   "hash": "0x78e89632",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "clear",
+   "handler": "0x3182038",
+   "case_entry": "0x317d2d0",
+   "verify_block": "0x3182030",
+   "case_kind": "b.eq",
+   "hash": "0x5c6e1222",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "page"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "communicationChara",
+   "handler": "0x317ef18",
+   "case_entry": "0x31794f4",
+   "verify_block": "0x317ef0c",
+   "case_kind": "b.eq",
+   "hash": "0xe685d03e",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317ef34"
+    }
+   ],
+   "aliases": [
+    "communicationCharaLoop"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "communicationCharaClear",
+   "handler": "0x318670c",
+   "case_entry": "0x317ccd4",
+   "verify_block": "0x3186704",
+   "case_kind": "b.eq",
+   "hash": "0x4d505e0f",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "communicationCharaFace",
+   "handler": "0x317d044",
+   "case_entry": "0x317d014",
+   "verify_block": "0x317d038",
+   "case_kind": "b.ne",
+   "hash": "0x6d7b8a87",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317d0ac"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "communicationCharaLoop",
+   "handler": "0x317ef18",
+   "case_entry": "0x317dd70",
+   "verify_block": "0x317ef0c",
+   "case_kind": "b.ne",
+   "hash": "0xdc96d1c4",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317ef34"
+    }
+   ],
+   "aliases": [
+    "communicationChara"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "communicationCharaStop",
+   "handler": "0x3181d7c",
+   "case_entry": "0x317cbc8",
+   "verify_block": "0x3181d74",
+   "case_kind": "b.eq",
+   "hash": "0xa10d876",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "criMovie",
+   "handler": "0x3183c38",
+   "case_entry": "0x317a110",
+   "verify_block": "0x3183c30",
+   "case_kind": "b.eq",
+   "hash": "0x1dcc0581",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "movie"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "cueSe",
+   "handler": "0x3186434",
+   "case_entry": "0x317c80c",
+   "verify_block": "0x318642c",
+   "case_kind": "b.eq",
+   "hash": "0xb129b224",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x318fcbc"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x318fce4"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318fd08"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "cueSeContinue",
+   "handler": "0x317ffa4",
+   "case_entry": "0x317aa44",
+   "verify_block": "0x317ff98",
+   "case_kind": "b.eq",
+   "hash": "0x4b340125",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x3191658"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x319167c"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3191608"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "cueSeContinueStop",
+   "handler": "0x31838c8",
+   "case_entry": "0x3179c4c",
+   "verify_block": "0x31838c0",
+   "case_kind": "b.eq",
+   "hash": "0x2b516325",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "op_Equality",
+     "evidence": "0x3193e04"
+    }
+   ],
+   "aliases": [
+    "seContinueStop"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "cueSeContinueVolume",
+   "handler": "0x3188898",
+   "case_entry": "0x317e7e8",
+   "verify_block": "0x3188890",
+   "case_kind": "b.eq",
+   "hash": "0xe4cc08cf",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31889a0"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318897c"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3188938"
+    }
+   ],
+   "aliases": [
+    "seContinueVolume"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "cueSeStop",
+   "handler": "0x3188bb0",
+   "case_entry": "0x317ea6c",
+   "verify_block": "0x3188ba8",
+   "case_kind": "b.eq",
+   "hash": "0x81709bec",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3188c2c"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3188c2c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "cueSeVolume",
+   "handler": "0x318440c",
+   "case_entry": "0x317aa34",
+   "verify_block": "0x3184404",
+   "case_kind": "b.eq",
+   "hash": "0x4a9cd496",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "cueVoice",
+   "handler": "0x317cef8",
+   "case_entry": "0x317cec8",
+   "verify_block": "0x317ceec",
+   "case_kind": "b.ne",
+   "hash": "0x316fbd5a",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "cueVoiceStop",
+   "handler": "0x3179ed0",
+   "case_entry": "0x3179ea0",
+   "verify_block": "0x3179ec4",
+   "case_kind": "b.ne",
+   "hash": "0x6b2bbb82",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "cueVoiceVolume",
+   "handler": "0x317b954",
+   "case_entry": "0x317b924",
+   "verify_block": "0x317b948",
+   "case_kind": "b.ne",
+   "hash": "0xd1009d6c",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "delay",
+   "handler": "0x3182768",
+   "case_entry": "0x317ccf4",
+   "verify_block": "0x3182760",
+   "case_kind": "b.ne",
+   "hash": "0x4ed1f1d8",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31827a8"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31827cc"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31827f0"
+    }
+   ],
+   "aliases": [
+    "tdelay"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "delayEnd",
+   "handler": "0x3182018",
+   "case_entry": "0x317cfd0",
+   "verify_block": "0x3182010",
+   "case_kind": "b.ne",
+   "hash": "0xacd4411d",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "advSoundSet",
+    "enableFullScreen",
+    "enableWaitLoadAssetWhenResume"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "delayStop",
+   "handler": "0x31886a0",
+   "case_entry": "0x317e650",
+   "verify_block": "0x3188698",
+   "case_kind": "b.eq",
+   "hash": "0x20c8df00",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31886bc"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31886e0"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "delayStopAll",
+   "handler": "0x317fcbc",
+   "case_entry": "0x317a608",
+   "verify_block": "0x317fcb0",
+   "case_kind": "b.eq",
+   "hash": "0x7d286a53",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "distortionloop",
+   "handler": "0x317f1e0",
+   "case_entry": "0x3179710",
+   "verify_block": "0x317f1d4",
+   "case_kind": "b.eq",
+   "hash": "0x52ded3b8",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317f240"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317f264"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317f288"
+    },
+    {
+     "index": 8,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317f2ac"
+    },
+    {
+     "index": 10,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317f2d0"
+    },
+    {
+     "index": 12,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317f2f4"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "distortionstart",
+   "handler": "0x317b128",
+   "case_entry": "0x317b0f8",
+   "verify_block": "0x317b11c",
+   "case_kind": "b.ne",
+   "hash": "0x569b71d2",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317b188"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317b1ac"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317b1d0"
+    },
+    {
+     "index": 8,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317b1f4"
+    },
+    {
+     "index": 10,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317b218"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "distortionstop",
+   "handler": "0x317b7ec",
+   "case_entry": "0x317b7bc",
+   "verify_block": "0x317b7e0",
+   "case_kind": "b.ne",
+   "hash": "0x9239b092",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317b828"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "effect",
+   "handler": "0x3180b70",
+   "case_entry": "0x317bb14",
+   "verify_block": "0x3180b64",
+   "case_kind": "b.eq",
+   "hash": "0x6e6e8d54",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3180b90"
+    }
+   ],
+   "aliases": [
+    "effectPause"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "effectDestroy",
+   "handler": "0x3184278",
+   "case_entry": "0x317a7b0",
+   "verify_block": "0x3184270",
+   "case_kind": "b.eq",
+   "hash": "0xf8310406",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3184298"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "effectForceStop",
+   "handler": "0x3184508",
+   "case_entry": "0x317aa80",
+   "verify_block": "0x3184500",
+   "case_kind": "b.eq",
+   "hash": "0xc0c274bf",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3184528"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "effectPause",
+   "handler": "0x3180b70",
+   "case_entry": "0x317dea8",
+   "verify_block": "0x3180b64",
+   "case_kind": "b.ne",
+   "hash": "0xb7e2027e",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3180b90"
+    }
+   ],
+   "aliases": [
+    "effect"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "effectStart",
+   "handler": "0x317cca8",
+   "case_entry": "0x317cc78",
+   "verify_block": "0x317cc9c",
+   "case_kind": "b.ne",
+   "hash": "0x8e961ad8",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x317ccc8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "effectStop",
+   "handler": "0x31821f8",
+   "case_entry": "0x317d4a8",
+   "verify_block": "0x31821f0",
+   "case_kind": "b.eq",
+   "hash": "0x45bba27c",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3182218"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "effectmessageDestroy",
+   "handler": "0x3181ce4",
+   "case_entry": "0x317ca98",
+   "verify_block": "0x3181cdc",
+   "case_kind": "b.eq",
+   "hash": "0x7662206b",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x3181d04"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "effectmessageStop",
+   "handler": "0x31814c4",
+   "case_entry": "0x317c1ac",
+   "verify_block": "0x31814bc",
+   "case_kind": "b.eq",
+   "hash": "0x2c09cdb",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x31814e4"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "else",
+   "handler": "0x317c0dc",
+   "case_entry": "0x317c0ac",
+   "verify_block": "0x317c0d0",
+   "case_kind": "b.ne",
+   "hash": "0xbdbf5bf0",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "enableFullScreen",
+   "handler": "0x3182018",
+   "case_entry": "0x317d24c",
+   "verify_block": "0x3182010",
+   "case_kind": "b.eq",
+   "hash": "0x9c236c7b",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "advSoundSet",
+    "delayEnd",
+    "enableWaitLoadAssetWhenResume"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "enableWaitLoadAssetWhenResume",
+   "handler": "0x3182018",
+   "case_entry": "0x3179488",
+   "verify_block": "0x3182010",
+   "case_kind": "b.eq",
+   "hash": "0x633964ee",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "advSoundSet",
+    "delayEnd",
+    "enableFullScreen"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "end",
+   "handler": "0x317f9c4",
+   "case_entry": "0x3179e90",
+   "verify_block": "0x317f9b8",
+   "case_kind": "b.eq",
+   "hash": "0x6a8e75aa",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "interruption"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "endFade",
+   "handler": "0x31843b4",
+   "case_entry": "0x317a9e8",
+   "verify_block": "0x31843ac",
+   "case_kind": "b.eq",
+   "hash": "0x867da2ec",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "endIf",
+   "handler": "0x317dbf4",
+   "case_entry": "0x317dbc4",
+   "verify_block": "0x317dbe8",
+   "case_kind": "b.ne",
+   "hash": "0x1c625f2d",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "equipChange",
+   "handler": "0x31884b4",
+   "case_entry": "0x317d7fc",
+   "verify_block": "0x31884ac",
+   "case_kind": "b.ne",
+   "hash": "0x8a3e0dd7",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x3188504"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31884d4"
+    }
+   ],
+   "aliases": [
+    "horizontalImageChange",
+    "imageChange",
+    "verticalImageChange"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "equipSet",
+   "handler": "0x3186fe0",
+   "case_entry": "0x317c54c",
+   "verify_block": "0x3186fd8",
+   "case_kind": "b.eq",
+   "hash": "0x25a4ee11",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaSet",
+    "figureSet",
+    "horizontalImageSet",
+    "imageSet",
+    "sceneSet",
+    "verticalImageSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "f",
+   "handler": "0x3187928",
+   "case_entry": "0x317bd80",
+   "verify_block": "0x3187920",
+   "case_kind": "b.eq",
+   "hash": "0xe30c2799",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "font",
+    "fontSize"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "faceTalkScreen",
+   "handler": "0x317cd60",
+   "case_entry": "0x317cd30",
+   "verify_block": "0x317cd54",
+   "case_kind": "b.ne",
+   "hash": "0xce912426",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "warBoardTalkScreen"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "fadeMove",
+   "handler": "0x3181ef0",
+   "case_entry": "0x317cfc0",
+   "verify_block": "0x3181ee8",
+   "case_kind": "b.eq",
+   "hash": "0xab024cba",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "fadeOff",
+   "handler": "0x3184b58",
+   "case_entry": "0x317b79c",
+   "verify_block": "0x3184b50",
+   "case_kind": "b.eq",
+   "hash": "0x8ef601f0",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "fadein",
+   "handler": "0x3180b14",
+   "case_entry": "0x317bac8",
+   "verify_block": "0x3180b08",
+   "case_kind": "b.eq",
+   "hash": "0xae01fb20",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "fadeout"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "fadeout",
+   "handler": "0x3180b14",
+   "case_entry": "0x317d220",
+   "verify_block": "0x3180b08",
+   "case_kind": "b.ne",
+   "hash": "0x20407665",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "fadein"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "figureChange",
+   "handler": "0x317ec9c",
+   "case_entry": "0x317e198",
+   "verify_block": "0x317ec90",
+   "case_kind": "b.ne",
+   "hash": "0xd558a289",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x317ecec"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317ecbc"
+    }
+   ],
+   "aliases": [
+    "charaChange"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "figureSet",
+   "handler": "0x3186fe0",
+   "case_entry": "0x317e7b4",
+   "verify_block": "0x3186fd8",
+   "case_kind": "b.eq",
+   "hash": "0x6032d17f",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaSet",
+    "equipSet",
+    "horizontalImageSet",
+    "imageSet",
+    "sceneSet",
+    "verticalImageSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "flag",
+   "handler": "0x3188a44",
+   "case_entry": "0x317e8c0",
+   "verify_block": "0x3188a3c",
+   "case_kind": "b.eq",
+   "hash": "0xbdeaa8d7",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "SearchFlag",
+     "evidence": "0x3188a90"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "unknown",
+     "consumer": "Set",
+     "evidence": "0x3188ab4"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "flagRandom",
+   "handler": "0x3184ed4",
+   "case_entry": "0x317bab8",
+   "verify_block": "0x3184ecc",
+   "case_kind": "b.eq",
+   "hash": "0xacf5d138",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "flashOff",
+   "handler": "0x317d868",
+   "case_entry": "0x317d838",
+   "verify_block": "0x317d85c",
+   "case_kind": "b.ne",
+   "hash": "0x4cff8f0e",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "flashOffDep",
+   "handler": "0x317c600",
+   "case_entry": "0x317c5d0",
+   "verify_block": "0x317c5f4",
+   "case_kind": "b.ne",
+   "hash": "0xa5971263",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "flashin",
+   "handler": "0x317df1c",
+   "case_entry": "0x317deec",
+   "verify_block": "0x317df10",
+   "case_kind": "b.ne",
+   "hash": "0x7ae472ea",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "flashinDep",
+   "handler": "0x3187f10",
+   "case_entry": "0x317de88",
+   "verify_block": "0x3187f08",
+   "case_kind": "b.eq",
+   "hash": "0xb6903d97",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "flashout",
+   "handler": "0x31809bc",
+   "case_entry": "0x317b7ac",
+   "verify_block": "0x31809b0",
+   "case_kind": "b.eq",
+   "hash": "0x8f69a0a3",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3180a00"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "flashoutDep",
+   "handler": "0x3185ef0",
+   "case_entry": "0x317c758",
+   "verify_block": "0x3185ee8",
+   "case_kind": "b.eq",
+   "hash": "0x53407890",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3185f34"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "font",
+   "handler": "0x3187928",
+   "case_entry": "0x317ab60",
+   "verify_block": "0x3187920",
+   "case_kind": "b.eq",
+   "hash": "0x274e1290",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "f",
+    "fontSize"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "fontSize",
+   "handler": "0x3187928",
+   "case_entry": "0x317da34",
+   "verify_block": "0x3187920",
+   "case_kind": "b.eq",
+   "hash": "0xa8f18501",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "f",
+    "font"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "fontType",
+   "handler": "0x31795f8",
+   "case_entry": "0x31795c8",
+   "verify_block": "0x31795ec",
+   "case_kind": "b.ne",
+   "hash": "0x949487b8",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "fowardEffect",
+   "handler": "0x318087c",
+   "case_entry": "0x317bad8",
+   "verify_block": "0x3180870",
+   "case_kind": "b.ne",
+   "hash": "0xae20810d",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x318089c"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x318f6f8"
+    }
+   ],
+   "aliases": [
+    "fowardEffectPause"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "fowardEffectDestroy",
+   "handler": "0x317db6c",
+   "case_entry": "0x317db3c",
+   "verify_block": "0x317db60",
+   "case_kind": "b.ne",
+   "hash": "0xeb4e703d",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x317db8c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "fowardEffectPause",
+   "handler": "0x318087c",
+   "case_entry": "0x317b574",
+   "verify_block": "0x3180870",
+   "case_kind": "b.eq",
+   "hash": "0x79355ce5",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x318089c"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x318f6f8"
+    }
+   ],
+   "aliases": [
+    "fowardEffect"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "fowardEffectStart",
+   "handler": "0x318140c",
+   "case_entry": "0x317c110",
+   "verify_block": "0x3181404",
+   "case_kind": "b.eq",
+   "hash": "0x80a47737",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x318142c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "fowardEffectStop",
+   "handler": "0x318496c",
+   "case_entry": "0x317b448",
+   "verify_block": "0x3184964",
+   "case_kind": "b.eq",
+   "hash": "0xb5b3e89d",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertTalkEffectName",
+     "evidence": "0x318498c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "fsmObjDestroy",
+   "handler": "0x317aba0",
+   "case_entry": "0x317ab70",
+   "verify_block": "0x317ab94",
+   "case_kind": "b.ne",
+   "hash": "0x284081d0",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "Destroy",
+     "evidence": "0x317abec"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317abc0"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "fsmObjLayer",
+   "handler": "0x317f638",
+   "case_entry": "0x3179ab8",
+   "verify_block": "0x317f62c",
+   "case_kind": "b.eq",
+   "hash": "0x8afb97c3",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "fsmObjSendEvent",
+   "handler": "0x3185e08",
+   "case_entry": "0x31799d4",
+   "verify_block": "0x3185e00",
+   "case_kind": "b.ne",
+   "hash": "0x73600b4c",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "fsmObjSetState"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "fsmObjSet",
+   "handler": "0x317c248",
+   "case_entry": "0x317c218",
+   "verify_block": "0x317c23c",
+   "case_kind": "b.ne",
+   "hash": "0x8643a3f6",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "fsmObjSetBool",
+   "handler": "0x3182adc",
+   "case_entry": "0x317dc10",
+   "verify_block": "0x3182ad4",
+   "case_kind": "b.eq",
+   "hash": "0x996d981a",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "fsmObjSetFloat",
+    "fsmObjSetString"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "fsmObjSetFloat",
+   "handler": "0x3182adc",
+   "case_entry": "0x3179364",
+   "verify_block": "0x3182ad4",
+   "case_kind": "b.ne",
+   "hash": "0x25392b7c",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "fsmObjSetBool",
+    "fsmObjSetString"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "fsmObjSetState",
+   "handler": "0x3185e08",
+   "case_entry": "0x317c714",
+   "verify_block": "0x3185e00",
+   "case_kind": "b.eq",
+   "hash": "0x94ce0aeb",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "fsmObjSendEvent"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "fsmObjSetString",
+   "handler": "0x3182adc",
+   "case_entry": "0x31791fc",
+   "verify_block": "0x3182ad4",
+   "case_kind": "b.eq",
+   "hash": "0xbf98a387",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "fsmObjSetBool",
+    "fsmObjSetFloat"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "horizontalImageChange",
+   "handler": "0x31884b4",
+   "case_entry": "0x317e39c",
+   "verify_block": "0x31884ac",
+   "case_kind": "b.eq",
+   "hash": "0xae26297a",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x3188504"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31884d4"
+    }
+   ],
+   "aliases": [
+    "equipChange",
+    "imageChange",
+    "verticalImageChange"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "horizontalImageSet",
+   "handler": "0x3186fe0",
+   "case_entry": "0x317d6a4",
+   "verify_block": "0x3186fd8",
+   "case_kind": "b.ne",
+   "hash": "0xfad91c16",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaSet",
+    "equipSet",
+    "figureSet",
+    "imageSet",
+    "sceneSet",
+    "verticalImageSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "ifClear",
+   "handler": "0x3179400",
+   "case_entry": "0x31793d0",
+   "verify_block": "0x31793f4",
+   "case_kind": "b.ne",
+   "hash": "0xa03fd777",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "imageChange",
+   "handler": "0x31884b4",
+   "case_entry": "0x317eb70",
+   "verify_block": "0x31884ac",
+   "case_kind": "b.ne",
+   "hash": "0xff9b04ee",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x3188504"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31884d4"
+    }
+   ],
+   "aliases": [
+    "equipChange",
+    "horizontalImageChange",
+    "verticalImageChange"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "imageSet",
+   "handler": "0x3186fe0",
+   "case_entry": "0x317d2c0",
+   "verify_block": "0x3186fd8",
+   "case_kind": "b.eq",
+   "hash": "0x5c1b8bfa",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaSet",
+    "equipSet",
+    "figureSet",
+    "horizontalImageSet",
+    "sceneSet",
+    "verticalImageSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "input",
+   "handler": "0x317a800",
+   "case_entry": "0x317a7d0",
+   "verify_block": "0x317a7f4",
+   "case_kind": "b.ne",
+   "hash": "0xf9d86f7b",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "insertionAnimationEnd",
+   "handler": "0x317f818",
+   "case_entry": "0x3179b78",
+   "verify_block": "0x317f80c",
+   "case_kind": "b.eq",
+   "hash": "0xc8e1b9f1",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "insertionAnimationSet",
+   "handler": "0x318816c",
+   "case_entry": "0x317e0f8",
+   "verify_block": "0x3188164",
+   "case_kind": "b.eq",
+   "hash": "0x931e8db4",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "insertionAnimationSetFSL",
+    "insertionAnimationSetFSR",
+    "insertionAnimationSetFSSideL",
+    "insertionAnimationSetFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "insertionAnimationSetFSL",
+   "handler": "0x318816c",
+   "case_entry": "0x3179b68",
+   "verify_block": "0x3188164",
+   "case_kind": "b.eq",
+   "hash": "0xc7d76289",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "insertionAnimationSet",
+    "insertionAnimationSetFSR",
+    "insertionAnimationSetFSSideL",
+    "insertionAnimationSetFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "insertionAnimationSetFSR",
+   "handler": "0x318816c",
+   "case_entry": "0x317aa90",
+   "verify_block": "0x3188164",
+   "case_kind": "b.eq",
+   "hash": "0xc1d75917",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "insertionAnimationSet",
+    "insertionAnimationSetFSL",
+    "insertionAnimationSetFSSideL",
+    "insertionAnimationSetFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "insertionAnimationSetFSSideL",
+   "handler": "0x318816c",
+   "case_entry": "0x317cc58",
+   "verify_block": "0x3188164",
+   "case_kind": "b.eq",
+   "hash": "0x8b8a5a58",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "insertionAnimationSet",
+    "insertionAnimationSetFSL",
+    "insertionAnimationSetFSR",
+    "insertionAnimationSetFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "insertionAnimationSetFSSideR",
+   "handler": "0x318816c",
+   "case_entry": "0x317dc20",
+   "verify_block": "0x3188164",
+   "case_kind": "b.ne",
+   "hash": "0x998a7062",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "insertionAnimationSet",
+    "insertionAnimationSetFSL",
+    "insertionAnimationSetFSR",
+    "insertionAnimationSetFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "insertionAnimationStart",
+   "handler": "0x3180d0c",
+   "case_entry": "0x317bb60",
+   "verify_block": "0x3180d04",
+   "case_kind": "b.eq",
+   "hash": "0xf20ffe70",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "interruption",
+   "handler": "0x317f9c4",
+   "case_entry": "0x317aa08",
+   "verify_block": "0x317f9b8",
+   "case_kind": "b.ne",
+   "hash": "0x884d2996",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "end"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "jingle",
+   "handler": "0x3186b70",
+   "case_entry": "0x317d0fc",
+   "verify_block": "0x3186b68",
+   "case_kind": "b.eq",
+   "hash": "0xef3a9228",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "jingleStop",
+   "handler": "0x31846c0",
+   "case_entry": "0x317ae4c",
+   "verify_block": "0x31846b8",
+   "case_kind": "b.eq",
+   "hash": "0x667b7330",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "jump",
+   "handler": "0x31801a4",
+   "case_entry": "0x317ac28",
+   "verify_block": "0x3180198",
+   "case_kind": "b.eq",
+   "hash": "0xa73f5c0d",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x318c29c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "k",
+   "handler": "0x317fa28",
+   "case_entry": "0x3179fb0",
+   "verify_block": "0x317fa1c",
+   "case_kind": "b.eq",
+   "hash": "0xee0c38ea",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "keepSubBgmOff",
+   "handler": "0x31797d0",
+   "case_entry": "0x31797a0",
+   "verify_block": "0x31797c4",
+   "case_kind": "b.ne",
+   "hash": "0xd74cae15",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "keepSubBgmOn",
+   "handler": "0x3181fd4",
+   "case_entry": "0x317d210",
+   "verify_block": "0x3181fcc",
+   "case_kind": "b.eq",
+   "hash": "0x1f76ee39",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "l",
+   "handler": "0x318472c",
+   "case_entry": "0x317af28",
+   "verify_block": "0x3184724",
+   "case_kind": "b.eq",
+   "hash": "0xe90c310b",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "betweenHeight"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "label",
+   "handler": "0x317b600",
+   "case_entry": "0x317b5d0",
+   "verify_block": "0x317b5f4",
+   "case_kind": "b.ne",
+   "hash": "0xf69717fd",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "maskOff",
+   "handler": "0x3183208",
+   "case_entry": "0x317e624",
+   "verify_block": "0x3183200",
+   "case_kind": "b.eq",
+   "hash": "0xf324464e",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "maskin",
+   "handler": "0x3188484",
+   "case_entry": "0x317e8d0",
+   "verify_block": "0x318847c",
+   "case_kind": "b.eq",
+   "hash": "0xbecdfa2a",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "maskout"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "maskout",
+   "handler": "0x3188484",
+   "case_entry": "0x317e1bc",
+   "verify_block": "0x318847c",
+   "case_kind": "b.eq",
+   "hash": "0x358feae3",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "maskin"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "masterBranch",
+   "handler": "0x3179bb8",
+   "case_entry": "0x3179b88",
+   "verify_block": "0x3179bac",
+   "case_kind": "b.ne",
+   "hash": "0xcb78578b",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "masterChange",
+   "handler": "0x3187c1c",
+   "case_entry": "0x317dc00",
+   "verify_block": "0x3187c14",
+   "case_kind": "b.eq",
+   "hash": "0x987dcf37",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x3187c6c"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x3187c3c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "masterHorizontalImageChange",
+   "handler": "0x317fe24",
+   "case_entry": "0x317e118",
+   "verify_block": "0x317fe18",
+   "case_kind": "b.ne",
+   "hash": "0x934e55d8",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x317fe74"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317fe44"
+    }
+   ],
+   "aliases": [
+    "masterImageChange",
+    "masterVerticalImageChange"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "masterHorizontalImageSet",
+   "handler": "0x3188708",
+   "case_entry": "0x317a35c",
+   "verify_block": "0x3188700",
+   "case_kind": "b.eq",
+   "hash": "0x43e4c390",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "masterImageSet",
+    "masterSet",
+    "masterVerticalImageSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "masterImageChange",
+   "handler": "0x317fe24",
+   "case_entry": "0x317a9ac",
+   "verify_block": "0x317fe18",
+   "case_kind": "b.eq",
+   "hash": "0x3fc15a0",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x317fe74"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317fe44"
+    }
+   ],
+   "aliases": [
+    "masterHorizontalImageChange",
+    "masterVerticalImageChange"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "masterImageSet",
+   "handler": "0x3188708",
+   "case_entry": "0x317e68c",
+   "verify_block": "0x3188700",
+   "case_kind": "b.eq",
+   "hash": "0x9f0b35e8",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "masterHorizontalImageSet",
+    "masterSet",
+    "masterVerticalImageSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "masterNameWidth",
+   "handler": "0x3185be0",
+   "case_entry": "0x317c688",
+   "verify_block": "0x3185bd8",
+   "case_kind": "b.eq",
+   "hash": "0x110334b4",
+   "min_token_count": 7,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "masterScene",
+   "handler": "0x3180a34",
+   "case_entry": "0x317b8c0",
+   "verify_block": "0x3180a28",
+   "case_kind": "b.eq",
+   "hash": "0x4fe73b71",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "masterSet",
+   "handler": "0x3188708",
+   "case_entry": "0x317e4f8",
+   "verify_block": "0x3188700",
+   "case_kind": "b.eq",
+   "hash": "0x6ef359f1",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "masterHorizontalImageSet",
+    "masterImageSet",
+    "masterVerticalImageSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "masterVerticalImageChange",
+   "handler": "0x317fe24",
+   "case_entry": "0x3179504",
+   "verify_block": "0x317fe18",
+   "case_kind": "b.ne",
+   "hash": "0xe6ad339e",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x317fe74"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x317fe44"
+    }
+   ],
+   "aliases": [
+    "masterHorizontalImageChange",
+    "masterImageChange"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "masterVerticalImageSet",
+   "handler": "0x3188708",
+   "case_entry": "0x3179498",
+   "verify_block": "0x3188700",
+   "case_kind": "b.ne",
+   "hash": "0x6436880a",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [
+    "masterHorizontalImageSet",
+    "masterImageSet",
+    "masterSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "menu",
+   "handler": "0x317fa74",
+   "case_entry": "0x317a17c",
+   "verify_block": "0x317fa68",
+   "case_kind": "b.eq",
+   "hash": "0x99e4dd3a",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "messageAlign",
+   "handler": "0x3186e48",
+   "case_entry": "0x317d354",
+   "verify_block": "0x3186e40",
+   "case_kind": "b.eq",
+   "hash": "0xe055dfd1",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "messageChange",
+   "handler": "0x31852b8",
+   "case_entry": "0x317bce8",
+   "verify_block": "0x31852b0",
+   "case_kind": "b.eq",
+   "hash": "0x9e17a594",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "ConvertMessageWindowName",
+     "evidence": "0x31852f8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "messageOff",
+   "handler": "0x318152c",
+   "case_entry": "0x317c208",
+   "verify_block": "0x3181524",
+   "case_kind": "b.eq",
+   "hash": "0x84f7ac69",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "messageOn",
+   "handler": "0x317bc58",
+   "case_entry": "0x317bc28",
+   "verify_block": "0x317bc4c",
+   "case_kind": "b.ne",
+   "hash": "0x20bd548d",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "messageShake",
+   "handler": "0x3182074",
+   "case_entry": "0x317d364",
+   "verify_block": "0x318206c",
+   "case_kind": "b.eq",
+   "hash": "0xe127297a",
+   "min_token_count": 7,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "messageShakeStop",
+   "handler": "0x317e89c",
+   "case_entry": "0x317e86c",
+   "verify_block": "0x317e890",
+   "case_kind": "b.ne",
+   "hash": "0x47473262",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "messageSpeedForcedNormal",
+   "handler": "0x3184204",
+   "case_entry": "0x317a480",
+   "verify_block": "0x31841fc",
+   "case_kind": "b.eq",
+   "hash": "0xb86e2e29",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "messageStart",
+   "handler": "0x317f98c",
+   "case_entry": "0x3179dcc",
+   "verify_block": "0x317f980",
+   "case_kind": "b.eq",
+   "hash": "0xa9fb9b48",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "movie",
+   "handler": "0x3183c38",
+   "case_entry": "0x317e3ac",
+   "verify_block": "0x3183c30",
+   "case_kind": "b.eq",
+   "hash": "0xaef39ccf",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "criMovie"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "notification",
+   "handler": "0x317af78",
+   "case_entry": "0x317af48",
+   "verify_block": "0x317af6c",
+   "case_kind": "b.ne",
+   "hash": "0xea3d3046",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "overlayFadein",
+   "handler": "0x3184300",
+   "case_entry": "0x317a99c",
+   "verify_block": "0x31842f8",
+   "case_kind": "b.eq",
+   "hash": "0x2f80406",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "page",
+   "handler": "0x3182038",
+   "case_entry": "0x317c120",
+   "verify_block": "0x317c144",
+   "case_kind": "b.ne",
+   "hash": "0x815dfa76",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "clear"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "pictureFrame",
+   "handler": "0x317e838",
+   "case_entry": "0x317e808",
+   "verify_block": "0x317e82c",
+   "case_kind": "b.ne",
+   "hash": "0xe5d2343a",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "pictureFrameTop"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "pictureFrameTop",
+   "handler": "0x317e838",
+   "case_entry": "0x317e7c4",
+   "verify_block": "0x317e82c",
+   "case_kind": "b.ne",
+   "hash": "0x6055ad3d",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "pictureFrame"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "q",
+   "handler": "0x318662c",
+   "case_entry": "0x317cb1c",
+   "verify_block": "0x3186624",
+   "case_kind": "b.eq",
+   "hash": "0xf40c425c",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "questMessageOverwrite",
+   "handler": "0x317d710",
+   "case_entry": "0x317d6e0",
+   "verify_block": "0x317d704",
+   "case_kind": "b.ne",
+   "hash": "0x698d999",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "revivalBranch",
+   "handler": "0x31853a4",
+   "case_entry": "0x317bd34",
+   "verify_block": "0x318539c",
+   "case_kind": "b.eq",
+   "hash": "0x5d81bb60",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "rewardSwitch",
+   "handler": "0x318522c",
+   "case_entry": "0x317bc08",
+   "verify_block": "0x3185224",
+   "case_kind": "b.eq",
+   "hash": "0x20460882",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "s",
+   "handler": "0x3184a58",
+   "case_entry": "0x317b5b0",
+   "verify_block": "0x3184a50",
+   "case_kind": "b.eq",
+   "hash": "0xf60c4582",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "speed"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "scene",
+   "handler": "0x3180e14",
+   "case_entry": "0x317bc18",
+   "verify_block": "0x3180e0c",
+   "case_kind": "b.eq",
+   "hash": "0x2063cb13",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "sceneSet",
+   "handler": "0x3186fe0",
+   "case_entry": "0x3179e80",
+   "verify_block": "0x3186fd8",
+   "case_kind": "b.eq",
+   "hash": "0x69977591",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaSet",
+    "equipSet",
+    "figureSet",
+    "horizontalImageSet",
+    "imageSet",
+    "verticalImageSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "screen",
+   "handler": "0x31804c8",
+   "case_entry": "0x317b0e8",
+   "verify_block": "0x31804bc",
+   "case_kind": "b.eq",
+   "hash": "0x55c54c11",
+   "min_token_count": 9,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "scrollStop",
+   "handler": "0x317f1a0",
+   "case_entry": "0x31795b8",
+   "verify_block": "0x317f194",
+   "case_kind": "b.eq",
+   "hash": "0x93d86544",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "se",
+   "handler": "0x3180760",
+   "case_entry": "0x317b3b4",
+   "verify_block": "0x3180754",
+   "case_kind": "b.eq",
+   "hash": "0x3c520aa5",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x318dfec"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318e010"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "seContinue",
+   "handler": "0x3180310",
+   "case_entry": "0x317b094",
+   "verify_block": "0x3180304",
+   "case_kind": "b.eq",
+   "hash": "0x973b8604",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x318fa88"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318faac"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x318fa3c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "seContinueStop",
+   "handler": "0x31838c8",
+   "case_entry": "0x317a120",
+   "verify_block": "0x31838c0",
+   "case_kind": "b.eq",
+   "hash": "0x1e72650c",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "op_Equality",
+     "evidence": "0x3193e04"
+    }
+   ],
+   "aliases": [
+    "cueSeContinueStop"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "seContinueVolume",
+   "handler": "0x3188898",
+   "case_entry": "0x317b084",
+   "verify_block": "0x3188890",
+   "case_kind": "b.eq",
+   "hash": "0x96db45b6",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31889a0"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318897c"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3188938"
+    }
+   ],
+   "aliases": [
+    "cueSeContinueVolume"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "seLoop",
+   "handler": "0x31833e0",
+   "case_entry": "0x317e85c",
+   "verify_block": "0x31833d8",
+   "case_kind": "b.eq",
+   "hash": "0x47410f2b",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x318e10c"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318e130"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "seStop",
+   "handler": "0x3180a80",
+   "case_entry": "0x317b9d4",
+   "verify_block": "0x3180a74",
+   "case_kind": "b.eq",
+   "hash": "0x34a684a5",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3188c2c"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3188c2c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "seVolume",
+   "handler": "0x3181dd0",
+   "case_entry": "0x317cc68",
+   "verify_block": "0x3181dc8",
+   "case_kind": "b.eq",
+   "hash": "0x8dadc64f",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "selectionCentering",
+   "handler": "0x317f90c",
+   "case_entry": "0x3179c5c",
+   "verify_block": "0x317f900",
+   "case_kind": "b.eq",
+   "hash": "0x2b7bb164",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "selectionUse",
+   "handler": "0x317d28c",
+   "case_entry": "0x317d25c",
+   "verify_block": "0x317d280",
+   "case_kind": "b.ne",
+   "hash": "0x9dedcfc4",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "shake",
+   "handler": "0x318548c",
+   "case_entry": "0x317c08c",
+   "verify_block": "0x3185484",
+   "case_kind": "b.eq",
+   "hash": "0xbd8bb2f5",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3185524"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3185598"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31855bc"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3185554"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "shakeStop",
+   "handler": "0x317e0d8",
+   "case_entry": "0x317e0a8",
+   "verify_block": "0x317e0cc",
+   "case_kind": "b.ne",
+   "hash": "0xdeb8bd5",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "skip",
+   "handler": "0x317b3f4",
+   "case_entry": "0x317b3c4",
+   "verify_block": "0x317b3e8",
+   "case_kind": "b.ne",
+   "hash": "0x416b7bc2",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "soundStopAll",
+   "handler": "0x3188554",
+   "case_entry": "0x317e4e8",
+   "verify_block": "0x318854c",
+   "case_kind": "b.eq",
+   "hash": "0x6ee5b7e7",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "soundStopAllEnd",
+   "handler": "0x3187494",
+   "case_entry": "0x317d6c0",
+   "verify_block": "0x318748c",
+   "case_kind": "b.eq",
+   "hash": "0x5322754",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "soundStopAllFade",
+   "handler": "0x3181c98",
+   "case_entry": "0x317c81c",
+   "verify_block": "0x3181c90",
+   "case_kind": "b.eq",
+   "hash": "0xb45ad829",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3181cb4"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "specialEffect",
+   "handler": "0x3187604",
+   "case_entry": "0x317d23c",
+   "verify_block": "0x31875fc",
+   "case_kind": "b.eq",
+   "hash": "0x9b439b01",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x3187624"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31876bc"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31876e0"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3187764"
+    }
+   ],
+   "aliases": [
+    "specialEffectPuase"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "specialEffectPuase",
+   "handler": "0x3187604",
+   "case_entry": "0x317d878",
+   "verify_block": "0x31875fc",
+   "case_kind": "b.eq",
+   "hash": "0xc622e861",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x3187624"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31876bc"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31876e0"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3187764"
+    }
+   ],
+   "aliases": [
+    "specialEffect"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "specialEffectStart",
+   "handler": "0x318290c",
+   "case_entry": "0x317da80",
+   "verify_block": "0x3182904",
+   "case_kind": "b.eq",
+   "hash": "0x6982d753",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x318292c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "specialEffectStop",
+   "handler": "0x317c6d8",
+   "case_entry": "0x317c6a8",
+   "verify_block": "0x317c6cc",
+   "case_kind": "b.ne",
+   "hash": "0x13048b21",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x317c6f8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "speed",
+   "handler": "0x3184a58",
+   "case_entry": "0x317a5f8",
+   "verify_block": "0x3184a50",
+   "case_kind": "b.eq",
+   "hash": "0x7b80c780",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "s"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "spriteMaskOff",
+   "handler": "0x3187440",
+   "case_entry": "0x317d684",
+   "verify_block": "0x3187438",
+   "case_kind": "b.eq",
+   "hash": "0xfa7137f1",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "spriteMaskSet",
+   "handler": "0x3179ff0",
+   "case_entry": "0x3179fc0",
+   "verify_block": "0x3179fe4",
+   "case_kind": "b.ne",
+   "hash": "0xeef1b964",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "stretchOff",
+   "handler": "0x3181c60",
+   "case_entry": "0x317c7a4",
+   "verify_block": "0x3181c58",
+   "case_kind": "b.eq",
+   "hash": "0xd8d0d187",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "stretchin",
+   "handler": "0x3187cbc",
+   "case_entry": "0x317dc3c",
+   "verify_block": "0x3187cb4",
+   "case_kind": "b.eq",
+   "hash": "0x57067d35",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "stretchout"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "stretchout",
+   "handler": "0x3187cbc",
+   "case_entry": "0x317cea8",
+   "verify_block": "0x3187cb4",
+   "case_kind": "b.eq",
+   "hash": "0x2db0e81e",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "stretchin"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subBgm",
+   "handler": "0x31824fc",
+   "case_entry": "0x317d6d0",
+   "verify_block": "0x31824f4",
+   "case_kind": "b.eq",
+   "hash": "0x5372061",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31893f8"
+    }
+   ],
+   "aliases": [
+    "bgm"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "subBgmStop",
+   "handler": "0x3181900",
+   "case_entry": "0x317c620",
+   "verify_block": "0x31818f8",
+   "case_kind": "b.eq",
+   "hash": "0x6617ac41",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "bgmStop",
+    "bgmStopEnd"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subBlur",
+   "handler": "0x3180674",
+   "case_entry": "0x317b8d0",
+   "verify_block": "0x3180668",
+   "case_kind": "b.ne",
+   "hash": "0x50e9c348",
+   "min_token_count": 6,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x31806d8"
+    }
+   ],
+   "aliases": [
+    "subBlur2"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "subBlur2",
+   "handler": "0x3180674",
+   "case_entry": "0x317b2a0",
+   "verify_block": "0x3180668",
+   "case_kind": "b.eq",
+   "hash": "0xd9feb90e",
+   "min_token_count": 6,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x31806d8"
+    }
+   ],
+   "aliases": [
+    "subBlur"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "subBlur2Off",
+   "handler": "0x3183a9c",
+   "case_entry": "0x3179b24",
+   "verify_block": "0x3183a94",
+   "case_kind": "b.ne",
+   "hash": "0x4d43c02b",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x3183afc"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3183b5c"
+    }
+   ],
+   "aliases": [
+    "subBlurOff"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "subBlurOff",
+   "handler": "0x3183a9c",
+   "case_entry": "0x3179fa0",
+   "verify_block": "0x3183a94",
+   "case_kind": "b.eq",
+   "hash": "0xed0cd1ad",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x3183afc"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3183b5c"
+    }
+   ],
+   "aliases": [
+    "subBlur2Off"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "subCameraFilter",
+   "handler": "0x3183234",
+   "case_entry": "0x317e660",
+   "verify_block": "0x318322c",
+   "case_kind": "b.eq",
+   "hash": "0x21501858",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subCameraHome",
+   "handler": "0x317dac0",
+   "case_entry": "0x317da90",
+   "verify_block": "0x317dab4",
+   "case_kind": "b.ne",
+   "hash": "0x6983f751",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x317dae4"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "subCameraMove",
+   "handler": "0x3182c6c",
+   "case_entry": "0x317de98",
+   "verify_block": "0x3182c64",
+   "case_kind": "b.eq",
+   "hash": "0xb6cf534b",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subCameraMoveEase",
+   "handler": "0x3185430",
+   "case_entry": "0x317be90",
+   "verify_block": "0x3185428",
+   "case_kind": "b.eq",
+   "hash": "0x46f3ff79",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subCameraOff",
+   "handler": "0x3179750",
+   "case_entry": "0x3179720",
+   "verify_block": "0x3179744",
+   "case_kind": "b.ne",
+   "hash": "0x533834db",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subCameraOn",
+   "handler": "0x318339c",
+   "case_entry": "0x317e7f8",
+   "verify_block": "0x3183394",
+   "case_kind": "b.eq",
+   "hash": "0xe5863997",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31833b8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "subCameraRoll",
+   "handler": "0x317a2e0",
+   "case_entry": "0x317a2b0",
+   "verify_block": "0x317a2d4",
+   "case_kind": "b.ne",
+   "hash": "0xde7ae531",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x317a304"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "subCameraRollMove",
+   "handler": "0x3179e0c",
+   "case_entry": "0x3179ddc",
+   "verify_block": "0x3179e00",
+   "case_kind": "b.ne",
+   "hash": "0xa9ffd8d0",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x3179e30"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "subRenderDepth",
+   "handler": "0x3182c14",
+   "case_entry": "0x317dd9c",
+   "verify_block": "0x3182c0c",
+   "case_kind": "b.eq",
+   "hash": "0x41c90422",
+   "min_token_count": 3,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3182c34"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3182c34"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "subRenderFadein",
+   "handler": "0x3185f64",
+   "case_entry": "0x317c794",
+   "verify_block": "0x3185f5c",
+   "case_kind": "b.eq",
+   "hash": "0xd7b31398",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderFadeinFSL",
+    "subRenderFadeinFSR",
+    "subRenderFadeinFSSideL",
+    "subRenderFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderFadeinFSL",
+   "handler": "0x3185f64",
+   "case_entry": "0x317c7e0",
+   "verify_block": "0x3185f5c",
+   "case_kind": "b.eq",
+   "hash": "0x3b06af45",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderFadein",
+    "subRenderFadeinFSR",
+    "subRenderFadeinFSSideL",
+    "subRenderFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderFadeinFSR",
+   "handler": "0x3185f64",
+   "case_entry": "0x3179b04",
+   "verify_block": "0x3185f5c",
+   "case_kind": "b.eq",
+   "hash": "0x4d06cb9b",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderFadein",
+    "subRenderFadeinFSL",
+    "subRenderFadeinFSSideL",
+    "subRenderFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderFadeinFSSideL",
+   "handler": "0x3185f64",
+   "case_entry": "0x317b5c0",
+   "verify_block": "0x3185f5c",
+   "case_kind": "b.eq",
+   "hash": "0xf664b234",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderFadein",
+    "subRenderFadeinFSL",
+    "subRenderFadeinFSR",
+    "subRenderFadeinFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderFadeinFSSideR",
+   "handler": "0x3185f64",
+   "case_entry": "0x317dd60",
+   "verify_block": "0x3185f5c",
+   "case_kind": "b.eq",
+   "hash": "0xdc648946",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderFadein",
+    "subRenderFadeinFSL",
+    "subRenderFadeinFSR",
+    "subRenderFadeinFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderFadeout",
+   "handler": "0x317d310",
+   "case_entry": "0x317d2e0",
+   "verify_block": "0x317d304",
+   "case_kind": "b.ne",
+   "hash": "0x5caba61d",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMove",
+   "handler": "0x3180f80",
+   "case_entry": "0x317bb24",
+   "verify_block": "0x3180f78",
+   "case_kind": "b.ne",
+   "hash": "0x6ec06cec",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMoveFSL",
+    "subRenderMoveFSR",
+    "subRenderMoveFSSideL",
+    "subRenderMoveFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveEase",
+   "handler": "0x3186c5c",
+   "case_entry": "0x317d200",
+   "verify_block": "0x3186c54",
+   "case_kind": "b.eq",
+   "hash": "0x1eb3aeb6",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMoveEaseFSL",
+    "subRenderMoveEaseFSR",
+    "subRenderMoveEaseFSSideL",
+    "subRenderMoveEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveEaseFSL",
+   "handler": "0x3186c5c",
+   "case_entry": "0x317d538",
+   "verify_block": "0x3186c54",
+   "case_kind": "b.ne",
+   "hash": "0xbad79d2f",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMoveEase",
+    "subRenderMoveEaseFSR",
+    "subRenderMoveEaseFSSideL",
+    "subRenderMoveEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveEaseFSR",
+   "handler": "0x3186c5c",
+   "case_entry": "0x3179978",
+   "verify_block": "0x3186c54",
+   "case_kind": "b.ne",
+   "hash": "0xb0d78d71",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMoveEase",
+    "subRenderMoveEaseFSL",
+    "subRenderMoveEaseFSSideL",
+    "subRenderMoveEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveEaseFSSideL",
+   "handler": "0x3186c5c",
+   "case_entry": "0x317c1f8",
+   "verify_block": "0x3186c54",
+   "case_kind": "b.eq",
+   "hash": "0x8427f51a",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMoveEase",
+    "subRenderMoveEaseFSL",
+    "subRenderMoveEaseFSR",
+    "subRenderMoveEaseFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveEaseFSSideR",
+   "handler": "0x3186c5c",
+   "case_entry": "0x317c630",
+   "verify_block": "0x3186c54",
+   "case_kind": "b.ne",
+   "hash": "0x6627c5e0",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMoveEase",
+    "subRenderMoveEaseFSL",
+    "subRenderMoveEaseFSR",
+    "subRenderMoveEaseFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveFSL",
+   "handler": "0x3180f80",
+   "case_entry": "0x3179a7c",
+   "verify_block": "0x3180f78",
+   "case_kind": "b.ne",
+   "hash": "0x98b9821",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMove",
+    "subRenderMoveFSR",
+    "subRenderMoveFSSideL",
+    "subRenderMoveFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveFSR",
+   "handler": "0x3180f80",
+   "case_entry": "0x3179a20",
+   "verify_block": "0x3180f78",
+   "case_kind": "b.eq",
+   "hash": "0xf38b757f",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMove",
+    "subRenderMoveFSL",
+    "subRenderMoveFSSideL",
+    "subRenderMoveFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveFSSideL",
+   "handler": "0x3180f80",
+   "case_entry": "0x317bd90",
+   "verify_block": "0x3180f78",
+   "case_kind": "b.eq",
+   "hash": "0xe4344080",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMove",
+    "subRenderMoveFSL",
+    "subRenderMoveFSR",
+    "subRenderMoveFSSideR"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveFSSideR",
+   "handler": "0x3180f80",
+   "case_entry": "0x3179080",
+   "verify_block": "0x3180f78",
+   "case_kind": "b.ne",
+   "hash": "0x2346fba",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "subRenderMove",
+    "subRenderMoveFSL",
+    "subRenderMoveFSR",
+    "subRenderMoveFSSideL"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveScale",
+   "handler": "0x317c508",
+   "case_entry": "0x317c4d8",
+   "verify_block": "0x317c4fc",
+   "case_kind": "b.ne",
+   "hash": "0xc085a4a6",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderMoveScaleEase",
+   "handler": "0x317f7b4",
+   "case_entry": "0x3179b14",
+   "verify_block": "0x317f7a8",
+   "case_kind": "b.eq",
+   "hash": "0x4d38e8ac",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderScale",
+   "handler": "0x317cad8",
+   "case_entry": "0x317caa8",
+   "verify_block": "0x317cacc",
+   "case_kind": "b.ne",
+   "hash": "0x787d9c49",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subRenderShake",
+   "handler": "0x3179c9c",
+   "case_entry": "0x3179c6c",
+   "verify_block": "0x3179c90",
+   "case_kind": "b.ne",
+   "hash": "0x2be7961d",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x3179d78"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3179cb8"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3179d2c"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3179d50"
+    },
+    {
+     "index": 8,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3179ce8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "subRenderShakeStop",
+   "handler": "0x317fc00",
+   "case_entry": "0x317a2a0",
+   "verify_block": "0x317fbf4",
+   "case_kind": "b.eq",
+   "hash": "0xddd7948d",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subStretch",
+   "handler": "0x3187f58",
+   "case_entry": "0x317decc",
+   "verify_block": "0x3187f50",
+   "case_kind": "b.eq",
+   "hash": "0x7a7833ba",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "subStretchin",
+   "handler": "0x317d3a4",
+   "case_entry": "0x317a24c",
+   "verify_block": "0x317d398",
+   "case_kind": "b.ne",
+   "hash": "0x5ba5fec5",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x317d444"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317d41c"
+    }
+   ],
+   "aliases": [
+    "subStretchout"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "subStretchout",
+   "handler": "0x317d3a4",
+   "case_entry": "0x317d374",
+   "verify_block": "0x317d398",
+   "case_kind": "b.ne",
+   "hash": "0xe29ef44e",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "GetScriptSubLayer",
+     "evidence": "0x317d444"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317d41c"
+    }
+   ],
+   "aliases": [
+    "subStretchin"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "switchCase",
+   "handler": "0x31875c4",
+   "case_entry": "0x317d818",
+   "verify_block": "0x31875bc",
+   "case_kind": "b.eq",
+   "hash": "0x4b951a35",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "switchCaseEnd",
+   "handler": "0x3188c58",
+   "case_entry": "0x317eb50",
+   "verify_block": "0x3188c50",
+   "case_kind": "b.eq",
+   "hash": "0xfe9f10da",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "tVoice",
+   "handler": "0x317cc08",
+   "case_entry": "0x317cbd8",
+   "verify_block": "0x317cbfc",
+   "case_kind": "b.ne",
+   "hash": "0xa71eb67",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x317cc28"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318c77c"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "tVoiceUser",
+   "handler": "0x317ae9c",
+   "case_entry": "0x317ae6c",
+   "verify_block": "0x317ae90",
+   "case_kind": "b.ne",
+   "hash": "0x67709e34",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertNameString",
+     "evidence": "0x317aef4"
+    },
+    {
+     "index": 8,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x318c4a8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "talkEnd",
+   "handler": "0x3180268",
+   "case_entry": "0x317af38",
+   "verify_block": "0x318025c",
+   "case_kind": "b.eq",
+   "hash": "0xe9c1d77c",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "talkName",
+   "handler": "0x3187bf0",
+   "case_entry": "0x317dba4",
+   "verify_block": "0x3187be8",
+   "case_kind": "b.eq",
+   "hash": "0x1aff046c",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "talkNameBack",
+   "handler": "0x3184900",
+   "case_entry": "0x317b290",
+   "verify_block": "0x31848f8",
+   "case_kind": "b.eq",
+   "hash": "0xd9f57ae7",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "talkStart",
+   "handler": "0x3182bc4",
+   "case_entry": "0x317dc4c",
+   "verify_block": "0x3182bbc",
+   "case_kind": "b.eq",
+   "hash": "0x581cc885",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "tapSkip",
+   "handler": "0x317bba0",
+   "case_entry": "0x317bb70",
+   "verify_block": "0x317bb94",
+   "case_kind": "b.ne",
+   "hash": "0xf2239de9",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "unknown",
+     "consumer": "op_Equality",
+     "evidence": "0x3190430"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "tdelay",
+   "handler": "0x3182768",
+   "case_entry": "0x317d988",
+   "verify_block": "0x3182760",
+   "case_kind": "b.eq",
+   "hash": "0x2a4286d2",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31827a8"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31827cc"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31827f0"
+    }
+   ],
+   "aliases": [
+    "delay"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "turnPageOff",
+   "handler": "0x3182720",
+   "case_entry": "0x317d888",
+   "verify_block": "0x3182718",
+   "case_kind": "b.eq",
+   "hash": "0xc6b33946",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "turnPageOn",
+   "handler": "0x317d4e8",
+   "case_entry": "0x317d4b8",
+   "verify_block": "0x317d4dc",
+   "case_kind": "b.ne",
+   "hash": "0x4662386c",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "useSimpleMeshFigure",
+   "handler": "0x317ba14",
+   "case_entry": "0x317b9e4",
+   "verify_block": "0x317ba08",
+   "case_kind": "b.ne",
+   "hash": "0x355910af",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "verticalImageChange",
+   "handler": "0x31884b4",
+   "case_entry": "0x317c65c",
+   "verify_block": "0x31884ac",
+   "case_kind": "b.eq",
+   "hash": "0xe82687d8",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "IsLoad",
+     "evidence": "0x3188504"
+    },
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "ConvertCharaIndex",
+     "evidence": "0x31884d4"
+    }
+   ],
+   "aliases": [
+    "equipChange",
+    "horizontalImageChange",
+    "imageChange"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "verticalImageSet",
+   "handler": "0x3186fe0",
+   "case_entry": "0x317c19c",
+   "verify_block": "0x3186fd8",
+   "case_kind": "b.eq",
+   "hash": "0x29c1990",
+   "min_token_count": 3,
+   "params": [],
+   "aliases": [
+    "charaSet",
+    "equipSet",
+    "figureSet",
+    "horizontalImageSet",
+    "imageSet",
+    "sceneSet"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "voice",
+   "handler": "0x317d5b0",
+   "case_entry": "0x317d580",
+   "verify_block": "0x317d5a4",
+   "case_kind": "b.ne",
+   "hash": "0x7f9bc9f9",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "voiceStop",
+   "handler": "0x317d8c8",
+   "case_entry": "0x317d898",
+   "verify_block": "0x317d8bc",
+   "case_kind": "b.ne",
+   "hash": "0xc73f3ba9",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "voiceVolume",
+   "handler": "0x317e3ec",
+   "case_entry": "0x317e3bc",
+   "verify_block": "0x317e3e0",
+   "case_kind": "b.ne",
+   "hash": "0xaf859093",
+   "min_token_count": 5,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "wait",
+   "handler": "0x31874f4",
+   "case_entry": "0x317d7dc",
+   "verify_block": "0x31874ec",
+   "case_kind": "b.eq",
+   "hash": "0x892e4ca0",
+   "min_token_count": 1,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "warBoardTalkScreen",
+   "handler": "0x317cd60",
+   "case_entry": "0x317c734",
+   "verify_block": "0x317cd54",
+   "case_kind": "b.ne",
+   "hash": "0x9537e6ad",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "faceTalkScreen"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "warCharaFadein",
+   "handler": "0x317ac68",
+   "case_entry": "0x317ac38",
+   "verify_block": "0x317ac5c",
+   "case_kind": "b.ne",
+   "hash": "0xa890df7d",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "warEffectOff",
+   "handler": "0x317fc60",
+   "case_entry": "0x317a490",
+   "verify_block": "0x317fc54",
+   "case_kind": "b.eq",
+   "hash": "0xb8c3be19",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "get_Instance",
+     "evidence": "0x317fc84"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "warEffectPiece",
+   "handler": "0x317fd14",
+   "case_entry": "0x317a7c0",
+   "verify_block": "0x317fd08",
+   "case_kind": "b.eq",
+   "hash": "0xf9a697b6",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "unknown",
+     "consumer": "0x2230564",
+     "evidence": "0x317fd40"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "unknown",
+     "consumer": "0x2230564",
+     "evidence": "0x317fd40"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317fd64"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317fd94"
+    },
+    {
+     "index": 8,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317fdc4"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "warEffectPos",
+   "handler": "0x3186664",
+   "case_entry": "0x317cbb8",
+   "verify_block": "0x318665c",
+   "case_kind": "b.eq",
+   "hash": "0x9a791fe",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3186688"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3186688"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3186688"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31866ac"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "warEffectSquare",
+   "handler": "0x317f470",
+   "case_entry": "0x3179968",
+   "verify_block": "0x317f464",
+   "case_kind": "b.eq",
+   "hash": "0xb0bcd6d3",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317f494"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317f494"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317f494"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "warEventScript",
+   "handler": "0x317a1bc",
+   "case_entry": "0x317a18c",
+   "verify_block": "0x317a1b0",
+   "case_kind": "b.ne",
+   "hash": "0x99feb508",
+   "min_token_count": 1,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x317a1d8"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "warMoveCameraPiece",
+   "handler": "0x3187cec",
+   "case_entry": "0x317dd50",
+   "verify_block": "0x3187ce4",
+   "case_kind": "b.eq",
+   "hash": "0xdb22bb53",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3187d2c"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3187d50"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "unknown",
+     "consumer": "0x2230564",
+     "evidence": "0x3187d80"
+    },
+    {
+     "index": 8,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3187da4"
+    },
+    {
+     "index": 10,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3187dd4"
+    },
+    {
+     "index": 12,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x3187e04"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "warMoveCameraPos",
+   "handler": "0x317df90",
+   "case_entry": "0x317df60",
+   "verify_block": "0x317df84",
+   "case_kind": "b.ne",
+   "hash": "0xf73ba0e3",
+   "min_token_count": 7,
+   "params": [
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317dfd0"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317dff4"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317e024"
+    },
+    {
+     "index": 8,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317e024"
+    },
+    {
+     "index": 10,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317e048"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "warMoveCameraSquare",
+   "handler": "0x3183030",
+   "case_entry": "0x317e144",
+   "verify_block": "0x3183028",
+   "case_kind": "b.eq",
+   "hash": "0x525668fc",
+   "min_token_count": 9,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x318304c"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3183070"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3183094"
+    },
+    {
+     "index": 6,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31830c4"
+    },
+    {
+     "index": 8,
+     "name": null,
+     "type": "int",
+     "consumer": "Parse",
+     "evidence": "0x31830c4"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "wipeFilter",
+   "handler": "0x3185814",
+   "case_entry": "0x317c4b8",
+   "verify_block": "0x318580c",
+   "case_kind": "b.eq",
+   "hash": "0xc0189da0",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertWipeName",
+     "evidence": "0x31858a4"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x3185880"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x31858fc"
+    }
+   ],
+   "aliases": [],
+   "confidence": "high"
+  },
+  {
+   "name": "wipeFilterEx",
+   "handler": "0x317bee0",
+   "case_entry": "0x317beb0",
+   "verify_block": "0x317bed4",
+   "case_kind": "b.ne",
+   "hash": "0x47212805",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "wipeOff",
+   "handler": "0x3184940",
+   "case_entry": "0x317b3a4",
+   "verify_block": "0x3184938",
+   "case_kind": "b.eq",
+   "hash": "0x3bdaedc3",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [],
+   "confidence": "medium"
+  },
+  {
+   "name": "wipein",
+   "handler": "0x317e910",
+   "case_entry": "0x317e8e0",
+   "verify_block": "0x317e904",
+   "case_kind": "b.ne",
+   "hash": "0xbee8a3a9",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertWipeName",
+     "evidence": "0x317e9bc"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317e998"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317ea34"
+    }
+   ],
+   "aliases": [
+    "wipeout"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "wipeinEx",
+   "handler": "0x318402c",
+   "case_entry": "0x317e634",
+   "verify_block": "0x3184024",
+   "case_kind": "b.ne",
+   "hash": "0xf36270b4",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "wipeoutEx"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "wipeout",
+   "handler": "0x317e910",
+   "case_entry": "0x317c7b4",
+   "verify_block": "0x317e904",
+   "case_kind": "b.ne",
+   "hash": "0xd97b372a",
+   "min_token_count": 5,
+   "params": [
+    {
+     "index": 0,
+     "name": null,
+     "type": "string",
+     "consumer": "ConvertWipeName",
+     "evidence": "0x317e9bc"
+    },
+    {
+     "index": 2,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317e998"
+    },
+    {
+     "index": 4,
+     "name": null,
+     "type": "float",
+     "consumer": "Parse",
+     "evidence": "0x317ea34"
+    }
+   ],
+   "aliases": [
+    "wipein"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "wipeoutEx",
+   "handler": "0x318402c",
+   "case_entry": "0x317a290",
+   "verify_block": "0x3184024",
+   "case_kind": "b.eq",
+   "hash": "0xdcd2af1f",
+   "min_token_count": null,
+   "params": [],
+   "aliases": [
+    "wipeinEx"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "param_vocab": {
+  "separators": {
+   "' '": [
+    0,
+    1,
+    3,
+    5,
+    7,
+    9
+   ],
+   "','": [
+    1,
+    3,
+    5
+   ]
+  },
+  "boolean_literals": {
+   "true": [
+    0,
+    2
+   ],
+   "false": [
+    0
+   ]
+  },
+  "sentinel": {
+   "-": [
+    0
+   ]
+  },
+  "pd_value_keywords": {
+   " ": [
+    0,
+    1,
+    3,
+    5,
+    7,
+    9
+   ],
+   ",": [
+    1,
+    3,
+    5
+   ],
+   "-": [
+    0
+   ],
+   "allFalse": [
+    0
+   ],
+   "clear": [
+    0
+   ],
+   "false": [
+    0
+   ],
+   "inside": [
+    2
+   ],
+   "lens": [
+    0
+   ],
+   "off": [
+    0
+   ],
+   "on": [
+    0
+   ],
+   "resume": [
+    0
+   ],
+   "selectBranch": [
+    0
+   ],
+   "skipStop": [
+    2
+   ],
+   "sub": [
+    2
+   ],
+   "subBlur2": [
+    0
+   ],
+   "subBlur2Off": [
+    0
+   ],
+   "true": [
+    0,
+    2
+   ],
+   "ui": [
+    2
+   ]
+  },
+  "effect_flip_kind": {
+   "H": 1,
+   "V": 2,
+   "F": 3,
+   "other": 0,
+   "evidence": "0x31b3ad0 ScriptManager$$ConvertEffectFlipKind"
+  },
+  "end_fade_color": [
+   "white",
+   "black",
+   ""
+  ],
+  "end_fade_evidence": "0x31b402c ScriptManager$$GetEndMode",
+  "wipe_name": "asset path, prefixed with 'Wipe/' (0x31b3a00 ConvertWipeName); vocabulary is asset-data driven",
+  "sprite_mask": "asset path 'Image/mask_{0}' (0x31b39b4)",
+  "talk_effect": "asset path 'Talk/' + name (0x31b37c8 ConvertTalkEffectName)",
+  "font": "String.Format('Font/{0}') (0x31b3898)",
+  "picture_frame": "String.Format('Image/{0}') (0x31b38e4)",
+  "back_texture": "String.Format('Back/back{0:D5}') (0x31b3930)",
+  "movie": "String.Format('Movie/{0}.mp4') (0x31b3c38)",
+  "pd0_subcommand_keywords": [
+   "charaCut",
+   "charaCutStart",
+   "charaFade",
+   "communicatioChara",
+   "effectmessage",
+   "effectmessageStart",
+   "fastPlayDraw",
+   "frame",
+   "fsmObjFinished",
+   "masterverticalImageSet",
+   "rtime",
+   "time"
+  ],
+  "pd0_shared_with_commands": [
+   "backEffect",
+   "charaAttack",
+   "charaBackEffect",
+   "charaChange",
+   "charaCrossFade",
+   "charaEffect",
+   "charaEffectEdgeBlur",
+   "charaFadeTimeLoop",
+   "charaMove",
+   "charaMoveEase",
+   "charaMoveEaseFSL",
+   "charaMoveEaseFSR",
+   "charaMoveEaseFSSideL",
+   "charaMoveEaseFSSideR",
+   "charaMoveFSL",
+   "charaMoveFSR",
+   "charaMoveFSSideL",
+   "charaMoveFSSideR",
+   "charaMoveReturn",
+   "charaMoveReturnEase",
+   "charaMoveReturnEaseFSL",
+   "charaMoveReturnEaseFSR",
+   "charaMoveReturnEaseFSSideL",
+   "charaMoveReturnEaseFSSideR",
+   "charaMoveReturnFSL",
+   "charaMoveReturnFSR",
+   "charaMoveReturnFSSideL",
+   "charaMoveReturnFSSideR",
+   "charaMoveScale",
+   "charaReturn",
+   "charaRollAxis",
+   "charaRollAxisLoopStop",
+   "charaRollMove",
+   "charaRollMoveEx",
+   "charaSet",
+   "charaSpecialEffect",
+   "effect",
+   "equipChange",
+   "equipSet",
+   "figureChange",
+   "figureSet",
+   "fowardEffect",
+   "fsmObjSet",
+   "horizontalImageChange",
+   "horizontalImageSet",
+   "imageChange",
+   "imageSet",
+   "insertionAnimationEnd",
+   "insertionAnimationStart",
+   "masterChange",
+   "masterHorizontalImageChange",
+   "masterHorizontalImageSet",
+   "masterImageChange",
+   "masterImageSet",
+   "masterSet",
+   "masterVerticalImageChange",
+   "sceneSet",
+   "specialEffect",
+   "verticalImageChange",
+   "verticalImageSet"
+  ],
+  "position_keywords_note": "not enumerated: camera/chara positions are integer pairs via ScriptPosition.GetPosition (0x31d8e3c)"
+ }
+}

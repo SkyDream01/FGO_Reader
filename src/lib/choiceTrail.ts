@@ -26,24 +26,3 @@ export function normalizeChoiceTrail(value: unknown): ChoiceTrail {
     .filter(isChoiceDecision)
     .map(({ choiceId, optionIndex }) => ({ choiceId, optionIndex }));
 }
-
-/** Adds one decision immutably; a choice frame can only appear once in a path. */
-export function addChoiceDecision(
-  choiceTrail: ChoiceTrail | undefined,
-  decision: ChoiceDecision,
-): ChoiceTrail {
-  const normalized = normalizeChoiceTrail(choiceTrail);
-  if (
-    !isChoiceDecision(decision) ||
-    normalized.some(({ choiceId }) => choiceId === decision.choiceId)
-  ) {
-    return normalized;
-  }
-
-  return [...normalized, { ...decision }];
-}
-
-/** Creates an empty trail for a new story path. */
-export function clearChoiceTrail(): ChoiceTrail {
-  return [];
-}

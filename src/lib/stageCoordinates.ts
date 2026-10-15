@@ -1,13 +1,12 @@
-export const STAGE_WIDTH = 1024;
-export const STAGE_HEIGHT = 576;
+import { STAGE_WIDTH, STAGE_HEIGHT, LOGICAL_WIDTH } from "../adv/constants";
+export { STAGE_WIDTH, STAGE_HEIGHT } from "../adv/constants";
 
 /**
- * Production coordinate calibration. These values are part of the renderer,
- * not a debug preference: screen and character placement always include them.
+ * Native coordinates have no empirical renderer offsets.
  */
 export const STAGE_CALIBRATION_RATIOS = {
-  screen: { x: 0, y: -0.25 },
-  character: { x: 0, y: 0.1 },
+  screen: { x: 0, y: 0 },
+  character: { x: 0, y: 0 },
 } as const;
 
 export type StageAxis = "x" | "y";
@@ -23,9 +22,7 @@ export function stageCoordinateToScreenOffset(value: number, axis: StageAxis) {
 }
 
 export function stageCoordinateToViewport(value: number, axis: StageAxis) {
-  const dimension = axis === "x" ? STAGE_WIDTH : STAGE_HEIGHT;
-  const viewportUnit = axis === "x" ? "vw" : "dvh";
-  return `${stageCoordinateToScreenOffset(value, axis) * (100 / dimension)}${viewportUnit}`;
+  return `calc(${stageCoordinateToScreenOffset(value, axis)} * var(--adv-unit))`;
 }
 
 /**
@@ -39,7 +36,7 @@ export function stageRatioToViewport(
   reference: StageCoordinateReference = "screen",
 ) {
   const dimension = reference === "character"
-    ? STAGE_WIDTH
+    ? LOGICAL_WIDTH
     : axis === "x"
       ? STAGE_WIDTH
       : STAGE_HEIGHT;

@@ -3,6 +3,10 @@ import { compileFgoScript } from "./scriptParser";
 import { collectStorySteps } from "./storyPreparation";
 
 describe("story resource collection", () => {
+  it("preloads image masks referenced by grouped sub cameras", () => {
+    const program = compileFgoScript("[subCameraFilter #A maskEdge cut359_mask16 5 0,0,0,255]\n[subCameraFilter maskEdge cut359_mask09 5]\n＠旁白\n切入\n[k]", "9415900310-masks");
+    expect(program.assets.filter((asset) => asset.kind === "image").map((asset) => asset.name)).toEqual(["cut359_mask16", "cut359_mask09"]);
+  });
   it("collects and deduplicates resources from every choice branch", () => {
     const program = compileFgoScript([
       "[charaSet A 1001 1 共通]",

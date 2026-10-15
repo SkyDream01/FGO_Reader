@@ -1,0 +1,139 @@
+
+==============================================================================
+### ScriptPosition$$.cctor  0x31d8f08..0x31d9054  (size 0x14c)
+0x31d8f08  str      x30, [sp, #-0x20]!
+0x31d8f0c  stp      x20, x19, [sp, #0x10]
+0x31d8f10  adrp     x20, #0x59c5000
+0x31d8f14  adrp     x19, #0x5571000
+0x31d8f18  ldrb     w8, [x20, #0x2e2]
+0x31d8f1c  ldr      x19, [x19, #0xae8]
+0x31d8f20  tbnz     w8, #0, #0x31d8f44
+0x31d8f24  adrp     x0, #0x55c9000
+0x31d8f28  ldr      x0, [x0, #0x340]
+0x31d8f2c  bl       #0x22304a4   CALL 0x22304a4
+0x31d8f30  adrp     x0, #0x5571000
+0x31d8f34  ldr      x0, [x0, #0xae8]
+0x31d8f38  bl       #0x22304a4   CALL 0x22304a4
+0x31d8f3c  mov      w8, #1
+0x31d8f40  strb     w8, [x20, #0x2e2]
+0x31d8f44  ldr      x0, [x19]
+0x31d8f48  mov      w1, #7
+0x31d8f4c  bl       #0x2230564   CALL 0x2230564
+0x31d8f50  cbz      x0, #0x31d9050
+0x31d8f54  ldr      w8, [x0, #0x18]
+0x31d8f58  mov      x1, x0
+0x31d8f5c  cbz      w8, #0x31d904c
+0x31d8f60  adrp     x9, #0xea7000
+0x31d8f64  cmp      w8, #1
+0x31d8f68  ldr      d0, [x9, #0x60]
+0x31d8f6c  str      d0, [x1, #0x20]
+0x31d8f70  b.eq     #0x31d904c
+0x31d8f74  cmp      w8, #2
+0x31d8f78  str      xzr, [x1, #0x28]
+0x31d8f7c  b.ls     #0x31d904c
+0x31d8f80  adrp     x9, #0xea7000
+0x31d8f84  cmp      w8, #3
+0x31d8f88  ldr      d0, [x9, #0xfd8]
+0x31d8f8c  str      d0, [x1, #0x30]
+0x31d8f90  b.eq     #0x31d904c
+0x31d8f94  adrp     x9, #0xea6000
+0x31d8f98  cmp      w8, #4
+0x31d8f9c  ldr      d0, [x9, #0xb48]
+0x31d8fa0  str      d0, [x1, #0x38]
+0x31d8fa4  b.ls     #0x31d904c
+0x31d8fa8  adrp     x9, #0xea7000
+0x31d8fac  cmp      w8, #5
+0x31d8fb0  ldr      d0, [x9, #0xe10]
+0x31d8fb4  str      d0, [x1, #0x40]
+0x31d8fb8  b.eq     #0x31d904c
+0x31d8fbc  adrp     x9, #0xea8000
+0x31d8fc0  cmp      w8, #6
+0x31d8fc4  ldr      d0, [x9, #0x508]
+0x31d8fc8  str      d0, [x1, #0x48]
+0x31d8fcc  b.ls     #0x31d904c
+0x31d8fd0  adrp     x8, #0xea7000
+0x31d8fd4  adrp     x20, #0x55c9000
+0x31d8fd8  ldr      d0, [x8, #0xe18]
+0x31d8fdc  ldr      x20, [x20, #0x340]
+0x31d8fe0  str      d0, [x1, #0x50]
+0x31d8fe4  ldr      x8, [x20]
+0x31d8fe8  ldr      x8, [x8, #0xb8]
+0x31d8fec  str      x1, [x8]
+0x31d8ff0  ldr      x8, [x20]
+0x31d8ff4  ldr      x0, [x8, #0xb8]
+0x31d8ff8  bl       #0x2230448   CALL 0x2230448
+0x31d8ffc  ldr      x0, [x19]
+0x31d9000  mov      w1, #3
+0x31d9004  bl       #0x2230564   CALL 0x2230564
+0x31d9008  cbz      x0, #0x31d9050
+0x31d900c  ldr      w8, [x0, #0x18]
+0x31d9010  mov      x1, x0
+0x31d9014  cbz      w8, #0x31d904c
+0x31d9018  cmp      w8, #1
+0x31d901c  str      xzr, [x1, #0x20]
+0x31d9020  b.eq     #0x31d904c
+0x31d9024  cmp      w8, #2
+0x31d9028  str      xzr, [x1, #0x28]
+0x31d902c  b.ls     #0x31d904c
+0x31d9030  str      xzr, [x1, #0x30]
+0x31d9034  ldr      x8, [x20]
+0x31d9038  ldp      x20, x19, [sp, #0x10]
+0x31d903c  ldr      x0, [x8, #0xb8]
+0x31d9040  str      x1, [x0, #8]!
+0x31d9044  ldr      x30, [sp], #0x20
+0x31d9048  b        #0x2230448
+0x31d904c  bl       #0x2230728   CALL 0x2230728
+0x31d9050  bl       #0x2230720   CALL 0x2230720
+
+==============================================================================
+### ScriptPosition$$GetCharaOffset  0x31d8e44..0x31d8ef8  (size 0xb4)
+0x31d8e44  stp      x30, x21, [sp, #-0x20]!
+0x31d8e48  stp      x20, x19, [sp, #0x10]
+0x31d8e4c  adrp     x21, #0x59c5000
+0x31d8e50  adrp     x20, #0x55c9000
+0x31d8e54  mov      w19, w0
+0x31d8e58  ldrb     w8, [x21, #0x2e1]
+0x31d8e5c  ldr      x20, [x20, #0x340]
+0x31d8e60  tbnz     w8, #0, #0x31d8e78
+0x31d8e64  adrp     x0, #0x55c9000
+0x31d8e68  ldr      x0, [x0, #0x340]
+0x31d8e6c  bl       #0x22304a4   CALL 0x22304a4
+0x31d8e70  mov      w8, #1
+0x31d8e74  strb     w8, [x21, #0x2e1]
+0x31d8e78  ldr      x0, [x20]
+0x31d8e7c  tbnz     w19, #0x1f, #0x31d8eac
+0x31d8e80  ldr      w8, [x0, #0xe4]
+0x31d8e84  cbnz     w8, #0x31d8e90
+0x31d8e88  bl       #0x22305f4   CALL 0x22305f4
+0x31d8e8c  ldr      x0, [x20]
+0x31d8e90  ldr      x8, [x0, #0xb8]
+0x31d8e94  ldr      x8, [x8, #8]
+0x31d8e98  cbz      x8, #0x31d8ef0
+0x31d8e9c  ldr      w8, [x8, #0x18]
+0x31d8ea0  cmp      w8, w19
+0x31d8ea4  csel     w19, w19, wzr, gt
+0x31d8ea8  b        #0x31d8eb0
+0x31d8eac  mov      w19, wzr
+0x31d8eb0  ldr      w8, [x0, #0xe4]
+0x31d8eb4  cbnz     w8, #0x31d8ec0
+0x31d8eb8  bl       #0x22305f4   CALL 0x22305f4
+0x31d8ebc  ldr      x0, [x20]
+0x31d8ec0  ldr      x8, [x0, #0xb8]
+0x31d8ec4  ldr      x8, [x8, #8]
+0x31d8ec8  cbz      x8, #0x31d8ef0
+0x31d8ecc  ldr      w9, [x8, #0x18]
+0x31d8ed0  cmp      w19, w9
+0x31d8ed4  b.hs     #0x31d8ef4
+0x31d8ed8  add      x8, x8, w19, uxtw #3
+0x31d8edc  ldp      x20, x19, [sp, #0x10]
+0x31d8ee0  movi     d2, #0000000000000000
+0x31d8ee4  ldp      s0, s1, [x8, #0x20]
+0x31d8ee8  ldp      x30, x21, [sp], #0x20
+0x31d8eec  ret      
+0x31d8ef0  bl       #0x2230720   CALL 0x2230720
+0x31d8ef4  bl       #0x2230728   CALL 0x2230728
+
+==============================================================================
+### ScriptPosition$$GetCharaOffset  0x31d8ef8..0x31d8f00  (size 0x8)
+0x31d8ef8  movi     d2, #0000000000000000
+0x31d8efc  ret      

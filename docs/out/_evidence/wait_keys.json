@@ -1,0 +1,733 @@
+{
+ "keys": [
+  "backEffect",
+  "charaAttack",
+  "charaBackEffect",
+  "charaChange",
+  "charaCrossFade",
+  "charaCut",
+  "charaCutStart",
+  "charaEffect",
+  "charaEffectEdgeBlur",
+  "charaFade",
+  "charaFadeTimeLoop",
+  "charaMove",
+  "charaMoveEase",
+  "charaMoveEaseFSL",
+  "charaMoveEaseFSR",
+  "charaMoveEaseFSSideL",
+  "charaMoveEaseFSSideR",
+  "charaMoveFSL",
+  "charaMoveFSR",
+  "charaMoveFSSideL",
+  "charaMoveFSSideR",
+  "charaMoveReturn",
+  "charaMoveReturnEaseFSL",
+  "charaMoveReturnEaseFSR",
+  "charaMoveReturnEaseFSSideL",
+  "charaMoveReturnEaseFSSideR",
+  "charaMoveReturnFSL",
+  "charaMoveReturnFSR",
+  "charaMoveReturnFSSideL",
+  "charaMoveReturnFSSideR",
+  "charaMoveScale",
+  "charaReturn",
+  "charaRollAxis",
+  "charaRollAxisLoopStop",
+  "charaRollMove",
+  "charaRollMoveEx",
+  "charaSet",
+  "charaSpecialEffect",
+  "communicatioChara",
+  "effect",
+  "effectmessage",
+  "effectmessageStart",
+  "equipChange",
+  "equipSet",
+  "fastPlayDraw",
+  "figureChange",
+  "figureSet",
+  "fowardEffect",
+  "frame",
+  "fsmObjFinished",
+  "fsmObjSet",
+  "horizontalImageChange",
+  "horizontalImageSet",
+  "imageChange",
+  "imageSet",
+  "insertionAnimationEnd",
+  "insertionAnimationStart",
+  "masterChange",
+  "masterHorizontalImageChange",
+  "masterHorizontalImageSet",
+  "masterImageChange",
+  "masterImageSet",
+  "masterSet",
+  "masterVerticalImageChange",
+  "masterverticalImageSet",
+  "rtime",
+  "sceneSet",
+  "skippableTime",
+  "specialEffect",
+  "time",
+  "verticalImageChange",
+  "verticalImageSet"
+ ],
+ "sites": {
+  "charaMoveFSL": [
+   [
+    "0x318755c",
+    "b.hi",
+    "#0x3190780"
+   ],
+   [
+    "0x3191f5c",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "masterImageChange": [
+   [
+    "0x318756c",
+    "b.hi",
+    "#0x3191f4c"
+   ],
+   [
+    "0x318758c",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "verticalImageSet": [
+   [
+    "0x318757c",
+    "b.eq",
+    "#0x3193074"
+   ]
+  ],
+  "charaBackEffect": [
+   [
+    "0x318b704",
+    "b.hi",
+    "#0x318d95c"
+   ],
+   [
+    "0x31922e4",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "specialEffect": [
+   [
+    "0x318b714",
+    "b.hi",
+    "#0x318f214"
+   ],
+   [
+    "0x3192118",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaMoveReturnFSSideR": [
+   [
+    "0x318b724",
+    "b.hi",
+    "#0x31907dc"
+   ],
+   [
+    "0x3191f88",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaMoveScale": [
+   [
+    "0x318b734",
+    "b.hi",
+    "#0x3191f78"
+   ],
+   [
+    "0x318b754",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaCut": [
+   [
+    "0x318b744",
+    "b.eq",
+    "#0x3193080"
+   ]
+  ],
+  "charaMoveReturn": [
+   [
+    "0x318d900",
+    "b.hi",
+    "#0x318f260"
+   ],
+   [
+    "0x31921bc",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "rtime": [
+   [
+    "0x318d910",
+    "b.hi",
+    "#0x3190818"
+   ],
+   [
+    "0x3191fb4",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "fsmObjFinished": [
+   [
+    "0x318d920",
+    "b.hi",
+    "#0x3191fa4"
+   ],
+   [
+    "0x318d940",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaMoveEase": [
+   [
+    "0x318d930",
+    "b.eq",
+    "#0x31930f4"
+   ]
+  ],
+  "charaMoveReturnFSR": [
+   [
+    "0x318d96c",
+    "b.hi",
+    "#0x3190854"
+   ],
+   [
+    "0x3191fe0",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "masterverticalImageSet": [
+   [
+    "0x318d97c",
+    "b.hi",
+    "#0x3191fd0"
+   ],
+   [
+    "0x318d99c",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaCrossFade": [
+   [
+    "0x318d98c",
+    "b.eq",
+    "#0x3193100"
+   ]
+  ],
+  "charaAttack": [
+   [
+    "0x318f1c8",
+    "b.hi",
+    "#0x31908a4"
+   ],
+   [
+    "0x319200c",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaCutStart": [
+   [
+    "0x318f1d8",
+    "b.hi",
+    "#0x3191ffc"
+   ],
+   [
+    "0x318f1f8",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "equipSet": [
+   [
+    "0x318f1e8",
+    "b.eq",
+    "#0x319310c"
+   ]
+  ],
+  "charaMoveEaseFSSideR": [
+   [
+    "0x318f214",
+    "b.hi",
+    "#0x31908e0"
+   ],
+   [
+    "0x3192038",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaChange": [
+   [
+    "0x318f224",
+    "b.hi",
+    "#0x3192028"
+   ],
+   [
+    "0x318f244",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "masterImageSet": [
+   [
+    "0x318f234",
+    "b.eq",
+    "#0x3193118"
+   ]
+  ],
+  "charaRollMove": [
+   [
+    "0x318f260",
+    "b.hi",
+    "#0x319091c"
+   ],
+   [
+    "0x3192064",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "effect": [
+   [
+    "0x318f270",
+    "b.hi",
+    "#0x3192054"
+   ],
+   [
+    "0x318f290",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "sceneSet": [
+   [
+    "0x318f280",
+    "b.eq",
+    "#0x3193124"
+   ]
+  ],
+  "effectmessage": [
+   [
+    "0x318f2ac",
+    "b.hi",
+    "#0x319094c"
+   ],
+   [
+    "0x31920a0",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaMove": [
+   [
+    "0x318f2bc",
+    "b.hi",
+    "#0x3192080"
+   ],
+   [
+    "0x318f2dc",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "verticalImageChange": [
+   [
+    "0x318f2cc",
+    "b.eq",
+    "#0x3193130"
+   ]
+  ],
+  "communicatioChara": [
+   [
+    "0x3190780",
+    "b.hi",
+    "#0x31920bc"
+   ],
+   [
+    "0x31907a0",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaMoveFSR": [
+   [
+    "0x3190790",
+    "b.eq",
+    "#0x319313c"
+   ]
+  ],
+  "charaMoveReturnEaseFSR": [
+   [
+    "0x31907dc",
+    "b.hi",
+    "#0x31920f8"
+   ],
+   [
+    "0x31907fc",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "masterHorizontalImageChange": [
+   [
+    "0x31907ec",
+    "b.eq",
+    "#0x3193148"
+   ]
+  ],
+  "imageSet": [
+   [
+    "0x3190818",
+    "b.hi",
+    "#0x319219c"
+   ],
+   [
+    "0x3190838",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaMoveReturnEaseFSSideR": [
+   [
+    "0x3190828",
+    "b.eq",
+    "#0x3193154"
+   ]
+  ],
+  "charaEffectEdgeBlur": [
+   [
+    "0x3190854",
+    "b.hi",
+    "#0x31921d8"
+   ],
+   [
+    "0x3190874",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaMoveReturnFSL": [
+   [
+    "0x3190864",
+    "b.eq",
+    "#0x3193160"
+   ]
+  ],
+  "charaMoveReturnEaseFSSideL": [
+   [
+    "0x31908a4",
+    "b.hi",
+    "#0x3192214"
+   ],
+   [
+    "0x31908c4",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "masterHorizontalImageSet": [
+   [
+    "0x31908b4",
+    "b.eq",
+    "#0x319316c"
+   ]
+  ],
+  "charaMoveReturnFSSideL": [
+   [
+    "0x31908f0",
+    "b.eq",
+    "#0x3193178"
+   ]
+  ],
+  "fowardEffect": [
+   [
+    "0x3190900",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "skippableTime": [
+   [
+    "0x319091c",
+    "b.hi",
+    "#0x31923b8"
+   ]
+  ],
+  "charaEffect": [
+   [
+    "0x319094c",
+    "b.hi",
+    "#0x31923f4"
+   ],
+   [
+    "0x319096c",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "horizontalImageSet": [
+   [
+    "0x319095c",
+    "b.eq",
+    "#0x3193190"
+   ]
+  ],
+  "charaMoveEaseFSL": [
+   [
+    "0x3191f4c",
+    "b.eq",
+    "#0x319319c"
+   ]
+  ],
+  "equipChange": [
+   [
+    "0x3191f78",
+    "b.eq",
+    "#0x31931a8"
+   ]
+  ],
+  "charaSpecialEffect": [
+   [
+    "0x3191fa4",
+    "b.eq",
+    "#0x31931b4"
+   ]
+  ],
+  "insertionAnimationEnd": [
+   [
+    "0x3191fd0",
+    "b.eq",
+    "#0x319328c"
+   ]
+  ],
+  "charaRollAxis": [
+   [
+    "0x3191ffc",
+    "b.eq",
+    "#0x3193298"
+   ]
+  ],
+  "charaRollAxisLoopStop": [
+   [
+    "0x3192028",
+    "b.eq",
+    "#0x31932a4"
+   ]
+  ],
+  "masterSet": [
+   [
+    "0x3192054",
+    "b.eq",
+    "#0x31932b0"
+   ]
+  ],
+  "insertionAnimationStart": [
+   [
+    "0x3192080",
+    "b.eq",
+    "#0x3193644"
+   ]
+  ],
+  "charaFadeTimeLoop": [
+   [
+    "0x3192090",
+    "b.eq",
+    "#0x31934c8"
+   ]
+  ],
+  "charaFade": [
+   [
+    "0x31920bc",
+    "b.eq",
+    "#0x3193710"
+   ]
+  ],
+  "charaMoveFSSideL": [
+   [
+    "0x31920cc",
+    "b.eq",
+    "#0x31934d4"
+   ]
+  ],
+  "charaMoveEaseFSR": [
+   [
+    "0x31920dc",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "masterChange": [
+   [
+    "0x31920f8",
+    "b.eq",
+    "#0x319371c"
+   ]
+  ],
+  "charaMoveEaseFSSideL": [
+   [
+    "0x3192108",
+    "b.eq",
+    "#0x31934e0"
+   ]
+  ],
+  "time": [
+   [
+    "0x319219c",
+    "b.eq",
+    "#0x3193728"
+   ]
+  ],
+  "figureSet": [
+   [
+    "0x31921ac",
+    "b.eq",
+    "#0x31934ec"
+   ]
+  ],
+  "frame": [
+   [
+    "0x31921d8",
+    "b.eq",
+    "#0x31937dc"
+   ]
+  ],
+  "figureChange": [
+   [
+    "0x31921e8",
+    "b.eq",
+    "#0x31934f8"
+   ]
+  ],
+  "masterVerticalImageChange": [
+   [
+    "0x31921f8",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaReturn": [
+   [
+    "0x3192214",
+    "b.eq",
+    "#0x3193888"
+   ]
+  ],
+  "effectmessageStart": [
+   [
+    "0x3192224",
+    "b.eq",
+    "#0x3193504"
+   ]
+  ],
+  "backEffect": [
+   [
+    "0x3192234",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "horizontalImageChange": [
+   [
+    "0x31922c4",
+    "b.eq",
+    "#0x3193894"
+   ]
+  ],
+  "charaSet": [
+   [
+    "0x31922d4",
+    "b.eq",
+    "#0x31935a0"
+   ]
+  ],
+  "charaMoveReturnEaseFSL": [
+   [
+    "0x31923b8",
+    "b.eq",
+    "#0x31938a0"
+   ]
+  ],
+  "fastPlayDraw": [
+   [
+    "0x31923c8",
+    "b.eq",
+    "#0x31935ac"
+   ]
+  ],
+  "fsmObjSet": [
+   [
+    "0x31923d8",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ],
+  "charaMoveFSSideR": [
+   [
+    "0x31923f4",
+    "b.eq",
+    "#0x31938ac"
+   ]
+  ],
+  "charaRollMoveEx": [
+   [
+    "0x3192404",
+    "b.eq",
+    "#0x3193638"
+   ]
+  ],
+  "imageChange": [
+   [
+    "0x3192414",
+    "b.ne",
+    "#0x3193920"
+   ]
+  ]
+ },
+ "pivots": [
+  [
+   "0x318753c",
+   "0x4a6c6c30",
+   "b.hs",
+   "#0x318d900"
+  ],
+  [
+   "0x318754c",
+   "0x22da84bb",
+   "b.hs",
+   "#0x318f1c8"
+  ],
+  [
+   "0x318d95c",
+   "0xe6ad339f",
+   "b.hs",
+   "#0x318f2ac"
+  ],
+  [
+   "0x31908e0",
+   "0xae20810e",
+   "b.hs",
+   "#0x31922c4"
+  ]
+ ]
+}

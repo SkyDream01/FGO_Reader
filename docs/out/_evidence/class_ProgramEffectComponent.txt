@@ -1,0 +1,46 @@
+==============================================================================
+// ProgramEffectComponent  (dump.cs line 149562)
+public class ProgramEffectComponent : UITweenRenderer // TypeDefIndex: 4324
+{
+	// Fields
+	[SerializeField]
+	protected string effectName; // 0x190
+	protected Color effectColor; // 0x198
+	protected float effectRange; // 0x1A8
+	protected float duration; // 0x1AC
+	protected float totalTime; // 0x1B0
+	protected bool isSkip; // 0x1B4
+	protected bool isPause; // 0x1B5
+	protected bool isStart; // 0x1B6
+	protected bool isContinueSilhouette; // 0x1B7
+	protected ProgramEffectComponent.Param param; // 0x1B8
+
+	// Properties
+	public string EffectName { get; }
+	public bool IsStart { get; }
+
+	// Methods
+
+	// RVA: 0x30C80A0 Offset: 0x30C40A0 VA: 0x30C80A0
+	public string get_EffectName() { }
+
+	// RVA: 0x30C80A8 Offset: 0x30C40A8 VA: 0x30C80A8
+	public bool get_IsStart() { }
+
+	// RVA: 0x30C80B0 Offset: 0x30C40B0 VA: 0x30C80B0
+	public void Init(float time, Color color, float range, bool isSkip = False, bool isPause = False, bool isContinueSilhouette = False, ProgramEffectComponent.Param param) { }
+
+	// RVA: 0x30C8298 Offset: 0x30C4298 VA: 0x30C8298
+	protected void SetChildInit(Transform tf, int layer) { }
+
+	// RVA: 0x30C857C Offset: 0x30C457C VA: 0x30C857C Slot: 43
+	public virtual void Resume(bool isSkip) { }
+
+	// RVA: 0x30C8588 Offset: 0x30C4588 VA: 0x30C8588 Slot: 44
+	public virtual void Stop() { }
+
+	// RVA: 0x30B62F8 Offset: 0x30B22F8 VA: 0x30B62F8 Slot: 21
+	protected override void OnUpdate() { }
+
+	// RVA: 0x30B64C4 Offset: 0x30B24C4 VA: 0x30B64C4
+	public void .ctor() { }

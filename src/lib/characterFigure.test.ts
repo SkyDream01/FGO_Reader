@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { CharacterFigureMetadata } from "../data/atlas";
 import {
   resolveCharacterBaselineTop,
+  resolveCharacterFigurePlacement,
   resolveCharacterAlphaContentRect,
   resolveCharacterCenterCorrection,
   resolveCharacterCanvasSize,
@@ -19,6 +20,23 @@ const metadata: CharacterFigureMetadata = {
 };
 
 describe("character figure helpers", () => {
+  it("aligns the bitmap with Atlas metadata without recentering transparent margins", () => {
+    const placement = resolveCharacterFigurePlacement(1024, 1024, metadata);
+    expect(placement).toEqual({ canvasSize: 1024, left: -10, top: 72 });
+    // Stage center (288) - half canvas (512) + bitmap top = -offsetY.
+    expect(288 - placement.canvasSize / 2 + placement.top).toBe(-metadata.offsetY);
+  });
+
+  it("preserves source pixel scale and metadata alignment for oversized figures", () => {
+    const placement = resolveCharacterFigurePlacement(2048, 1200, metadata);
+    expect(placement).toEqual({ canvasSize: 2048, left: -10, top: 584 });
+    expect(288 - placement.canvasSize / 2 + placement.top).toBe(-metadata.offsetY);
+  });
+
+  it("matches both Atlas horizontal offsets for the large offsets in 9415900310", () => {
+    expect(resolveCharacterFigurePlacement(1024, 1024, { ...metadata, offsetX: 39 }).left).toBe(78);
+    expect(resolveCharacterFigurePlacement(1024, 1024, { ...metadata, offsetX: -25 }).left).toBe(-50);
+  });
   it("finds visible content while ignoring transparent pixels", () => {
     const data = new Uint8ClampedArray(4 * 4 * 4);
     const setPixel = (x: number, y: number, alpha: number) => {

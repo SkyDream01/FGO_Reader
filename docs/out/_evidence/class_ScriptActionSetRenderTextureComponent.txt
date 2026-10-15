@@ -1,0 +1,26 @@
+==============================================================================
+// ScriptActionSetRenderTextureComponent  (dump.cs line 165493)
+public class ScriptActionSetRenderTextureComponent : MonoBehaviour // TypeDefIndex: 4798
+{
+	// Fields
+	[SerializeField]
+	[Tooltip("スクリプトでcaptureした画像を使用する場合はCaptureを選択してください。")]
+	private ScriptActionSetRenderTextureComponent.RenderTextureType textureType; // 0x20
+	[SerializeField]
+	[Tooltip("指定されたGameObjectの子オブジェクトも対象となります。")]
+	private GameObject[] TargetObjects; // 0x28
+	private const float ScriptActionRenderWidth = 1344;
+	private const float ScriptActionRenderHeight = 576;
+	private static readonly Vector2 mainTextureScale; // 0x0
+	private static readonly Vector2 mainTextureOffset; // 0x8
+
+	// Methods
+
+	// RVA: 0x316D184 Offset: 0x3169184 VA: 0x316D184
+	private void Start() { }
+
+	// RVA: 0x316D3BC Offset: 0x31693BC VA: 0x316D3BC
+	public void .ctor() { }
+
+	// RVA: 0x316D3C4 Offset: 0x31693C4 VA: 0x316D3C4
+	private static void .cctor() { }

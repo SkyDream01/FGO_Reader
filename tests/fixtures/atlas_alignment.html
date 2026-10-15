@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>Atlas composition regression fixture</title></head>
+<body>
+<div id="root"></div>
+<script type="module">
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { StoryStage } from "../../src/components/StoryStage";
+import { compileFgoScript } from "../../src/lib/scriptParser";
+import { ScriptExecutor } from "../../src/adv/executor";
+import { backgroundUrl } from "../../src/data/atlas";
+import { useCustomAssetUrl } from "../../src/hooks/useCustomAssetUrl";
+import "../../src/styles.css";
+import "../../src/adv/runtime.css";
+
+const root = createRoot(document.getElementById("root"));
+const debug = { screenOrigin: { x: 0, y: 0 }, characterOrigin: { x: 0, y: 0 }, showScreenOrigin: false, showCharacterOrigin: false };
+function replay(source, ordinal = 1) {
+  const program = compileFgoScript(source, "atlas-alignment");
+  const executor = new ScriptExecutor(program, { masterName: "御主", masterGender: "male", textSpeedMs: 0, reduceMotion: true });
+  executor.setViewportAspect(window.innerWidth / Math.max(1, window.innerHeight));
+  executor.start();
+  for (let n = 0; n < 1000; n++) {
+    const frame = executor.getSnapshot();
+    if ((frame.phase === "message" && frame.messageOrdinal >= ordinal) || frame.phase === "ended") break;
+    if (frame.phase === "choice") { executor.selectChoice(0); executor.tick(120000); continue; }
+    executor.tap(); executor.tick(120000);
+  }
+  for (let settle = 0; settle < 8 && executor.getSnapshot().message?.complete === false; settle++) executor.tick(120000);
+  return executor.getSnapshot();
+}
+function renderSnapshot(snapshot) {
+  root.render(React.createElement("div", { className: "reader-shell" }, React.createElement("div", { className: "reader-stage" },
+    React.createElement(StoryStage, { snapshot, region: "JP", customPackage: null, currentBackground: backgroundUrl("JP", snapshot.background.id, snapshot.fullScreen), onBackgroundError() {}, debug }))));
+  return { ordinal: snapshot.messageOrdinal, phase: snapshot.phase, waitKind: snapshot.waitKind, complete: snapshot.message?.complete, position: snapshot.position, characters: snapshot.characters, layers: snapshot.stageLayers, subLayers: snapshot.subLayers, background: snapshot.background, frame: snapshot.pictureFrame, camera: snapshot.camera, fade: snapshot.fade, wipe: snapshot.wipe, effects: snapshot.presentation.effects.map(e => e.name), message: snapshot.message?.lines.flatMap(l => l.spans.map(s => s.text)).join(''), total: snapshot.messageTotal, diagnostics: snapshot.diagnostics };
+}
+window.renderFrame = (source, ordinal = 1) => renderSnapshot(replay(source, ordinal));
+
+// Deterministic normal-speed playback. Timer/completion waits advance in small
+// steps, while each input boundary remains on screen for one simulated second.
+let playback, elapsed = 0, inputKey = "", inputElapsed = 0, traces = [], messages = new Set();
+window.startPlayback = source => {
+  playback = new ScriptExecutor(compileFgoScript(source, "atlas-animation"), { masterName: "御主", masterGender: "male", textSpeedMs: 0, reduceMotion: false });
+  playback.setViewportAspect(window.innerWidth / Math.max(1, window.innerHeight));
+  elapsed = 0; inputKey = ""; inputElapsed = 0; traces = []; messages = new Set();
+  playback.onTrace = event => traces.push({ ...event, elapsed });
+  playback.start();
+  return renderSnapshot(playback.getSnapshot());
+};
+function tickPlayback(ms, autoInput = false) {
+  const frame = playback.getSnapshot();
+  if (frame.messageOrdinal) messages.add(frame.messageOrdinal);
+  if (autoInput && (frame.waitKind === "input" || frame.phase === "choice")) {
+    const key = `${frame.position}:${frame.phase}`;
+    if (key !== inputKey) { inputKey = key; inputElapsed = 0; }
+    inputElapsed += ms;
+    if (inputElapsed >= 1000) {
+      if (frame.phase === "choice") playback.selectChoice(0); else playback.tap();
+      inputKey = "";
+    }
+  }
+  elapsed += ms;
+  playback.tick(ms);
+}
+window.advancePlayback = ms => {
+  for (let remaining = ms; remaining > 0; remaining -= Math.min(remaining, 25)) tickPlayback(Math.min(remaining, 25));
+  return renderSnapshot(playback.getSnapshot());
+};
+window.playUntilLine = line => {
+  for (let n = 0; n < 120000 && !traces.some(event => event.line >= line) && playback.getSnapshot().phase !== "ended"; n++) tickPlayback(25, true);
+  if (!traces.some(event => event.line >= line)) throw new Error(`Playback did not reach line ${line}`);
+  return renderSnapshot(playback.getSnapshot());
+};
+window.finishPlayback = () => {
+  for (let n = 0; n < 120000 && playback.getSnapshot().phase !== "ended"; n++) tickPlayback(25, true);
+  return { ...renderSnapshot(playback.getSnapshot()), elapsed, messageOrdinals: [...messages], traces };
+};
+function FallbackProbe({ scene }) {
+  const { url, useFallback } = useCustomAssetUrl({ fallbackUrl: backgroundUrl("JP", scene, true), fallbackUrls: [backgroundUrl("JP", scene)] });
+  return React.createElement("img", { id: "fallback-probe", src: url, onError: useFallback });
+}
+window.renderFallback = scene => root.render(React.createElement(FallbackProbe, { scene }));
+window.fixtureReady = true;
+</script>
+</body>
+</html>

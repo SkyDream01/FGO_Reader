@@ -1,0 +1,145 @@
+[
+ {
+  "claim": "A1: ScriptManager.AnalysScript(0x31A50EC)的 Split 分隔符是 char[4],其 InitialArray 字段句柄来自使用槽 0x558a348 -> ScriptMetadata cell 0x57fbc10 = Field$<PrivateImplementationDetails>.307012A837186614D001E192B1D70E6A03D8FC10730FB392A7536E08456B2EF3;数组类 = slot 0x558a340 -> cell 0x5787400 = char[]_TypeInfo,长度 4。",
+  "evidence": [
+   "0x31a54dc bl #0x48748dc CALL System.String$$Replace (x1='\\r' slot 0x55706f0 reloc addend 0x57fd590; x2='' slot 0x5570458 reloc addend 0x57fd2e8)",
+   "0x31a54e8 mov w1, #4 ; 0x31a54ec ldr x8,[x8,#0x340] ; 0x31a54f8 bl #0x2230564 (char[] 分配) ; 0x31a54fc adrp x8,#0x558a000",
+   "0x31a5508 ldr x8,[x8,#0x348] ; 0x31a550c ldr x1,[x8] ; 0x31a5510 bl #0x491026c CALL System.Runtime.CompilerServices.RuntimeHelpers$$InitializeArray",
+   "reloc .rela.dyn type 1027: 0x558a340 addend 0x5787400 -> ScriptMetadata 'char[]_TypeInfo'; 0x558a348 addend 0x57fbc10 -> ScriptMetadata 'Field$<PrivateImplementationDetails>.307012A837186614D001E192B1D70E6A03D8FC10730FB392A7536E08456B2EF3'",
+   "script.json InitializeArray 签名 void ...InitializeArray(System_Array_o* array, intptr_t fldHandle, const MethodInfo*)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "A2: 字段 307012A8… 的初始数据 = 8 字节 BF BB FF FE FE FF 0A 00。global-metadata.dat(version 31,magic 0xFAB11BAF)中 fieldDefaultValues @0x9F0908(26692 项 x12)、fields @0xCFAC0C(119812 项 x12)、fieldAndParameterDefaultValueData @0xA3EC38(size 0xFD094)、string @0xD9010;字段名 307012A8… 位于 fields[75761](typeIndex 0x69DC, token 0x040127F2),FDV(fieldIndex=75761,dataIndex=0xBB40),绝对偏移 0xA3EC38+0xBB40=0xA4A778。dataIndex 为相对 blob 偏移。",
+  "evidence": [
+   "struct.unpack('<Ii', md, 0) -> magic 0xFAB11BAF, version 31",
+   "fields[75761] nameIndex -> \"307012A837186614D001E192B1D70E6A03D8FC10730FB392A7536E08456B2EF3\"",
+   "FDV 命中 (75761, 0x69DC, 0xBB40);data 0xA3EC38+0xBB40=0xA4A778 的 8 字节 = bfbbfffefeff0a00",
+   "dump.cs:474991 internal static readonly long 307012A837186614D001E192B1D70E6A03D8FC10730FB392A7536E08456B2EF3 = 3096220432055231; // 0x950(0x0AFFFEFEFFBBBF = 同 8 字节 LE)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "A3: 字节内容由 Roslyn 内容寻址自证:sha256(BF BB FF FE FE FF 0A 00) == 字段名 307012A8…B2EF3。按 UTF-16LE 解释得到 4 个字符 U+BBBF, U+FEFF, U+FFFE, U+000A;其中只有 U+000A(LF)在语料中出现。",
+  "evidence": [
+   "hashlib.sha256(bytes.fromhex('bfbbfffefeff0a00')).hexdigest().upper() == '307012A837186614D001E192B1D70E6A03D8FC10730FB392A7536E08456B2EF3' (True)",
+   "RuntimeHelpers::InitializeArray 实体 0x223be28 尾部 0x223bea8 mul w21,w21,w8; 0x223beb4 add x0,x19,#0x20; 0x223bec8 b #0x53113c0(memcpy)——原样拷贝,无字节序转换"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "A4: 同族第 2 个数组 char[5] = {U+BBBF,U+FEFF,U+FFFE,U+000D,U+000A}(10 字节 bf bb ff fe fe ff 0d 00 0a 00),用于 LocalizationManager.SetTextData(0x2E5C768)解析本地化表;两处证明这组特殊码位是 FGO 文本管线的‘行分隔符集合’约定。",
+  "evidence": [
+   "元数据扫描:RVA 字段 01A2D4D2A3644EB58B9321AF665A1E3DD259AB36BB36C6953CE858B64416EF54 长度 10,内容 bfbbfffefeff0d000a00(sha256 与字段名一致)",
+   "0x2e5c8f8 mov w1,#5 ; 0x2e5c904 bl #0x2230564 ; 0x2e5c908 ldr x1,[x20](x20=[0x55b31e8] -> cell 0x57fbad8=该 char[5] 字段) ; 0x2e5c914 bl #0x491026c InitializeArray ; 0x2e5c934 bl #0x4875368 String$$Split",
+   "方法自证:同类调用点 0x2349c0c -> int[3]{1,2,3}、0x2815730 -> float[4]{156,114,72,30},解码方式可靠"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "A5: 语料行为:scripts\\ 下 33 章 2583 个 .txt,行尾 \\r\\n 共 1,773,635 次、\\r\\r\\n 共 47,063 次、孤立 \\r 为 0;U+BBBF/U+FEFF/U+FFFE/U+2028/U+2029 出现 0 次。Replace(\\r,\"\") 后按 LF 断行即等价;3 个特殊码位对语料无作用。",
+  "evidence": [
+   "全量扫描 scripts/ 2583 文件(os.walk + 正则 \\r+\\n 分类)",
+   "raw_0100000010.txt 与 scripts/…/0100000010.txt 对比:后者为 \\r\\r\\n 版本(2341B,72 个 \\r\\r\\n)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "B1: LocalizationManager.Get(0x2E58030)从静态字典 lookup(dump.cs: protected static Dictionary<string,string> lookup; // 0x18)取值;Get 内调用 ContainsKey(0x2E580DC)再取字典值。表由 SetTextData(0x2E5C768)解析填充。",
+  "evidence": [
+   "0x2e58084 bl #0x2e580dc CALL LocalizationManager$$ContainsKey ; 0x2e580a0 ldr x8,[x0,#0xb8] ; 0x2e580a4 ldr x0,[x8,#0x18]",
+   "Initialize(0x2E57AFC): 0x2e57c00 ldr x0,[x19,#0x20](mainTextData) ; 0x2e57c0c bl #0x4fd8c00 TextAsset$$get_text ; 0x2e57c1c b #0x2e5c768 SetTextData"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "B2: 运行时可被 AssetStorage \"Localization\" 覆盖:LoadAssetData(0x2E57C24)调用 AssetManager.loadAssetStorage(\"Localization\", cb, 1, false)(0x2e57db0 b #0x2da59ac),回调 <>c__DisplayClass16_0$$<LoadAssetData>b__0(0x2E5CFC8)取 AssetData.GetObject<TextAsset> → get_text → SetTextData。字面量 'Localization' 在 ScriptManager 之外仅此两处(另一处是 NGUI Localization$$LoadDictionary)。",
+  "evidence": [
+   "0x2e57ca0 ldr x0,[x0,#0xfb0] ; 槽 0x55b2fb0='Localization';0x2e57d98 同样 'Localization'",
+   "0x2e57d70 bl #0x2da0564 AssetLoader.LoadEndDataHandler$$.ctor ; 0x2e57db0 b #0x2da59ac AssetManager$$loadAssetStorage(bool ...(string name, AssetLoader_LoadEndDataHandler cb, int32 maxParallelLoad, bool canCancel, ...))",
+   "0x2e5d018 bl #0x3806f00 AssetData$$GetObject<object> ; 0x2e5d024 TextAsset$$get_text ; 0x2e5d03c bl #0x2e5c768 SetTextData"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "B3: APK 内置本地化表穷举:data.unity3d 共 15 个 TextAsset,其中 LocalizationJpn(pathID 98,349803 字符/533126 UTF-8 字节)与 NGUI 示例 Localization(pathID 602,1240 字符/1253 字节,KEY,English,Français 示例,0 个 MonoBehaviour 实例使用)。LocalizationJpn 位于 cab sharedassets0.assets。",
+  "evidence": [
+   "UnityPy 枚举 env.objects:TextAsset 98='LocalizationJpn'(len(m_Script)=349803),602='Localization'(1240)",
+   "LocalizationJpn 头 600B 为 \"UNKNOWN_NAME\" : \"???\", 等键值 + // 注释;6237 行,无 CR",
+   "com.aniplex.fategrandorder.apk 211 项(zipfile):assets/bin/Data/data.unity3d 21723820B、global-metadata.dat 20406076B、Managed/Resources/*.dll-resources.dat;无其他本地化表"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "B4: JP 是内置默认:data.unity3d 中 25 个 LocalizationManager MonoBehaviour(m_Script pathID 0x11DC)的 mainTextData PPtr 全部指向 pathID 98(=LocalizationJpn);level0 实例解析:fileID=2 → cab externals[1]=sharedassets0.assets(该文件含 pathID 98 TextAsset)。控制符随语言变化 = 表数据驱动;代码中无 'Jpn'/'Eng'/语言码字面量(搜索 lit_methods.json 命中 0)。",
+  "evidence": [
+   "原始字节解析:25 个实例 m_Script pathID=0x11DC;m_Name 后 PPtr 读得 (fileID,pathID)=(2,98) x23 与 (3,98) x2;cab 映射验证 1976 在 level0,externals=[globalgamemanagers.assets, sharedassets0.assets, Library/unity default resources]",
+   "lit_methods.json 词条扫描:'Jpn' 命中 0、'LocalizationJpn' 命中 0;'Localization' 命中 4(2 处 LocalizationManager$$LoadAssetData,2 处 NGUI)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "B5: 脚本控制符键→ScriptManager 字段(实例,Initialize 0x31A0DC0 内 Get+str):0x658 codeCommentString←SCRIPT_ACTION_CODE_COMMENT(0x31a111c/0x31a1124)、0x660 codeLabelString←…_LABEL、0x668 codeSceneString←…_SCENE、0x670 codeTalkString←…_TALK、0x678/0x680/0x688/0x690 switch 系列、0x698 codeInsertString←…_INSERT、0x6A0 codeVoiceString←…_VOICE、0x6A8 codeReturnString←…_RETURN、0x6B0 backLogTalkStartString←SCRIPT_ACTION_BACK_LOG_TALK_START。Jpn 值:COMMENT=＊(U+FF0A)、LABEL=＄(U+FF04)、SCENE=＃(U+FF03)、TALK=＠(U+FF20)、SWITCH_CASE=？、SWITCH_CASE_SPLIT=：、SWITCH_CASE_HIDDEN=；、SWITCH_END=？！、INSERT=％！、VOICE=％％、RETURN=￥(U+FFE5)、BACK_LOG_TALK_START=「 / END=」。",
+  "evidence": [
+   "win.py 扫描 0x31A0DC0..0x31A1400 的 bl #0x2e58030 + str x0,[x19,#0x6xx] 配对(上文 VA 清单)",
+   "从 LocalizationJpn(m_Script) 正则提取 \"KEY\" : \"VALUE\" 4930 条,SCRIPT_* 键值直接抄录"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "C1: ADV/章节脚本名模板 = String.Format(\"{0:D10}\", WarEntity.targetId)。PlayChapterStart(0x319A044)取 WarMaster(DataMasterBase<WarMaster,WarEntity,int>)的实体,读 WarEntity.targetId(long @0x58),用字面量 '{0:D10}'(槽 0x55ca5d0)格式化;随后 playScriptDataName=Concat('PlayChapter ',name),并把 10 位名传给 GetScriptAssetName(0x319a2a8)与 PlayLocal(x4=10位名)。",
+  "evidence": [
+   "0x319a1d4 ldr w1,[x20,#0x18] ; 0x319a1dc bl #0x3f48444 DataMasterBase<object,object,int>$$GetEntity ; 0x319a1f4 ldr x9,[x0,#0x58]",
+   "0x319a1f8 ldr x22,[x22,#0x5d0] ; &'{0:D10}'(字面量初始化 0x319a0f8) ; 0x319a21c bl #0x4868ad0 String$$Format",
+   "dump.cs:140924 WarMaster : DataMasterBase<WarMaster, WarEntity, int>;WarEntity: public long targetId; // 0x58",
+   "语料 2583 个文件名全部 ^\\d{10}\\.txt$;0100000010.txt 首行 ＄01-00-00-00-1-0(= Format(\"{0:D10}\",100000010))"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "C2: 资源仓储名与目录:文件在 AssetStorage \"ScriptActionEncrypt/\" + GetScriptAssetName(名字)。GetScriptAssetName(string)(0x3195CE4)取前 2 位;若前2位=='94' 则返回 '94/'+前4位。LoadExecuteScript(0x31A40AC)以 textPath+name 调 AssetManager.loadAssetStorage。textPath=\"ScriptActionEncrypt/\"(cctor 0x31c9630 写入 static+0x30),textPathRaw=\"ScriptAction/\"(0x31c961c,static+0x28)。",
+  "evidence": [
+   "0x3195d30 bl #0x48746b4 Substring(0,2) ; 0x3195d4c bl #0x48706e4 Equals('94') ; 0x3195d64 Substring(0,4) ; 0x3195d88 b #0x48727c4 Concat(3参,含 '/')",
+   "0x31a420c ldr x0,[x8,#0x30] ; 0x31a4210 bl #0x4867ef8 Concat ; 0x31a425c bl #0x2da59ac loadAssetStorage",
+   "ScriptManager$$.cctor: 0x31c94cc ldr x28,[x28,#0xec0]='ScriptAction/'; 0x31c94d0 ldr x27,[x27,#0xec8]='ScriptActionEncrypt/'; 0x31c961c str x1,[x0,#0x28]!; 0x31c9630 str x1,[x0,#0x30]!"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "C3: IsExistScriptFile(0x319BF3C)校验 = (scriptName+\".txt\") ∈ this.scriptFileList(0x2f8);清单资源 = textPath+\"ScriptFileList\" = \"ScriptActionEncrypt/ScriptFileList\"(Initialize 0x31a17f8/0x31a1834/loadAssetStorage);EndLoadScriptFileListAssetData(0x31A22E8)解密清单文本、Replace(\"\\r\\n\",\"\\n\")、Split('\\n')(mov w1,#0xa)、Sort,并取 ScriptEncryptSettings 对象存 +0x300。",
+  "evidence": [
+   "0x319bf78 ldr x1,[x22]; 槽 0x5587568='.txt' ; 0x319bf84 String$$Concat(name,'.txt') ; 0x319bf88 ldr x20,[x19,#0x2f8] ; 0x319bfc8 String$$Equals",
+   "0x31a17f8 ldr x23,[x23,#0x7e0]='ScriptFileList' ; 0x31a1830 ldr x0,[x8,#0x30](textPath) ; 0x31a1834 String$$Concat",
+   "0x31a2360 AssetData$$GetDecryptObjectText ; 0x31a2384 String$$Replace('\\r\\n','\\n') ; 0x31a23a4 mov w1,#0xa ; 0x31a23b0 String$$Split ; 0x31a23cc Array$$Sort ; 0x31a23d8 GetObject<ScriptEncryptSettings>"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "C4: Q/E/W 后缀 = 在 PlayQuestStart 模式下追加到脚本名(scriptLabel,+0x2D8)的同一资源内条目键:<name>Q<scriptQuestId|questId> / <name>E<eventId> / <name>W<warId>,依次探测,最后回退 <name>。模式判定 = playScriptDataName(static+0xC0) == \"PlayQuestStart\"(由 ScriptManager$$PlayQuestStart 0x319B55C 的 0x319b770 写入;GetScriptData 0x31A3BA8 检查)。Q/E/W 后缀条目不在本仓库语料(语料只有基名 .txt 文件),其载体为同一 AssetData(INFERRED:GetExecuteScriptText 仅按名字取文本,无二次装载)。",
+  "evidence": [
+   "0x31a3c3c String.op_Equality(playScriptDataName,'PlayQuestStart');0x31a3c30 ldr x1,[x20] 槽 0x55ca660='PlayQuestStart'",
+   "0x319b770 str x1('PlayQuestStart'),[x0,#0xc0]  @ ScriptManager$$PlayQuestStart(0x319B55C)",
+   "0x31a3cec Concat(base,'Q',scriptQuestId)('Q' 槽 0x55ca08c0) ; 0x31a3d60 Concat(base,'Q',questId) ; 0x31a3de0 Concat(base,'E',eventId)('E' 槽 0x5571410) ; 0x31a3e48 Concat(base,'W',warId)('W' 槽 0x5571408)",
+   "静态字段:warId 0xCC, eventId 0xD0, questId 0xD4, scriptQuestId 0xD8, questStartAction 0x138, scriptLabel(实例) 0x2D8(dump.cs ScriptManager)"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "C5: 文件名与文件内 ＄ 标签的关系:标签 = 同一个 10 位数字按 2-2-2-2-1-1 加 '-'。语料实测 2583 个文件中 2508 个满足 filename == 首行＄标签去'-'(74 个文件内为其他体系标签如 ＄93-00-01-15-1-0,1 个文件无 ＄ 行;每个文件最多 1 个 ＄ 标签)。",
+  "evidence": [
+   "正则 \\xEF\\xBC\\x84([0-9\\-]+) 扫描 2583 文件:labs 数 1 的文件 2582,0 的 1 个;label 去'-'==basename 2508",
+   "0100000010.txt -> ＄01-00-00-00-1-0;0100050120.txt(首行空行后)-> ＄01-00-05-01-2-0;0300110010.txt -> ＄03-00-11-00-1-0"
+  ],
+  "confidence": "high"
+ },
+ {
+  "claim": "C6: 战斗脚本命名与 ADV 分离:ScriptManager 常量 SCRIPT_NAME_BATTLE_BASE=\"{0:D8}{1:D1}\"、…_START=\"{0:D8}{1:D1}0\" 等(dump.cs:167801-167811),实现于 GetScriptName_BattleStart(0x319B8E4,字面量 '{0:D8}{1:D1}0' @0x319b90c)等;取脚本文本经 GetExecuteScriptText(0x31A3E88):AssetData.GetDecryptObjectText(name, ScriptEncryptSettings.GetKey(name))(GetKey 0x3199EAC → 0x31710A4 ScriptEncryptSettings$$GetKey)。",
+  "evidence": [
+   "lit_methods.json: '{0:D8}{1:D1}0' @0x319b90c [ScriptManager$$GetScriptName_BattleStart] 等 11 条",
+   "0x31a3ec4 ldr x21,[x19,#0x310](assetData) ; 0x31a3ed4 bl #0x3199eac GetKey ; 0x31a3ee8 bl #0x2d9e830 AssetData$$GetDecryptObjectText",
+   "0x31a3f38 str x20,[x0,#0xc0]!(playScriptDataName = Concat('AssetData ', name),字面量槽 0x55ca8c8)"
+  ],
+  "confidence": "high"
+ }
+]

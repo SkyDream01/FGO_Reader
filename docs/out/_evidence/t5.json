@@ -1,0 +1,212 @@
+{
+ "lines": [
+  {
+   "index": 0,
+   "raw": "wipein cut_01 0.5 0.8",
+   "kind": "command",
+   "tag": "wipein",
+   "params": [
+    "cut_01",
+    "0.5",
+    "0.8"
+   ],
+   "pd": [
+    "cut_01",
+    " ",
+    "0.5",
+    " ",
+    "0.8"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "cut_01",
+     "omitted": false,
+     "meaning": "划像名(拼成 Wipe/<name>)",
+     "type": "string",
+     "confidence": "high(受限扫描)",
+     "documented": true
+    },
+    {
+     "pd": 2,
+     "value": "0.5",
+     "omitted": false,
+     "meaning": null,
+     "type": "float",
+     "confidence": null,
+     "documented": true
+    },
+    {
+     "pd": 4,
+     "value": "0.8",
+     "omitted": false,
+     "meaning": null,
+     "type": "float",
+     "confidence": null,
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "raw": "charaSet A 100100",
+   "kind": "command",
+   "tag": "charaSet",
+   "params": [
+    "A",
+    "100100"
+   ],
+   "pd": [
+    "A",
+    " ",
+    "100100"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "A",
+     "omitted": false,
+     "meaning": "角色槽位索引(把 A-Z / 数字转成槽位号)",
+     "type": "string",
+     "confidence": "high(受限扫描)",
+     "documented": true
+    },
+    {
+     "pd": 2,
+     "value": "100100",
+     "omitted": false,
+     "meaning": "名称字符串(立绘/资源/对象名)",
+     "type": "string",
+     "confidence": "high(受限扫描)",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "raw": "cameraMoveEase 1 2 0.5 3",
+   "kind": "command",
+   "tag": "cameraMoveEase",
+   "params": [
+    "1",
+    "2",
+    "0.5",
+    "3"
+   ],
+   "pd": [
+    "1",
+    " ",
+    "2",
+    " ",
+    "0.5",
+    " ",
+    "3"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "1",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    },
+    {
+     "pd": 2,
+     "value": "2",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    },
+    {
+     "pd": 4,
+     "value": "0.5",
+     "omitted": false,
+     "meaning": null,
+     "type": null,
+     "confidence": null,
+     "documented": false
+    },
+    {
+     "pd": 6,
+     "value": "3",
+     "omitted": false,
+     "meaning": "传给 MainCameraMoveEase() 的参数 `vector`(Vector3)",
+     "type": "Vector3",
+     "confidence": "high(受限扫描)",
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "raw": "shake 0.3 0.05 8 4",
+   "kind": "command",
+   "tag": "shake",
+   "params": [
+    "0.3",
+    "0.05",
+    "8",
+    "4"
+   ],
+   "pd": [
+    "0.3",
+    " ",
+    "0.05",
+    " ",
+    "8",
+    " ",
+    "4"
+   ],
+   "param_info": [
+    {
+     "pd": 0,
+     "value": "0.3",
+     "omitted": false,
+     "meaning": "角色槽位索引(把 A-Z / 数字转成槽位号)",
+     "type": "float",
+     "confidence": "low(边界放宽后扫描,可能混入相邻指令)",
+     "documented": true
+    },
+    {
+     "pd": 2,
+     "value": "0.05",
+     "omitted": false,
+     "meaning": "名称字符串(立绘/资源/对象名)",
+     "type": "float",
+     "confidence": "low(边界放宽后扫描,可能混入相邻指令)",
+     "documented": true
+    },
+    {
+     "pd": 4,
+     "value": "8",
+     "omitted": false,
+     "meaning": null,
+     "type": "float",
+     "confidence": null,
+     "documented": true
+    },
+    {
+     "pd": 6,
+     "value": "4",
+     "omitted": false,
+     "meaning": null,
+     "type": "float",
+     "confidence": null,
+     "documented": true
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "raw": "",
+   "kind": "empty",
+   "tag": null,
+   "params": []
+  }
+ ],
+ "labels": {}
+}

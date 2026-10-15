@@ -1,0 +1,373 @@
+{
+  "meta": {
+    "doc": "work/out/_evidence/closure-choice-branch.md",
+    "binary": "work/extract/lib/arm64-v8a/libil2cpp.so (FGO 2.139.3, code 0x2321aa4-0x5311320)",
+    "corpus": "scripts/**/*.txt (33 chapters, 2583 files)",
+    "tools": [
+      "python work/coverage/win.py <VA> [before] [after]",
+      "python work/tools/find_callers.py 0x...",
+      "work/il2cpp_out/dump.cs",
+      "work/il2cpp_out/lit_methods.json",
+      "work/il2cpp_out/stringliteral.json",
+      "work/tools/resolve_strings.py (So.method_of / So.slot2str)"
+    ],
+    "generated_by": "closure-choice-branch corpus scan + disassembly windows (all counts from full runs, see doc section 0)",
+    "total_lines": 1870344,
+    "total_lines_excl_trailing": 1867761,
+    "files": 2583,
+    "option_lines": 18197,
+    "switch_end_lines": 11684,
+    "blocks": 11676
+  },
+  "findings": [
+    {
+      "id": "A1",
+      "claim": "语料全量：`？` 开头行 29,881 = 选项行 18,197 + `？！` 11,684；由「选项行…`？！`」构成的块 11,676；`？！` 全部独占一行（11,684/11,684）。",
+      "evidence": {
+        "corpus_command": "python - <<'PY' 全量遍历 scripts/**/*.txt：正则 ^？([^：]*)[：](.*)$ 计 18,197；ln.startswith('？！') 计 11,684；块 = 选项行到下一个 ？！ 计 11,676 (见 doc §0 脚本)",
+        "cross_check": "grep -rc '^？' scripts/ 合计 = 29,881 = 18,197 + 11,684",
+        "lines": "1,870,344（\\n 切分）− 2,583（每文件末尾空元素）= 1,867,761，与既有 supplement-script-format 数字一致"
+      },
+      "confidence": "proven-corpus-count"
+    },
+    {
+      "id": "A2",
+      "claim": "每块选项数分布 1:5,191 / 2:6,456 / 3:23 / 4:5 / 5:1；每块内序号严格为 1..k 连续、无重复、无空洞（0 例外）；序号取值统计 1:11,658 / 2:6,466 / 3:25 / 4:6 / 5:1，另有 41 行为非纯数字（`1,1000`、`1,1000,saveMaterial` 等）。",
+      "evidence": {
+        "corpus_command": "同 §A1 脚本内 per-block 判定：块内序号集合 == {1..k}；首序号必为 '1'（notstart1=0）；非数字形式见 doc §A.6 逐行原文（Lostbelt No6 0300090260.txt:270/282、0300081031.txt:416）"
+      },
+      "confidence": "proven-corpus-count"
+    },
+    {
+      "id": "A3",
+      "claim": "块尾 `？！` 之后的第一个非空命令 Top：charaFace 3219、charaFadeout 2486、messageOff 2007、charaTalk 841、bgm 301、wt 221、bgmStop 189、＠<说话人> 155、se 123、charaFaceFade 100、branch 77、label 72。块首选项行之前最近的命令：`[k]` 8258（70.7%）、`[wt …]` 若干、`？！` 160（链式块）。⇒ 「选项总在 [k] 之后」不成立，「选项总在台词/停顿之后」成立。",
+      "evidence": {
+        "corpus_command": "同 §A1 脚本 + §A.10 例句；doc §A.4 两张 Top 表"
+      },
+      "confidence": "proven-corpus-count"
+    },
+    {
+      "id": "A4",
+      "claim": "`；`(U+FF1B) 在语料中从不出现在行首，但作为「选项文本尾部条件」出现 14 行：10 行为 `？n：<文本>；<flag名>`（0400070720.txt:1243/1244、0400040520.txt:441/445/449/453/457、0400051740.txt:560 空文本、0500010320.txt:180/182/184），3 行为 [line 3] 乱码行，1 行为其它。",
+      "evidence": {
+        "corpus_command": "grep -rn '；' scripts/ ；doc §A.5 逐行原文表",
+        "note": "既有结论「`；` 0 次」仅对行首形态成立"
+      },
+      "confidence": "proven-corpus-count"
+    },
+    {
+      "id": "A5",
+      "claim": "`[input …]` 全量 83 行，只有三形态：`[input selectBranch]` 81、`[input selectBranch skipStop \"branchNotRouteSelect 4000517 4000574\"]` 1、`[input name]` 1；`[label selectBranch]` 82；`[branch …INPUT_SELECT_BRANCH…]` 22（11 × `[branch INPUT_SELECT_BRANCH_2 INPUT_SELECT_BRANCH 1]`、8 × `[branch INPUT_SELECT_BRANCH_3]`、3 × `[branch INPUT_SELECT_BRANCH_01b INPUT_SELECT_BRANCH 1]`）。",
+      "evidence": {
+        "corpus_command": "grep -rn 'selectBranch' scripts/ ; grep -rn 'INPUT_SELECT_BRANCH' scripts/ ; doc §A.7 表"
+      },
+      "confidence": "proven-corpus-count"
+    },
+    {
+      "id": "A6",
+      "claim": "`[input selectBranch]` 不是「块后触发」而是「选择段入口」：81 处中 43 处同文件后方存在 `？` 行（其中 42 处与后续首个 `？` 之间恰好 1 个 `[label selectBranch]`），39 处本文件内其后无任何 `？` 行（位于文件末尾，如 0300010210.txt:1666 + 1695 [label selectBranch] + 1709 [end]）。",
+      "evidence": {
+        "corpus_command": "同 §A1 脚本的距离统计 + 0300010210.txt/0300011720.txt 结构导出（doc §A.7 原文）"
+      },
+      "confidence": "proven-corpus-count"
+    },
+    {
+      "id": "A7",
+      "claim": "`[selectionUse masterMale]` 15 次、`masterFemale` 15 次；上下文为「性别条件段」，段内是单选项块 + 设 flag（0300011921.txt:66-77 原文：flag MALE/FEMALE false → [selectionUse masterMale] → ？1：武蔵ちゃん！ → [flag MALE true] → ？！ → [selectionUse masterFemale] → …）。它不用于「回放已选过的选项」。",
+      "evidence": {
+        "corpus_command": "grep -rn 'selectionUse' scripts/ ; 0300011921.txt:66-77 原文见 doc §A.8"
+      },
+      "confidence": "proven-corpus-count+context"
+    },
+    {
+      "id": "A8",
+      "claim": "选项正文（body）按「`？k：` 到下一个 `？`/`？！`」切分：2+ 选项块中 (body1>0, body2>0) 分布 = (F,F) 4614 / (T,T) 1661 / (F,T) 134 / (T,F) 76；单选项块 5191 = 有 body 52 + 无 body 5139。",
+      "evidence": {
+        "corpus_command": "同 §A1 脚本的 body 非空判定（doc §C.4）"
+      },
+      "confidence": "proven-corpus-count"
+    },
+    {
+      "id": "A9",
+      "claim": "「选项 → 跳转」写法：`[branch <label>]` 无条件跳、`[branch <label> <flag> <值>]` 条件跳；完整闭环实例 0400040520.txt:441-463（5 选项各带 `[flag flag_N true]`+`[branch lbl_textN]`，块尾 `？！` 后 `[branch select_start]` 回到菜单）。",
+      "evidence": {
+        "corpus_command": "grep -rn 'branch ' scripts/ (785 行)；0400040520.txt:417-470 原文（doc §A.9）"
+      },
+      "confidence": "proven-corpus-context"
+    },
+    {
+      "id": "B1-field-map",
+      "claim": "ScriptManager$$Initialize 把本地化键写入字段：0x658=COMMENT、0x660=LABEL(＄)、0x668=SCENE(＃)、0x670=TALK(＠)、0x678=SWITCH_CASE(？)、0x680=SWITCH_CASE_SPLIT(：)、0x688=SWITCH_CASE_HIDDEN(；)、0x690=SWITCH_END(？！)、0x698=INSERT、0x6a0=VOICE(％％)、0x6a8=RETURN(￥)。字段名与 dump.cs 的 code*String 逐一对上（0x678/0x680/0x688 由推断升级为确证）。",
+      "evidence": {
+        "va": [
+          {"va": "0x31a10b0", "insn": "ldr x24,[x24,#0xf80]  ; &'SCRIPT_ACTION_CODE_COMMENT'"},
+          {"va": "0x31a1124", "insn": "str x0,[x19,#0x658]   (LocalizationManager$$Get 之后)"},
+          {"va": "0x31a1130", "insn": "ldr x0,[x23]  ; 'SCRIPT_ACTION_CODE_LABEL'"},
+          {"va": "0x31a1140", "insn": "str x0,[x19,#0x660]"},
+          {"va": "0x31a115c", "insn": "str x0,[x19,#0x668]"},
+          {"va": "0x31a1178", "insn": "str x0,[x19,#0x670]"},
+          {"va": "0x31a1184", "insn": "ldr x0,[x25]  ; 'SCRIPT_ACTION_CODE_SWITCH_CASE'"},
+          {"va": "0x31a1194", "insn": "str x0,[x19,#0x678]  (= codeSwitchCaseString '？')"},
+          {"va": "0x31a11a0", "insn": "ldr x0,[x22]  ; 'SCRIPT_ACTION_CODE_SWITCH_CASE_SPLIT'"},
+          {"va": "0x31a11b0", "insn": "str x0,[x19,#0x680]  (= codeSwitchCaseSplitString '：')"},
+          {"va": "0x31a11bc", "insn": "ldr x0,[x29]  ; 'SCRIPT_ACTION_CODE_SWITCH_CASE_HIDDEN'"},
+          {"va": "0x31a11cc", "insn": "str x0,[x19,#0x688]  (= codeSwitchCaseHiddenString '；')"},
+          {"va": "0x31a11e8", "insn": "bl #0x2e58030 CALL LocalizationManager$$Get  args: x0='SCRIPT_ACTION_CODE_SWITCH_END'"},
+          {"va": "0x31a11f0", "insn": "str x0,[x19,#0x690]  (= codeSwitchEndString '？！')"}
+        ],
+        "dump_cs": "protected string codeSwitchCaseString; // 0x678 / codeSwitchCaseSplitString; // 0x680 / codeSwitchCaseHiddenString; // 0x688 / codeSwitchEndString; // 0x690"
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B2-convert-case",
+      "claim": "解析期 `？n：文本`（判定：行以 '？' 开头 且 去掉首字符后 Contains('：')）被转成 tag='switchCase'，参数 = 行.Substring(1)（序号与文本不切分，整串进 param）。",
+      "evidence": {
+        "va": [
+          {"va": "0x31a66f0", "insn": "mov x0,x21 ; mov x1,x27 (line)"},
+          {"va": "0x31a66f8", "insn": "bl #0x31a9080 CALL ScriptManager$$IsCodeSwitchCaseString"},
+          {"va": "0x31a66fc", "insn": "tbz w0,#0,#0x31a6780   (false → AnalysText)"},
+          {"va": "0x31a670c", "insn": "ldr x8,[x8,#0x230]  ; &'switchCase'"},
+          {"va": "0x31a6714", "insn": "ldr x26,[x8]  ; 'switchCase'"},
+          {"va": "0x31a6718", "insn": "bl #0x4876934 CALL System.String$$Substring  (param = line.Substring(1))"},
+          {"va": "0x31a9090", "insn": "ldr x1,[x0,#0x678]  ; '？'"},
+          {"va": "0x31a90a0", "insn": "bl #0x4870d34 CALL System.String$$StartsWith"},
+          {"va": "0x31a90bc", "insn": "ldr x1,[x19,#0x680]  ; '：'"},
+          {"va": "0x31a90cc", "insn": "b #0x4877124 (= System.String$$Contains, 由 So.method_of 解析)"}
+        ]
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B3-convert-end",
+      "claim": "解析期 `？！` 行（op_Equality 字段 0x690）被转成 tag='switchCaseEnd'，并把消息下标置 -1（该行不产生台词消息）。",
+      "evidence": {
+        "va": [
+          {"va": "0x31a5f24", "insn": "ldr x1,[x21,#0x690]  ; '？！'"},
+          {"va": "0x31a5f30", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality"},
+          {"va": "0x31a5f34", "insn": "tbz w0,#0,#0x31a66f0"},
+          {"va": "0x31a5f40", "insn": "ldr x8,[x8,#0xd98]  ; &'switchCaseEnd'"},
+          {"va": "0x31a5f48", "insn": "ldr x26,[x8]  ; 'switchCaseEnd'"},
+          {"va": "0x31a5f4c", "insn": "mov w8,#-1 ; b #0x31a6778"},
+          {"va": "0x31a6778", "insn": "str w8,[sp,#0x48]   (lastMessageIndex = -1)"}
+        ]
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B4-show-dialog",
+      "claim": "运行期顺序执行到 `switchCase` tag 时：暂停播放、关闭 scriptPlayBase、对选项文本做 ReplaceBranchText + HiddenFlagCheckReplaceMessage，然后打开 ScriptSelectDialog（普通 Open / 隐藏 OpenHidden / 限时 OpenLimitTime）并等待输入。",
+      "evidence": {
+        "va": [
+          {"va": "0x31bd9ac", "insn": "ldr x8,[x8,#0x230]  ; &'switchCase'"},
+          {"va": "0x31bd9b4", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality"},
+          {"va": "0x31bd9b8", "insn": "tbz w0,#0,#0x31c2848"},
+          {"va": "0x31bd9dc", "insn": "b #0x31c2aa4"},
+          {"va": "0x31c2aa4", "insn": "ldr x0,[x19,#0x238]  (scriptPlayBase)"},
+          {"va": "0x31c2ab4", "insn": "bl #0x4fd4510 CALL UnityEngine.GameObject$$SetActive"},
+          {"va": "0x31c2ac0", "insn": "bl #0x31b536c CALL ScriptManager$$PausePlaySpeed"},
+          {"va": "0x31c2ac4", "insn": "ldr x22,[x19,#0x4a0]  (menuMessageList)"},
+          {"va": "0x31c2af4", "insn": "bl #0x31b5064 CALL ScriptManager$$ReplaceBranchText"},
+          {"va": "0x31c2b28", "insn": "bl #0x31c7f50 CALL ScriptManager$$HiddenFlagCheckReplaceMessage"},
+          {"va": "0x31c2bb0", "insn": "bl #0x31d95bc CALL ScriptSelectDialog$$Open"},
+          {"va": "0x31c2ec4", "insn": "bl #0x31d998c CALL ScriptSelectDialog$$OpenHidden"},
+          {"va": "0x31c2fcc", "insn": "bl #0x31d9aa4 CALL ScriptSelectDialog$$OpenLimitTime"},
+          {"va": "0x31c2ea4", "insn": "bl #0x31da34c CALL ScriptSelectDialog.ClickDelegate$$.ctor (目标实例=ScriptManager)"}
+        ],
+        "find_callers": "ScriptSelectDialog$$Open(0x31D95BC) callers: 0x31c2bb0 / 0x31c2cd4 in ScriptManager$$ProcessScript; OpenHidden(0x31D998C): 0x31c2ec4; OpenLimitTime(0x31D9AA4): 0x31c2fcc"
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B5-index-store",
+      "claim": "选项序号有三处落点：① PlayerPrefs.SetInt('ScriptManagerSelectBranch', index)；② flag INPUT_SELECT_BRANCH 的值字段（ScriptFlagData.v @0x18）；③ switchSelections 字典（0x798，SaveSwitchSelection 写入、GetSwitchSelection 读回）。另有日志记录 ScriptLoop.SetSwitchCase(executeIndex, message)。",
+      "evidence": {
+        "va": [
+          {"va": "0x31b2edc", "insn": "bl #0x3194a30 CALL ScriptManager$$SetSelectBranchIndex"},
+          {"va": "0x3194a50", "insn": "adrp x0,#0x55ca000 ; 0x3194a5c ldr x0,[x0,#0x3c8]  ; &'ScriptManagerSelectBranch'"},
+          {"va": "0x3194a80", "insn": "bl #0x31949e8 CALL ScriptManager$$GetSelectBranchIndex"},
+          {"va": "0x3194a84", "insn": "cmp w0,w19 ; 0x3194a88 b.ne #0x3194a98"},
+          {"va": "0x3194aa4", "insn": "ldr x8,[x8,#0x3c8]  ; &'ScriptManagerSelectBranch'"},
+          {"va": "0x3194aac", "insn": "bl #0x4fcacc0 CALL UnityEngine.PlayerPrefs$$SetInt"},
+          {"va": "0x31b2e64", "insn": "ldr x0,[x0,#0x888]  ; &'INPUT_SELECT_BRANCH'"},
+          {"va": "0x31b2ee8", "insn": "bl #0x31a8f0c CALL ScriptManager$$SearchFlag  args: x1='INPUT_SELECT_BRANCH'"},
+          {"va": "0x31b2ef0", "insn": "sxtw x8,w20 ; 0x31b2ef4 str x8,[x0,#0x18]  (flag.v = index)"},
+          {"va": "0x31b6edc", "insn": "bl #0x31b6f3c CALL ScriptManager$$SaveSwitchSelection"},
+          {"va": "0x31b7014", "insn": "ldr x0,[x22,#0x798]  (switchSelections Dictionary)"},
+          {"va": "0x31c554c", "insn": "ldr x0,[x19,#0x798]  (GetSwitchSelection 读回)"},
+          {"va": "0x31b6c24", "insn": "bl #0x31c9e7c CALL ScriptLoop$$SetSwitchCase  (由 SetSelectLogMessage 0x31b6bf8 调用)"}
+        ],
+        "dump_cs": "public const string SCRIPT_SELECT_BRANCH_SAVE_KEY = \"ScriptManagerSelectBranch\"; public const string FLAG_NAME_INPUT_SELECT_BRANCH = \"INPUT_SELECT_BRANCH\"; ScriptFlagData: protected long v; // 0x18"
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B6-jump-body",
+      "claim": "JumpScriptSwitchCase(index) 按「从 executeIndex 起数到第 index 个 'switchCase' tag」定位选项正文：executeIndex := 该 tag + 1，executeWaitIndex 同值，state := 3，isSwitchCase := true。若已置 isSelectBranch，则先复位并（关 skipButton、）用 SetSelectBranchIndex/SearchFlag 写入序号。",
+      "evidence": {
+        "va": [
+          {"va": "0x31b2e8c", "insn": "ldrb w8,[x19,#0x3d0]  (isSelectBranch)"},
+          {"va": "0x31b2e98", "insn": "strb wzr,[x19,#0x3d0]"},
+          {"va": "0x31b2efc", "insn": "ldrsw x21,[x19,#0x320]  (i=executeIndex)"},
+          {"va": "0x31b2f18", "insn": "ldr x8,[x19,#0x330]  (executeTagList)"},
+          {"va": "0x31b2f3c", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality  (tag=='switchCase')"},
+          {"va": "0x31b2f44", "insn": "cmp w23,w20 ; 0x31b2f48 b.eq #0x31b2f9c"},
+          {"va": "0x31b2fa8", "insn": "str w8,[x19,#0x320]  (executeIndex := tagIdx+1)"},
+          {"va": "0x31b2fb0", "insn": "str w9,[x19,#0x288]  (state:=3)"},
+          {"va": "0x31b2fb4", "insn": "strb w0(=1),[x19,#0x370]  (isSwitchCase:=true)"},
+          {"va": "0x31b2f68", "insn": "str w8(=0x10),[x19,#0x288]  (未找到: state=16, 返回 false)"}
+        ],
+        "find_callers": "JumpScriptSwitchCase(0x31B2E34) callers: 0x318ebbc in ScriptCommandExecute, 0x31b6ee8 in EndSelectSwitchCase"
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B7-end-select-switch-case",
+      "claim": "EndSelectSwitchCase(index)：关闭选择窗、清空 menuMessageList、置 isCancelInput=true、SaveSwitchSelection(executeIndex, index)、JumpScriptSwitchCase(index)。",
+      "evidence": {
+        "va": [
+          {"va": "0x31b6e98", "insn": "bl #0x31d9dd0 CALL ScriptSelectDialog$$Close"},
+          {"va": "0x31b6ea4", "insn": "str xzr,[x19,#0x4a0]"},
+          {"va": "0x31b6eb8", "insn": "strb w8,[x19,#0x375]  (isCancelInput=true)"},
+          {"va": "0x31b6edc", "insn": "bl #0x31b6f3c CALL ScriptManager$$SaveSwitchSelection"},
+          {"va": "0x31b6ee8", "insn": "bl #0x31b2e34 CALL ScriptManager$$JumpScriptSwitchCase"}
+        ]
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B8-what-happens-after-body",
+      "claim": "选项正文结束的处理：执行到任意 'switchCase' tag 时，若 isSwitchCase==true 则 JumpScriptCommand(\"switchCaseEnd\") 直接跳到 `？！` 并复位 isSwitchCase；执行到 'switchCaseEnd' tag 时 handler 也复位 isSwitchCase 并顺序继续。⇒ `？！` 不等待、不按选择跳转，只是正文结束/终止落点。",
+      "evidence": {
+        "va": [
+          {"va": "0x31875c4", "insn": "ldrb w8,[x19,#0x370]  (isSwitchCase)"},
+          {"va": "0x31875c8", "insn": "cbz w8,#0x318a774"},
+          {"va": "0x31875d8", "insn": "ldr x8,[x8,#0xd98]  ; &'switchCaseEnd'"},
+          {"va": "0x31b2d68", "insn": "bl #0x48706e4 CALL System.String$$Equals  (tag.Equals(\"switchCaseEnd\"))"},
+          {"va": "0x31b2e04", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality  (command==\"switchCaseEnd\")"},
+          {"va": "0x31b2e0c", "insn": "strb wzr,[x19,#0x370]  (isSwitchCase:=false)"},
+          {"va": "0x3188c50", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality  (tag==\"switchCaseEnd\")"},
+          {"va": "0x3188c58", "insn": "ldrb w8,[x19,#0x370]"},
+          {"va": "0x3188c64", "insn": "strb wzr,[x19,#0x370]  (复位)"},
+          {"va": "0x3188c68", "insn": "b #0x3193f04  (共用尾 → 顺序继续)"}
+        ]
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B9-label-jump-boundary",
+      "claim": "按 label 跳转时若先遇到 switchCase/switchCaseEnd tag 则放弃跳转并置 isResetSwitchCase=true；命中 label 时 executeIndex:=index、state:=3、并复位 isSwitchCase。按行号跳转 JumpScript(int) 亦复位 isSwitchCase(0x31b2808)。",
+      "evidence": {
+        "va": [
+          {"va": "0x31b2c34", "insn": "ldr x9,[x9,#0x230]  ; &'switchCase'"},
+          {"va": "0x31b2c40", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality"},
+          {"va": "0x31b2c74", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality  (=='switchCaseEnd')"},
+          {"va": "0x31b2c7c", "insn": "mov w8,#1 ; mov w0,wzr ; 0x31b2c84 strb w8,[x19]  (*isResetSwitchCase=true; return false)"},
+          {"va": "0x31b2cbc", "insn": "mov w8,#3 ; 0x31b2cc0 str w20,[x21,#0x320]"},
+          {"va": "0x31b2cd4", "insn": "strb wzr,[x21,#0x370]"},
+          {"va": "0x31b2808", "insn": "strb wzr,[x0,#0x370]  (JumpScript(int index))"},
+          {"va": "0x31a856c", "insn": "strb wzr,[x19,#0x370]  (JumpScript(string label) 内，等值判定后)"}
+        ]
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B10-hidden-semicolon",
+      "claim": "`；` 语义 = 选项文本尾部条件隐藏：Contains('；') → IndexOf('；')+1 取 flag 名 → SearchFlag → Comp()；flag 为真 ⇒ 该选项文本置空（隐藏模式下经 OpenHidden 的 itemIds 保留原始序号、不显示），flag 为假 ⇒ 去掉后缀正常显示。",
+      "evidence": {
+        "va": [
+          {"va": "0x31c7f8c", "insn": "ldr x1,[x20,#0x688]  ; '；'"},
+          {"va": "0x31c7f98", "insn": "bl #0x4877124 CALL System.String$$Contains"},
+          {"va": "0x31c7fac", "insn": "strb w8(=1),[x21]  (*hiddenMode=true)"},
+          {"va": "0x31c7fb4", "insn": "bl #0x48776f0 CALL System.String$$IndexOf"},
+          {"va": "0x31c7fc4", "insn": "bl #0x4876934 CALL System.String$$Substring  (flagName)"},
+          {"va": "0x31c7fd4", "insn": "bl #0x31a8f0c CALL ScriptManager$$SearchFlag"},
+          {"va": "0x31c7fe0", "insn": "bl #0x3171a34 CALL ScriptFlagData$$Comp"},
+          {"va": "0x31c7ff0", "insn": "ldr x19,[x8]  ; ''   (flag 真 ⇒ 返回空串)"},
+          {"va": "0x31c8008", "insn": "ldr x0,[x20,#0x688]  ; '；' (flag 假 ⇒ 去后缀)"},
+          {"va": "0x31c2de4", "insn": "bl #0x4870cc4 CALL System.String$$op_Inequality  (message[i] != \"\")"},
+          {"va": "0x31c2e18", "insn": "… List<int>.Add(i)  (itemIds=原始下标)"},
+          {"va": "0x31c2ec4", "insn": "bl #0x31d998c CALL ScriptSelectDialog$$OpenHidden"},
+          {"va": "0x31d998c", "insn": "dump.cs: public void OpenHidden(string[] selectMessageList, int[] itemIds, Font fontType, ClickDelegate callback)"}
+        ]
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "B11-selectionuse",
+      "claim": "`[selectionUse <X>]` 是守卫：CheckSwitchType(pd) 为假就 JumpScriptCommand(\"switchCaseEnd\") 跳过后续内容，为真则空操作继续；pd[0] 与 'masterMale'/'masterFemale'/'cancel' 字面量比较（cancel→false）。与语料「性别条件段（[selectionUse] + 单选项块 + ？！）」一致；不是「回放已选选项」。",
+      "evidence": {
+        "va": [
+          {"va": "0x317d298", "insn": "bl #0x31b55e8 CALL ScriptManager$$CheckSwitchType"},
+          {"va": "0x317d29c", "insn": "tbz w0,#0,#0x317d2a4"},
+          {"va": "0x317d2a0", "insn": "b #0x3193f00  (真 → 继续)"},
+          {"va": "0x317d2b0", "insn": "ldr x8,[x8,#0xd98]  ; &'switchCaseEnd' (假 → 跳到 switchCaseEnd)"},
+          {"va": "0x31b5610", "insn": "ldr x0,[x0,#0xa88]  ; &'cancel'"},
+          {"va": "0x31b561c", "insn": "ldr x0,[x0,#0xa90]  ; &'masterMale'"},
+          {"va": "0x31b5628", "insn": "ldr x0,[x0,#0xa98]  ; &'masterFemale'"},
+          {"va": "0x31b5668", "insn": "mov w0,wzr  (cancel → false)"}
+        ]
+      },
+      "confidence": "proven(semantics)/inferred(gender source class)"
+    },
+    {
+      "id": "B12-input-selectbranch",
+      "claim": "`[input selectBranch]`：input 命令处理器置 isSelectBranch=true 并（对 selectBranchSkipTrueColor 形态）操作 skipButton；运行期 tag 'selectBranch' 在 ProcessScript 中置 waitType=\"selectBranch2\" 并调 JumpSelectBranch()（inputTopMode:=4，构造 Action 交给单例等待分支决定）。",
+      "evidence": {
+        "va": [
+          {"va": "0x317a824", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality  args: x1='selectBranch'"},
+          {"va": "0x317a848", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality  args: x1='selectBranchSkipTrueColor'"},
+          {"va": "0x317a87c", "insn": "bl #0x31b53d8 CALL ScriptManager$$ResumePlaySpeed"},
+          {"va": "0x317a884", "insn": "strb w8,[x19,#0x3d0]  (isSelectBranch:=true)"},
+          {"va": "0x317a8cc", "insn": "ldr x0,[x19,#0x3a8]  (inputCommandIndex)"},
+          {"va": "0x31c2434", "insn": "mov w8,#0xb0cd ; 0x31c2438 movk w8,#0xe3c8,lsl#16 ; cmp w0,w8 (hash('selectBranch')=0xe3c8b0cd)"},
+          {"va": "0x31c2458", "insn": "bl #0x4870cc0 CALL System.String$$op_Equality  args: x1='selectBranch'"},
+          {"va": "0x31c2478", "insn": "str x1,[x19,#0x3d8]  (waitType := 'selectBranch2')"},
+          {"va": "0x31c2484", "insn": "bl #0x31c3bbc CALL ScriptManager$$JumpSelectBranch"},
+          {"va": "0x31c3c20", "insn": "mov w8,#4 ; 0x31c3c24 str w8,[x19,#0x294]  (inputTopMode=4)"},
+          {"va": "0x31c3c4c", "insn": "bl #0x4959620 CALL System.Action$$.ctor"}
+        ]
+      },
+      "confidence": "proven(structure)/inferred(UI singleton type)"
+    },
+    {
+      "id": "B13-scriptloop-log",
+      "claim": "ScriptLoop：SetSwitchCase(index,message) 追加 switchCaseIndex/switchCaseMessage 并 switchCaseCount++；ExecuteLoop 在第 2 轮起 isForceStopAdd=true 并用 LastOrDefault(switchCaseIndex) 写 lastSelectedIndex(0x18)；ShouldAddLogSwitchCase 读 lastSelectedIndex。",
+      "evidence": {
+        "va": [
+          {"va": "0x31c9ef0", "insn": "ldr w8,[x20,#0x1c] ; 0x31c9ef8 add w8,w8,#1 ; 0x31c9efc str w8,[x20,#0x1c]"},
+          {"va": "0x31c9ef4", "insn": "ldr x0,[x20,#0x20]  (switchCaseIndex) ; 0x31c9f40 str w21,[x8,#0x20]"},
+          {"va": "0x31c9ee8", "insn": "strb w9,[x20,#0x30]  (isAddLog=true)"},
+          {"va": "0x31c9c8c", "insn": "add w9,w8,#1 ; 0x31c9c9c str w9,[x19,#0x14]  (count++)"},
+          {"va": "0x31c9ca4", "insn": "mov w9,#1 ; 0x31c9ca8 strb w9,[x19,#0x10]  (isForceStopAdd=true)"},
+          {"va": "0x31c9cb4", "insn": "bl #0x38ba1b8 CALL System.Linq.Enumerable$$LastOrDefault<int>"},
+          {"va": "0x31ca0e4", "insn": "ldr w8,[x0,#0x18]  (ShouldAddLogSwitchCase 读 lastSelectedIndex)"},
+          {"va": "0x31b2b28", "insn": "find_callers: ScriptLoop$$ExecuteLoop(0x31C9C5C) 唯一调用者 = 0x31b2b28 in ScriptManager$$SearchBranchLabel"}
+        ],
+        "dump_cs": "ScriptLoop: private int count; //0x14  private int lastSelectedIndex; //0x18  private int switchCaseCount; //0x1C  private List<int> switchCaseIndex; //0x20  private List<string> switchCaseMessage; //0x28  private bool isAddLog; //0x30"
+      },
+      "confidence": "proven"
+    },
+    {
+      "id": "C1-runtime-model",
+      "claim": "选项块运行时模型（闭环）：解析期 ？→tag switchCase、？！→tag switchCaseEnd；运行期顺扫到第一个 switchCase 就弹窗等待输入；选定后 OnSelectSwitchCase → SetSelectLogMessage(ScriptLoop 记录) → EndSelectSwitchCase(存档+JumpScriptSwitchCase 跳入第 index 个选项正文、isSwitchCase=true)；正文走到下一个 ？/？！ 时复位 isSwitchCase 并顺序继续。每个选项各有一段互斥正文。",
+      "evidence": {"va": ["0x31a66f8", "0x31a5f24", "0x31bd9a0", "0x31c2aa4", "0x31b6bf8", "0x31b6e50", "0x31b2e34", "0x31875c4", "0x3188c58"], "see_also": ["B2-convert-case", "B3-convert-end", "B4-show-dialog", "B6-jump-body", "B7-end-select-switch-case", "B8-what-happens-after-body"]},
+      "confidence": "proven"
+    },
+    {
+      "id": "C2-two-kinds",
+      "claim": "「无分支台词选项」(单选项块 5,191，其中 5,139 无正文) 与「真分支选项」(多选项块 6,485，其中带正文 1,871) 在脚本层共用同一语法，没有显式标志；区别体现为①选项正文是否非空 ②块后/正文内是否有 [branch]/[label] ③是否用 [input selectBranch]+flag INPUT_SELECT_BRANCH 决定跨段落点。",
+      "evidence": {"corpus_command": "§A1/A8 全量统计；§A.9/A.10 例句；doc §C.4"},
+      "confidence": "proven-corpus-count"
+    }
+  ],
+  "inferred": [
+    {"id": "D1", "item": "menuMessageList(0x4A0) 的填充指令未逐字定位（仅证实运行期读取点 0x31c2ac4/0x31c2b08/0x31c2b3c/0x31c2c90 与清空点 0x31b6ea4/0x31b7304/0x31bd2e4）"},
+    {"id": "D2", "item": "‘？n：’ 的序号/文本在运行期不按文本数字解析，而是按「第 index 个 switchCase tag」定位；解析期唯一的文本切分在 `？？…`(AddSwitchCaseAsset 0x31a675c)，语料 0 例"},
+    {"id": "D3", "item": "JumpSelectBranch 中 SingletonMonoBehaviour<object>.get_Instance(0x47e721c) 与 new Action 目标方法未解析"},
+    {"id": "D4", "item": "switchSelections(0x798) 字典键字面量疑似 'SwitchSelections'（lit_methods.json: ScriptManager$$.cctor 0x31c9540），未逐字读出赋值"},
+    {"id": "D5", "item": "CheckSwitchType 中主人公性别取值来源类/字段未解析"},
+    {"id": "D6", "item": "39 处「[input selectBranch] 之后本文件无选项块」的承接机制未取证（脚本形态已列）"},
+    {"id": "D7", "item": "`？<n>,<素材id>[,saveMaterial]：` 的素材消耗 UI 流程未取证（branchMaterial 语料 26 次）"}
+  ]
+}

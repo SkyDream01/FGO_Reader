@@ -1747,11 +1747,12 @@ select:focus-visible {
 /* Story reader */
 
 .reader-shell {
-  --fgo-stage-width: 1024;
+  --fgo-stage-width: 1344;
+  --adv-unit: min(calc(100vw / 1024), calc(100dvh / 576));
   --fgo-stage-height: 576;
   /* Keep the default figure size used by the reader. Script-authored
      charaScale values are additional multipliers on this baseline. */
-  --fgo-figure-scale: 0.9;
+  --fgo-figure-scale: 1;
   position: fixed;
   inset: 0;
   display: grid;
@@ -1821,236 +1822,83 @@ html[data-runtime="android"] .custom-library-backdrop {
   inset: 0;
 }
 
-/* Camera commands transform the composed game world, while the message UI
-   stays pinned to the viewport like it does in the original reader. */
-.world-layer {
+/* ADV coordinates share one isotropic scale. All motion comes from runtime tracks. */
+.adv-composition, .world-layer, .adv-camera-root, .adv-sub-layer {
   position: absolute;
-  z-index: 0;
   inset: 0;
-  transform: translate(var(--camera-x, 0vw), var(--camera-y, 0dvh))
-    scale(var(--camera-scale, 1)) rotate(var(--camera-rotation, 0deg));
+  pointer-events: none;
   transform-origin: 50% 50%;
-  filter: var(--camera-filter, none) var(--world-blur, none) var(--screen-effect-filter, none);
-  transition: transform 180ms ease, filter 180ms ease;
 }
-
-.scene-layer {
-  z-index: 0;
-  overflow: hidden;
-  background: #091622;
-}
-
-.scene-layer::before {
+.adv-composition { z-index: 0; overflow: hidden; }
+.scene-layer { z-index: 0; overflow: hidden; background: #091622; }
+.scene-image, .stage-layer-sprite {
   position: absolute;
-  z-index: 1;
-  inset: -32px;
-  content: "";
-  background-image:
-    linear-gradient(rgba(2, 7, 12, 0.42), rgba(2, 7, 12, 0.58)),
-    var(--stage-background);
-  background-position: center;
-  background-size: cover;
-  filter: blur(24px) saturate(0.78);
-  transform: scale(1.04);
-}
-
-.scene-image {
-  position: absolute;
-  z-index: 2;
-  width: max(100%, calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height)));
-  width: max(100%, calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height)));
+  width: calc(1024 * var(--adv-unit));
   height: auto;
-  aspect-ratio: 1024 / 626;
   left: 50%;
   top: 50%;
-  /* FGO composes 1024x626 backgrounds on a 1024x576 stage. Preserve the
-     game's 1:1 stage scale and crop the 25px overscan at the top and bottom. */
-  object-fit: fill;
+  object-fit: contain;
   transform: translate(-50%, -50%);
-  animation: scene-appear 420ms ease both;
+  transform-origin: 50% 50%;
 }
-
-.scene-image.transition-wipe {
-  animation-name: scene-wipe;
+.scene-image { z-index: 1; }
+.scene-image-previous { z-index: 2; }
+/* Atlas keeps the 16:9 safe area centered inside its 1344-unit wide asset. */
+.scene-image[src$="_1344_626.png"], .stage-layer-sprite[src$="_1344_626.png"] {
+  width: calc(1344 * var(--adv-unit));
 }
-
-.scene-image.transition-none {
-  animation-duration: 240ms;
-}
-
-@keyframes scene-appear {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(1.015); }
-  to { opacity: 1; transform: translate(-50%, -50%); }
-}
-
-@keyframes scene-wipe {
-  from { clip-path: inset(0 100% 0 0); filter: brightness(1.35); }
-  to { clip-path: inset(0); filter: none; }
-}
-
-.scene-fallback {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  background:
-    radial-gradient(circle at 50% 36%, rgba(93, 178, 180, 0.18), transparent 18%),
-    conic-gradient(from 90deg at 50% 52%, #07111c, #0b2a3b, #07111c, #102d3c, #07111c);
-}
-
-.scene-fallback::before,
-.scene-fallback::after {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  content: "";
-  border: 1px solid rgba(117, 216, 211, 0.14);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.scene-fallback::before {
-  width: 34%;
-  aspect-ratio: 1;
-  box-shadow: 0 0 0 6vw rgba(117, 216, 211, 0.018), 0 0 0 12vw rgba(117, 216, 211, 0.012);
-}
-
-.scene-fallback::after {
-  width: 4px;
-  height: 4px;
-  border: 0;
-  background: var(--teal);
-  box-shadow: 0 -12vw 8px var(--teal), 13vw 7vw 7px var(--gold), -15vw 6vw 8px var(--teal);
-}
-
-.scene-vignette {
-  position: absolute;
-  z-index: 4;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(to bottom, rgba(1, 5, 9, 0.45), transparent 18%, transparent 67%, rgba(1, 5, 9, 0.36)),
-    radial-gradient(ellipse at center, transparent 53%, rgba(0, 4, 8, 0.48) 100%);
-}
-
-.scene-scanlines {
-  position: absolute;
-  z-index: 5;
-  inset: 0;
-  opacity: 0.12;
-  pointer-events: none;
-  background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(168, 230, 230, 0.07) 4px);
-  mix-blend-mode: soft-light;
-}
-
-.stage-image-layer {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  pointer-events: none;
-}
-
+.scene-image[data-mode="FULLSCREEN_IMAGE_DEVICE_WIDTH"] { width: 100%; }
 .stage-layer-sprite {
-  position: absolute;
-  width: max(100%, calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height)));
-  width: max(100%, calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height)));
-  height: auto;
-  aspect-ratio: 1024 / 626;
-  left: 50%;
-  top: 50%;
-  object-fit: fill;
-  opacity: 0.96;
+  /* ScriptImagePrefab: Depth.y=-288; ImageA/B.y=511 inside Scale/Roll.
+     Applying script y to the bitmap center alone exposes the background below. */
+  transform: translate(calc(-50% + var(--stage-layer-x, 0px)), calc(-50% + var(--stage-layer-y, 0px) + 288 * var(--adv-unit)))
+    scale(var(--stage-layer-scale, 1)) rotate(var(--stage-layer-rotation, 0deg)) translateY(calc(-511 * var(--adv-unit)));
+}
+/* Backdrop pans crop the enlarged image at its edges. They must not reveal
+   a second, unmoved copy of the scene above or below the foreground backdrop. */
+.stage-layer-sprite[data-background-fill="true"] {
+  --background-overflow-x: max(0px, calc((var(--stage-layer-width) * var(--stage-layer-scale) * var(--adv-unit) - 100vw) / 2));
+  --background-overflow-y: max(0px, calc((626 * var(--stage-layer-scale) * var(--adv-unit) - 100dvh) / 2));
+  --background-pan-y: calc(var(--stage-layer-y) + 288 * var(--adv-unit) - 511 * var(--stage-layer-scale) * var(--adv-unit));
   transform: translate(
-    calc(-50% + var(--stage-layer-x, 0vw)),
-    calc(-50% + var(--stage-layer-y, 0dvh))
-  ) scale(var(--stage-layer-scale, 1));
-  transform-origin: 50% 50%;
-  animation: scene-appear 260ms ease both;
+    calc(-50% + clamp(calc(-1 * var(--background-overflow-x)), var(--stage-layer-x), var(--background-overflow-x))),
+    calc(-50% + clamp(calc(-1 * var(--background-overflow-y)), var(--background-pan-y), var(--background-overflow-y))))
+    scale(var(--stage-layer-scale));
 }
-
-.stage-layer-sprite.sub {
-  z-index: 4;
-  opacity: 1;
-}
-
-.stage-layer-sprite.main {
-  z-index: 2;
-}
-
-.character-layer {
-  z-index: 3;
-  pointer-events: none;
-  /* Production screen calibration is always active; debug adjustment is
-     opt-in and remains zero when coordinate debugging is disabled. */
-  transform: translate(
-    calc(var(--screen-calibration-x, 0vw) + var(--screen-debug-x, 0vw)),
-    calc(var(--screen-calibration-y, 0dvh) + var(--screen-debug-y, 0dvh))
-  );
-}
-
+.scene-fallback { position: absolute; inset: 0; background: #091622; }
 .character-sprite {
   position: absolute;
-  /* Place the authored character coordinate at the stage center, then add
-     production calibration, optional debug adjustment, and visual correction. */
-  width: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
-  width: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
-  height: calc(100vh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
-  height: calc(100dvh * var(--fgo-stage-width) / var(--fgo-stage-height) * var(--fgo-figure-scale));
-  left: 50%;
-  top: 50%;
-  opacity: 0;
+  width: calc(1024 * var(--adv-unit));
+  height: calc(1024 * var(--adv-unit));
+  left: 50%; top: 50%;
   transform: translate(
-    calc(-50% + var(--character-x, 0vw) + var(--character-calibration-x, 0vw) + var(--character-debug-x, 0vw) + var(--character-visual-correction-x, 0vw)),
-    calc(-50% + var(--character-y, 0dvh) + var(--character-calibration-y, 0dvh) + var(--character-debug-y, 0dvh) + var(--character-visual-correction-y, 0dvh))
-  ) scale(var(--character-scale, 1)) rotate(var(--character-rotation, 0deg));
+    calc(-50% + var(--character-x, 0px) + var(--character-debug-x, 0px) + var(--character-visual-correction-x, 0px)),
+    calc(-50% + var(--character-y, 0px) + var(--character-debug-y, 0px) + var(--character-visual-correction-y, 0px))
+  ) scale(var(--character-scale, 1)) rotate3d(var(--character-axis-x, 0), var(--character-axis-y, 0), var(--character-axis-z, 1), var(--character-rotation, 0deg));
   transform-origin: 50% 50%;
-  animation: character-enter 220ms ease forwards;
-  transition: filter 180ms ease, opacity 180ms ease, transform 180ms ease;
-  filter: brightness(0.72) saturate(0.72);
 }
-
-.character-sprite img,
-.character-sprite canvas {
-  width: 100%;
-  height: 100%;
-  clip-path: inset(0 0 25% 0);
+.character-sprite img, .character-sprite canvas { width: 100%; height: 100%; object-fit: contain; }
+.character-sprite canvas { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0; }
+.character-sprite canvas.ready { opacity: 1; }
+.character-sprite.wide-atlas img { object-fit: cover; }
+.character-sprite.silhouette img, .character-sprite.silhouette canvas { filter: brightness(0); }
+.character-sprite.with-shadow img, .character-sprite.with-shadow canvas { filter: drop-shadow(0 16px 30px #0008); }
+.adv-picture-frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 7; pointer-events: none; }
+.adv-picture-frame.top { z-index: 61; }
+.adv-picture-frame.cinematic {
+  inset: auto;
+  left: 50%;
+  top: calc(50% - 308 * var(--adv-unit));
+  width: calc(1024 * var(--adv-unit));
+  height: auto;
+  transform: translateX(-50%);
   object-fit: contain;
-  object-position: center bottom;
-  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.42));
 }
-
-.character-sprite canvas {
-  opacity: 0;
-  transition: opacity 120ms ease;
-}
-
-.character-sprite canvas.ready {
-  opacity: 1;
-}
-
-.character-sprite.wide-atlas img {
-  object-fit: cover;
-}
-
-.character-sprite.active {
-  z-index: 2;
-  opacity: 1;
-  filter: brightness(1.03) saturate(1);
-}
-
-.character-sprite.inactive {
-  z-index: 1;
-  opacity: 0.82;
-}
-
-.character-sprite.silhouette img,
-.character-sprite.silhouette canvas {
-  filter: brightness(0) opacity(0.86) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.6));
-}
-
-.character-sprite.with-shadow img,
-.character-sprite.with-shadow canvas {
-  filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.68));
-}
+.adv-picture-frame.cinematic[data-fullscreen="true"] { width: calc(1344 * var(--adv-unit)); }
+.message-line { display: inline-block; min-width: 100%; }
+.message-image, .message-icon { height: 1.2em; max-width: 100%; object-fit: contain; vertical-align: middle; }
+.message-image { height: 1.8em; }
+.reader-compatibility { position: absolute; z-index: 62; top: 65px; right: 2%; max-width: 45%; padding: 6px 10px; color: #e4c085; background: #091622e6; font-size: 11px; }
 
 /* DEBUG ONLY: marks logical (0, 0) points for the final composition. */
 .coordinate-origin-debug {
@@ -2135,23 +1983,6 @@ html[data-runtime="android"] .custom-library-backdrop {
     calc(-50% + var(--character-x, 0vw) + var(--character-calibration-x, 0vw) + var(--character-debug-x, 0vw)),
     calc(-50% + var(--character-y, 0dvh) + var(--character-calibration-y, 0dvh) + var(--character-debug-y, 0dvh))
   );
-}
-
-@keyframes character-enter {
-  from {
-    opacity: 0;
-    transform: translate(
-      calc(-50% + var(--character-x, 0vw) + var(--character-calibration-x, 0vw) + var(--character-debug-x, 0vw) + var(--character-visual-correction-x, 0vw)),
-      calc(-50% + var(--character-y, 0dvh) + var(--character-calibration-y, 0dvh) + var(--character-debug-y, 0dvh) + var(--character-visual-correction-y, 0dvh) + 15px)
-    ) scale(var(--character-scale, 1));
-  }
-  to {
-    opacity: 1;
-    transform: translate(
-      calc(-50% + var(--character-x, 0vw) + var(--character-calibration-x, 0vw) + var(--character-debug-x, 0vw) + var(--character-visual-correction-x, 0vw)),
-      calc(-50% + var(--character-y, 0dvh) + var(--character-calibration-y, 0dvh) + var(--character-debug-y, 0dvh) + var(--character-visual-correction-y, 0dvh))
-    ) scale(var(--character-scale, 1));
-  }
 }
 
 .character-fallback {
@@ -3904,124 +3735,10 @@ html[data-runtime="android"] .custom-library-backdrop {
   letter-spacing: 0.08em;
 }
 
-.reader-stage.shake {
-  animation: stage-shake 300ms ease both;
-}
-
-@keyframes stage-shake {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(-7px, 2px); }
-  40% { transform: translate(5px, -3px); }
-  60% { transform: translate(-3px, 3px); }
-  80% { transform: translate(2px, -1px); }
-}
-
-.effect-flash {
-  position: absolute;
-  z-index: 70;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  background: #fff;
-}
-
-.reader-stage.flash .effect-flash {
-  animation: flash-frame 320ms ease-out both;
-}
-
 .transition-overlay {
-  position: absolute;
-  z-index: 60;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
+  position: absolute; z-index: 60; inset: 0; pointer-events: none;
 }
-
-.transition-overlay.transition-fade {
-  animation: transition-fade 520ms ease both;
-}
-
-.transition-overlay.transition-wipe {
-  clip-path: inset(0 100% 0 0);
-  animation: transition-wipe-overlay 520ms ease both;
-}
-
-@keyframes transition-fade {
-  0% { opacity: 0.86; }
-  100% { opacity: 0; }
-}
-
-@keyframes transition-wipe-overlay {
-  0% { opacity: 0.82; clip-path: inset(0 0 0 0); }
-  100% { opacity: 0; clip-path: inset(0 0 0 100%); }
-}
-
-.picture-frame-overlay {
-  position: absolute;
-  z-index: 7;
-  inset: 0;
-  border: 1.2vw solid rgba(2, 8, 13, 0.78);
-  box-shadow: inset 0 0 0 1px rgba(200, 222, 222, 0.25);
-  pointer-events: none;
-}
-
-.movie-overlay {
-  position: absolute;
-  z-index: 20;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(0, 0, 0, 0.54);
-  color: rgba(235, 244, 244, 0.82);
-  font-family: "Bahnschrift", monospace;
-  font-size: clamp(9px, 0.8vw, 13px);
-  letter-spacing: 0.24em;
-  text-shadow: 0 2px 12px #000;
-  pointer-events: none;
-  animation: movie-enter 240ms ease both;
-}
-
-@keyframes movie-enter {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.reader-stage.screen-effect-sepia .world-layer {
-  filter: var(--camera-filter, none) var(--world-blur, none) var(--screen-effect-filter, none);
-}
-
-.reader-stage.screen-effect-noise::after {
-  position: absolute;
-  z-index: 55;
-  inset: 0;
-  content: "";
-  opacity: 0.18;
-  pointer-events: none;
-  background-image: repeating-radial-gradient(circle at 20% 30%, rgba(255,255,255,.38) 0 1px, transparent 1px 4px);
-  mix-blend-mode: screen;
-  animation: noise-drift 180ms steps(2, end) infinite;
-}
-
-.reader-stage.screen-effect-security::after {
-  position: absolute;
-  z-index: 55;
-  inset: 7%;
-  content: "";
-  border: 1px solid rgba(117, 216, 211, 0.55);
-  box-shadow: 0 0 0 1px rgba(198, 168, 101, 0.2), inset 0 0 50px rgba(117, 216, 211, 0.09);
-  pointer-events: none;
-}
-
-@keyframes noise-drift {
-  0% { transform: translate(0); }
-  50% { transform: translate(2%, -1%); }
-  100% { transform: translate(-1%, 2%); }
-}
-
-@keyframes flash-frame {
-  0% { opacity: 0.85; }
-  100% { opacity: 0; }
-}
+.adv-flash { z-index: 62; }
 
 @media (max-width: 1220px) {
   .library-screen {
