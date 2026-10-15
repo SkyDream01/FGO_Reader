@@ -173,6 +173,72 @@ describe("native runtime", () => {
     executor.start({ startIndex: program.instructions.length - 1 });
     expect(executor.getSnapshot().phase).toBe("choice");
   });
+  it("steps back repeatedly through messages and reopens choices without future decisions", () => {
+    const { executor } = create("＠旁白\n开始\n[k]\n？1：一\n＠旁白\n分支一\n[k]\n？2：二\n＠旁白\n分支二\n[k]\n？！\n＠旁白\n共通\n[k]", { reduceMotion: true });
+    executor.tap(); executor.selectChoice(1); executor.tap();
+    expect(text(executor)).toBe("共通");
+    executor.goBackOneBoundary();
+    expect(text(executor)).toBe("分支二");
+    executor.goBackOneBoundary();
+    expect(executor.getSnapshot()).toMatchObject({ phase: "choice", choiceTrail: [] });
+    executor.goBackOneBoundary();
+    expect(text(executor)).toBe("开始");
+    executor.tap(); executor.selectChoice(0);
+    expect(text(executor)).toBe("分支一");
+    expect(executor.getSnapshot().choiceTrail.map(item => item.optionIndex)).toEqual([0]);
+  });
+  it("returns to the last message after ending, then continues back to the beginning", () => {
+    const { executor } = create("＠旁白\n一\n[k]\n＠旁白\n二\n[k]\n＠旁白\n三\n[k]\n[end black]", { reduceMotion: true });
+    executor.tap(); executor.tap(); executor.tap();
+    expect(executor.getSnapshot().phase).toBe("ended");
+    for (const expected of ["三", "二", "一"]) {
+      executor.goBackOneBoundary();
+      expect(text(executor)).toBe(expected);
+      expect(executor.getSnapshot()).toMatchObject({ phase: "message", fade: { alpha: 0 } });
+    }
+    executor.goBackOneBoundary();
+    expect(text(executor)).toBe("一");
+  });
+  it("can return from a one-message ending and from the following presentation wait", () => {
+    const { executor } = create("＠旁白\n唯一一句\n[k]\n[wt 1]\n[end black]", { reduceMotion: true });
+    executor.tap();
+    expect(executor.getSnapshot().phase).toBe("wait");
+    executor.goBackOneBoundary();
+    expect(executor.getSnapshot().phase).toBe("message");
+    executor.tap(); executor.tick(1000);
+    expect(executor.getSnapshot().phase).toBe("ended");
+    executor.goBackOneBoundary();
+    expect(executor.getSnapshot().phase).toBe("message");
+    expect(text(executor)).toBe("唯一一句");
+  });
+  it("seeks a log entry before a choice without replaying its later decisions", () => {
+    const { executor, program } = create("＠旁白\n前文\n[k]\n？1：继续\n＠旁白\n后文\n[k]\n？！", { reduceMotion: true });
+    executor.tap(); executor.selectChoice(0);
+    executor.jumpToMessage(program.messageCatalog[0].key);
+    expect(text(executor)).toBe("前文");
+    expect(executor.getSnapshot().choiceTrail).toEqual([]);
+    executor.tap();
+    expect(executor.getSnapshot().phase).toBe("choice");
+  });
+  it("preserves the visit when backing through a menu that starts at instruction zero", () => {
+    const { executor } = create("[menu ask=询问 done=离开]\n[label ask]\n[flag asked true]\n[jump start]\n[label start]\n[menu ask=再问 done=离开]\n[label done]\n＠旁白\n结束\n[k]", { reduceMotion: true });
+    executor.selectChoice(0); executor.selectChoice(1);
+    executor.goBackOneBoundary();
+    expect(executor.getSnapshot()).toMatchObject({ phase: "choice", choiceTrail: [{ optionIndex: 0 }] });
+    executor.goBackOneBoundary();
+    expect(executor.getSnapshot()).toMatchObject({ phase: "choice", choiceTrail: [] });
+  });
+  it("backs through consecutive visits to the same menu in order", () => {
+    const { executor } = create("[label menu]\n[menu ask=询问 done=离开]\n[label ask]\n[jump menu]\n[label done]\n＠旁白\n结束\n[k]", { reduceMotion: true });
+    executor.selectChoice(0); executor.selectChoice(0); executor.selectChoice(1);
+    expect(text(executor)).toBe("结束");
+    for (const choiceCount of [2, 1, 0]) {
+      executor.goBackOneBoundary();
+      expect(executor.getSnapshot().phase).toBe("choice");
+      expect(executor.getSnapshot().choiceTrail).toHaveLength(choiceCount);
+    }
+    expect(executor.getSnapshot().canGoBack).toBe(false);
+  });
   it("isolates sub-cameras, slot alpha and group depth", () => {
     const { executor } = create("[charaSet A 1 1]\n[charaSet B 2 1]\n[charaFadein A 1 1]\n[charaFadein B 0 1]\n[charaLayer B sub #B]\n[subRenderDepth #B 5]\n[subCameraMove #B 0 100,-20 1.5]\n[subRenderFadein #B 0 0,0]\n[subRenderFadeout #B 1]\n[wait charaFade A]\n＠旁白\n本文\n[k]");
     executor.tick(500);

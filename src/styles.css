@@ -2821,7 +2821,8 @@ html[data-runtime="android"] .custom-library-backdrop {
 
 .reader-panel {
   position: absolute;
-  z-index: 40;
+  /* Keep reader controls above ADV fades and the completion screen. */
+  z-index: 80;
   display: flex;
   flex-direction: column;
   width: min(43%, 680px);
@@ -3585,7 +3586,7 @@ html[data-runtime="android"] .custom-library-backdrop {
 
 .completion-panel {
   position: absolute;
-  z-index: 50;
+  z-index: 70;
   display: flex;
   flex-direction: column;
   align-items: center;

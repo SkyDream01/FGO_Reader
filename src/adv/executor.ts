@@ -51,7 +51,7 @@ export interface StageSnapshot {
   waitKind: "input" | "timer" | "completion" | "choice" | null;
   message: MessageSnapshot | null; choice: ChoiceSnapshot | null; log: LogEntry[];
   bgm: { name: string; volume: number | null; fade: number } | null;
-  position: number; messageOrdinal: number; messageTotal: number; boundaryCount: number;
+  position: number; messageOrdinal: number; messageTotal: number; boundaryCount: number; canGoBack: boolean;
   diagnostics: Array<{ tag: string; line: number; reason: string }>;
   choiceTrail: ChoiceDecision[];
   presentation: {
@@ -85,6 +85,7 @@ interface WaitState {
   target?: string;
   skippable?: boolean;
 }
+interface ReadableBoundary { index: number; choiceCount: number }
 const STEP_LIMIT = 20_000;
 
 /** Cursor + explicit waits. Presentation starts asynchronously in the same burst. */
@@ -108,7 +109,7 @@ export class ScriptExecutor {
   private activeChoice: Instruction | null = null;
   private choiceOptions: ChoiceOptionIns[] = [];
   private log: LogEntry[] = [];
-  private boundaries: number[] = [];
+  private boundaries: ReadableBoundary[] = [];
   private flags = new Map<string, string>();
   private decisions: ChoiceDecision[] = [];
   private restored: ChoiceDecision[] = [];
@@ -275,7 +276,8 @@ export class ScriptExecutor {
   takeNewDecisions(): ChoiceDecision[] { const next = this.decisions.slice(this.drained); this.drained = this.decisions.length; return next; }
 
   private boundary(index: number): void {
-    if (this.boundaries.at(-1) !== index) this.boundaries.push(index);
+    const previous = this.boundaries.at(-1), choiceCount = this.decisions.length;
+    if (previous?.index !== index || previous.choiceCount !== choiceCount) this.boundaries.push({ index, choiceCount });
   }
   private run(stopAt?: number): void {
     if (this.phase === "ended") return;
@@ -506,12 +508,22 @@ export class ScriptExecutor {
     if (this.phase !== "choice" && this.phase !== "ended") { this.wait = null; this.run(); }
   }
   fastForwardTo(target: number): void { this.replayTo(Math.max(0, target)); this.changed(); }
-  goBackOneBoundary(): void {
-    if (this.boundaries.length < 2) return;
-    const target = this.boundaries[this.boundaries.length - 2];
-    const trail = [...this.decisions]; this.start({ startIndex: target, choiceTrail: trail });
+  private backBoundary(): ReadableBoundary | undefined {
+    // Presentation waits and the ending sit after the last readable boundary.
+    const atBoundary = this.phase === "message" || this.phase === "choice" || this.waitResumesMessage;
+    return this.boundaries.at(atBoundary ? -2 : -1);
   }
-  jumpToMessage(key: string): void { const index = this.getInstructionIndex(key); if (index !== null) this.start({ startIndex: index, choiceTrail: [...this.decisions] }); }
+  goBackOneBoundary(): void {
+    const target = this.backBoundary();
+    if (!target) return;
+    this.start({ startIndex: target.index, choiceTrail: this.decisions.slice(0, target.choiceCount) });
+  }
+  jumpToMessage(key: string): void {
+    const index = this.getInstructionIndex(key);
+    if (index === null) return;
+    const boundary = [...this.boundaries].reverse().find(item => item.index === index);
+    this.start({ startIndex: index, choiceTrail: this.decisions.slice(0, boundary?.choiceCount) });
+  }
   getInstructionIndex(key: string): number | null {
     return this.program.messageCatalog.find((entry) => entry.key === key)?.instructionIndex ?? this.program.choiceCatalog.find((entry) => entry.key === key)?.instructionIndex ?? null;
   }
@@ -564,7 +576,7 @@ export class ScriptExecutor {
       choice: this.activeChoice && this.phase === "choice" ? { key: this.activeChoice.choiceKey!, options: this.choiceOptions.map((option) => ({ label: option.label, id: option.id })), selected: null } : null,
       log: this.log.map((entry) => ({ ...entry })), bgm: stage.audio.bgm ? { name: stage.audio.bgm, volume: stage.audio.bgmVolume, fade: stage.audio.fade } : null,
       position: this.window.key && this.phase === "message" ? this.program.messageCatalog.find((entry) => entry.key === this.window.key)?.instructionIndex ?? this.position : this.position,
-      messageOrdinal: this.log.length, messageTotal: this.program.messageCatalog.length, boundaryCount: this.boundaries.length,
+      messageOrdinal: this.log.length, messageTotal: this.program.messageCatalog.length, boundaryCount: this.boundaries.length, canGoBack: !!this.backBoundary(),
       diagnostics: this.runtimeDiagnostics.map((entry) => ({ ...entry })),
       choiceTrail: this.decisions.map((entry) => ({ ...entry })),
       presentation: { effects: [...stage.effects.values()].map(effect => ({ ...effect })), communication: stage.communication ? { ...stage.communication } : null, insertions: [...stage.insertions.values()].map(object => ({ ...object, images: [...object.images] })), backColor: stage.backColor, capture: stage.capture, spriteMask: stage.spriteMask, distortion: { ...stage.distortion }, stretch: { ...stage.stretch }, subStretch: stage.subStretch, blurKind: stage.blurKind },

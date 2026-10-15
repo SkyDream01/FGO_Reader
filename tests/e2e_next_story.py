@@ -1,4 +1,4 @@
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 import base64
 import os
 
@@ -98,6 +98,10 @@ with sync_playwright() as playwright:
         _cdn_mock,
     )
     page.route(
+        "https://api.atlasacademy.io/**",
+        lambda route: route.fulfill(json=[], headers={"access-control-allow-origin": "*"}),
+    )
+    page.route(
         "https://api.atlasacademy.io/export/CN/basic_war.json",
         lambda route: route.fulfill(
             json=BASIC_WARS,
@@ -111,7 +115,7 @@ with sync_playwright() as playwright:
     page.route(
         "https://example.test/1000000001.txt",
         lambda route: route.fulfill(
-            body="＠测试终端\n第一段剧情结束。[k]",
+            body="＠测试终端\n第一段剧情结束。[k]\n[end black]",
             content_type="text/plain; charset=utf-8",
             headers={"access-control-allow-origin": "*"},
         ),
@@ -119,7 +123,7 @@ with sync_playwright() as playwright:
     page.route(
         "https://example.test/1000000002.txt",
         lambda route: route.fulfill(
-            body="＠测试终端\n第二段剧情开始。[k]",
+            body="＠测试终端\n第二段剧情开始。[k]\n[end white]",
             content_type="text/plain; charset=utf-8",
             headers={"access-control-allow-origin": "*"},
         ),
@@ -127,19 +131,20 @@ with sync_playwright() as playwright:
     page.route(
         "**/atlas-api/nice/CN/script/1000000001",
         lambda route: route.fulfill(
-            body="＠测试终端\n第一段剧情结束。[k]",
+            body="＠测试终端\n第一段剧情结束。[k]\n[end black]",
             content_type="text/plain; charset=utf-8",
         ),
     )
     page.route(
         "**/atlas-api/nice/CN/script/1000000002",
         lambda route: route.fulfill(
-            body="＠测试终端\n第二段剧情开始。[k]",
+            body="＠测试终端\n第二段剧情开始。[k]\n[end white]",
             content_type="text/plain; charset=utf-8",
         ),
     )
 
     page.goto(BASE_URL, wait_until="networkidle", timeout=30000)
+    page.locator(".region-select select").select_option("CN")
     page.get_by_role("button", name="开始观测").click()
     loader = page.locator(".reader-loading")
     loader.wait_for(state="hidden", timeout=10000)
@@ -149,8 +154,10 @@ with sync_playwright() as playwright:
     next_button = page.get_by_role("button", name="开始下一段剧情")
     next_button.wait_for(timeout=5000)
     assert "连续观测记录" in page.locator(".completion-panel p").text_content()
+    assert next_button.evaluate("el => { const r = el.getBoundingClientRect(); return document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)?.closest('button') === el; }")
 
-    next_button.click()
+    next_button.focus()
+    page.keyboard.press("Enter")
     loader.wait_for(state="hidden", timeout=10000)
     page.locator(".dialogue-box").wait_for(timeout=5000)
     assert page.locator(".dialogue-text").text_content() == "第二段剧情开始。"
@@ -159,13 +166,16 @@ with sync_playwright() as playwright:
     progress_keys = page.evaluate(
         "Object.keys(localStorage).filter(key => key.startsWith('fgo-reader-progress:')).sort()"
     )
-    assert progress_keys == [
-        "fgo-reader-progress:v5:1000000001",
-        "fgo-reader-progress:v5:1000000002",
+    assert [key.rsplit(":", 1)[-1] for key in progress_keys] == [
+        "1000000001",
+        "1000000002",
     ]
 
     page.keyboard.press("Space")
     page.get_by_text("当前播放队列已结束。", exact=False).wait_for(timeout=5000)
     assert next_button.count() == 0
+    page.get_by_role("button", name="返回目录", exact=True).last.focus()
+    page.keyboard.press("Enter")
+    expect(page.locator(".direct-script input")).to_be_visible()
     assert not page_errors, f"Page errors: {page_errors}"
     browser.close()

@@ -359,9 +359,6 @@ export function ReaderView({
   useEffect(() => { audioChannels.setBaseVolume(settings.bgmVolume); }, [audioChannels, settings.bgmVolume]);
   useEffect(() => () => { if (audioContinuations) audioChannels.saveContinuations(audioContinuations); audioChannels.dispose(); }, [audioChannels, audioContinuations]);
   useEffect(() => {
-    executor.setFastPlay(skipMode || ctrlHeld);
-  }, [executor, skipMode, ctrlHeld]);
-  useEffect(() => {
     const paused = new Set<"se" | "voice" | "subBgm" | "jingle">();
     if (snapshot.movie?.sePause) paused.add("se");
     if (snapshot.movie?.voicePause) paused.add("voice");
@@ -912,10 +909,10 @@ export function ReaderView({
     setChoiceTrail((current) => JSON.stringify(current) === JSON.stringify(snapshot.choiceTrail) ? current : snapshot.choiceTrail);
   }, [snapshot.choiceTrail]);
 
-  // Read-progress tracks completed messages; choices count once resolved.
+  // In-progress typewriter text must not be counted as already read by S.
   useEffect(() => {
-    setReadMax((current) => Math.max(current, snapshot.messageOrdinal));
-  }, [snapshot.messageOrdinal]);
+    if (currentMessage?.complete) setReadMax((current) => Math.max(current, snapshot.messageOrdinal));
+  }, [currentMessage?.complete, snapshot.messageOrdinal]);
 
   useEffect(() => {
     if (phase === "choice") {
@@ -945,52 +942,77 @@ export function ReaderView({
     selectChoice(choiceIndex);
   }, [phase, selectChoice, translation.preparing]);
 
-  const handleGoBack = useCallback(() => {
+  const stopPlayback = useCallback(() => {
+    executor.setFastPlay(false);
     setAutoMode(false);
     setSkipMode(false);
+    setCtrlHeld(false);
     setUiHidden(false);
+  }, [executor]);
+
+  const handleGoBack = useCallback(() => {
+    stopPlayback();
+    setPanel("none");
     goBack();
-  }, [goBack]);
+  }, [goBack, stopPlayback]);
+
+  const toggleAuto = useCallback(() => {
+    setAudioUnlocked(true);
+    setAutoMode((value) => !value);
+    setSkipMode(false);
+    setCtrlHeld(false);
+  }, []);
+
+  const toggleSkip = useCallback(() => {
+    setAudioUnlocked(true);
+    setSkipMode((value) => !value);
+    setAutoMode(false);
+    setCtrlHeld(false);
+  }, []);
 
   const advance = handleTap;
+  const playbackBlocked = panel !== "none" || !windowFocused || uiHidden || translation.preparing || completed;
+  const fastForward = !playbackBlocked && phase !== "choice"
+    && (ctrlHeld || skipMode && (settings.skipUnread || snapshot.messageOrdinal <= readMax));
+  useEffect(() => { executor.setFastPlay(fastForward); }, [executor, fastForward]);
 
+  const autoCharacterCount = currentChoice
+    ? choiceAutoPlaybackCharacterCount(currentChoice.options)
+    : currentMessage?.total ?? 0;
+
+  // Timers follow readable boundaries, independently of per-frame stage snapshots.
   useEffect(() => {
     if (
       !autoMode
       || snapshot.policy.hideAuto
-      || !windowFocused
-      || panel !== "none"
-      || uiHidden
-      || phase === "ended"
-      || phase === "wait"
-      || translation.preparing
+      || playbackBlocked
+      || phase === "idle"
+      || phase === "wait" && snapshot.waitKind !== "input"
     ) return;
     if (!textComplete) return;
-    const characterCount = currentChoice
-      ? choiceAutoPlaybackCharacterCount(currentChoice.options)
-      : currentMessage?.total ?? 0;
     const timer = window.setTimeout(() => {
-      if (currentChoice) resolveChoice(0, true);
+      if (phase === "choice") resolveChoice(0, true);
       else tap();
-    }, autoPlaybackDelayMs(characterCount));
+    }, autoPlaybackDelayMs(autoCharacterCount));
     return () => window.clearTimeout(timer);
   }, [
     autoMode,
+    autoCharacterCount,
     snapshot.policy.hideAuto,
-    currentChoice,
-    currentMessage?.total,
-    panel,
+    snapshot.waitKind,
+    snapshot.position,
+    snapshot.choiceTrail.length,
+    currentChoice?.key,
+    currentMessage?.key,
+    playbackBlocked,
     phase,
     resolveChoice,
     tap,
     textComplete,
-    translation.preparing,
-    uiHidden,
-    windowFocused,
   ]);
 
   useEffect(() => {
-    if (!skipMode || panel !== "none" || phase === "ended") return;
+    if (!skipMode || playbackBlocked) return;
     if (phase === "choice") {
       setSkipMode(false);
       return;
@@ -1004,15 +1026,15 @@ export function ReaderView({
       tap();
     }, 95);
     return () => window.clearInterval(timer);
-  }, [panel, phase, readMax, settings.skipUnread, snapshot.messageOrdinal, showToast, skipMode, tap]);
+  }, [playbackBlocked, phase, readMax, settings.skipUnread, snapshot.messageOrdinal, showToast, skipMode, tap]);
 
   useEffect(() => {
-    if (!ctrlHeld || panel !== "none" || phase === "choice" || phase === "ended") return;
+    if (!ctrlHeld || playbackBlocked || phase === "choice") return;
     const timer = window.setInterval(() => {
       tap();
     }, 80);
     return () => window.clearInterval(timer);
-  }, [ctrlHeld, panel, phase, tap]);
+  }, [ctrlHeld, playbackBlocked, phase, tap]);
 
   const saveBookmark = useCallback(() => {
     const value: ReaderBookmark = {
@@ -1036,14 +1058,14 @@ export function ReaderView({
   }, [showToast]);
 
   useEffect(() => registerAndroidBackHandler(() => {
-    if (panel !== "none" || completed) {
+    if (panel !== "none") {
       setPanel("none");
       return true;
     }
     void leaveApplicationFullscreen().catch(() => undefined);
     onExit();
     return true;
-  }), [completed, onExit, panel]);
+  }), [onExit, panel]);
 
   useEffect(() => () => {
     void leaveApplicationFullscreen().catch(() => undefined);
@@ -1065,29 +1087,50 @@ export function ReaderView({
 
   useEffect(() => {
     const keyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
+      if (event.defaultPrevented || event.isComposing) return;
+      const target = event.target instanceof HTMLElement ? event.target : null;
       if (event.key === "Escape") {
+        if (event.repeat) return;
         target?.blur();
+        if (panel !== "none") event.preventDefault();
         setPanel("none");
+        setCtrlHeld(false);
         return;
       }
-      if (target?.matches("input, textarea, select, [contenteditable='true']")) {
+      if (target?.closest("input, textarea, select, [role='textbox']") || target?.isContentEditable) {
         return;
       }
 
       if (event.key === "Control") {
-        setCtrlHeld(true);
+        if (!event.repeat && !event.altKey && !event.metaKey && panel === "none" && !uiHidden && !completed && !translation.preparing) {
+          setAudioUnlocked(true);
+          setCtrlHeld(true);
+        }
         return;
       }
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const advanceKey = event.key === "Enter" || event.code === "Space" || event.code === "PageDown";
+      if (event.repeat && !advanceKey && !["ArrowLeft", "ArrowUp", "ArrowDown"].includes(event.code)) return;
 
       if (event.code === "KeyT" && (panel === "none" || panel === "log")) {
+        event.preventDefault();
         toggleTranslation();
         return;
       }
 
       if (panel !== "none") return;
+      // Let focused ending buttons receive their native Enter/Space activation.
+      if (completed && advanceKey) {
+        if (!target?.closest("button")) event.preventDefault();
+        return;
+      }
+      if (uiHidden && advanceKey) {
+        event.preventDefault();
+        advance();
+        return;
+      }
 
-      if (phase === "choice" && currentChoice) {
+      if (!uiHidden && phase === "choice" && currentChoice) {
         if (event.key === "ArrowUp") {
           event.preventDefault();
           setChoiceFocus((value) => (value - 1 + currentChoice.options.length) % currentChoice.options.length);
@@ -1099,12 +1142,13 @@ export function ReaderView({
           return;
         }
         if (/^[1-9]$/.test(event.key)) {
-          resolveChoice(Number(event.key) - 1);
+          event.preventDefault();
+          if (!event.repeat) resolveChoice(Number(event.key) - 1);
           return;
         }
         if (event.key === "Enter" || event.code === "Space") {
           event.preventDefault();
-          resolveChoice(choiceFocus);
+          if (!event.repeat) resolveChoice(choiceFocus);
           return;
         }
       }
@@ -1115,6 +1159,7 @@ export function ReaderView({
           handleGoBack();
           break;
         case "Enter":
+        case "NumpadEnter":
         case "Space":
         case "PageDown":
           event.preventDefault();
@@ -1125,31 +1170,36 @@ export function ReaderView({
           if (!snapshot.policy.hideLog) setPanel("log");
           break;
         case "KeyA":
-          if (!snapshot.policy.hideAuto) setAutoMode((value) => !value);
-          setSkipMode(false);
+          event.preventDefault();
+          if (!snapshot.policy.hideAuto) toggleAuto();
           break;
         case "KeyS":
-          setSkipMode((value) => !value);
-          setAutoMode(false);
+          event.preventDefault();
+          toggleSkip();
           break;
         case "KeyL":
+          event.preventDefault();
           if (!snapshot.policy.hideLog) setPanel("log");
           break;
         case "KeyH":
+          event.preventDefault();
           setUiHidden((value) => !value);
           break;
         case "KeyM":
+          event.preventDefault();
           setMuted((value) => !value);
           setAudioUnlocked(true);
           break;
         case "KeyB":
+          event.preventDefault();
           saveBookmark();
           break;
         case "KeyF":
+          event.preventDefault();
           toggleFullscreen();
           break;
         case "Slash":
-          if (event.shiftKey) setPanel("shortcuts");
+          if (event.shiftKey) { event.preventDefault(); setPanel("shortcuts"); }
           break;
       }
     };
@@ -1162,7 +1212,7 @@ export function ReaderView({
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
-  }, [advance, choiceFocus, currentChoice, handleGoBack, panel, phase, resolveChoice, saveBookmark, toggleFullscreen, toggleTranslation, snapshot.policy.hideAuto, snapshot.policy.hideLog]);
+  }, [advance, choiceFocus, completed, currentChoice, handleGoBack, panel, phase, resolveChoice, saveBookmark, toggleAuto, toggleSkip, toggleFullscreen, toggleTranslation, uiHidden, translation.preparing, snapshot.policy.hideAuto, snapshot.policy.hideLog]);
 
   useEffect(() => () => {
     if (toastTimer.current) window.clearTimeout(toastTimer.current);
@@ -1213,10 +1263,10 @@ export function ReaderView({
   };
 
   const handleReplay = () => {
+    stopPlayback();
+    setPanel("none");
     replay();
     setChoiceTrail([]);
-    setAutoMode(false);
-    setSkipMode(false);
   };
 
   return (
@@ -1255,7 +1305,7 @@ export function ReaderView({
                   shortcut="←"
                   icon={<ChevronLeft size={16} />}
                   onClick={handleGoBack}
-                  disabled={snapshot.boundaryCount < 2}
+                  disabled={!snapshot.canGoBack}
                 />
                 {!snapshot.policy.hideLog && <ToggleButton label="记录" shortcut="L" icon={<MessageSquareText size={16} />} onClick={() => setPanel("log")} />}
                 {japaneseStoryLoaded && (
@@ -1269,8 +1319,8 @@ export function ReaderView({
                     onClick={toggleTranslation}
                   />
                 )}
-                {!snapshot.policy.hideAuto && <ToggleButton active={autoMode} label="自动" shortcut="A" icon={autoMode ? <Pause size={16} /> : <Play size={16} />} onClick={() => { setAutoMode((value) => !value); setSkipMode(false); }} />}
-                <ToggleButton active={skipMode} label="跳读" shortcut="S" icon={<SkipForward size={16} />} onClick={() => { setSkipMode((value) => !value); setAutoMode(false); }} />
+                {!snapshot.policy.hideAuto && <ToggleButton active={autoMode} label="自动" shortcut="A" icon={autoMode ? <Pause size={16} /> : <Play size={16} />} onClick={toggleAuto} />}
+                <ToggleButton active={skipMode} label="跳读" shortcut="S" icon={<SkipForward size={16} />} onClick={toggleSkip} />
                 <button className={`round-tool ${muted ? "active" : ""}`} onClick={() => { setMuted((value) => !value); setAudioUnlocked(true); }} aria-label={muted ? "恢复声音" : "静音"}>{muted ? <VolumeX size={18} /> : <Volume2 size={18} />}</button>
                 <button className="round-tool" onClick={openSettings} aria-label="设置"><Settings size={18} /></button>
               </div>
@@ -1445,7 +1495,7 @@ export function ReaderView({
                 return (
                   <button
                     key={`${entry.key}-${index}`}
-                    onClick={() => { jumpToMessage(entry.key); setPanel("none"); }}
+                    onClick={() => { stopPlayback(); jumpToMessage(entry.key); setPanel("none"); }}
                   >
                     <span>{String(index + 1).padStart(3, "0")}</span>
                     <div>
