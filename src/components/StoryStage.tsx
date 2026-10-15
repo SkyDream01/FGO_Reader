@@ -5,7 +5,7 @@ import { backgroundUrl, imageUrl, pictureFrameUrl } from "../data/atlas";
 import type { Region } from "../types";
 import type { PreparedCustomPackage } from "../lib/storyPreparation";
 import type { CoordinateDebugSettings } from "../lib/coordinateDebug";
-import { stageCoordinateToViewport } from "../lib/stageCoordinates";
+import { STAGE_WIDTH, stageCoordinateToViewport } from "../lib/stageCoordinates";
 import { blurFilterCss } from "../lib/blurFilter";
 import { useCustomAssetUrl } from "../hooks/useCustomAssetUrl";
 import { CharacterSprite, StageLayerSprite } from "./StageSprites";
@@ -33,6 +33,7 @@ function FrameImage({ name, region, top, customPackage, fullScreen }: { name: st
   return failed ? null : <img className={`adv-picture-frame ${top ? "top" : ""} ${name === "cut063_cinema" ? "cinematic" : ""}`} data-fullscreen={url.includes("/cut063_cinema_fs/")} src={url} alt="" onError={() => { if (!useFallback()) setFailed(true); }} draggable={false} />;
 }
 function SubSurface({ layer, region, children }: { layer: SubLayerState; region: Region; children: ReactNode }) {
+  const edgeFilterId = `sub-edge-${useId().replace(/:/g, "")}`;
   const [maskAsset, setMaskAsset] = useState<{ key: string; url: string | null; failed: boolean }>({ key: "", url: null, failed: false });
   const maskKey = `${region}:${layer.mask ?? ""}`;
   const needsMask = Boolean(layer.mask && !layer.mask.startsWith("#"));
@@ -50,25 +51,31 @@ function SubSurface({ layer, region, children }: { layer: SubLayerState; region:
     return () => { active = false; image.onload = null; image.onerror = null; };
   }, [layer.mask, region, maskKey]);
   const style: CSSProperties = {
-    transform: transform({ ...layer, x: layer.x + layer.shakeX, y: edgeMask ? 0 : layer.y + layer.shakeY }),
+    transform: transform({ ...layer, x: layer.x + layer.shakeX, y: layer.y + layer.shakeY }),
     opacity: layer.visible && !maskLoading ? layer.alpha : 0,
     zIndex: 100 + layer.depth,
-    filter: filters(blurCss(layer.blur, layer.blurKind), edgeMask && layer.maskEdge?.width ? `drop-shadow(${stageCoordinateToViewport(-layer.maskEdge.width, "x")} 0 0 ${layer.maskEdge.color})` : "none"),
+    filter: filters(blurCss(layer.blur, layer.blurKind), edgeMask && layer.maskEdge?.width ? `url(#${edgeFilterId})` : "none"),
   };
   const maskStyle: CSSProperties = {
     maskImage: maskUrl ? `url("${maskUrl}")` : undefined,
     maskMode: edgeMask ? "luminance" : "alpha",
-    // Sample the centered half-width of the mask without stretching its diagonal.
-    maskPosition: edgeMask ? "center top" : "center", maskSize: edgeMask ? "200% auto" : "cover", maskRepeat: "no-repeat",
+    maskPosition: "center", maskSize: edgeMask ? "100% 100%" : "cover", maskRepeat: "no-repeat",
   };
-  return <div className="adv-sub-layer" data-group={layer.key} data-mask={layer.mask ?? undefined} data-mask-state={!needsMask ? "none" : maskUrl ? "ready" : maskFailed ? "failed" : "loading"} style={style}>
-    <div className="adv-camera-root adv-sub-mask" style={maskStyle}>
-      {/* Edge masks define a viewport-height window; vertical movement pans its contents. */}
-      <div className="adv-camera-root" style={{ transform: edgeMask ? `translateY(${stageCoordinateToViewport(layer.y + layer.shakeY, "y")})` : undefined }}>
+  return <>
+    {edgeMask && layer.maskEdge && <svg className="adv-filter-defs" aria-hidden="true"><defs>
+      <filter id={edgeFilterId} x="-10%" y="-10%" width="120%" height="120%" primitiveUnits="objectBoundingBox">
+        <feMorphology in="SourceAlpha" operator="dilate" radius={layer.maskEdge.width / (2 * STAGE_WIDTH)} result="edge" />
+        <feFlood floodColor={layer.maskEdge.color} />
+        <feComposite in2="edge" operator="in" />
+        <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+      </filter>
+    </defs></svg>}
+    <div className={`adv-sub-layer${edgeMask ? " adv-sub-layer-masked" : ""}`} data-group={layer.key} data-mask={layer.mask ?? undefined} data-mask-state={!needsMask ? "none" : maskUrl ? "ready" : maskFailed ? "failed" : "loading"} style={style}>
+      <div className="adv-camera-root adv-sub-mask" style={maskStyle}>
         <div className="adv-camera-root" style={{ transform: transform(layer.stretch) }}><div className="adv-camera-root" style={{ transform: layer.cameraEnabled ? transform(layer.camera) : undefined, transformOrigin: pivotOrigin(layer.camera.pivot), filter: cameraFilterCss(layer.camera.filter) }}>{children}</div></div>
       </div>
     </div>
-  </div>;
+  </>;
 }
 
 function wipeClip(wipe: StageSnapshot["wipe"]): string {

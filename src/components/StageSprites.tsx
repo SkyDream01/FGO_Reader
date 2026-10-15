@@ -241,7 +241,7 @@ export function StageLayerSprite({
       data-image-kind={layer.mode}
       data-slot={layer.slot}
       data-source={layer.source}
-      data-background-fill={layer.source === "background" && layer.rotation === 0 && layer.scale >= 1 && (!layer.fullScreenScale || layer.fullScreenScale === "0") ? "true" : undefined}
+      data-background-fill={layer.source === "background" && layer.layer !== "sub" && layer.rotation === 0 && layer.scale >= 1 && (!layer.fullScreenScale || layer.fullScreenScale === "0") ? "true" : undefined}
       src={url}
       alt=""
       style={style}

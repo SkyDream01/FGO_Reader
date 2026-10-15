@@ -1830,6 +1830,15 @@ html[data-runtime="android"] .custom-library-backdrop {
   transform-origin: 50% 50%;
 }
 .adv-composition { z-index: 0; overflow: hidden; }
+/* Square masks use the 1344-unit stage surface, independently of the viewport.
+   Move the complete masked surface so a side cut-in cannot expose a rectangle. */
+.adv-sub-layer-masked {
+  inset: auto;
+  left: calc(50% - 672 * var(--adv-unit));
+  top: calc(50% - 672 * var(--adv-unit));
+  width: calc(1344 * var(--adv-unit));
+  height: calc(1344 * var(--adv-unit));
+}
 .scene-layer { z-index: 0; overflow: hidden; background: #091622; }
 .scene-image, .stage-layer-sprite {
   position: absolute;

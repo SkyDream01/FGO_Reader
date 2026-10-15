@@ -63,6 +63,11 @@ CINEMA = png(cinema)
 mask = Image.new("RGB", (1024, 1024), "black")
 ImageDraw.Draw(mask).polygon([(464, 0), (1023, 0), (1023, 625), (250, 625)], fill="white")
 MASK = png(mask)
+left_mask = Image.new("RGB", (1024, 1024), "black")
+# cut359_mask12 and cut359_mask11: the same diagonal at opposite top corners.
+ImageDraw.Draw(left_mask).polygon([(0, 0), (395, 0), (0, 478)], fill="white")
+LEFT_MASK = png(left_mask)
+RIGHT_MASK = png(left_mask.transpose(Image.Transpose.FLIP_LEFT_RIGHT))
 SUB_BACKGROUND = png(Image.new("RGB", (1344, 626), "red"))
 META = {"id": 5060000, "faceX": 384, "faceY": 146, "offsetX": 2, "offsetY": 124, "extendData": {}}
 SCRIPT = """[enableFullScreen]
@@ -99,6 +104,26 @@ MASKED = """[enableFullScreen]
 斜切蒙版。
 [k]
 """
+# 9415900320, message 26: the prepared right cut-in is reused on the left.
+LEFT_CUTIN = """[enableFullScreen]
+[scene 293500]
+[sceneSet S 294101 1]
+[charaLayer S sub #A]
+[charaFadein S 0 -450,80]
+[charaSet E 5036001 1 マシュ]
+[charaLayer E sub #A]
+[charaDepth E 2]
+[charaScale E 1.2]
+[charaFace E 13]
+[charaFadein E 0 -535,234]
+[subCameraFilter #A maskEdge cut359_mask12 5 0,0,0,255]
+[subRenderFadeinFSSideL #A 0.2 130,-170]
+[wt 0.3]
+＠E：マシュ
+い、いつも愛らしいハベトロットさんが……[r]あんなに大きくー！？
+[k]
+"""
+RIGHT_CUTIN = LEFT_CUTIN.replace("-450,80", "450,80").replace("-535,234", "525,234").replace("cut359_mask12", "cut359_mask11").replace("FSSideL #A 0.2 130,-170", "FSSideR #A 0.2 -100,-170")
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
@@ -118,9 +143,13 @@ with sync_playwright() as p:
                 pending_masks.append(route)
             else:
                 route.fulfill(content_type="image/png", body=MASK)
+        elif "cut359_mask12/cut359_mask12.png" in url:
+            route.fulfill(content_type="image/png", body=LEFT_MASK)
+        elif "cut359_mask11/cut359_mask11.png" in url:
+            route.fulfill(content_type="image/png", body=RIGHT_MASK)
         elif "cut063_cinema_fs/cut063_cinema_fs.png" in url:
             route.fulfill(content_type="image/png", body=CINEMA)
-        elif "back294100_1344_626.png" in url:
+        elif "back294100_1344_626.png" in url or "back294101_1344_626.png" in url:
             route.fulfill(content_type="image/png", body=SUB_BACKGROUND)
         elif "/CharaFigure/5036001/5036001_merged.png" in url:
             route.fulfill(content_type="image/png", body=BLUE_MERGED)
@@ -219,9 +248,33 @@ with sync_playwright() as p:
         page.evaluate("source => window.renderFrame(source)", MASKED.replace("[subRenderFadein #A 0 0,-270]", "[subRenderFadein #A 0 0,0]"))
         page.evaluate("() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))")
         edge_pixels = Image.open(io.BytesIO(page.screenshot())).convert("RGB")
-        # The native half-width sample keeps this point inside the diagonal;
-        # stretching the 626px portion or fitting the whole mask clips it out.
+        # Keep the portrait inside the diagonal when the sub-layer moves.
         assert edge_pixels.getpixel((int(width * 0.42), int(height * 0.1)))[2] > 240
+
+    for width, height in [(1344, 576), (1024, 576), (2048, 1110), (780, 440)]:
+        page.set_viewport_size({"width": width, "height": height})
+        for side, source in [("left", LEFT_CUTIN), ("right", RIGHT_CUTIN)]:
+            page.evaluate("source => window.renderFrame(source)", source)
+            page.wait_for_function("document.querySelector('.adv-sub-layer')?.dataset.maskState === 'ready' && [...document.querySelectorAll('img')].every(i=>i.complete) && [...document.querySelectorAll('.character-sprite canvas')].every(c=>c.classList.contains('ready'))")
+            page.evaluate("() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))")
+            pixels = Image.open(io.BytesIO(page.screenshot())).convert("RGB")
+            # The cut-in must reach its screen edge, with background behind the
+            # whole portrait; a viewport-sized mask exposes a vertical seam here.
+            edge_x = 5 if side == "left" else width - 5
+            assert pixels.getpixel((edge_x, 5)) == (255, 0, 0), (width, side, "background")
+            portrait_x = int(50 * min(width / 1024, height / 576))
+            if side == "right":
+                portrait_x = width - portrait_x
+            assert pixels.getpixel((portrait_x, int(height * 0.25))) == (0, 0, 255), (width, side, "portrait")
+            # A black outline follows the diagonal in both orientations.
+            edges = []
+            for row in [int(height * 0.25), int(height * 0.4)]:
+                outline = [x for x in range(width) if max(pixels.getpixel((x, row))) < 10]
+                assert outline, (width, side, row, "missing outline")
+                edges.append(sum(outline) / len(outline))
+            delta = edges[1] - edges[0]
+            assert delta * (1 if side == "right" else -1) > height * 0.08, (width, side, edges)
+            page.screenshot(path=str(OUT / f"cutin-{side}-{width}.png"))
 
     # A prepared sub-camera must stay invisible during the giant's entrance,
     # then reveal its masked contents over the authored 0.2-second fade.
@@ -296,4 +349,4 @@ with sync_playwright() as p:
 if server:
     server.shutdown()
     server.server_close()
-print("Atlas alignment checks passed (wide/16:9/mobile, metadata, moved background, cinema, masked fade, wipe directions, asset fallback)")
+print("Atlas alignment checks passed (wide/16:9/mobile, metadata, moved background, cinema, left/right cut-ins, masked fade, wipe directions, asset fallback)")
