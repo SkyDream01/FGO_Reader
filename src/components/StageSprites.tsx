@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { backgroundUrl, imageUrl, characterUrl, characterTextureUrl, getCharacterFigureMetadata, getEquipmentGraphUrl } from "../data/atlas";
 import { useCustomAssetUrl } from "../hooks/useCustomAssetUrl";
 import type { CharacterView, StageLayerView } from "../adv/executor";
@@ -83,12 +83,14 @@ function AtlasCharacterFigure({
   character,
   region,
   mergedUrl,
+  filter,
   onError,
   onOrigin,
 }: {
   character: CharacterView;
   region: StoryLaunch["region"];
   mergedUrl: string;
+  filter?: string;
   onError: () => void;
   onOrigin: (y: number) => void;
 }) {
@@ -191,7 +193,7 @@ function AtlasCharacterFigure({
       height={canvasSize}
       className={ready ? "ready" : ""}
       aria-label={character.name}
-      style={{ width: `calc(${canvasSize} * var(--adv-unit))`, height: `calc(${canvasSize} * var(--adv-unit))` }}
+      style={{ width: `calc(${canvasSize} * var(--adv-unit))`, height: `calc(${canvasSize} * var(--adv-unit))`, filter }}
     />
   );
 }
@@ -270,6 +272,7 @@ function CharacterSpriteFrame({
   showCharacterOrigin: boolean;
   spriteMask?: string | null;
 }) {
+  const silhouetteFilterId = `character-silhouette-${useId().replace(/:/g, "")}`;
   const [failed, setFailed] = useState(false);
   const [candidateIndex, setCandidateIndex] = useState(0);
   const [equipmentUrl, setEquipmentUrl] = useState<string | null>(null);
@@ -393,9 +396,21 @@ function CharacterSpriteFrame({
     if (candidateIndex + 1 < candidates.length) setCandidateIndex(candidateIndex + 1);
     else setFailed(true);
   }, [candidateIndex, candidates.length]);
+  const bitmapFilter = [
+    character.silhouette ? `url(#${silhouetteFilterId})` : "",
+    character.shadow ? "drop-shadow(0 16px 30px #0008)" : "",
+  ].filter(Boolean).join(" ") || undefined;
 
   return (
     <>
+      {character.silhouette && <svg className="adv-filter-defs" aria-hidden="true"><defs>
+        <filter id={silhouetteFilterId} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+          {/* Tint the composed figure's alpha, which excludes spare atlas faces.
+              SVG filters also work with cross-origin canvases without readback. */}
+          <feFlood floodColor={character.color ?? "#000"} />
+          <feComposite in2="SourceAlpha" operator="in" />
+        </filter>
+      </defs></svg>}
       <div
         className={`character-sprite ${character.active ? "active" : "inactive"} ${character.silhouette ? "silhouette" : ""} ${character.shadow ? "with-shadow" : ""} ${usingLocalAsset && wideAtlas ? "wide-atlas" : ""}`}
         data-position={character.position}
@@ -406,6 +421,7 @@ function CharacterSpriteFrame({
           <img
             src={url}
             alt={character.name}
+            style={{ filter: bitmapFilter }}
             onLoad={(event) => {
               const image = event.currentTarget;
               const wide = image.naturalWidth / image.naturalHeight > 1.25;
@@ -429,6 +445,7 @@ function CharacterSpriteFrame({
           character={{ ...character, id: resolvedId }}
           region={region}
           mergedUrl={url}
+          filter={bitmapFilter}
           onError={handleAtlasError}
           onOrigin={handleFigureOrigin}
         />
@@ -438,7 +455,6 @@ function CharacterSpriteFrame({
             <small>{character.name}</small>
           </div>
         ) : null}
-        {character.silhouette && character.color && <div className="adv-silhouette-tint" style={{ backgroundColor: character.color, maskImage: `url("${url}")`, maskSize: "contain", maskPosition: "center", maskRepeat: "no-repeat" }} />}
       </div>
       {showCharacterOrigin && (
         <span
