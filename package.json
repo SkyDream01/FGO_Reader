@@ -3,7 +3,7 @@
   "description": "Unofficial local FGO story reader powered by Atlas Academy data",
   "private": true,
   "version": "0.4.0",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "main": "desktop/main.mjs",
   "author": "SkyDream01",

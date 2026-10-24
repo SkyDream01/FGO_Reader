@@ -21,7 +21,7 @@
 
 ## 自制资源与替换
 
-[src/adv/assets](../src/adv/assets/README.md) 中的 SVG 均为本项目原创，按 MIT 许可提供。除静态纹理外，`RuntimeEffects.tsx` 用 SVG 几何绘制部分资源。动画使用执行器时钟，暂停、快进、回退不会留下独立运行的 CSS 时间轴。
+[src/adv/assets](../src/adv/assets/README.md) 中的 SVG 均为本项目原创，按 AGPL-3.0-only 许可提供。除静态纹理外，`RuntimeEffects.tsx` 用 SVG 几何绘制部分资源。动画使用执行器时钟，暂停、快进、回退不会留下独立运行的 CSS 时间轴。
 
 本地 ZIP 的 `assets.images` 可用 `Effect/Talk/<name>` 或 `<name>` 覆盖替代特效，`CharaGraph/<id>` 提供卡面，`mask_<name>` 提供遮罩；`assets.sounds` 可用 `Se/<sheet>/<cue>` 提供已转换 cue；新增 `assets.movies` 提供 MP4/WebM。格式示例见 [custom-scripts.md](custom-scripts.md)。
 
